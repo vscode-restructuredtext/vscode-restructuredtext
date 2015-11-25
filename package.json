@@ -1,0 +1,26 @@
+{
+	"name": "restructuredtext",
+	"displayName": "restructuredtext",
+	"description": "reStructuredText Language Support",
+	"version": "0.0.1",
+	"publisher": "lextudio",
+	"engines": {
+		"vscode": "^0.10.1"
+	},
+	"categories": [
+		"Languages"
+	],
+	"contributes": {
+		"languages": [{
+			"id": "restructuredtext",
+			"aliases": ["reStructuredText", "restructuredtext"],
+			"extensions": [".rst",".rest"],
+			"configuration": "./restructuredtext.configuration.json"
+		}],
+		"grammars": [{
+			"language": "restructuredtext",
+			"scopeName": "text.restructuredtext",
+			"path": "./syntaxes/restructuredtext.tmLanguage"
+		}]
+	}
+}
