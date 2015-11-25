@@ -1,13 +1,21 @@
-# README
-## This is the README for your extension "restructuredtext" 
-You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
+# reStructuredText Language Support for Visual Studio Code
 
-* Split the editor (`Cmd+\` on OSX or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+CMD+V` on OSX or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux) or `Cmd+Space` (OSX) to see a list of Markdown snippets
+This extension provides rich reStructuredText language support for Visual Studio Code.
+Now you write reStructuredText scripts using the excellent IDE-like interface
+that VS Code provides.
 
-### For more information
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+## Features
 
-** Enjoy!**
+- Syntax highlighting
+- Code snippets (coming soon)
+
+## Contributing to the Code
+
+Check out the [development documentation](docs/development.md) for more details
+on how to contribute to this extension!
+
+## License
+
+This extension is [licensed under the MIT License](LICENSE.txt).  Please see the
+[third-party notices](Third Party Notices.txt) file for details on the third-party
+files that we include with releases of this project.

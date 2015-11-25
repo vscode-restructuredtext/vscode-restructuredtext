@@ -1,0 +1,9 @@
+.vscode/**
+typings/**
+**/*.ts
+.gitignore
+tsconfig.json
+build/**
+bin/EditorServices.log
+bin/DebugAdapter.log
+bin/*.vshost.*

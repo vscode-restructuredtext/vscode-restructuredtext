@@ -1,15 +1,25 @@
 {
 	"name": "restructuredtext",
-	"displayName": "restructuredtext",
-	"description": "reStructuredText Language Support",
+	"displayName": "reStructuredText",
+	"description": "Develop reStructuredText in Visual Studio Code!",
 	"version": "0.0.1",
 	"publisher": "lextudio",
 	"engines": {
-		"vscode": "^0.10.1"
+		"vscode": "0.10.*"
 	},
+    "license":"SEE LICENSE IN LICENSE.txt",
+    "homepage": "https://github.com/lextm/vscode-restructuredtext/README.md",
 	"categories": [
 		"Languages"
 	],
+    "galleryBanner": {
+		"color": "#ACD1EC",
+		"theme": "light"
+	},
+    "repository": {
+		"type": "git",
+		"url": "https://github.com/lextm/vscode-restructuredtext.git"
+	},
 	"contributes": {
 		"languages": [{
 			"id": "restructuredtext",
