@@ -1,0 +1,62 @@
+{
+	"image": {
+		"prefix": "image",
+		"body": ".. image:: ${1:path}\n$0",
+		"description": "Image",
+		"scope": "text.restructuredtext"
+	},
+	"link": {
+		"prefix": "link",
+		"body": "\n\\`${1:Title}<${2:http://link}>\\`_",
+		"description": "Link",
+		"scope": "text.restructuredtext"
+	},
+	"s1": {
+		"prefix": "s1",
+		"body": "${1:subsection name}\n${1/(.)|\\s/(?1:=:=)/g}\n$0",
+		"description": "Section 1",
+		"scope": "text.restructuredtext"
+	},
+	"s2": {
+		"prefix": "s2",
+		"body": "${1:subsection name}\n${1/(.)|\\s/(?1:*:*)/g}\n$0",
+		"description": "Section 2",
+		"scope": "text.restructuredtext"
+	},
+	"s3": {
+		"prefix": "s3",
+		"body": "${1:subsection name}\n${1/(.)|\\s/(?1:-:-)/g}\n$0",
+		"description": "Section 3",
+		"scope": "text.restructuredtext"
+	},
+	"s4": {
+		"prefix": "s4",
+		"body": "${1:subsection name}\n${1/(.)|\\s/(?1:^:^)/g}\n$0",
+		"description": "Section 4",
+		"scope": "text.restructuredtext"
+	},
+	"s5": {
+		"prefix": "s5",
+		"body": "${1:subsection name}\n${1/(.)|\\s/(?1:\":\")/g}\n$0",
+		"description": "Section 5",
+		"scope": "text.restructuredtext"
+	},
+	"s6": {
+		"prefix": "s6",
+		"body": "${1:subsection name}\n${1/(.)|\\s/(?1:+:+)/g}\n$0",
+		"description": "Section 6",
+		"scope": "text.restructuredtext"
+	},
+	"s7": {
+		"prefix": "s7",
+		"body": "${1:subsection name}\n${1/(.)|\\s/(?1:~:~)/g}\n$0",
+		"description": "Section 7",
+		"scope": "text.restructuredtext"
+	},
+	"s8": {
+		"prefix": "s8",
+		"body": "${1:subsection name}\n${1/(.)|\\s/(?1:#:#)/g}\n$0",
+		"description": "Section 8",
+		"scope": "text.restructuredtext"
+	}
+}

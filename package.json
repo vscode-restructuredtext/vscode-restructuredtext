@@ -2,22 +2,22 @@
 	"name": "restructuredtext",
 	"displayName": "reStructuredText",
 	"description": "Develop reStructuredText in Visual Studio Code!",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"publisher": "lextudio",
 	"engines": {
 		"vscode": "0.10.*"
 	},
-    "license":"SEE LICENSE IN LICENSE.txt",
-    "homepage": "https://github.com/lextm/vscode-restructuredtext/README.md",
+	"license":"SEE LICENSE IN LICENSE.txt",
+	"homepage": "https://github.com/lextm/vscode-restructuredtext/README.md",
 	"categories": [
 		"Languages"
 	],
-    "icon": "images/Document_icon.png",
-    "galleryBanner": {
+	"icon": "images/Document_icon.png",
+	"galleryBanner": {
 		"color": "#ACD1EC",
 		"theme": "light"
 	},
-    "repository": {
+	"repository": {
 		"type": "git",
 		"url": "https://github.com/lextm/vscode-restructuredtext.git"
 	},
@@ -25,13 +25,18 @@
 		"languages": [{
 			"id": "restructuredtext",
 			"aliases": ["reStructuredText", "restructuredtext"],
-			"extensions": [".rst",".rest"],
-			"configuration": "./restructuredtext.configuration.json"
+			"extensions": [".rst",".rest"]
 		}],
 		"grammars": [{
 			"language": "restructuredtext",
 			"scopeName": "text.restructuredtext",
 			"path": "./syntaxes/restructuredtext.tmLanguage"
-		}]
+		}],
+		"snippets": [
+			{
+				"language": "restructuredtext",
+				"path": "./snippets/snippets.json"
+			}
+		]
 	}
 }
