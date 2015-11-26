@@ -7,7 +7,7 @@ that VS Code provides.
 ## Features
 
 - Syntax highlighting
-- Code snippets (coming soon)
+- Code snippets
 
 ## Contributing to the Code
 
