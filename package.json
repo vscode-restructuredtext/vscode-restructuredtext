@@ -12,6 +12,7 @@
 	"categories": [
 		"Languages"
 	],
+    "icon": "images/Document_icon.png",
     "galleryBanner": {
 		"color": "#ACD1EC",
 		"theme": "light"
