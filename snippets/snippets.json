@@ -1,4 +1,10 @@
 {
+	"code": {
+		"prefix": "code",
+		"body": ".. code-block:: ${1:language}\n$0",
+		"description": "Code",
+		"scope": "text.restructuredtext"
+	},
 	"image": {
 		"prefix": "image",
 		"body": ".. image:: ${1:path}\n$0",
@@ -57,6 +63,72 @@
 		"prefix": "s8",
 		"body": "${1:subsection name}\n${1/(.)|\\s/(?1:#:#)/g}\n$0",
 		"description": "Section 8",
+		"scope": "text.restructuredtext"
+	},
+	"attention": {
+		"prefix": "attention",
+		"body": ".. attention:: ${1:text}\n$0",
+		"description": "Attention",
+		"scope": "text.restructuredtext"
+	},
+	"note": {
+		"prefix": "note",
+		"body": ".. note:: ${1:text}\n$0",
+		"description": "Note",
+		"scope": "text.restructuredtext"
+	},
+	"warning": {
+		"prefix": "warning",
+		"body": ".. warning:: ${1:text}\n$0",
+		"description": "Warning",
+		"scope": "text.restructuredtext"
+	},
+	"error": {
+		"prefix": "error",
+		"body": ".. error:: ${1:text}\n$0",
+		"description": "Error",
+		"scope": "text.restructuredtext"
+	},
+	"hint": {
+		"prefix": "hint",
+		"body": ".. hint:: ${1:text}\n$0",
+		"description": "Hint",
+		"scope": "text.restructuredtext"
+	},
+	"important": {
+		"prefix": "important",
+		"body": ".. important:: ${1:text}\n$0",
+		"description": "Important",
+		"scope": "text.restructuredtext"
+	},
+	"caution": {
+		"prefix": "caution",
+		"body": ".. caution:: ${1:text}\n$0",
+		"description": "Caution",
+		"scope": "text.restructuredtext"
+	},
+	"danger": {
+		"prefix": "danger",
+		"body": ".. danger:: ${1:text}\n$0",
+		"description": "Danger",
+		"scope": "text.restructuredtext"
+	},
+	"tip": {
+		"prefix": "tip",
+		"body": ".. tip:: ${1:text}\n$0",
+		"description": "Tip",
+		"scope": "text.restructuredtext"
+	},
+	"admonition": {
+		"prefix": "admonition",
+		"body": ".. admonition:: ${1:text}\n$0",
+		"description": "Admonition",
+		"scope": "text.restructuredtext"
+	},
+	"rubric": {
+		"prefix": "rubric",
+		"body": ".. rubric:: ${1:text}\n$0",
+		"description": "Rubric",
 		"scope": "text.restructuredtext"
 	}
 }
