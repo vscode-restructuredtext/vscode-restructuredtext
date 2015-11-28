@@ -4,10 +4,24 @@ This extension provides rich reStructuredText language support for Visual Studio
 Now you write reStructuredText scripts using the excellent IDE-like interface
 that VS Code provides.
 
+![reStructuredText in Visual Studio Code](images/vscode.png)
+
 ## Features
 
 - Syntax highlighting
 - Code snippets
+  - `image` Image
+  - `link`  Link
+  - `s1`    Section 1
+  - `s2`    Section 2
+  - `s3`    Section 3
+  - `s4`    Section 4
+  - `s5`    Section 5
+  - `s6`    Section 6
+  - `s7`    Section 7
+  - `s8`    Section 8
+
+  To trigger snippets, please refer to [Visual Studio Code shortcuts](https://code.visualstudio.com/docs/customization/keybindings).
 
 ## Contributing to the Code
 
