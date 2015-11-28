@@ -25,6 +25,8 @@ that VS Code provides.
 
 ## How to Install from Gallery
 
+This extension is hosted at [Visual Studio Marketplace](https://marketplace.visualstudio.com/items/lextudio.restructuredtext)
+
 1. Press `F1` to show all commands.
 2. Type `ext install` and hit `Enter`.
 3. Change the command to `ext install restructuredtext` and hit `Enter`.
