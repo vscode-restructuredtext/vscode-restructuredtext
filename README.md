@@ -23,6 +23,14 @@ that VS Code provides.
 
   To trigger snippets, please refer to [Visual Studio Code shortcuts](https://code.visualstudio.com/docs/customization/keybindings).
 
+## How to Install from Gallery
+
+1. Press `F1` to show all commands.
+2. Type `ext install` and hit `Enter`.
+3. Change the command to `ext install restructuredtext` and hit `Enter`.
+
+When the extension information is displayed, click the install button.
+
 ## Contributing to the Code
 
 Check out the [development documentation](docs/development.md) for more details
