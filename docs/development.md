@@ -7,7 +7,7 @@
 ```
 cd ~
 git clone https://github.com/lextm/vscode-restructuredtext.git
-cd ~/vscode-restructuredtext`
+cd ~/vscode-restructuredtext
 code .
 ```
 
