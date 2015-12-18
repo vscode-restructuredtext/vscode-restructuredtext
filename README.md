@@ -21,17 +21,17 @@ that VS Code provides.
   - `s6`    			Section 6
   - `s7`    			Section 7
   - `s8`    			Section 8
-	- `attention` 	Attention
-	- `note`				Note
-	- `warning`			Warning
-	- `error`				Error
-	- `hint`				Hint
-	- `important`		Important
-	- `caution`			Caution
-	- `danger`			Danger
-	- `tip`					Tip
-	- `admonition` 	Admonition
-	- `rubric`			Rubric (footnote)
+  - `attention` 		Attention
+  - `note`				Note
+  - `warning`			Warning
+  - `error`				Error
+  - `hint`				Hint
+  - `important`			Important
+  - `caution`			Caution
+  - `danger`			Danger
+  - `tip`				Tip
+  - `admonition` 		Admonition
+  - `rubric`			Rubric (footnote)
 
   To trigger snippets, please refer to [Visual Studio Code shortcuts](https://code.visualstudio.com/docs/customization/keybindings).
 
