@@ -10,16 +10,28 @@ that VS Code provides.
 
 - Syntax highlighting
 - Code snippets
-  - `image` Image
-  - `link`  Link
-  - `s1`    Section 1
-  - `s2`    Section 2
-  - `s3`    Section 3
-  - `s4`    Section 4
-  - `s5`    Section 5
-  - `s6`    Section 6
-  - `s7`    Section 7
-  - `s8`    Section 8
+  - `code`  			Code block
+  - `image` 			Image
+  - `link`  			Link
+  - `s1`    			Section 1
+  - `s2`    			Section 2
+  - `s3`    			Section 3
+  - `s4`    			Section 4
+  - `s5`    			Section 5
+  - `s6`    			Section 6
+  - `s7`    			Section 7
+  - `s8`    			Section 8
+	- `attention` 	Attention
+	- `note`				Note
+	- `warning`			Warning
+	- `error`				Error
+	- `hint`				Hint
+	- `important`		Important
+	- `caution`			Caution
+	- `danger`			Danger
+	- `tip`					Tip
+	- `admonition` 	Admonition
+	- `rubric`			Rubric (footnote)
 
   To trigger snippets, please refer to [Visual Studio Code shortcuts](https://code.visualstudio.com/docs/customization/keybindings).
 
