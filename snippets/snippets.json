@@ -13,7 +13,7 @@
 	},
 	"link": {
 		"prefix": "link",
-		"body": "\n\\`${1:Title}<${2:http://link}>\\`_",
+		"body": "`${1:Title} <${2:http://link}>`_",
 		"description": "Link",
 		"scope": "text.restructuredtext"
 	},
