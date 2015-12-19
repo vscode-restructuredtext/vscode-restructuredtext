@@ -2,7 +2,7 @@
 	"name": "restructuredtext",
 	"displayName": "reStructuredText",
 	"description": "Develop reStructuredText in Visual Studio Code!",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"publisher": "lextudio",
 	"engines": {
 		"vscode": "0.10.*"
