@@ -39,6 +39,8 @@ The warning and errors can be checked in Error panel by pressing `⇧⌘M`.
 
 Note that this assumes your document project has `make.bat` or `makefile` at root directory.
 
+One example project can be found [here](https://github.com/lextudio/linpeiman).
+
 ## Launch a Terminal (The Easy Way)
 If you do want to open a terminal, it is quite easy to launch a terminal as below,
 
