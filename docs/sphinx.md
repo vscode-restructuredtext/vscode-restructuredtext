@@ -37,9 +37,12 @@ Once this file is saved, the following steps can activate it in VS Code,
 
 The warning and errors can be checked in Error panel by pressing `⇧⌘M`.
 
-Note that this assumes your document project has `make.bat` or `makefile` at root directory.
+Note that this assumes your document project has `make.bat` or `makefile` at root 
+directory. One example project can be found [here](https://github.com/lextudio/linpeiman).
 
-One example project can be found [here](https://github.com/lextudio/linpeiman).
+If your document project does not have such files at root directory, you can add a `makefile` 
+at root directory, and redirect the command to the target directory. One example project can 
+be found [here](https://github.com/lextm/sharpsnmp_docs).
 
 ## Launch a Terminal (The Easy Way)
 If you do want to open a terminal, it is quite easy to launch a terminal as below,
