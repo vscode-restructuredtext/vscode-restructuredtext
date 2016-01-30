@@ -38,6 +38,10 @@ This extension is hosted at [Visual Studio Marketplace](https://marketplace.visu
 
 When the extension information is displayed, click the install button.
 
+## Integration with Sphinx
+
+Check out the [workarounds](docs/sphinx.md) for more details.
+
 ## Contributing to the Code
 
 Check out the [development documentation](docs/development.md) for more details
