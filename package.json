@@ -2,10 +2,10 @@
 	"name": "restructuredtext",
 	"displayName": "reStructuredText",
 	"description": "Develop reStructuredText in Visual Studio Code!",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"publisher": "lextudio",
 	"engines": {
-		"vscode": "0.10.*"
+		"vscode": "^0.10.8"
 	},
 	"license":"SEE LICENSE IN LICENSE.txt",
 	"homepage": "https://github.com/lextm/vscode-restructuredtext/blob/master/README.md",
@@ -21,6 +21,12 @@
 		"type": "git",
 		"url": "https://github.com/lextm/vscode-restructuredtext.git"
 	},
+    "bugs": "https://github.com/lextm/vscode-restructuredtext/issues",
+    "main": "./out/src/extension",
+    "activationEvents": [
+        "onCommand:restructuredtext.preview",
+        "onCommand:restructuredtext.previewToSide"
+    ],
 	"contributes": {
 		"languages": [{
 			"id": "restructuredtext",
@@ -37,6 +43,42 @@
 				"language": "restructuredtext",
 				"path": "./snippets/snippets.json"
 			}
-		]
-	}
+		],
+        "keybindings": [
+            {
+                "command": "restructuredtext.preview",
+                "key": "ctrl+shift+r",
+                "when": "editorTextFocus"
+            },
+            {
+                "command": "restructuredtext.previewToSide",
+                "key": "ctrl+k r",
+                "when": "editorTextFocus"
+            }
+        ],
+        "commands": [
+            {
+                "command": "restructuredtext.preview",
+                "title": "Toggle Preview",
+                "category": "reStructuredText"
+            },
+            {
+                "command": "restructuredtext.previewToSide",
+                "title": "Open Preview to the Side",
+                "category": "reStructuredText"
+            }
+        ]
+	},
+    "scripts": {
+        "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
+        "compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install"
+    },
+    "dependencies": {
+        "file-url": "^1.0.1"
+    },
+    "devDependencies": {
+        "typescript": "^1.7.5",
+        "vscode": "^0.11.x"
+    }
 }

@@ -11,6 +11,12 @@
 		"description": "Image",
 		"scope": "text.restructuredtext"
 	},
+	"figure": {
+		"prefix": "figure",
+		"body": ".. figure:: ${1:path}\n\n   $0",
+		"description": "Figure",
+		"scope": "text.restructuredtext"
+	},
 	"link": {
 		"prefix": "link",
 		"body": "`${1:Title} <${2:http://link}>`_ ",

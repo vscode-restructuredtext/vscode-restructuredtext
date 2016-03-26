@@ -7,3 +7,9 @@ restructuredtext.tmbundle
 The license terms can be found at
 
 https://github.com/textmate/restructuredtext.tmbundle
+
+ReStructured Text Previewer
+
+The license terms can be found at
+
+https://github.com/tht13/RST-vscode/blob/master/LICENSE

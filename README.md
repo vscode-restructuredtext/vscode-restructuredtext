@@ -12,6 +12,7 @@ that VS Code provides.
 - Code snippets
   - `code`  			Code block
   - `image` 			Image
+  - `figure`            Figure
   - `link`  			Link
   - `attention` 		Attention
   - `note`				Note
@@ -27,6 +28,13 @@ that VS Code provides.
   - `doc`               Doc reference
 
   To trigger snippets, please refer to [Visual Studio Code shortcuts](https://code.visualstudio.com/docs/customization/keybindings).
+  
+- Preview (ported from rst-vscode extension)
+
+  The shortcuts are
+
+  - `ctrl+shift+r`      Preview
+  - `ctrl+k r`          Preview to Side
 
 ## How to Install from Gallery
 
