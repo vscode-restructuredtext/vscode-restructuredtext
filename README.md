@@ -36,6 +36,8 @@ that VS Code provides.
   - `ctrl+shift+r`      Preview
   - `ctrl+k r`          Preview to Side
 
+**The preview feature requires Python to be installed. The `docutils` Python module is also required.**
+
 ## How to Install from Gallery
 
 This extension is hosted at [Visual Studio Marketplace](https://marketplace.visualstudio.com/items/lextudio.restructuredtext)
