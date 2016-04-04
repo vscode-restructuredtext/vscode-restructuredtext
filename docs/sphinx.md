@@ -1,6 +1,10 @@
 #How to work with Sphinx
 
-It has been planned to add Sphinx integration, but it won't come soon. Before that, a few workarounds can be used.
+## Note on Preview Feature
+The preview feature relies on sphinx generated HTML files. So before previewing a file, the HTML page must be generated ahead manually,
+via ``make html``.
+
+Automatic page generation is being investigated and will be added in a later release.
 
 ## Use VS Code Tasks
 This requires a new file `./.vscode/tasks.json` to be created in your document project.
