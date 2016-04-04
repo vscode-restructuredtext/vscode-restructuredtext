@@ -29,7 +29,8 @@ export function activate(context: ExtensionContext) {
     });
 
     function sendHTMLCommand(displayColumn: ViewColumn): PromiseLike<void> {
-        let previewTitle = `Preview: '${path.basename(window.activeTextEditor.document.fileName)}'`;
+        let whole = window.activeTextEditor.document.fileName;
+        let previewTitle = `Preview: '${basicName(whole)}'`;
         provider = new RstDocumentContentProvider();
         registration = workspace.registerTextDocumentContentProvider("restructuredtext-preview", provider);
         previewUri = Uri.parse(`restructuredtext-preview://preview/${previewTitle}`);
@@ -59,6 +60,12 @@ export function activate(context: ExtensionContext) {
     });
 
     context.subscriptions.push(previewToSide, preview, registration);
+}
+
+function basicName(whole: string): string {
+    let ext = whole.lastIndexOf(".");
+    let core = whole.substring(0, ext);
+    return core.substring(workspace.rootPath.length, core.length);
 }
 
 // this method is called when your extension is deactivated
@@ -95,17 +102,42 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
                     ${error}
                 </body>`;
     }
-
+    
+    private fixLinks(document: string, documentPath: string): string {		
+        return document.replace(		
+            new RegExp("((?:src|href)=[\'\"])(.*?)([\'\"])", "gmi"), (subString: string, p1: string, p2: string, p3: string): string => {		
+                return [		
+                    p1,		
+                    fileUrl(path.join(		
+                        path.dirname(documentPath),		
+                        p2		
+                    )),		
+                    p3		
+                ].join("");		
+            }		
+        );		
+    }
+    
     public preview(editor: TextEditor): Thenable<string> {
         let whole = editor.document.fileName;
-        let ext = whole.lastIndexOf(".");
-        let core = whole.substring(0, ext);
-        let basicName = core.substring(workspace.rootPath.length, core.length);
-        let finalName = path.join(workspace.rootPath, "_build/html", basicName + ".html");
+        let finalName = path.join(workspace.rootPath, "_build/html", basicName(whole) + ".html");
         return new Promise<string>((resolve, reject) => {
-            fs.stat(finalName, function(error, stat) {
-                if(error == null) {
-                    resolve(fs.readFileSync(finalName, "utf8"));
+            fs.stat(finalName, (error, stat) => {
+                if (error == null) {
+                    fs.readFile(finalName, "utf8", (err, data) => {
+                        if (err == null) {
+                            let fixed = this.fixLinks(data, finalName);
+                            resolve(fixed);
+                        } else {
+                            let errorMessage = [
+                                err.name,
+                                err.message,
+                                err.stack
+                            ].join("\n");
+                            console.error(errorMessage);
+                            reject(errorMessage);
+                        }                        
+                    });
                 //} else if(err.code == 'ENOENT') {
                 //    fs.writeFile('log.txt', 'Some log\n');
                 } else {
