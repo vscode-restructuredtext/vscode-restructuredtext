@@ -96,81 +96,28 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
                 </body>`;
     }
 
-    private buildPage(document: string, headerArgs: string[]): string {
-        return `
-            <html lang="en">
-            <head>
-            ${headerArgs.join("\n")}
-            </head>
-            <body>
-            ${document}
-            </body>
-            </html>`;
-    }
-
-    private createStylesheet(file: string) {
-        let href = fileUrl(
-            path.join(
-                __dirname,
-                "..",
-                "..",
-                "src",
-                "static",
-                file
-            )
-        );
-        return `<link href="${href}" rel="stylesheet" />`;
-    }
-
-    private fixLinks(document: string, documentPath: string): string {
-        return document.replace(
-            new RegExp("((?:src|href)=[\'\"])(.*?)([\'\"])", "gmi"), (subString: string, p1: string, p2: string, p3: string): string => {
-                return [
-                    p1,
-                    fileUrl(path.join(
-                        path.dirname(documentPath),
-                        p2
-                    )),
-                    p3
-                ].join("");
-            }
-        );
-    }
-
     public preview(editor: TextEditor): Thenable<string> {
-        let doc = editor.document;
+        let whole = editor.document.fileName;
+        let ext = whole.lastIndexOf(".");
+        let core = whole.substring(0, ext);
+        let basicName = core.substring(workspace.rootPath.length, core.length);
+        let finalName = path.join(workspace.rootPath, "_build/html", basicName + ".html");
         return new Promise<string>((resolve, reject) => {
-            let cmd = [
-                "python",
-                path.join(
-                    __dirname,
-                    "..",
-                    "..",
-                    "src",
-                    "preview.py"
-                ),
-                doc.fileName
-            ].join(" ");
-            exec(cmd, (error: Error, stdout: Buffer, stderr: Buffer) => {
-                if (error) {
+            fs.stat(finalName, function(error, stat) {
+                if(error == null) {
+                    resolve(fs.readFileSync(finalName, "utf8"));
+                //} else if(err.code == 'ENOENT') {
+                //    fs.writeFile('log.txt', 'Some log\n');
+                } else {
                     let errorMessage = [
                         error.name,
                         error.message,
-                        error.stack,
-                        "",
-                        stderr.toString()
+                        error.stack
                     ].join("\n");
                     console.error(errorMessage);
                     reject(errorMessage);
-                } else {
-                    let result = this.fixLinks(stdout.toString(), editor.document.fileName);
-                    let headerArgs = [
-                        this.createStylesheet("basic.css"),
-                        this.createStylesheet("default.css")
-                    ];
-                    resolve(this.buildPage(result, headerArgs));
                 }
             });
-        });
+        });        
     }
 }
