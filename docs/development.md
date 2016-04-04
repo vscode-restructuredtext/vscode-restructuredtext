@@ -9,7 +9,7 @@
 1. In this editing VS Code instance, press F5 to start a debugging instance.
 ```
 cd ~
-git clone https://github.com/lextm/vscode-restructuredtext.git
+git clone https://github.com/vscode-restructuredtext/vscode-restructuredtext.git
 cd ~/vscode-restructuredtext
 npm install
 npm run compile

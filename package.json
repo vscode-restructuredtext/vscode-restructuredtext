@@ -2,13 +2,13 @@
 	"name": "restructuredtext",
 	"displayName": "reStructuredText",
 	"description": "Develop reStructuredText in Visual Studio Code!",
-	"version": "0.0.7",
+	"version": "0.0.8",
 	"publisher": "lextudio",
 	"engines": {
 		"vscode": "^0.10.8"
 	},
 	"license":"SEE LICENSE IN LICENSE.txt",
-	"homepage": "https://github.com/lextm/vscode-restructuredtext/blob/master/README.md",
+	"homepage": "https://github.com/vscode-restructuredtext/vscode-restructuredtext/blob/master/README.md",
 	"categories": [
 		"Languages"
 	],
@@ -19,9 +19,9 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/lextm/vscode-restructuredtext.git"
+		"url": "https://github.com/vscode-restructuredtext/vscode-restructuredtext.git"
 	},
-    "bugs": "https://github.com/lextm/vscode-restructuredtext/issues",
+    "bugs": "https://github.com/vscode-restructuredtext/vscode-restructuredtext/issues",
     "main": "./out/src/extension",
     "activationEvents": [
         "onCommand:restructuredtext.preview",
