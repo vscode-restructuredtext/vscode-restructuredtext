@@ -2,7 +2,7 @@
 	"name": "restructuredtext",
 	"displayName": "reStructuredText",
 	"description": "Develop reStructuredText in Visual Studio Code!",
-	"version": "0.0.9",
+	"version": "0.0.10",
 	"publisher": "lextudio",
 	"engines": {
 		"vscode": "^0.10.8"
@@ -10,7 +10,8 @@
 	"license":"SEE LICENSE IN LICENSE.txt",
 	"homepage": "https://github.com/vscode-restructuredtext/vscode-restructuredtext/blob/master/README.md",
 	"categories": [
-		"Languages"
+		"Languages",
+        "Snippets"        
 	],
 	"icon": "images/Document_icon.png",
 	"galleryBanner": {
