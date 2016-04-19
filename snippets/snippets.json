@@ -22,7 +22,7 @@
 		"body": "`${1:Title} <${2:http://link}>`_ ",
 		"description": "Link",
 		"scope": "text.restructuredtext"
-	},	
+	},
 	"attention": {
 		"prefix": "attention",
 		"body": ".. attention:: ${1:text}\n$0",
@@ -94,5 +94,35 @@
 		"body": ":doc:`/${1:text}` $0",
 		"description": "Doc reference",
 		"scope": "text.restructuredtext"
+	},
+	"ref": {
+		"prefix": "ref",
+		"body": ":ref:`${1:Label}` $0",
+		"description": "Label reference",
+		"scope": "text.restructuredtext"
+	},
+	"label": {
+		"prefix": "label",
+		"body": ".. _${1:Title}:\n\n$0",
+		"description": "Label",
+		"scope": "text.restructuredtext"
+	},
+	"download": {
+		"prefix": "download",
+		"body": ":download:`${1:Title} <${2:path}>` $0",
+		"description": "Download",
+		"scope": "text.restructuredtext"		
+	},
+	"file": {
+		"prefix": "file",
+		"body": ":file:`${1:path}` $0",
+		"description": "File",
+		"scope": "text.restructuredtext"		
+	},
+	"key": {
+		"prefix": "key",
+		"body": ":kbd:`${1:shortcut}` $0",
+		"description": "Keyboard Shortcut",
+		"scope": "text.restructuredtext"		
 	}
 }

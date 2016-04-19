@@ -26,6 +26,11 @@ that VS Code provides.
   - `admonition` 		Admonition
   - `rubric`			Rubric (footnote)
   - `doc`               Doc reference
+  - `ref`               Label reference
+  - `label`			Label
+  - `download` 		Download
+  - `file`				File
+  - `kbd`				Keyboard Shortcut
 
   To trigger snippets, please refer to [Visual Studio Code shortcuts](https://code.visualstudio.com/docs/customization/keybindings).
   
