@@ -15,7 +15,7 @@ export function activate(context: ExtensionContext) {
 
     let provider: RstDocumentContentProvider;
     let registration: Disposable;
-
+    
     workspace.onDidChangeTextDocument((e: TextDocumentChangeEvent) => {
         if (e.document === window.activeTextEditor.document) {
             provider.update(previewUri);
@@ -30,7 +30,9 @@ export function activate(context: ExtensionContext) {
 
     function sendHTMLCommand(displayColumn: ViewColumn): PromiseLike<void> {
         let whole = window.activeTextEditor.document.fileName;
-        let previewTitle = `Preview: '${basicName(whole)}'`;
+        let previewTitle = (
+            `Preview: '${whole.substring(workspace.rootPath.length)}'`
+        );
         provider = new RstDocumentContentProvider();
         registration = workspace.registerTextDocumentContentProvider("restructuredtext-preview", provider);
         previewUri = Uri.parse(`restructuredtext-preview://preview/${previewTitle}`);
@@ -62,10 +64,31 @@ export function activate(context: ExtensionContext) {
     context.subscriptions.push(previewToSide, preview, registration);
 }
 
-function basicName(whole: string): string {
-    let ext = whole.lastIndexOf(".");
-    let core = whole.substring(0, ext);
-    return core.substring(workspace.rootPath.length, core.length);
+/**
+ * Return absolute path for passed *configSection* driven path.
+ * 
+ * If *configSection* value not defined then use *defaultValue instead when 
+ * computing absolute path.
+ */
+function absoluteConfiguredPath(
+    configSection: string, defaultValue: string
+): string {
+    return path.join(
+        workspace.rootPath,
+        workspace.getConfiguration("restructuredtext").get(
+            configSection, defaultValue
+        )
+    );
+}
+
+/**
+ * Return *whole* path relative to documentation conf.py 
+ */
+function relativeDocumentationPath(whole: string): string {
+    let confContainerPath = path.dirname(
+        absoluteConfiguredPath("confPath", "conf.py")
+    );
+    return whole.substring(confContainerPath.length);
 }
 
 // this method is called when your extension is deactivated
@@ -119,8 +142,17 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
     }
     
     public preview(editor: TextEditor): Thenable<string> {
+        // Calculate full path to built html file.
         let whole = editor.document.fileName;
-        let finalName = path.join(workspace.rootPath, "_build/html", basicName(whole) + ".html");
+        let ext = whole.lastIndexOf(".");
+        whole = whole.substring(0, ext) + ".html";
+        
+        let finalName = path.join(
+            absoluteConfiguredPath("builtDocumentationPath", "build/doc/html"), 
+            relativeDocumentationPath(whole)
+        );
+        
+        // Display file.
         return new Promise<string>((resolve, reject) => {
             fs.stat(finalName, (error, stat) => {
                 if (error == null) {

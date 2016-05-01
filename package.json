@@ -68,7 +68,19 @@
                 "title": "Open Preview to the Side",
                 "category": "reStructuredText"
             }
-        ]
+        ],
+        "properties": {
+            "restructuredtext.confPath": {
+                "type": "string",
+                "default": "conf.py",
+                "description": "Relative path from workspace root to conf.py."
+            },
+            "restructuredtext.builtDocumentationPath": {
+                "type": "string",
+                "default": "build/doc/html",
+                "description": "Relative path from workspace root to built html documentation root."
+            }
+        }
 	},
     "scripts": {
         "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
