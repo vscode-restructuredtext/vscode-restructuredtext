@@ -77,7 +77,7 @@
             },
             "restructuredtext.builtDocumentationPath": {
                 "type": "string",
-                "default": "build/doc/html",
+                "default": "_build/html",
                 "description": "Relative path from workspace root to built html documentation root."
             }
         }
