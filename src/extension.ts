@@ -148,7 +148,7 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
         whole = whole.substring(0, ext) + ".html";
         
         let finalName = path.join(
-            absoluteConfiguredPath("builtDocumentationPath", "build/doc/html"), 
+            absoluteConfiguredPath("builtDocumentationPath", "_build/html"), 
             relativeDocumentationPath(whole)
         );
         
