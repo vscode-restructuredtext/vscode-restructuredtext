@@ -6,8 +6,28 @@ via ``make html``.
 
 Automatic page generation is being investigated and will be added in a later release.
 
+## Preview Settings
+For this extension to locate the generated HTML pages, two settings can be set.
+
+This requires a new file `./.vscode/settings.json` to be created under your workspace root directory.
+
+The sample content is as below,
+```
+{
+    "restructuredtext.confPath" : "conf.py",
+    "restructuredtext.builtDocumentationPath" : "_build/html"
+}
+```
+which shows the default values. A file with customized values might look as below,
+```
+{
+    "restructuredtext.confPath" : "manager/conf.py",
+    "restructuredtext.builtDocumentationPath" : "manager/_build/html"
+}
+```
+
 ## Use VS Code Tasks
-This requires a new file `./.vscode/tasks.json` to be created in your document project.
+This requires a new file `./.vscode/tasks.json` to be created under your workspace root directory.
 
 The sample content is as below,
 

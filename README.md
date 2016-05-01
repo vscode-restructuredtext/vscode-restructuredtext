@@ -34,14 +34,14 @@ that VS Code provides.
 
   To trigger snippets, please refer to [Visual Studio Code shortcuts](https://code.visualstudio.com/docs/customization/keybindings).
   
-- Preview (ported from rst-vscode extension)
+- Preview (Experimental)
 
   The shortcuts are
 
   - `ctrl+shift+r`      Preview
   - `ctrl+k r`          Preview to Side
 
-**The preview feature requires Python to be installed. The `docutils` Python module is also required.**
+**The preview feature requires Python to be installed. The `sphinx` Python module is also required.**
 
 ## How to Install from Gallery
 
