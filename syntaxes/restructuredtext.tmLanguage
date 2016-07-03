@@ -65,7 +65,7 @@
 					<key>comment</key>
 					<string>substitution</string>
 					<key>match</key>
-					<string>(\|)[^|]+(\|_{0,2})</string>
+					<string>(\|)[^| ]+[^|]*[^| ]*(\|_{0,2})</string>
 					<key>name</key>
 					<string>markup.underline.substitution.restructuredtext</string>
 				</dict>
