@@ -11,57 +11,110 @@ let fileUrl = require("file-url");
 
 export function activate(context: ExtensionContext) {
 
-    let previewUri: Uri;
-
-    let provider: RstDocumentContentProvider;
-    let registration: Disposable;
+    let provider = new RstDocumentContentProvider(context);
+    let registration = workspace.registerTextDocumentContentProvider("restructuredtext", provider);
     
-    workspace.onDidChangeTextDocument((e: TextDocumentChangeEvent) => {
-        if (e.document === window.activeTextEditor.document) {
-            provider.update(previewUri);
+    let d1 = commands.registerCommand("restructuredtext.showPreview", showPreview);
+    let d2 = commands.registerCommand("restructuredtext.showPreviewToSide", uri => showPreview(uri, true));
+    let d3 = commands.registerCommand("restructuredtext.showSource", showSource);
+
+    context.subscriptions.push(d1, d2, registration);
+
+    workspace.onDidSaveTextDocument(document => {
+        if (isRstFile(document)) {
+            const uri = getRstUri(document.uri);
+            provider.update(uri);
         }
     });
 
-    workspace.onDidSaveTextDocument((e: TextDocument) => {
-        if (e === window.activeTextEditor.document) {
-            provider.update(previewUri);
+    workspace.onDidChangeTextDocument(event => {
+        if (isRstFile(event.document)) {
+            const uri = getRstUri(event.document.uri);
+            provider.update(uri);
         }
     });
 
-    function sendHTMLCommand(displayColumn: ViewColumn): PromiseLike<void> {
-        let whole = window.activeTextEditor.document.fileName;
-        let previewTitle = (
-            `Preview: '${whole.substring(workspace.rootPath.length)}'`
-        );
-        provider = new RstDocumentContentProvider();
-        registration = workspace.registerTextDocumentContentProvider("restructuredtext-preview", provider);
-        previewUri = Uri.parse(`restructuredtext-preview://preview/${previewTitle}`);
-        return commands.executeCommand("vscode.previewHtml", previewUri, displayColumn).then((success) => {
-        }, (reason) => {
-            console.warn(reason);
-            window.showErrorMessage(reason);
-        });
-    }
+    workspace.onDidChangeConfiguration(() => {
+		workspace.textDocuments.forEach(document => {
+			if (document.uri.scheme === 'restructuredtext') {
+				// update all generated md documents
+				provider.update(document.uri);
+			}
+		});
+	});
+}
 
-    let previewToSide = commands.registerCommand("restructuredtext.previewToSide", () => {
-        let displayColumn: ViewColumn;
-        switch (window.activeTextEditor.viewColumn) {
-            case ViewColumn.One:
-                displayColumn = ViewColumn.Two;
-                break;
-            case ViewColumn.Two:
-            case ViewColumn.Three:
-                displayColumn = ViewColumn.Three;
-                break;
-        }
-        return sendHTMLCommand(displayColumn);
-    });
+function isRstFile(document: TextDocument) {
+	return document.languageId === 'restructuredtext'
+		&& document.uri.scheme !== 'restructuredtext'; // prevent processing of own documents
+}
 
-    let preview = commands.registerCommand("restructuredtext.preview", () => {
-        return sendHTMLCommand(window.activeTextEditor.viewColumn);
-    });
+function getRstUri(uri: Uri) {
+	return uri.with({ scheme: 'restructuredtext', path: uri.path + '.rendered', query: uri.toString() });
+}
 
-    context.subscriptions.push(previewToSide, preview, registration);
+function showPreview(uri?: Uri, sideBySide: boolean = false) {
+    let resource = uri;
+	if (!(resource instanceof Uri)) {
+		if (window.activeTextEditor) {
+			// we are relaxed and don't check for markdown files
+			resource = window.activeTextEditor.document.uri;
+		}
+	}
+
+	if (!(resource instanceof Uri)) {
+		if (!window.activeTextEditor) {
+			// this is most likely toggling the preview
+			return commands.executeCommand('restructuredtext.showSource');
+		}
+		// nothing found that could be shown or toggled
+		return;
+	}
+
+    let thenable = commands.executeCommand('vscode.previewHtml',
+		getRstUri(resource),
+		getViewColumn(sideBySide),
+		`Preview '${path.basename(resource.fsPath)}'`);
+
+	return thenable;
+}
+
+function getViewColumn(sideBySide): ViewColumn {
+	const active = window.activeTextEditor;
+	if (!active) {
+		return ViewColumn.One;
+	}
+
+	if (!sideBySide) {
+		return active.viewColumn;
+	}
+
+	switch (active.viewColumn) {
+		case ViewColumn.One:
+			return ViewColumn.Two;
+		case ViewColumn.Two:
+			return ViewColumn.Three;
+	}
+
+	return active.viewColumn;
+}
+
+function showSource(mdUri: Uri) {
+	if (!mdUri) {
+		return commands.executeCommand('workbench.action.navigateBack');
+	}
+
+	const docUri = Uri.parse(mdUri.query);
+
+	for (let editor of window.visibleTextEditors) {
+		if (editor.document.uri.toString() === docUri.toString()) {
+			return window.showTextDocument(editor.document, editor.viewColumn);
+		}
+	}
+
+	return workspace.openTextDocument(docUri).then(doc => {
+		return window.showTextDocument(doc);
+	});
 }
 
 /**
@@ -96,8 +149,14 @@ export function deactivate() {
 }
 
 class RstDocumentContentProvider implements TextDocumentContentProvider {
+    private _context: ExtensionContext;
     private _onDidChange = new EventEmitter<Uri>();
-    private resultText = "";
+    private _waiting: boolean;
+
+    constructor(context: ExtensionContext) {
+        this._context = context;
+        this._waiting = false;
+    }
 
     public provideTextDocumentContent(uri: Uri): string | Thenable<string> {
         return this.createRstSnippet();
@@ -107,9 +166,15 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
         return this._onDidChange.event;
     }
 
-    public update(uri: Uri) {
-        this._onDidChange.fire(uri);
-    }
+	public update(uri: Uri) {
+		if (!this._waiting) {
+			this._waiting = true;
+			setTimeout(() => {
+				this._waiting = false;
+				this._onDidChange.fire(uri);
+			}, 300);
+		}
+	}
 
     private createRstSnippet(): string | Thenable<string> {
         let editor = window.activeTextEditor;

@@ -2,7 +2,7 @@
 	"name": "restructuredtext",
 	"displayName": "reStructuredText",
 	"description": "Develop reStructuredText (RST, ReST) in Visual Studio Code!",
-	"version": "0.0.13",
+	"version": "0.0.12",
 	"publisher": "lextudio",
 	"engines": {
 		"vscode": "^1.0.0"
@@ -25,8 +25,9 @@
     "bugs": "https://github.com/vscode-restructuredtext/vscode-restructuredtext/issues",
     "main": "./out/src/extension",
     "activationEvents": [
-        "onCommand:restructuredtext.preview",
-        "onCommand:restructuredtext.previewToSide"
+        "onCommand:restructuredtext.showPreview",
+        "onCommand:restructuredtext.showPreviewToSide",
+        "onCommand:restructuredtext.showSource"
     ],
 	"contributes": {
 		"languages": [{
@@ -47,28 +48,67 @@
 		],
         "keybindings": [
             {
-                "command": "restructuredtext.preview",
+                "command": "restructuredtext.showPreview",
                 "key": "ctrl+shift+r",
                 "when": "editorTextFocus"
             },
             {
-                "command": "restructuredtext.previewToSide",
+                "command": "restructuredtext.showPreviewToSide",
                 "key": "ctrl+k r",
                 "when": "editorTextFocus"
             }
         ],
         "commands": [
             {
-                "command": "restructuredtext.preview",
+                "command": "restructuredtext.showPreview",
                 "title": "Toggle Preview",
-                "category": "reStructuredText"
+                "category": "reStructuredText",
+                "icon": {
+					"light": "./media/Preview.svg",
+					"dark": "./media/Preview_inverse.svg"
+				}
             },
             {
-                "command": "restructuredtext.previewToSide",
+                "command": "restructuredtext.showPreviewToSide",
                 "title": "Open Preview to the Side",
-                "category": "reStructuredText"
-            }
+                "category": "reStructuredText",
+                "icon": {
+					"light": "./media/PreviewOnRightPane_16x.svg",
+					"dark": "./media/PreviewOnRightPane_16x_dark.svg"
+				}
+            },
+            {
+				"command": "restructuredtext.showSource",
+				"title": "Show Source",
+				"category": "reStructuredText",
+				"icon": {
+					"light": "./media/ViewSource.svg",
+					"dark": "./media/ViewSource_inverse.svg"
+				}
+			}
         ],
+        "menus": {
+            "editor/title" :[
+                {
+                    "when": "resourceLangId == restructuredtext",
+                    "command": "restructuredtext.showPreview",
+                    "alt": "restructuredtext.showPreviewToSide",
+                    "group": "navigation"
+                },
+                {
+					"when": "resourceScheme == restructuredtext",
+					"command": "restructuredtext.showSource",
+					"group": "navigation"
+				}
+            ],
+            "explorer/context": [
+                {
+                    "when": "resourceLangId == restructuredtext",
+                    "command": "restructuredtext.showPreview",
+                    "group": "navigation"
+                }
+            ]
+        },
         "properties": {
             "restructuredtext.confPath": {
                 "type": "string",
@@ -89,9 +129,5 @@
     },
     "dependencies": {
         "file-url": "^1.0.1"
-    },
-    "devDependencies": {
-        "typescript": "^1.7.5",
-        "vscode": "^0.11.x"
     }
 }
