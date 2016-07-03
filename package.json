@@ -1,11 +1,11 @@
 {
 	"name": "restructuredtext",
 	"displayName": "reStructuredText",
-	"description": "Develop reStructuredText in Visual Studio Code!",
-	"version": "0.0.12",
+	"description": "Develop reStructuredText (RST, ReST) in Visual Studio Code!",
+	"version": "0.0.13",
 	"publisher": "lextudio",
 	"engines": {
-		"vscode": "^0.10.8"
+		"vscode": "^1.0.0"
 	},
 	"license":"SEE LICENSE IN LICENSE.txt",
 	"homepage": "https://github.com/vscode-restructuredtext/vscode-restructuredtext/blob/master/README.md",
@@ -31,7 +31,7 @@
 	"contributes": {
 		"languages": [{
 			"id": "restructuredtext",
-			"aliases": ["reStructuredText", "restructuredtext"],
+			"aliases": ["reStructuredText", "restructuredtext", "RST", "ReST"],
 			"extensions": [".rst",".rest"]
 		}],
 		"grammars": [{
