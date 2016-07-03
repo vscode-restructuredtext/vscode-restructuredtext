@@ -117,33 +117,6 @@ function showSource(mdUri: Uri) {
 	});
 }
 
-/**
- * Return absolute path for passed *configSection* driven path.
- * 
- * If *configSection* value not defined then use *defaultValue instead when 
- * computing absolute path.
- */
-function absoluteConfiguredPath(
-    configSection: string, defaultValue: string
-): string {
-    return path.join(
-        workspace.rootPath,
-        workspace.getConfiguration("restructuredtext").get(
-            configSection, defaultValue
-        )
-    );
-}
-
-/**
- * Return *whole* path relative to documentation conf.py 
- */
-function relativeDocumentationPath(whole: string): string {
-    let confContainerPath = path.dirname(
-        absoluteConfiguredPath("confPath", "conf.py")
-    );
-    return whole.substring(confContainerPath.length);
-}
-
 // this method is called when your extension is deactivated
 export function deactivate() {
 }
@@ -152,10 +125,12 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
     private _context: ExtensionContext;
     private _onDidChange = new EventEmitter<Uri>();
     private _waiting: boolean;
+    private _containerPath: string;
 
     constructor(context: ExtensionContext) {
         this._context = context;
         this._waiting = false;
+        this._containerPath = path.dirname(this.absoluteConfiguredPath("confPath", "conf.py"));
     }
 
     public provideTextDocumentContent(uri: Uri): string | Thenable<string> {
@@ -205,6 +180,30 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
             }		
         );		
     }
+
+    /**
+     * Return absolute path for passed *configSection* driven path.
+     * 
+     * If *configSection* value not defined then use *defaultValue instead when 
+     * computing absolute path.
+     */
+    private absoluteConfiguredPath(
+        configSection: string, defaultValue: string
+    ): string {
+        return path.join(
+            workspace.rootPath,
+            workspace.getConfiguration("restructuredtext").get(
+                configSection, defaultValue
+            )
+        );
+    }
+
+    /**
+     * Return *whole* path relative to documentation conf.py 
+     */
+    private relativeDocumentationPath(whole: string): string {
+        return whole.substring(this._containerPath.length);
+    }
     
     public preview(editor: TextEditor): Thenable<string> {
         // Calculate full path to built html file.
@@ -212,41 +211,61 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
         let ext = whole.lastIndexOf(".");
         whole = whole.substring(0, ext) + ".html";
         
+        let root = this._containerPath;
         let finalName = path.join(
-            absoluteConfiguredPath("builtDocumentationPath", "_build/html"), 
-            relativeDocumentationPath(whole)
+            this.absoluteConfiguredPath("builtDocumentationPath", "_build/html"), 
+            this.relativeDocumentationPath(whole)
         );
         
         // Display file.
         return new Promise<string>((resolve, reject) => {
-            fs.stat(finalName, (error, stat) => {
-                if (error == null) {
-                    fs.readFile(finalName, "utf8", (err, data) => {
-                        if (err == null) {
-                            let fixed = this.fixLinks(data, finalName);
-                            resolve(fixed);
-                        } else {
-                            let errorMessage = [
-                                err.name,
-                                err.message,
-                                err.stack
-                            ].join("\n");
-                            console.error(errorMessage);
-                            reject(errorMessage);
-                        }                        
-                    });
-                //} else if(err.code == 'ENOENT') {
-                //    fs.writeFile('log.txt', 'Some log\n');
-                } else {
+            let cmd = [
+                "make",
+                "html"
+            ].join(" ");
+            exec(cmd, {cwd: root}, (error, stdout, stderr) =>
+            {
+                if (error) {
                     let errorMessage = [
                         error.name,
                         error.message,
-                        error.stack
+                        error.stack,
+                        "",
+                        stderr.toString()
                     ].join("\n");
                     console.error(errorMessage);
                     reject(errorMessage);
+                } else {
+                    fs.stat(finalName, (error, stat) => {
+                        if (error == null) {
+                            fs.readFile(finalName, "utf8", (err, data) => {
+                                if (err == null) {
+                                    let fixed = this.fixLinks(data, finalName);
+                                    resolve(fixed);
+                                } else {
+                                    let errorMessage = [
+                                        err.name,
+                                        err.message,
+                                        err.stack
+                                    ].join("\n");
+                                    console.error(errorMessage);
+                                    reject(errorMessage);
+                                }                        
+                            });
+                        //} else if(err.code == 'ENOENT') {
+                        //    fs.writeFile('log.txt', 'Some log\n');
+                        } else {
+                            let errorMessage = [
+                                error.name,
+                                error.message,
+                                error.stack
+                            ].join("\n");
+                            console.error(errorMessage);
+                            reject(errorMessage);
+                        }
+                    }
                 }
-            });
+            });           
         });        
     }
 }
