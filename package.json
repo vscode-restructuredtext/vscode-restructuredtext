@@ -1,8 +1,8 @@
 {
 	"name": "restructuredtext",
 	"displayName": "reStructuredText",
-	"description": "Develop reStructuredText (RST, ReST) in Visual Studio Code!",
-	"version": "0.0.12",
+	"description": "Develop reStructuredText (RST, ReST) with accurate live preview!",
+	"version": "0.0.14",
 	"publisher": "lextudio",
 	"engines": {
 		"vscode": "^1.0.0"

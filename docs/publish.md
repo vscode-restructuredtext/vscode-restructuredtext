@@ -1,4 +1,4 @@
-#Publish This Extension to Visual Studio Code Gallery
+#Publish this extension to Visual Studio Code Gallery
 
 To publish this extension, use [vsce](https://code.visualstudio.com/docs/tools/vscecli)
 ```
