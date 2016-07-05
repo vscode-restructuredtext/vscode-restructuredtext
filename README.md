@@ -53,14 +53,16 @@ This extension is hosted at [Visual Studio Marketplace](https://marketplace.visu
 
 When the extension information is displayed, click the install button.
 
-## Integration with Sphinx
+## Live preview with Sphinx
 
-Check out the [workarounds](docs/sphinx.md) for more details.
+Check out the [steps to configure sphinx](docs/sphinx.md).
 
 ## Contributing to the Code
 
 Check out the [development documentation](docs/development.md) for more details
 on how to contribute to this extension!
+
+Check the [dashboard on work items](https://waffle.io/vscode-restructuredtext/vscode-restructuredtext).
 
 ## License
 
