@@ -236,6 +236,13 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
                     console.error(errorMessage);
                     reject(errorMessage);
                     return;
+                }
+
+                if (stderr) {
+                    let errorMessage = stderr.toString();
+                    console.error(errorMessage);
+                    reject(errorMessage);
+                    return;
                 } 
                     
                 fs.stat(finalName, (error, stat) => {
