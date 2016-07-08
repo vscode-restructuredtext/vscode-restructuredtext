@@ -235,36 +235,38 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
                     ].join("\n");
                     console.error(errorMessage);
                     reject(errorMessage);
-                } else {
-                    fs.stat(finalName, (error, stat) => {
-                        if (error == null) {
-                            fs.readFile(finalName, "utf8", (err, data) => {
-                                if (err == null) {
-                                    let fixed = this.fixLinks(data, finalName);
-                                    resolve(fixed);
-                                } else {
-                                    let errorMessage = [
-                                        err.name,
-                                        err.message,
-                                        err.stack
-                                    ].join("\n");
-                                    console.error(errorMessage);
-                                    reject(errorMessage);
-                                }                        
-                            });
-                        //} else if(err.code == 'ENOENT') {
-                        //    fs.writeFile('log.txt', 'Some log\n');
+                    return;
+                } 
+                    
+                fs.stat(finalName, (error, stat) => {
+                    if (error != null) {
+                        let errorMessage = [
+                            error.name,
+                            error.message,
+                            error.stack
+                        ].join("\n");
+                        console.error(errorMessage);
+                        reject(errorMessage);
+                        return;
+                    //} else if(err.code == 'ENOENT') {
+                    //    fs.writeFile('log.txt', 'Some log\n');
+                    }                       
+
+                    fs.readFile(finalName, "utf8", (err, data) => {
+                        if (err == null) {
+                            let fixed = this.fixLinks(data, finalName);
+                            resolve(fixed);
                         } else {
                             let errorMessage = [
-                                error.name,
-                                error.message,
-                                error.stack
+                                err.name,
+                                err.message,
+                                err.stack
                             ].join("\n");
                             console.error(errorMessage);
                             reject(errorMessage);
-                        }
-                    }
-                }
+                        }                        
+                    });
+                });
             });           
         });        
     }
