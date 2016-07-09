@@ -240,7 +240,7 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
 
                 if (stderr) {
                     let errorMessage = stderr.toString();
-                    if (errorMessage.indexOf("ERROR:") > -1)
+                    if (errorMessage.indexOf("Exception occurred:") > -1)
                     {
                         console.error(errorMessage);
                         reject(errorMessage);
