@@ -204,19 +204,19 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
     private relativeDocumentationPath(whole: string): string {
         return whole.substring(this._containerPath.length);
     }
-    
+
     public preview(editor: TextEditor): Thenable<string> {
         // Calculate full path to built html file.
         let whole = editor.document.fileName;
         let ext = whole.lastIndexOf(".");
         whole = whole.substring(0, ext) + ".html";
-        
+
         let root = this._containerPath;
         let finalName = path.join(
             this.absoluteConfiguredPath("builtDocumentationPath", "_build/html"), 
             this.relativeDocumentationPath(whole)
         );
-        
+
         // Display file.
         return new Promise<string>((resolve, reject) => {
             let cmd = [
@@ -240,11 +240,14 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
 
                 if (stderr) {
                     let errorMessage = stderr.toString();
-                    console.error(errorMessage);
-                    reject(errorMessage);
-                    return;
-                } 
-                    
+                    if (errorMessage.indexOf("ERROR:") > -1)
+                    {
+                        console.error(errorMessage);
+                        reject(errorMessage);
+                        return;
+                    }
+                }
+
                 fs.stat(finalName, (error, stat) => {
                     if (error != null) {
                         let errorMessage = [
