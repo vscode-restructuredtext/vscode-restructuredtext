@@ -1,5 +1,7 @@
 # reStructuredText Language Support for Visual Studio Code
 
+[![Join the chat at https://gitter.im/vscode-restructuredtext/vscode-restructuredtext](https://badges.gitter.im/vscode-restructuredtext/vscode-restructuredtext.svg)](https://gitter.im/vscode-restructuredtext/vscode-restructuredtext?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 >**Notice:** Homepage for this extension is at [GitHub](https://github.com/vscode-restructuredtext/vscode-restructuredtext)
 
 This extension provides rich reStructuredText language support for Visual Studio Code.
