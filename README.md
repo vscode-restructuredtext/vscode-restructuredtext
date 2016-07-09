@@ -1,6 +1,9 @@
 # reStructuredText Language Support for Visual Studio Code
 
 [![Gitter](https://badges.gitter.im/vscode-restructuredtext/vscode-restructuredtext.svg)](https://gitter.im/vscode-restructuredtext/vscode-restructuredtext?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Current Version](http://vsmarketplacebadge.apphb.com/version/lextudio.restructuredtext.svg)](https://marketplace.visualstudio.com/items?itemName=lextudio.restructuredtext)
+[![Install Count](http://vsmarketplacebadge.apphb.com/installs/lextudio.restructuredtext.svg)](https://marketplace.visualstudio.com/items?itemName=lextudio.restructuredtext)
+[![Open Issues](http://vsmarketplacebadge.apphb.com/rating/lextudio.restructuredtext.svg) ](https://marketplace.visualstudio.com/items?itemName=lextudio.restructuredtext)
 
 >**Notice:** Homepage for this extension is at [GitHub](https://github.com/vscode-restructuredtext/vscode-restructuredtext)
 
