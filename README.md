@@ -1,8 +1,10 @@
 # reStructuredText Language Support for Visual Studio Code
 
+>**Notice:** Homepage for this extension is at [GitHub](https://github.com/vscode-restructuredtext/vscode-restructuredtext)
+
 This extension provides rich reStructuredText language support for Visual Studio Code.
 Now you write reStructuredText scripts using the excellent IDE-like interface
-that VS Code provides.
+that VS Code provides. With live preview enabled, final look-and-feel is just one click away.
 
 ![reStructuredText in Visual Studio Code](images/vscode.png)
 
@@ -34,30 +36,26 @@ that VS Code provides.
 
   To trigger snippets, please refer to [Visual Studio Code shortcuts](https://code.visualstudio.com/docs/customization/keybindings).
   
-- Preview (Experimental)
+- Live Preview (Experimental)
 
   The shortcuts are
 
   - `ctrl+shift+r`      Preview
   - `ctrl+k r`          Preview to Side
 
-**The preview feature requires Python to be installed. The `sphinx` Python module is also required.**
+>**Notice:** The preview feature requires Python to be installed. The `sphinx` Python module is also required. 
+check out the [steps to configure sphinx](docs/sphinx.md)
 
-## How to Install from Gallery
+## How to install from Marketplace
 
 This extension is hosted at [Visual Studio Marketplace](https://marketplace.visualstudio.com/items/lextudio.restructuredtext)
 
-1. Press `F1` to show all commands.
-2. Type `ext install` and hit `Enter`.
-3. Change the command to `ext install restructuredtext` and hit `Enter`.
+1. Upgrade to Visual Studio Code 1.3.0 or above.
+1. Switch to the Extensions view by clicking the fifth icon in the left most bar.
+1. Type "restructuredtext" in the search box and hit Enter key.
+1. Click "Install" button to install "reStructuredText" extension.
 
-When the extension information is displayed, click the install button.
-
-## Live preview with Sphinx
-
-Check out the [steps to configure sphinx](docs/sphinx.md).
-
-## Contributing to the Code
+## Contributing to the code
 
 Check out the [development documentation](docs/development.md) for more details
 on how to contribute to this extension!
