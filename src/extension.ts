@@ -238,7 +238,7 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
                     return;
                 }
 
-                if (stderr) {
+                if (process.platform === "win32" && stderr) {
                     let errorMessage = stderr.toString();
                     if (errorMessage.indexOf("Exception occurred:") > -1)
                     {
@@ -249,7 +249,7 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
                 }
 
                 fs.stat(finalName, (error, stat) => {
-                    if (error != null) {
+                    if (error !== null) {
                         let errorMessage = [
                             error.name,
                             error.message,
@@ -258,12 +258,12 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
                         console.error(errorMessage);
                         reject(errorMessage);
                         return;
-                    //} else if(err.code == 'ENOENT') {
+                    //} else if(err.code === 'ENOENT') {
                     //    fs.writeFile('log.txt', 'Some log\n');
                     }                       
 
                     fs.readFile(finalName, "utf8", (err, data) => {
-                        if (err == null) {
+                        if (err === null) {
                             let fixed = this.fixLinks(data, finalName);
                             resolve(fixed);
                         } else {
