@@ -2,7 +2,7 @@
 	"name": "restructuredtext",
 	"displayName": "reStructuredText",
 	"description": "Edit reStructuredText (RST, ReST) with accurate live preview!",
-	"version": "0.0.17",
+	"version": "0.0.18",
 	"publisher": "lextudio",
 	"engines": {
 		"vscode": "^1.3.0"
@@ -123,6 +123,11 @@
                 "type": "string",
                 "default": "_build/html",
                 "description": "Relative path from workspace root to built html documentation root."
+            },
+            "restructuredtext.updateOnTextChanged": {
+                "type": "string",
+                "default": "false",
+                "description": "Flag to control whether text changed event triggers preview update."
             }
         }
 	},

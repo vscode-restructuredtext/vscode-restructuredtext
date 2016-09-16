@@ -22,7 +22,7 @@ The preview feature relies on sphinx generated HTML files.
 Note that latest steps on how to install Python and sphinx, please refer to [this article](https://github.com/aspnet/Docs/blob/master/CONTRIBUTING.md).
 
 ## Live Preview Settings
-For this extension to locate the generated HTML pages, two settings can be set.
+For this extension to locate the generated HTML pages, three settings can be set.
 
 This requires a new file `./.vscode/settings.json` to be created under your workspace root directory.
 
@@ -30,13 +30,17 @@ The sample content is as below,
 ```
 {
     "restructuredtext.confPath" : "conf.py",
-    "restructuredtext.builtDocumentationPath" : "_build/html"
+    "restructuredtext.builtDocumentationPath" : "_build/html",
+    "restructuredtext.updateOnTextChanged" : "false"
 }
 ```
-which shows the default values. A file with customized values might look as below,
+which shows the default values. 
+
+A file with customized values might look as below,
 ```
 {
     "restructuredtext.confPath" : "manager/conf.py",
-    "restructuredtext.builtDocumentationPath" : "manager/_build/html"
+    "restructuredtext.builtDocumentationPath" : "manager/_build/html",
+    "restructuredtext.updateOnTextChanged" : "true"
 }
 ```

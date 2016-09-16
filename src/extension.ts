@@ -27,12 +27,16 @@ export function activate(context: ExtensionContext) {
         }
     });
 
-    workspace.onDidChangeTextDocument(event => {
-        if (isRstFile(event.document)) {
-            const uri = getRstUri(event.document.uri);
-            provider.update(uri);
-        }
-    });
+    let updateOnTextChanged = RstDocumentContentProvider.absoluteConfiguredPath("updateOnTextChanged", "false");
+    if (updateOnTextChanged === 'true')
+    {
+        workspace.onDidChangeTextDocument(event => {
+            if (isRstFile(event.document)) {
+                const uri = getRstUri(event.document.uri);
+                provider.update(uri);
+            }
+        });
+    }
 
     workspace.onDidChangeConfiguration(() => {
 		workspace.textDocuments.forEach(document => {
@@ -130,7 +134,7 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
     constructor(context: ExtensionContext) {
         this._context = context;
         this._waiting = false;
-        this._containerPath = path.dirname(this.absoluteConfiguredPath("confPath", "conf.py"));
+        this._containerPath = path.dirname(RstDocumentContentProvider.absoluteConfiguredPath("confPath", "conf.py"));
     }
 
     public provideTextDocumentContent(uri: Uri): string | Thenable<string> {
@@ -187,7 +191,7 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
      * If *configSection* value not defined then use *defaultValue instead when 
      * computing absolute path.
      */
-    private absoluteConfiguredPath(
+    public static absoluteConfiguredPath(
         configSection: string, defaultValue: string
     ): string {
         return path.join(
@@ -213,7 +217,7 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
 
         let root = this._containerPath;
         let finalName = path.join(
-            this.absoluteConfiguredPath("builtDocumentationPath", "_build/html"), 
+            RstDocumentContentProvider.absoluteConfiguredPath("builtDocumentationPath", "_build/html"), 
             this.relativeDocumentationPath(whole)
         );
 
