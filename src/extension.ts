@@ -27,7 +27,7 @@ export function activate(context: ExtensionContext) {
         }
     });
 
-    let updateOnTextChanged = RstDocumentContentProvider.absoluteConfiguredPath("updateOnTextChanged", "false");
+    let updateOnTextChanged = RstDocumentContentProvider.absoluteConfiguredPath("updateOnTextChanged", "true");
     if (updateOnTextChanged === 'true')
     {
         workspace.onDidChangeTextDocument(event => {

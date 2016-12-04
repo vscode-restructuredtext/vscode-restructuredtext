@@ -31,7 +31,7 @@ The sample content is as below,
 {
     "restructuredtext.confPath" : "conf.py",
     "restructuredtext.builtDocumentationPath" : "_build/html",
-    "restructuredtext.updateOnTextChanged" : "false"
+    "restructuredtext.updateOnTextChanged" : "true"
 }
 ```
 which shows the default values. 
@@ -41,6 +41,6 @@ A file with customized values might look as below,
 {
     "restructuredtext.confPath" : "manager/conf.py",
     "restructuredtext.builtDocumentationPath" : "manager/_build/html",
-    "restructuredtext.updateOnTextChanged" : "true"
+    "restructuredtext.updateOnTextChanged" : "false"
 }
 ```
