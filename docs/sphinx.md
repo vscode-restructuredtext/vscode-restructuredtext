@@ -24,7 +24,7 @@ Note that latest steps on how to install Python and sphinx, please refer to [thi
 ## Live Preview Settings
 For this extension to locate the generated HTML pages, three settings can be set.
 
-This requires a new file `./.vscode/settings.json` to be created under your workspace root directory.
+This requires a new file `.vscode/settings.json` to be created under the root directory shown in your Explorer tab in Visual Studio Code.
 
 The sample content is as below,
 ```
