@@ -1,142 +1,156 @@
 {
-	"name": "restructuredtext",
-	"displayName": "reStructuredText",
-	"description": "Edit reStructuredText (RST, ReST) with accurate live preview!",
-	"version": "0.0.19",
-	"publisher": "lextudio",
-	"engines": {
-		"vscode": "^1.6.0"
-	},
-    "devDependencies": {
-        "vscode": "^0.11.12",
-        "typescript": "^1.8.0"
-    },
-	"license":"SEE LICENSE IN LICENSE.txt",
-	"homepage": "https://github.com/vscode-restructuredtext/vscode-restructuredtext/blob/master/README.md",
-	"categories": [
-		"Languages",
-        "Snippets"
-	],
-	"icon": "images/Document_icon.png",
-	"galleryBanner": {
-		"color": "#ACD1EC",
-		"theme": "light"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/vscode-restructuredtext/vscode-restructuredtext.git"
-	},
-    "bugs": "https://github.com/vscode-restructuredtext/vscode-restructuredtext/issues",
-    "main": "./out/src/extension",
-    "activationEvents": [
-        "onCommand:restructuredtext.showPreview",
-        "onCommand:restructuredtext.showPreviewToSide",
-        "onCommand:restructuredtext.showSource"
+  "name": "restructuredtext",
+  "displayName": "reStructuredText",
+  "description": "Edit reStructuredText (RST, ReST) with accurate live preview!",
+  "version": "0.0.19",
+  "publisher": "lextudio",
+  "engines": {
+    "vscode": "^1.7.0"
+  },
+  "devDependencies": {
+    "vscode": "^1.0.0",
+    "typescript": "^2.0.3",
+    "@types/node": "^6.0.40"
+  },
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "homepage": "https://github.com/vscode-restructuredtext/vscode-restructuredtext/blob/master/README.md",
+  "categories": [
+    "Languages",
+    "Snippets"
+  ],
+  "icon": "images/Document_icon.png",
+  "galleryBanner": {
+    "color": "#ACD1EC",
+    "theme": "light"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vscode-restructuredtext/vscode-restructuredtext.git"
+  },
+  "bugs": "https://github.com/vscode-restructuredtext/vscode-restructuredtext/issues",
+  "main": "./out/src/extension",
+  "activationEvents": [
+    "onCommand:restructuredtext.showPreview",
+    "onCommand:restructuredtext.showPreviewToSide",
+    "onCommand:restructuredtext.showSource"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "restructuredtext",
+        "aliases": [
+          "reStructuredText",
+          "restructuredtext",
+          "RST",
+          "ReST",
+          "reST"
+        ],
+        "extensions": [
+          ".rst",
+          ".rest"
+        ]
+      }
     ],
-	"contributes": {
-		"languages": [{
-			"id": "restructuredtext",
-			"aliases": ["reStructuredText", "restructuredtext", "RST", "ReST", "reST"],
-			"extensions": [".rst",".rest"]
-		}],
-		"grammars": [{
-			"language": "restructuredtext",
-			"scopeName": "text.restructuredtext",
-			"path": "./syntaxes/restructuredtext.tmLanguage"
-		}],
-		"snippets": [
-			{
-				"language": "restructuredtext",
-				"path": "./snippets/snippets.json"
-			}
-		],
-        "keybindings": [
-            {
-                "command": "restructuredtext.showPreview",
-                "key": "ctrl+shift+r",
-                "when": "editorTextFocus"
-            },
-            {
-                "command": "restructuredtext.showPreviewToSide",
-                "key": "ctrl+k r",
-                "when": "editorTextFocus"
-            }
-        ],
-        "commands": [
-            {
-                "command": "restructuredtext.showPreview",
-                "title": "Toggle Preview",
-                "category": "reStructuredText",
-                "icon": {
-					"light": "./media/Preview.svg",
-					"dark": "./media/Preview_inverse.svg"
-				}
-            },
-            {
-                "command": "restructuredtext.showPreviewToSide",
-                "title": "Open Preview to the Side",
-                "category": "reStructuredText",
-                "icon": {
-					"light": "./media/PreviewOnRightPane_16x.svg",
-					"dark": "./media/PreviewOnRightPane_16x_dark.svg"
-				}
-            },
-            {
-				"command": "restructuredtext.showSource",
-				"title": "Show Source",
-				"category": "reStructuredText",
-				"icon": {
-					"light": "./media/ViewSource.svg",
-					"dark": "./media/ViewSource_inverse.svg"
-				}
-			}
-        ],
-        "menus": {
-            "editor/title" :[
-                {
-                    "when": "resourceLangId == restructuredtext",
-                    "command": "restructuredtext.showPreview",
-                    "alt": "restructuredtext.showPreviewToSide",
-                    "group": "navigation"
-                },
-                {
-					"when": "resourceScheme == restructuredtext",
-					"command": "restructuredtext.showSource",
-					"group": "navigation"
-				}
-            ],
-            "explorer/context": [
-                {
-                    "when": "resourceLangId == restructuredtext",
-                    "command": "restructuredtext.showPreview",
-                    "group": "navigation"
-                }
-            ]
-        },
-        "properties": {
-            "restructuredtext.confPath": {
-                "type": "string",
-                "default": "conf.py",
-                "description": "Relative path from workspace root to conf.py."
-            },
-            "restructuredtext.builtDocumentationPath": {
-                "type": "string",
-                "default": "_build/html",
-                "description": "Relative path from workspace root to built html documentation root."
-            },
-            "restructuredtext.updateOnTextChanged": {
-                "type": "string",
-                "default": "true",
-                "description": "Flag to control whether text changed event triggers preview update."
-            }
+    "grammars": [
+      {
+        "language": "restructuredtext",
+        "scopeName": "text.restructuredtext",
+        "path": "./syntaxes/restructuredtext.tmLanguage"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "restructuredtext",
+        "path": "./snippets/snippets.json"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "restructuredtext.showPreview",
+        "key": "ctrl+shift+r",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "restructuredtext.showPreviewToSide",
+        "key": "ctrl+k r",
+        "when": "editorTextFocus"
+      }
+    ],
+    "commands": [
+      {
+        "command": "restructuredtext.showPreview",
+        "title": "Toggle Preview",
+        "category": "reStructuredText",
+        "icon": {
+          "light": "./media/Preview.svg",
+          "dark": "./media/Preview_inverse.svg"
         }
-	},
-    "scripts": {
-        "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
-        "compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install"
+      },
+      {
+        "command": "restructuredtext.showPreviewToSide",
+        "title": "Open Preview to the Side",
+        "category": "reStructuredText",
+        "icon": {
+          "light": "./media/PreviewOnRightPane_16x.svg",
+          "dark": "./media/PreviewOnRightPane_16x_dark.svg"
+        }
+      },
+      {
+        "command": "restructuredtext.showSource",
+        "title": "Show Source",
+        "category": "reStructuredText",
+        "icon": {
+          "light": "./media/ViewSource.svg",
+          "dark": "./media/ViewSource_inverse.svg"
+        }
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "when": "resourceLangId == restructuredtext",
+          "command": "restructuredtext.showPreview",
+          "alt": "restructuredtext.showPreviewToSide",
+          "group": "navigation"
+        },
+        {
+          "when": "resourceScheme == restructuredtext",
+          "command": "restructuredtext.showSource",
+          "group": "navigation"
+        }
+      ],
+      "explorer/context": [
+        {
+          "when": "resourceLangId == restructuredtext",
+          "command": "restructuredtext.showPreview",
+          "group": "navigation"
+        }
+      ]
     },
-    "dependencies": {
-        "file-url": "^1.0.1"
+    "properties": {
+      "restructuredtext.builtDocumentationPath": {
+        "type": "string",
+        "default": "_build/html",
+        "description": "Relative path from workspace root to built html documentation root."
+      },
+      "restructuredtext.makefilePath": {
+        "type": "string",
+        "default": ".",
+        "description": "Relative path from workspace root to makefile."
+      },
+      "restructuredtext.updateOnTextChanged": {
+        "type": "string",
+        "default": "true",
+        "description": "Flag to control whether text changed event triggers preview update."
+      }
     }
+  },
+  "scripts": {
+    "vscode:prepublish": "tsc -p ./",
+    "compile": "tsc -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install"
+  },
+  "dependencies": {
+    "file-url": "^1.0.1"
+  }
 }

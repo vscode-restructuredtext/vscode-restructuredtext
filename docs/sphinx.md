@@ -29,8 +29,8 @@ This requires a new file `.vscode/settings.json` to be created under the root di
 The sample content is as below,
 ```
 {
-    "restructuredtext.confPath" : "conf.py",
     "restructuredtext.builtDocumentationPath" : "_build/html",
+    "restructuredtext.makefilePath" : ".",
     "restructuredtext.updateOnTextChanged" : "true"
 }
 ```
@@ -39,18 +39,18 @@ which shows the default values.
 A file with customized values might look as below,
 ```
 {
-    "restructuredtext.confPath" : "manager/conf.py",
     "restructuredtext.builtDocumentationPath" : "manager/_build/html",
+    "restructuredtext.makefilePath" : "manager",
     "restructuredtext.updateOnTextChanged" : "false"
 }
 ```
 
-## conf.py Path
-Based on the folder structure, conf.py file can be put in a few common locations.
+## Makefile Path
+This extension relies on sphinx generated makefile to perform compilation. 
 
-In many cases, this file is at root, which means "restructuredtext.confPath" should be set to ```conf.py```. 
+Usually when a sphinx project is opened, makefile is located at the root in Explorer folder, and that's the default value ```.``` of "restructuredtext.makefilePath".
 
-But if source files and build results are separate, "restructuredtext.confPath" might be set to ```source/conf.py``` when source files are put under source folder.
+If you move makefile to another location, then please set "restructuredtext.makefilePath" to the proper path, such as ```manager```.
 
 ## Built Documentation Path
 The value for "restructuredtext.builtDocumentationPath" above can be queried from makefile.

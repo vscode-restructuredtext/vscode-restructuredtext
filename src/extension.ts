@@ -134,7 +134,7 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
     constructor(context: ExtensionContext) {
         this._context = context;
         this._waiting = false;
-        this._containerPath = path.dirname(RstDocumentContentProvider.absoluteConfiguredPath("confPath", "conf.py"));
+        this._containerPath = path.dirname(RstDocumentContentProvider.absoluteConfiguredPath("makefilePath", "."));
     }
 
     public provideTextDocumentContent(uri: Uri): string | Thenable<string> {
@@ -202,9 +202,6 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
         );
     }
 
-    /**
-     * Return *whole* path relative to documentation conf.py 
-     */
     private relativeDocumentationPath(whole: string): string {
         return whole.substring(this._containerPath.length);
     }
