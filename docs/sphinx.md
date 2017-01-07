@@ -44,3 +44,27 @@ A file with customized values might look as below,
     "restructuredtext.updateOnTextChanged" : "false"
 }
 ```
+
+## conf.py Path
+Based on the folder structure, conf.py file can be put in a few common locations.
+
+In many cases, this file is at root, which means "restructuredtext.confPath" should be set to ```conf.py```. 
+
+But if source files and build results are separate, "restructuredtext.confPath" might be set to ```source/conf.py``` when source files are put under source folder.
+
+## Built Documentation Path
+The value for "restructuredtext.builtDocumentationPath" above can be queried from makefile.
+
+If the Makefile contains the following,
+```
+# Makefile for Sphinx documentation
+#
+
+# You can set these variables from the command line.
+SPHINXOPTS    =
+SPHINXBUILD   = sphinx-build
+PAPER         =
+BUILDDIR      = build
+```
+
+Then the value should be set to ```build/html```.
