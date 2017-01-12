@@ -21,6 +21,10 @@ The preview feature relies on sphinx generated HTML files.
 
 Note that latest steps on how to install Python and sphinx, please refer to [this article](https://github.com/aspnet/Docs/blob/master/CONTRIBUTING.md).
 
+## Get Started
+You should use sphinx-quickstart to generate a test project so as to understand its basic structure, like makefile, conf.py, and build folder. Then you can better 
+understand why the below settings are required.
+
 ## Live Preview Settings
 For this extension to locate the generated HTML pages, three settings can be set.
 
