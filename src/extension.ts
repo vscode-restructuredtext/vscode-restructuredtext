@@ -134,7 +134,7 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
     constructor(context: ExtensionContext) {
         this._context = context;
         this._waiting = false;
-        this._containerPath = path.dirname(RstDocumentContentProvider.absoluteConfiguredPath("makefilePath", "."));
+        this._containerPath = RstDocumentContentProvider.absoluteConfiguredPath("makefilePath", ".");
     }
 
     public provideTextDocumentContent(uri: Uri): string | Thenable<string> {
@@ -194,8 +194,9 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
     public static absoluteConfiguredPath(
         configSection: string, defaultValue: string
     ): string {
+        let root = workspace.rootPath;
         return path.join(
-            workspace.rootPath,
+            root,
             workspace.getConfiguration("restructuredtext").get(
                 configSection, defaultValue
             )
@@ -213,10 +214,8 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
         whole = whole.substring(0, ext) + ".html";
 
         let root = this._containerPath;
-        let finalName = path.join(
-            RstDocumentContentProvider.absoluteConfiguredPath("builtDocumentationPath", "_build/html"), 
-            this.relativeDocumentationPath(whole)
-        );
+        let htmlFolder = RstDocumentContentProvider.absoluteConfiguredPath("builtDocumentationPath", "_build/html");
+        let finalName = path.join(htmlFolder, this.relativeDocumentationPath(whole));
 
         // Display file.
         return new Promise<string>((resolve, reject) => {
