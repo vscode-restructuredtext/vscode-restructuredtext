@@ -1,36 +1,39 @@
-#How to work with Sphinx
+# What is Sphinx
+Sphinx is a tool to generate HTML/PDF from reStructuredText documents.
 
-## Steps to Turn On Live Preview Feature (0.0.14 and above)
-The preview feature relies on sphinx generated HTML files.
+This extension relies on specific sphinx setup documented below to show live preview.
 
+# Install Sphinx (0.0.14 and above)
 1. [Download python](https://www.python.org/downloads/) version 2.7.10 or higher (Version 3.4 is recommended).
 
 2. If you are installing on Windows, ensure both the Python install directory and the Python scripts directory have been added to your `PATH` environment variable. For example, if you install Python into the c:\python34 directory, you would add `c:\python34;c:\python34\scripts` to your `PATH` environment variable.
 
 3. Install Sphinx by opening a command prompt and running the following Python command. (Note that this operation might take a few minutes to complete.)
 
-    ```pip install sphinx```
+    ```pip install sphinx sphinx-autobuild```
 
-4. By default, when you install Sphinx, it will install the ReadTheDocs custom theme automatically. If you need to update the installed version of this theme, you should run:
+Note that latest steps on how to install Python and sphinx, please refer to [this article](https://docs.readthedocs.io/en/latest/getting_started.html#in-rst).
 
-    ```pip install -U sphinx_rtd_theme```
+# Sample Project
+Generate a sample project to test out this extension. The test project has the following contents, like makefile, conf.py, and build folder. 
+Then you can better understand why the below settings are required.
 
-5. Install the Sphinx .NET domain:
+```
+mkdir sphinxtest
+cd sphinxtest
+sphinx-quickstart
+code .
+```
+Now this project is opened in Visual Studio Code.
 
-    ```pip install sphinxcontrib-dotnetdomain```
+You can preview .rst files if `makefile` (or `make.bat`) is at the root folder, and the default HTML output folder is `_build/html`.
 
-Note that latest steps on how to install Python and sphinx, please refer to [this article](https://github.com/aspnet/Docs/blob/master/CONTRIBUTING.md).
+# Live Preview Settings
+You might need to set three settings so as to let this extension locate the generated HTML pages in some cases.
 
-## Get Started
-You should use sphinx-quickstart to generate a test project so as to understand its basic structure, like makefile, conf.py, and build folder. Then you can better 
-understand why the below settings are required.
+First, a new file `.vscode/settings.json` needs to be created under the root directory shown in your Explorer tab in Visual Studio Code.
 
-## Live Preview Settings
-For this extension to locate the generated HTML pages, three settings can be set.
-
-This requires a new file `.vscode/settings.json` to be created under the root directory shown in your Explorer tab in Visual Studio Code.
-
-The sample content is as below,
+Its default content is as below,
 ```
 {
     "restructuredtext.builtDocumentationPath" : "_build/html",
@@ -38,7 +41,7 @@ The sample content is as below,
     "restructuredtext.updateOnTextChanged" : "true"
 }
 ```
-which shows the default values. 
+Note that all settings are set to the default values. 
 
 A file with customized values might look as below,
 ```
@@ -72,3 +75,6 @@ BUILDDIR      = build
 ```
 
 Then the value should be set to ```build/html```.
+
+# Extra Notes
+If your Python environment is special, and `sphinx-build` cannot be run directly, you might set `SPHINXBUILD` environment to the equivalent command.
