@@ -2,7 +2,7 @@
   "name": "restructuredtext",
   "displayName": "reStructuredText",
   "description": "Edit reStructuredText (RST, ReST) with accurate live preview!",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "publisher": "lextudio",
   "engines": {
     "vscode": "^1.7.0"
@@ -127,21 +127,25 @@
         }
       ]
     },
-    "properties": {
-      "restructuredtext.builtDocumentationPath": {
-        "type": "string",
-        "default": "_build/html",
-        "description": "Relative path from workspace root to built html documentation root."
-      },
-      "restructuredtext.makefilePath": {
-        "type": "string",
-        "default": ".",
-        "description": "Relative path from workspace root to makefile."
-      },
-      "restructuredtext.updateOnTextChanged": {
-        "type": "string",
-        "default": "true",
-        "description": "Flag to control whether text changed event triggers preview update."
+    "configuration": {
+      "type": "object",
+      "title": "reStructuredText Configuration",
+      "properties": {
+        "restructuredtext.builtDocumentationPath": {
+          "type": "string",
+          "default": "_build/html",
+          "description": "HTML page output folder relative to workspace root."
+        },
+        "restructuredtext.makefilePath": {
+          "type": "string",
+          "default": ".",
+          "description": "The folder that contains makefile and make.bat relative to workspace root."
+        },
+        "restructuredtext.updateOnTextChanged": {
+          "type": "string",
+          "default": "true",
+          "description": "Flag to control whether text changed event triggers preview update."
+        }
       }
     }
   },
