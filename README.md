@@ -42,7 +42,7 @@ that VS Code provides. With live preview enabled, final look-and-feel is just on
 
   To trigger snippets, please refer to [Visual Studio Code shortcuts](https://code.visualstudio.com/docs/customization/keybindings).
   
-- Live Preview (Experimental)
+- Live Preview (Experimental, and **Sphinx must be configured in advanced**)
 
   The shortcuts are
 
@@ -50,7 +50,7 @@ that VS Code provides. With live preview enabled, final look-and-feel is just on
   - `ctrl+k r`          Preview to Side
 
 >**Notice:** The preview feature requires Python to be installed. The `sphinx` Python module is also required. 
-check out the [steps to configure sphinx](docs/sphinx.md)
+check out the [steps to configure sphinx](docs/sphinx.md).
 
 ## How to install from Marketplace
 
