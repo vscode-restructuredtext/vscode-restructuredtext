@@ -875,9 +875,9 @@
 						</dict>
 					</dict>
 					<key>comment</key>
-					<string>tags (and field lists</string>
+					<string>tags (and field lists)</string>
 					<key>match</key>
-					<string>(:)[A-z][A-z0-9  =\s\t_.]*(:)</string>
+					<string>(:)[[:alpha:]][[[:alpha:]]0-9  =\s\t_.-]*(:)</string>
 					<key>name</key>
 					<string>entity.name.tag.restructuredtext</string>
 				</dict>
