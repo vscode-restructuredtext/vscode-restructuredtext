@@ -7,7 +7,6 @@
 		"sourceMap": true
 	},
 	"exclude": [
-		"node_modules",
-        "test"
+		"node_modules"
 	]
 }

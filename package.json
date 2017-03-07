@@ -2,15 +2,15 @@
   "name": "restructuredtext",
   "displayName": "reStructuredText",
   "description": "Edit reStructuredText (RST, ReST) with accurate live preview!",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "publisher": "lextudio",
   "engines": {
-    "vscode": "^1.7.0"
+    "vscode": "^1.9.0"
   },
   "devDependencies": {
-    "vscode": "^1.0.0",
-    "typescript": "^2.0.3",
-    "@types/node": "^6.0.40"
+    "vscode": "^1.0.3",
+    "typescript": "^2.1.5",
+    "@types/node": "^7.0.5"
   },
   "license": "SEE LICENSE IN LICENSE.txt",
   "homepage": "https://github.com/vscode-restructuredtext/vscode-restructuredtext/blob/master/README.md",

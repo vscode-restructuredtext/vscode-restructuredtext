@@ -9,7 +9,7 @@
 			"runtimeExecutable": "${execPath}",
 			"args": ["--extensionDevelopmentPath=${workspaceRoot}" ],
 			"sourceMaps": true,
-			"outDir": "${workspaceRoot}/out"
+			"outFiles": ["${workspaceRoot}/out/extension.js"]
 		}
 	]
 }
