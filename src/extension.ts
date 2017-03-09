@@ -130,11 +130,15 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
     private _onDidChange = new EventEmitter<Uri>();
     private _waiting: boolean;
     private _containerPath: string;
+    private _renderTool: string;
+    private _renderFlags: string[];
 
     constructor(context: ExtensionContext) {
         this._context = context;
         this._waiting = false;
         this._containerPath = RstDocumentContentProvider.absoluteConfiguredPath("makefilePath", ".");
+        this._renderTool = workspace.getConfiguration("restructuredtext").get("renderTool", "");
+        this._renderFlags = workspace.getConfiguration("restructuredtext").get("renderFlags", []);
     }
 
     public provideTextDocumentContent(uri: Uri): string | Thenable<string> {
@@ -160,7 +164,10 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
         if (!(editor.document.languageId === "restructuredtext")) {
             return this.errorSnippet("Active editor doesn't show a reStructuredText document - no properties to preview.");
         }
-        return this.preview(editor);
+        if (this._renderTool)
+            return this.previewSimple(editor);
+        else
+            return this.preview(editor);
     }
 
     private errorSnippet(error: string): string {
@@ -205,6 +212,43 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
 
     private relativeDocumentationPath(whole: string): string {
         return whole.substring(this._containerPath.length);
+    }
+
+    public previewSimple(editor: TextEditor): Thenable<string> {
+        let root = this._containerPath;
+
+        // Display file.
+        return new Promise<string>((resolve, reject) => {
+            let cmd = [this._renderTool, ...this._renderFlags, editor.document.fileName].join(" ");
+
+            exec(cmd, {cwd: root}, (error, stdout, stderr) =>
+            {
+                if (error) {
+                    let errorMessage = [
+                        error.name,
+                        error.message,
+                        error.stack,
+                        "",
+                        stderr.toString()
+                    ].join("\n");
+                    console.error(errorMessage);
+                    reject(errorMessage);
+                    return;
+                }
+
+                if (process.platform === "win32" && stderr) {
+                    let errorMessage = stderr.toString();
+                    if (errorMessage.indexOf("Exception occurred:") > -1)
+                    {
+                        console.error(errorMessage);
+                        reject(errorMessage);
+                        return;
+                    }
+                }
+
+                resolve(stdout);
+            });
+        });
     }
 
     public preview(editor: TextEditor): Thenable<string> {

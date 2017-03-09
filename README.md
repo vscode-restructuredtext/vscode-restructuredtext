@@ -49,8 +49,19 @@ that VS Code provides. With live preview enabled, final look-and-feel is just on
   - `ctrl+shift+r`      Preview
   - `ctrl+k r`          Preview to Side
 
->**Notice:** The preview feature requires Python to be installed. The `sphinx` Python module is also required. 
-check out the [steps to configure sphinx](docs/sphinx.md).
+>**Notice:** The preview feature requires [Sphinx](http://www.sphinx-doc.org/) to be installed, which also requires Python.
+Check out the [steps to configure sphinx](docs/sphinx.md).
+
+You can also configure a simple preview using a reStructuredText to HTML renderer, like rst2html from [Docutils](http://docutils.sourceforge.net). **The `renderTool` option will disable Sphinx build if set.**
+You can install Docutils with: `pip install docutils`. (required Python and Python-PIP installed)
+
+```json
+{
+    "restructuredtext.renderTool": "rst2html5.py",
+    "restructuredtext.renderFlags": ["--halt=5"]
+}
+```
+
 
 ## How to install from Marketplace
 
