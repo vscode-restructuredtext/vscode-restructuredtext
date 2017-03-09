@@ -141,6 +141,19 @@
           "default": ".",
           "description": "The folder that contains makefile and make.bat relative to workspace root."
         },
+        "restructuredtext.renderTool": {
+          "type": "string",
+          "default": "",
+          "description": "Tool used to render HTML preview (e.g. 'rst2html5')"
+        },
+        "restructuredtext.renderFlags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Flags used by render tool (e.g. ['--halt=5'])"
+        },
         "restructuredtext.updateOnTextChanged": {
           "type": "string",
           "default": "true",
