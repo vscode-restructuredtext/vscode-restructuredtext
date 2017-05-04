@@ -138,7 +138,7 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
     }
 
     public provideTextDocumentContent(uri: Uri): string | Thenable<string> {
-        return this.createRstSnippet();
+        return this.preview(uri);
     }
 
     get onDidChange(): Event<Uri> {
@@ -154,14 +154,6 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
 			}, 300);
 		}
 	}
-
-    private createRstSnippet(): string | Thenable<string> {
-        let editor = window.activeTextEditor;
-        if (!(editor.document.languageId === "restructuredtext")) {
-            return this.errorSnippet("Active editor doesn't show a reStructuredText document - no properties to preview.");
-        }
-        return this.preview(editor);
-    }
 
     private errorSnippet(error: string): string {
         return `
@@ -207,9 +199,11 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
         return whole.substring(this._containerPath.length);
     }
 
-    public preview(editor: TextEditor): Thenable<string> {
+    private preview(uri: Uri): Thenable<string> {
         // Calculate full path to built html file.
-        let whole = editor.document.fileName;
+        let whole = uri.query;
+        if (whole.startsWith("file://"))
+            whole = whole.substring("file://".length);
         let ext = whole.lastIndexOf(".");
         whole = whole.substring(0, ext) + ".html";
 
