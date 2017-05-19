@@ -83,6 +83,8 @@ The value for `restructuredtext.sphinxBuildPath` above depends on your Python in
 
 On Windows Python can be installed to all possible locations and does not appear in PATH environment variable. Then you must set this value to the proper sphinx-build.exe file path.
 
+> If you intend to use Python VirtualEnv setup, please set `python.pythonPath` accordingly, and this extension will then pick up that setting instead of `sphinxBuildPath`.
+
 # Troubleshooting Guide
 If any error happens, please follow the steps below to locate the possible causes.
 
