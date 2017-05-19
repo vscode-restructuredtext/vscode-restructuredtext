@@ -124,5 +124,123 @@
 		"body": ":kbd:`${1:shortcut}` $0",
 		"description": "Keyboard Shortcut",
 		"scope": "text.restructuredtext"		
+	},
+	"Code Default": {
+		"prefix": "coded",
+		"body": [
+			".. default-role:: code",
+			"",
+			"${0}"
+		],
+		"description": "Declare default content is code",
+		"scope": "text.restructuredtext"
+	},
+	"Declare code framework": {
+		"prefix": "coderfl",
+		"body": [
+			".. code:: robotframework",
+			"",
+			"${0}"
+		],
+		"description": "Declare code framework",
+		"scope": "text.restructuredtext"
+	},
+	"Code Robot Framework Template": {
+		"prefix": "coderf",
+		"body": [
+			".. default-role:: code",
+			"",
+			".. code:: robotframework",
+			"",
+			"    *** Variables ***",
+			"    ${1:${2:var1}    ${3:hello world}}",
+			"",
+			"    *** Settings ***",
+			"${4:    ${5:Library}    ${6:Selenium2Library}}",
+			"",
+			"    *** Test Cases ***",
+			"    ${9:Test Case One}",
+			"        ${10:My Keyword}    ${11:first value}    ${12:second value}    ${13:third value}    ${14:4th value}",
+			"",
+			"    *** Keywords ***",
+			"    ${10:My Keyword}",
+			"        [Arguments]    $${{ ${15:argument1}  }}    $${{ ${16:argument2} }}    $${{ ${17:argument3} }}=$${{EMPTY}}",
+			"${18:        Todo    hello world    console=yes}",
+			"        ${0}",
+			""
+		],
+		"description": "Declare code framework sample template",
+		"scope": "text.restructuredtext"
+	},
+	"Variables Table": {
+		"prefix": "vart",
+		"body": [
+			"    *** Variables ***",
+			"    ${0}",
+			"",
+			""
+		],
+		"description": "Variables Table",
+		"scope": "text.restructuredtext"
+	},
+	"Settings Table": {
+		"prefix": "sett",
+		"body": [
+			"    *** Settings ***",
+			"    ${0}",
+			""
+		],
+		"description": "Settings Table",
+		"scope": "text.restructuredtext"
+	},
+	"Test Case Table": {
+		"prefix": "test",
+		"body": [
+			"    *** Test Cases ***",
+			"    ${0}",
+			""
+		],
+		"description": "Test Cases Table",
+		"scope": "text.restructuredtext"
+	},
+	"Keywords Table": {
+		"prefix": "kwt",
+		"body": [
+			"    *** Keywords ***",
+			"    ${0}",
+			""
+		],
+		"description": "Keywords Table",
+		"scope": "text.restructuredtext"
+	},
+	"Keyword with Argument Template": {
+		"prefix": "kw",
+		"body": [
+			"${1:My Keyword}",
+			"    [Arguments]    $${{ ${2:argument1}  }}    $${{ ${3:argument2} }}    $${{ ${4:argument3optional} }}=$${{EMPTY}}",
+			"    ${0}",
+			""
+		],
+		"description": "Keyword with Argument Template",
+		"scope": "text.restructuredtext"
+	},
+	"Test Case or Keyword Template": {
+		"prefix": "tc",
+		"body": [
+			"${1:My TC or Kw Name}",
+			"    ${0}",
+			""
+		],
+		"description": "Test Case or Keyword Template",
+		"scope": "text.restructuredtext"
+	},
+	"Log": {
+		"prefix": "log",
+		"body": [
+			"Log    ${2:Hello World}    ${0:console=yes}",
+			"${0}"
+		],
+		"description": "Log keyword",
+		"scope": "text.restructuredtext"
 	}
 }
