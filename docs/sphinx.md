@@ -78,7 +78,7 @@ BUILDDIR      = build
 
 Then the value should be set to ```build/html```.
 
-## Sphinx Build Path
+## Sphinx Build Path (25.0 and above)
 The value for `restructuredtext.sphinxBuildPath` above depends on your Python installation.
 
 On Windows Python can be installed to all possible locations and does not appear in PATH environment variable. Then you must set this value to the proper sphinx-build.exe file path.
