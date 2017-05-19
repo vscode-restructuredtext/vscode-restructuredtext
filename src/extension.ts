@@ -217,9 +217,17 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
                 "make",
                 "html"
             ].join(" ");
-            var build = workspace.getConfiguration("restructuredtext").get(
-                'sphinxBuildPath'
-            );
+            var python = workspace.getConfiguration("python").get("pythonPath");
+            var build;
+            if (python == null)
+            { 
+                build = workspace.getConfiguration("restructuredtext").get('sphinxBuildPath');
+            }
+            else
+            {
+                build = python + " -msphinx";
+            }
+
             var options;
             if (build == null)
             {
