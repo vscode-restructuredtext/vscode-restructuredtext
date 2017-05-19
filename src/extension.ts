@@ -217,7 +217,20 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
                 "make",
                 "html"
             ].join(" ");
-            exec(cmd, {cwd: root}, (error, stdout, stderr) =>
+            var build = workspace.getConfiguration("restructuredtext").get(
+                'sphinxBuildPath'
+            );
+            var options;
+            if (build == null)
+            {
+                options = {cwd: root};
+            }
+            else
+            {
+                options = {cwd: root, env: {'SPHINXBUILD': build}};
+            }
+
+            exec(cmd, options, (error, stdout, stderr) =>
             {
                 if (error) {
                     let errorMessage = [

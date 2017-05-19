@@ -37,8 +37,9 @@ Its default content is as below,
 ```
 {
     "restructuredtext.builtDocumentationPath" : "_build/html",
-    "restructuredtext.makefilePath" : ".",
-    "restructuredtext.updateOnTextChanged" : "true"
+    "restructuredtext.makefilePath"           : ".",
+    "restructuredtext.updateOnTextChanged"    : "true",
+    "restructuredtext.sphinxBuildPath"        : null
 }
 ```
 Note that all settings are set to the default values. 
@@ -47,8 +48,9 @@ A file with customized values might look as below,
 ```
 {
     "restructuredtext.builtDocumentationPath" : "manager/_build/html",
-    "restructuredtext.makefilePath" : "manager",
-    "restructuredtext.updateOnTextChanged" : "false"
+    "restructuredtext.makefilePath"           : "manager",
+    "restructuredtext.updateOnTextChanged"    : "false",
+    "restructuredtext.sphinxBuildPath"        : "C:\\Users\\lextm\\AppData\\Local\\Programs\\Python\\Python36\\Scripts\\sphinx-build.exe"
 }
 ```
 
@@ -75,6 +77,11 @@ BUILDDIR      = build
 ```
 
 Then the value should be set to ```build/html```.
+
+## Sphinx Build Path
+The value for `restructuredtext.sphinxBuildPath` above depends on your Python installation.
+
+On Windows Python can be installed to all possible locations and does not appear in PATH environment variable. Then you must set this value to the proper sphinx-build.exe file path.
 
 # Troubleshooting Guide
 If any error happens, please follow the steps below to locate the possible causes.

@@ -145,6 +145,11 @@
           "type": "string",
           "default": "true",
           "description": "Flag to control whether text changed event triggers preview update."
+        },
+        "restructuredtext.sphinxBuildPath": {
+          "type": "string",
+          "default": null,
+          "description": "The full path of sphinx-build utility."
         }
       }
     }
