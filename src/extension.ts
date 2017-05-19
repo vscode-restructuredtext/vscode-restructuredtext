@@ -201,9 +201,9 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
 
     private preview(uri: Uri): Thenable<string> {
         // Calculate full path to built html file.
-        let whole = uri.query;
-        if (whole.startsWith("file://"))
-            whole = whole.substring("file://".length);
+        let whole = uri.fsPath;
+        if (whole.endsWith(".rendered"))
+            whole = whole.substring(0, whole.lastIndexOf("."));
         let ext = whole.lastIndexOf(".");
         whole = whole.substring(0, ext) + ".html";
 
