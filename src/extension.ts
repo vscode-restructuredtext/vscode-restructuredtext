@@ -134,7 +134,7 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
     constructor(context: ExtensionContext) {
         this._context = context;
         this._waiting = false;
-        this._containerPath = RstDocumentContentProvider.absoluteConfiguredPath("makefilePath", ".");
+        this._containerPath = RstDocumentContentProvider.absoluteConfiguredPath("confPath", ".");
     }
 
     public provideTextDocumentContent(uri: Uri): string | Thenable<string> {
@@ -208,15 +208,11 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
         whole = whole.substring(0, ext) + ".html";
 
         let root = this._containerPath;
-        let htmlFolder = RstDocumentContentProvider.absoluteConfiguredPath("builtDocumentationPath", "_build/html");
-        let finalName = path.join(htmlFolder, this.relativeDocumentationPath(whole));
+        let output = RstDocumentContentProvider.absoluteConfiguredPath("builtDocumentationPath", "_build/html");
+        let finalName = path.join(output, this.relativeDocumentationPath(whole));
 
         // Display file.
         return new Promise<string>((resolve, reject) => {
-            let cmd = [
-                "make",
-                "html"
-            ].join(" ");
             var python = workspace.getConfiguration("python").get("pythonPath");
             var build;
             if (python == null)
@@ -228,15 +224,21 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
                 build = python + " -msphinx";
             }
 
+            var cmd: string;
             var options;
+            var input: string = ".";
             if (build == null)
             {
-                options = {cwd: root};
+                build = "sphinx-build";
             }
-            else
-            {
-                options = {cwd: root, env: {'SPHINXBUILD': build}};
-            }
+
+            options = {cwd: root};
+            cmd = [
+                build,
+                "-b html",
+                input,
+                output
+                ].join(" ");
 
             exec(cmd, options, (error, stdout, stderr) =>
             {
@@ -275,7 +277,7 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
                         return;
                     //} else if(err.code === 'ENOENT') {
                     //    fs.writeFile('log.txt', 'Some log\n');
-                    }                       
+                    }
 
                     fs.readFile(finalName, "utf8", (err, data) => {
                         if (err === null) {
@@ -289,10 +291,10 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
                             ].join("\n");
                             console.error(errorMessage);
                             reject(errorMessage);
-                        }                        
+                        }
                     });
                 });
-            });           
-        });        
+            });
+        });
     }
 }
