@@ -26,7 +26,7 @@ code .
 ```
 Now this project is opened in Visual Studio Code.
 
-You can preview .rst files if `makefile` (or `make.bat`) is at the root folder, and the default HTML output folder is `_build/html`.
+You can preview .rst files as `conf.py` is at the root folder, and the default HTML output folder is `_build/html`.
 
 # Live Preview Settings
 You might need to set three settings so as to let this extension locate the generated HTML pages in some cases.
@@ -37,7 +37,7 @@ Its default content is as below,
 ```
 {
     "restructuredtext.builtDocumentationPath" : "_build/html",
-    "restructuredtext.makefilePath"           : ".",
+    "restructuredtext.confPath"               : ".",
     "restructuredtext.updateOnTextChanged"    : "true",
     "restructuredtext.sphinxBuildPath"        : null
 }
@@ -47,36 +47,19 @@ Note that all settings are set to the default values.
 A file with customized values might look as below,
 ```
 {
-    "restructuredtext.builtDocumentationPath" : "manager/_build/html",
-    "restructuredtext.makefilePath"           : "manager",
+    "restructuredtext.builtDocumentationPath" : "build/html",
+    "restructuredtext.confPath"               : "source",
     "restructuredtext.updateOnTextChanged"    : "false",
     "restructuredtext.sphinxBuildPath"        : "C:\\Users\\lextm\\AppData\\Local\\Programs\\Python\\Python36\\Scripts\\sphinx-build.exe"
 }
 ```
 
-## Makefile Path
-This extension relies on sphinx generated makefile to perform compilation. 
+## Conf.py Path
+This extension relies on sphinx `conf.py` to perform compilation. 
 
-Usually when a sphinx project is opened, makefile is located at the root in Explorer folder, and that's the default value ```.``` of `restructuredtext.makefilePath`.
+Usually when a sphinx project is opened, `conf.py` is located at the root in Explorer folder, and that's the default value ```.``` of `restructuredtext.confPath`.
 
-If you move makefile to another location, then please set `restructuredtext.makefilePath` to the proper path, such as ```manager```.
-
-## Built Documentation Path
-The value for `restructuredtext.builtDocumentationPath` above can be queried from makefile.
-
-If the Makefile contains the following,
-```
-# Makefile for Sphinx documentation
-#
-
-# You can set these variables from the command line.
-SPHINXOPTS    =
-SPHINXBUILD   = sphinx-build
-PAPER         =
-BUILDDIR      = build
-```
-
-Then the value should be set to ```build/html```.
+If you have `conf.py` at another location, then please set `restructuredtext.confPath` to the proper path, such as ```source```.
 
 ## Sphinx Build Path (25.0 and above)
 The value for `restructuredtext.sphinxBuildPath` above depends on your Python installation.
@@ -88,27 +71,13 @@ On Windows Python can be installed to all possible locations and does not appear
 # Troubleshooting Guide
 If any error happens, please follow the steps below to locate the possible causes.
 
-## Locate The Makefile Folder
+## Locate The Conf.py Folder
 1. Open Integrated Terminal in Visual Studio Code code by clicking "View | Integrated Terminal".
-1. If you have `.vscode/settings.json` in the workspace, find the value of `restructuredtext.makefilePath` setting. 
+1. If you have `.vscode/settings.json` in the workspace, find the value of `restructuredtext.confPath` setting. 
 Assume its value is `src`, execute `cd src` at terminal to switch to the folder.
-
-## Test The Make Process
-Execute `make html` at terminal and see its output. 
-
-If the error indicates `make is not recognized` (or similar), then
-* You forgot to generate a makefile, 
-* You forgot to set `restructuredtext.makefilePath`,
-* Or your `restructuredtext.makefilePath` value is wrong.
-
-If there are Sphinx errors, refer to Sphinx documentation.
 
 ## Test The Generated HTML files
 When the make process succeeds, the generated HTML pages should present in `_build/html`.
 
 If you cannot find this folder or the extension indicates it cannot find certain HTML page, then the make process might 
 generate them at another location. You have to set `restructuredtext.builtDocumentationPath`.
-
-
-# Extra Notes
-If your Python environment is special, and `sphinx-build` cannot be run directly, you might set `SPHINXBUILD` environment to the equivalent command.

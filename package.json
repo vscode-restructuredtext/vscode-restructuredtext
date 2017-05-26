@@ -2,7 +2,7 @@
   "name": "restructuredtext",
   "displayName": "reStructuredText",
   "description": "Edit reStructuredText (RST, ReST) with accurate live preview!",
-  "version": "26.0.0",
+  "version": "27.0.0",
   "publisher": "lextudio",
   "engines": {
     "vscode": "^1.9.0"
@@ -136,10 +136,10 @@
           "default": "_build/html",
           "description": "HTML page output folder relative to workspace root."
         },
-        "restructuredtext.makefilePath": {
+        "restructuredtext.confPath": {
           "type": "string",
           "default": ".",
-          "description": "The folder that contains makefile and make.bat relative to workspace root."
+          "description": "The folder that contains conf.py relative to workspace root."
         },
         "restructuredtext.updateOnTextChanged": {
           "type": "string",
