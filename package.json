@@ -2,7 +2,7 @@
   "name": "restructuredtext",
   "displayName": "reStructuredText",
   "description": "Edit reStructuredText (RST, ReST) with accurate live preview!",
-  "version": "27.0.0",
+  "version": "28.0.0",
   "publisher": "lextudio",
   "engines": {
     "vscode": "^1.9.0"
@@ -134,12 +134,12 @@
         "restructuredtext.builtDocumentationPath": {
           "type": "string",
           "default": "_build/html",
-          "description": "HTML page output folder relative to workspace root."
+          "description": "HTML page output folder relative to workspace root. This is a relative path."
         },
         "restructuredtext.confPath": {
           "type": "string",
           "default": ".",
-          "description": "The folder that contains conf.py relative to workspace root."
+          "description": "The folder that contains conf.py relative to workspace root. This is a relative path."
         },
         "restructuredtext.updateOnTextChanged": {
           "type": "string",
@@ -149,7 +149,7 @@
         "restructuredtext.sphinxBuildPath": {
           "type": "string",
           "default": null,
-          "description": "The full path of sphinx-build utility."
+          "description": "The full path of sphinx-build utility. Usually it is an absolute path."
         }
       }
     }
