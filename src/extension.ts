@@ -237,7 +237,7 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
                 build,
                 "-b html",
                 input,
-                output
+                "\"" + output + "\""
                 ].join(" ");
 
             exec(cmd, options, (error, stdout, stderr) =>
