@@ -1,9 +1,11 @@
 "use strict";
-import { workspace, window, ExtensionContext, commands,
-TextEditor, TextDocumentContentProvider, EventEmitter,
-Event, Uri, TextDocumentChangeEvent, ViewColumn,
-TextEditorSelectionChangeEvent,
-TextDocument, Disposable } from "vscode";
+import {
+    workspace, window, ExtensionContext, commands,
+    TextEditor, TextDocumentContentProvider, EventEmitter,
+    Event, Uri, TextDocumentChangeEvent, ViewColumn,
+    TextEditorSelectionChangeEvent,
+    TextDocument, Disposable
+} from "vscode";
 import { exec } from "child_process";
 import * as fs from "fs";
 import * as path from "path";
@@ -13,12 +15,12 @@ export function activate(context: ExtensionContext) {
 
     let provider = new RstDocumentContentProvider(context);
     let registration = workspace.registerTextDocumentContentProvider("restructuredtext", provider);
-    
+
     let d1 = commands.registerCommand("restructuredtext.showPreview", showPreview);
     let d2 = commands.registerCommand("restructuredtext.showPreviewToSide", uri => showPreview(uri, true));
     let d3 = commands.registerCommand("restructuredtext.showSource", showSource);
 
-    context.subscriptions.push(d1, d2, registration);
+    context.subscriptions.push(d1, d2, d3, registration);
 
     workspace.onDidSaveTextDocument(document => {
         if (isRstFile(document)) {
@@ -28,8 +30,7 @@ export function activate(context: ExtensionContext) {
     });
 
     let updateOnTextChanged = RstDocumentContentProvider.absoluteConfiguredPath("updateOnTextChanged", "true");
-    if (updateOnTextChanged === 'true')
-    {
+    if (updateOnTextChanged === 'true') {
         workspace.onDidChangeTextDocument(event => {
             if (isRstFile(event.document)) {
                 const uri = getRstUri(event.document.uri);
@@ -39,86 +40,86 @@ export function activate(context: ExtensionContext) {
     }
 
     workspace.onDidChangeConfiguration(() => {
-		workspace.textDocuments.forEach(document => {
-			if (document.uri.scheme === 'restructuredtext') {
-				// update all generated md documents
-				provider.update(document.uri);
-			}
-		});
-	});
+        workspace.textDocuments.forEach(document => {
+            if (document.uri.scheme === 'restructuredtext') {
+                // update all generated md documents
+                provider.update(document.uri);
+            }
+        });
+    });
 }
 
 function isRstFile(document: TextDocument) {
-	return document.languageId === 'restructuredtext'
-		&& document.uri.scheme !== 'restructuredtext'; // prevent processing of own documents
+    return document.languageId === 'restructuredtext'
+        && document.uri.scheme !== 'restructuredtext'; // prevent processing of own documents
 }
 
 function getRstUri(uri: Uri) {
-	return uri.with({ scheme: 'restructuredtext', path: uri.path + '.rendered', query: uri.toString() });
+    return uri.with({ scheme: 'restructuredtext', path: uri.path + '.rendered', query: uri.toString() });
 }
 
 function showPreview(uri?: Uri, sideBySide: boolean = false) {
     let resource = uri;
-	if (!(resource instanceof Uri)) {
-		if (window.activeTextEditor) {
-			// we are relaxed and don't check for markdown files
-			resource = window.activeTextEditor.document.uri;
-		}
-	}
+    if (!(resource instanceof Uri)) {
+        if (window.activeTextEditor) {
+            // we are relaxed and don't check for markdown files
+            resource = window.activeTextEditor.document.uri;
+        }
+    }
 
-	if (!(resource instanceof Uri)) {
-		if (!window.activeTextEditor) {
-			// this is most likely toggling the preview
-			return commands.executeCommand('restructuredtext.showSource');
-		}
-		// nothing found that could be shown or toggled
-		return;
-	}
+    if (!(resource instanceof Uri)) {
+        if (!window.activeTextEditor) {
+            // this is most likely toggling the preview
+            return commands.executeCommand('restructuredtext.showSource');
+        }
+        // nothing found that could be shown or toggled
+        return;
+    }
 
     let thenable = commands.executeCommand('vscode.previewHtml',
-		getRstUri(resource),
-		getViewColumn(sideBySide),
-		`Preview '${path.basename(resource.fsPath)}'`);
+        getRstUri(resource),
+        getViewColumn(sideBySide),
+        `Preview '${path.basename(resource.fsPath)}'`);
 
-	return thenable;
+    return thenable;
 }
 
 function getViewColumn(sideBySide): ViewColumn {
-	const active = window.activeTextEditor;
-	if (!active) {
-		return ViewColumn.One;
-	}
+    const active = window.activeTextEditor;
+    if (!active) {
+        return ViewColumn.One;
+    }
 
-	if (!sideBySide) {
-		return active.viewColumn;
-	}
+    if (!sideBySide) {
+        return active.viewColumn;
+    }
 
-	switch (active.viewColumn) {
-		case ViewColumn.One:
-			return ViewColumn.Two;
-		case ViewColumn.Two:
-			return ViewColumn.Three;
-	}
+    switch (active.viewColumn) {
+        case ViewColumn.One:
+            return ViewColumn.Two;
+        case ViewColumn.Two:
+            return ViewColumn.Three;
+    }
 
-	return active.viewColumn;
+    return active.viewColumn;
 }
 
 function showSource(mdUri: Uri) {
-	if (!mdUri) {
-		return commands.executeCommand('workbench.action.navigateBack');
-	}
+    if (!mdUri) {
+        return commands.executeCommand('workbench.action.navigateBack');
+    }
 
-	const docUri = Uri.parse(mdUri.query);
+    const docUri = Uri.parse(mdUri.query);
 
-	for (let editor of window.visibleTextEditors) {
-		if (editor.document.uri.toString() === docUri.toString()) {
-			return window.showTextDocument(editor.document, editor.viewColumn);
-		}
-	}
+    for (let editor of window.visibleTextEditors) {
+        if (editor.document.uri.toString() === docUri.toString()) {
+            return window.showTextDocument(editor.document, editor.viewColumn);
+        }
+    }
 
-	return workspace.openTextDocument(docUri).then(doc => {
-		return window.showTextDocument(doc);
-	});
+    return workspace.openTextDocument(docUri).then(doc => {
+        return window.showTextDocument(doc);
+    });
 }
 
 // this method is called when your extension is deactivated
@@ -129,12 +130,38 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
     private _context: ExtensionContext;
     private _onDidChange = new EventEmitter<Uri>();
     private _waiting: boolean;
-    private _containerPath: string;
+    private _input: string;
+    private _output: string;
+    private _cmd: string;
+    private _options: any;
 
     constructor(context: ExtensionContext) {
         this._context = context;
         this._waiting = false;
-        this._containerPath = RstDocumentContentProvider.absoluteConfiguredPath("confPath", ".");
+        this._input = RstDocumentContentProvider.absoluteConfiguredPath("confPath", ".");
+        this._output = RstDocumentContentProvider.absoluteConfiguredPath("builtDocumentationPath", "_build/html");
+        let quotedOutput = "\"" + this._output + "\"";
+
+        var python = RstDocumentContentProvider.absoluteConfiguredPath("pythonPath", null, "python");
+        var build;
+        if (python == null) {
+            build = RstDocumentContentProvider.absoluteConfiguredPath('sphinxBuildPath', null);
+        }
+        else {
+            build = python + " -msphinx";
+        }
+
+        if (build == null) {
+            build = "sphinx-build";
+        }
+
+        this._options = { cwd: this._input };
+        this._cmd = [
+            build,
+            "-b html",
+            ".",
+            quotedOutput
+        ].join(" ");
     }
 
     public provideTextDocumentContent(uri: Uri): string | Thenable<string> {
@@ -145,15 +172,15 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
         return this._onDidChange.event;
     }
 
-	public update(uri: Uri) {
-		if (!this._waiting) {
-			this._waiting = true;
-			setTimeout(() => {
-				this._waiting = false;
-				this._onDidChange.fire(uri);
-			}, 300);
-		}
-	}
+    public update(uri: Uri) {
+        if (!this._waiting) {
+            this._waiting = true;
+            setTimeout(() => {
+                this._waiting = false;
+                this._onDidChange.fire(uri);
+            }, 300);
+        }
+    }
 
     private errorSnippet(error: string): string {
         return `
@@ -161,20 +188,20 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
                     ${error}
                 </body>`;
     }
-    
-    private fixLinks(document: string, documentPath: string): string {		
-        return document.replace(		
-            new RegExp("((?:src|href)=[\'\"])(.*?)([\'\"])", "gmi"), (subString: string, p1: string, p2: string, p3: string): string => {		
-                return [		
-                    p1,		
-                    fileUrl(path.join(		
-                        path.dirname(documentPath),		
-                        p2		
-                    )),		
-                    p3		
-                ].join("");		
-            }		
-        );		
+
+    private fixLinks(document: string, documentPath: string): string {
+        return document.replace(
+            new RegExp("((?:src|href)=[\'\"])(.*?)([\'\"])", "gmi"), (subString: string, p1: string, p2: string, p3: string): string => {
+                return [
+                    p1,
+                    fileUrl(path.join(
+                        path.dirname(documentPath),
+                        p2
+                    )),
+                    p3
+                ].join("");
+            }
+        );
     }
 
     /**
@@ -184,19 +211,19 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
      * computing absolute path.
      */
     public static absoluteConfiguredPath(
-        configSection: string, defaultValue: string
+        configSection: string, defaultValue: string, header: string = "restructuredtext"
     ): string {
         let root = workspace.rootPath;
         return path.join(
             root,
-            workspace.getConfiguration("restructuredtext").get(
+            workspace.getConfiguration(header).get(
                 configSection, defaultValue
             )
         );
     }
 
     private relativeDocumentationPath(whole: string): string {
-        return whole.substring(this._containerPath.length);
+        return whole.substring(this._input.length);
     }
 
     private preview(uri: Uri): Thenable<string> {
@@ -207,41 +234,11 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
         let ext = whole.lastIndexOf(".");
         whole = whole.substring(0, ext) + ".html";
 
-        let root = this._containerPath;
-        let output = RstDocumentContentProvider.absoluteConfiguredPath("builtDocumentationPath", "_build/html");
-        let finalName = path.join(output, this.relativeDocumentationPath(whole));
+        let finalName = path.join(this._output, this.relativeDocumentationPath(whole));
 
         // Display file.
         return new Promise<string>((resolve, reject) => {
-            var python = workspace.getConfiguration("python").get("pythonPath");
-            var build;
-            if (python == null)
-            { 
-                build = workspace.getConfiguration("restructuredtext").get('sphinxBuildPath');
-            }
-            else
-            {
-                build = python + " -msphinx";
-            }
-
-            var cmd: string;
-            var options;
-            var input: string = ".";
-            if (build == null)
-            {
-                build = "sphinx-build";
-            }
-
-            options = {cwd: root};
-            cmd = [
-                build,
-                "-b html",
-                input,
-                "\"" + output + "\""
-                ].join(" ");
-
-            exec(cmd, options, (error, stdout, stderr) =>
-            {
+            exec(this._cmd, this._options, (error, stdout, stderr) => {
                 if (error) {
                     let errorMessage = [
                         error.name,
@@ -257,8 +254,7 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
 
                 if (process.platform === "win32" && stderr) {
                     let errorMessage = stderr.toString();
-                    if (errorMessage.indexOf("Exception occurred:") > -1)
-                    {
+                    if (errorMessage.indexOf("Exception occurred:") > -1) {
                         console.error(errorMessage);
                         reject(errorMessage);
                         return;
@@ -275,8 +271,8 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
                         console.error(errorMessage);
                         reject(errorMessage);
                         return;
-                    //} else if(err.code === 'ENOENT') {
-                    //    fs.writeFile('log.txt', 'Some log\n');
+                        //} else if(err.code === 'ENOENT') {
+                        //    fs.writeFile('log.txt', 'Some log\n');
                     }
 
                     fs.readFile(finalName, "utf8", (err, data) => {
