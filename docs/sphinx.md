@@ -61,12 +61,15 @@ Usually when a sphinx project is opened, `conf.py` is located at the root in Exp
 
 If you have `conf.py` at another location, then please set `restructuredtext.confPath` to the proper path, such as ```source```.
 
+> Note that this should be a relative path to the workspace root (the root folder you opened in Visual Studio Code).
+
 ## Sphinx Build Path (25.0 and above)
 The value for `restructuredtext.sphinxBuildPath` above depends on your Python installation.
 
 On Windows Python can be installed to all possible locations and does not appear in PATH environment variable. Then you must set this value to the proper sphinx-build.exe file path.
 
-> If you intend to use Python VirtualEnv setup, please set `python.pythonPath` accordingly, and this extension will then pick up that setting instead of `sphinxBuildPath`.
+> Note that this should be an absolute path.
+> If you intend to use Python VirtualEnv setup, please set `python.pythonPath` accordingly, and this extension will then pick up that setting instead of `sphinxBuildPath`. Also `python.pythonPath` should be an absolute path.
 
 # Troubleshooting Guide
 If any error happens, please follow the steps below to locate the possible causes.
@@ -81,3 +84,5 @@ When the make process succeeds, the generated HTML pages should present in `_bui
 
 If you cannot find this folder or the extension indicates it cannot find certain HTML page, then the make process might 
 generate them at another location. You have to set `restructuredtext.builtDocumentationPath`.
+
+> Note that this should be a relative path to the workspace root (the root folder you opened in Visual Studio Code).
