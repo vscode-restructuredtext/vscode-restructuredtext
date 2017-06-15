@@ -74,6 +74,12 @@ On Windows Python can be installed to all possible locations and does not appear
 # Troubleshooting Guide
 If any error happens, please follow the steps below to locate the possible causes.
 
+## Find The Logs
+1. Use "View -> Output" menu item to open Visual Studio Code OUTPUT panel.
+1. On the top right area find "reStructuredText" from the list to switch to reStructuredText logging page.
+
+The logs show what compiler command line is used by this extension and which HTML is being previewed. They should indicate what might be wrong.
+
 ## Locate The Conf.py Folder
 1. Open Integrated Terminal in Visual Studio Code code by clicking "View | Integrated Terminal".
 1. If you have `.vscode/settings.json` in the workspace, find the value of `restructuredtext.confPath` setting. 
