@@ -138,14 +138,17 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
     constructor(context: ExtensionContext) {
         this._context = context;
         this._waiting = false;
+    }
+
+    public provideTextDocumentContent(uri: Uri): string | Thenable<string> {
         this._input = RstDocumentContentProvider.absoluteConfiguredPath("confPath", ".");
         this._output = RstDocumentContentProvider.absoluteConfiguredPath("builtDocumentationPath", "_build/html");
         let quotedOutput = "\"" + this._output + "\"";
 
-        var python = RstDocumentContentProvider.absoluteConfiguredPath("pythonPath", null, "python");
+        var python = RstDocumentContentProvider.configuredPath("pythonPath", null, "python");
         var build;
         if (python == null) {
-            build = RstDocumentContentProvider.absoluteConfiguredPath('sphinxBuildPath', null);
+            build = RstDocumentContentProvider.configuredPath('sphinxBuildPath', null);
         }
         else {
             build = python + " -msphinx";
@@ -162,9 +165,6 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
             ".",
             quotedOutput
         ].join(" ");
-    }
-
-    public provideTextDocumentContent(uri: Uri): string | Thenable<string> {
         return this.preview(uri);
     }
 
@@ -220,6 +220,12 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
                 configSection, defaultValue
             )
         );
+    }
+
+    public static configuredPath(
+        configSection: string, defaultValue: string, header: string = "restructuredtext"
+    ): string {
+        return workspace.getConfiguration(header).get(configSection, defaultValue);
     }
 
     private relativeDocumentationPath(whole: string): string {
