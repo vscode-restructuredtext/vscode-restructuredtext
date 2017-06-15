@@ -4,7 +4,7 @@ import {
     TextEditor, TextDocumentContentProvider, EventEmitter,
     Event, Uri, TextDocumentChangeEvent, ViewColumn,
     TextEditorSelectionChangeEvent,
-    TextDocument, Disposable
+    TextDocument, Disposable, OutputChannel
 } from "vscode";
 import { exec } from "child_process";
 import * as fs from "fs";
@@ -12,7 +12,7 @@ import * as path from "path";
 let fileUrl = require("file-url");
 
 export function activate(context: ExtensionContext) {
-
+    
     let provider = new RstDocumentContentProvider(context);
     let registration = workspace.registerTextDocumentContentProvider("restructuredtext", provider);
 
@@ -134,10 +134,13 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
     private _output: string;
     private _cmd: string;
     private _options: any;
+    private _channel: OutputChannel;
 
     constructor(context: ExtensionContext) {
         this._context = context;
         this._waiting = false;
+        this._channel = window.createOutputChannel("reStructuredText");
+        context.subscriptions.push(this._channel);
     }
 
     public provideTextDocumentContent(uri: Uri): string | Thenable<string> {
@@ -241,6 +244,10 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
         whole = whole.substring(0, ext) + ".html";
 
         let finalName = path.join(this._output, this.relativeDocumentationPath(whole));
+
+        this._channel.appendLine("Source file: " + uri.fsPath);
+        this._channel.appendLine("Compiler: " + this._cmd);
+        this._channel.appendLine("HTML file: " + finalName);
 
         // Display file.
         return new Promise<string>((resolve, reject) => {
