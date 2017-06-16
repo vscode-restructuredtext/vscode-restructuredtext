@@ -6,7 +6,9 @@
 [![Open Issues](http://vsmarketplacebadge.apphb.com/rating/lextudio.restructuredtext.svg) ](https://marketplace.visualstudio.com/items?itemName=lextudio.restructuredtext)
 [![Stories in Progress](https://img.shields.io/waffle/label/vscode-restructuredtext/vscode-restructuredtext/in%20progress.svg)](http://waffle.io/vscode-restructuredtext/vscode-restructuredtext) 
 
->**Notice:** Homepage for this extension is at [GitHub](https://github.com/vscode-restructuredtext/vscode-restructuredtext)
+>**Notice:**
+> Homepage for this extension is at [GitHub](https://github.com/vscode-restructuredtext/vscode-restructuredtext)
+> Starting from 32.0.0 release, all path settings require absolute paths.
 
 This extension provides rich reStructuredText language support for Visual Studio Code.
 Now you write reStructuredText scripts using the excellent IDE-like interface
