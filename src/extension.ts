@@ -29,7 +29,7 @@ export function activate(context: ExtensionContext) {
         }
     });
 
-    let updateOnTextChanged = RstDocumentContentProvider.absoluteConfiguredPath("updateOnTextChanged", "true");
+    let updateOnTextChanged = RstDocumentContentProvider.loadSetting("updateOnTextChanged", "true");
     if (updateOnTextChanged === 'true') {
         workspace.onDidChangeTextDocument(event => {
             if (isRstFile(event.document)) {
@@ -144,14 +144,15 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
     }
 
     public provideTextDocumentContent(uri: Uri): string | Thenable<string> {
-        this._input = RstDocumentContentProvider.absoluteConfiguredPath("confPath", ".");
-        this._output = RstDocumentContentProvider.absoluteConfiguredPath("builtDocumentationPath", "_build/html");
+        let root = workspace.rootPath;
+        this._input = RstDocumentContentProvider.loadSetting("confPath", root);
+        this._output = RstDocumentContentProvider.loadSetting("builtDocumentationPath", path.join(root, "_build", "html"));
         let quotedOutput = "\"" + this._output + "\"";
 
-        var python = RstDocumentContentProvider.configuredPath("pythonPath", null, "python");
-        var build;
+        var python = RstDocumentContentProvider.loadSetting("pythonPath", null, "python");
+        var build: string;
         if (python == null) {
-            build = RstDocumentContentProvider.configuredPath('sphinxBuildPath', null);
+            build = RstDocumentContentProvider.loadSetting('sphinxBuildPath', null);
         }
         else {
             build = python + " -msphinx";
@@ -207,28 +208,20 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
         );
     }
 
-    /**
-     * Return absolute path for passed *configSection* driven path.
-     * 
-     * If *configSection* value not defined then use *defaultValue instead when 
-     * computing absolute path.
-     */
-    public static absoluteConfiguredPath(
-        configSection: string, defaultValue: string, header: string = "restructuredtext"
+    public static loadSetting(
+        configSection: string, defaultValue: string, header: string = "restructuredtext", expand: boolean = true
     ): string {
-        let root = workspace.rootPath;
-        return path.join(
-            root,
-            workspace.getConfiguration(header).get(
-                configSection, defaultValue
-            )
-        );
+        var result = workspace.getConfiguration(header).get(configSection, defaultValue);
+        if (expand && result != null) {
+            return RstDocumentContentProvider.expandMacro(result);
+        }
+
+        return result;
     }
 
-    public static configuredPath(
-        configSection: string, defaultValue: string, header: string = "restructuredtext"
-    ): string {
-        return workspace.getConfiguration(header).get(configSection, defaultValue);
+    private static expandMacro(input: string): string {
+        let root = workspace.rootPath;
+        return input.replace("${workspaceRoot}", root);
     }
 
     private relativeDocumentationPath(whole: string): string {
@@ -261,6 +254,7 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
                         stderr.toString()
                     ].join("\n");
                     console.error(errorMessage);
+                    this._channel.appendLine("Error: " + errorMessage);
                     reject(errorMessage);
                     return;
                 }
@@ -269,6 +263,7 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
                     let errorMessage = stderr.toString();
                     if (errorMessage.indexOf("Exception occurred:") > -1) {
                         console.error(errorMessage);
+                        this._channel.appendLine("Error: " + errorMessage);
                         reject(errorMessage);
                         return;
                     }
@@ -282,6 +277,7 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
                             error.stack
                         ].join("\n");
                         console.error(errorMessage);
+                        this._channel.appendLine("Error: " + errorMessage);
                         reject(errorMessage);
                         return;
                         //} else if(err.code === 'ENOENT') {
@@ -299,6 +295,7 @@ class RstDocumentContentProvider implements TextDocumentContentProvider {
                                 err.stack
                             ].join("\n");
                             console.error(errorMessage);
+                            this._channel.appendLine("Error: " + errorMessage);
                             reject(errorMessage);
                         }
                     });

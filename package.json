@@ -135,12 +135,12 @@
       "properties": {
         "restructuredtext.builtDocumentationPath": {
           "type": "string",
-          "default": "_build/html",
+          "default": "${workspaceRoot}/_build/html",
           "description": "HTML page output folder relative to workspace root. This is a relative path."
         },
         "restructuredtext.confPath": {
           "type": "string",
-          "default": ".",
+          "default": "${workspaceRoot}",
           "description": "The folder that contains conf.py relative to workspace root. This is a relative path."
         },
         "restructuredtext.updateOnTextChanged": {
