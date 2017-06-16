@@ -36,8 +36,8 @@ First, a new file `.vscode/settings.json` needs to be created under the root dir
 Its default content is as below,
 ```
 {
-    "restructuredtext.builtDocumentationPath" : "_build/html",
-    "restructuredtext.confPath"               : ".",
+    "restructuredtext.builtDocumentationPath" : "${workspaceRoot}/_build/html",
+    "restructuredtext.confPath"               : "${workspaceRoot}",
     "restructuredtext.updateOnTextChanged"    : "true",
     "restructuredtext.sphinxBuildPath"        : null
 }
@@ -47,8 +47,8 @@ Note that all settings are set to the default values.
 A file with customized values might look as below,
 ```
 {
-    "restructuredtext.builtDocumentationPath" : "build/html",
-    "restructuredtext.confPath"               : "source",
+    "restructuredtext.builtDocumentationPath" : "${workspaceRoot}/build/html",
+    "restructuredtext.confPath"               : "${workspaceRoot}/source",
     "restructuredtext.updateOnTextChanged"    : "false",
     "restructuredtext.sphinxBuildPath"        : "C:\\Users\\lextm\\AppData\\Local\\Programs\\Python\\Python36\\Scripts\\sphinx-build.exe"
 }
@@ -57,11 +57,11 @@ A file with customized values might look as below,
 ## Conf.py Path
 This extension relies on sphinx `conf.py` to perform compilation. 
 
-Usually when a sphinx project is opened, `conf.py` is located at the root in Explorer folder, and that's the default value ```.``` of `restructuredtext.confPath`.
+Usually when a sphinx project is opened, `conf.py` is located at the root in Explorer folder, and that's the default value ```${workspaceRoot}``` of `restructuredtext.confPath`.
 
-If you have `conf.py` at another location, then please set `restructuredtext.confPath` to the proper path, such as ```source```.
+If you have `conf.py` at another location, then please set `restructuredtext.confPath` to the proper path, such as ```${workspaceRoot}/source```.
 
-> Note that this should be a relative path to the workspace root (the root folder you opened in Visual Studio Code).
+> Note that this should be an absolute path.
 
 ## Sphinx Build Path (25.0 and above)
 The value for `restructuredtext.sphinxBuildPath` above depends on your Python installation.
@@ -86,9 +86,9 @@ The logs show what compiler command line is used by this extension and which HTM
 Assume its value is `src`, execute `cd src` at terminal to switch to the folder.
 
 ## Test The Generated HTML files
-When the make process succeeds, the generated HTML pages should present in `_build/html`.
+When the make process succeeds, the generated HTML pages should present in `${workspaceRoot}/_build/html`.
 
 If you cannot find this folder or the extension indicates it cannot find certain HTML page, then the make process might 
 generate them at another location. You have to set `restructuredtext.builtDocumentationPath`.
 
-> Note that this should be a relative path to the workspace root (the root folder you opened in Visual Studio Code).
+> Note that this should be an absolute path.

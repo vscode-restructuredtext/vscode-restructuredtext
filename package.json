@@ -136,12 +136,12 @@
         "restructuredtext.builtDocumentationPath": {
           "type": "string",
           "default": "${workspaceRoot}/_build/html",
-          "description": "HTML page output folder relative to workspace root. This is a relative path."
+          "description": "HTML page output folder relative to workspace root. This is an absolute path."
         },
         "restructuredtext.confPath": {
           "type": "string",
           "default": "${workspaceRoot}",
-          "description": "The folder that contains conf.py relative to workspace root. This is a relative path."
+          "description": "The folder that contains conf.py relative to workspace root. This is an absolute path."
         },
         "restructuredtext.updateOnTextChanged": {
           "type": "string",
@@ -151,7 +151,7 @@
         "restructuredtext.sphinxBuildPath": {
           "type": "string",
           "default": null,
-          "description": "The full path of sphinx-build utility. Usually it is an absolute path."
+          "description": "The full path of sphinx-build utility. This is an absolute path."
         }
       }
     }
