@@ -52,7 +52,13 @@ that VS Code provides. With live preview enabled, final look-and-feel is just on
   - `ctrl+k r`          Preview to Side
 
 >**Notice:** The preview feature requires Python to be installed. The `sphinx` Python module is also required. 
-check out the [steps to configure sphinx](docs/sphinx.md).
+Check out the [steps to configure sphinx](docs/sphinx.md).
+
+- Linter (Experimental, and **restructuredtext-lint must be configured in advanced**)
+
+>**Notice:** The linter feature requires `restructuredtext-lint` Python module. 
+Check out the [steps to configure sphinx](docs/sphinx.md).
+Due to the facts that `restructuredtext-lint` does not support all Sphinx directives, there can be many false positives in its ouput.
 
 ## How to install from Marketplace
 
@@ -76,5 +82,12 @@ This extension is [licensed under the MIT License](LICENSE.txt).  Please see the
 [third-party notices](Third Party Notices.txt) file for details on the third-party
 files that we include with releases of this project.
 
-## Logo
+## Acknowledgements
+### Logo
 The project logo comes from [Legendora Icon](http://raindropmemory.deviantart.com/art/Legendora-Icon-Set-118999011) by [Teekatas Suwannakrua](http://raindropmemory.deviantart.com/).
+
+### Linter
+The linter support is based on [Cody Hoover's ruby-linter](https://marketplace.visualstudio.com/items?itemName=hoovercj.ruby-linter).
+
+### Live Preview
+The initial idea was brought from [Thomas Haakon Townsend's ReStructured Text Previewer](https://marketplace.visualstudio.com/items?itemName=tht13.rst-vscode), but soon after moving fully to Sphinx, this extension becomes its own beast.

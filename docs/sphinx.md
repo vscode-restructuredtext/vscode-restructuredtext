@@ -1,9 +1,9 @@
 # What is Sphinx
 Sphinx is a tool to generate HTML/PDF from reStructuredText documents.
 
-This extension relies on specific sphinx setup documented below to show live preview.
+This extension relies on specific sphinx setup documented below to lint code and show live preview.
 
-# Install Sphinx (0.0.14 and above)
+# Install Python, Sphinx, and Others (0.0.14 and above)
 1. [Download python](https://www.python.org/downloads/) version 2.7.10 or higher (Version 3.4 is recommended).
 
 2. If you are installing on Windows, ensure both the Python install directory and the Python scripts directory have been added to your `PATH` environment variable. For example, if you install Python into the `c:\python34` directory, you would add `c:\python34;c:\python34\scripts` to your `PATH` environment variable.
@@ -12,7 +12,11 @@ This extension relies on specific sphinx setup documented below to show live pre
 
     ```pip install sphinx sphinx-autobuild```
 
-Note that latest steps on how to install Python and sphinx, please refer to [this article](https://docs.readthedocs.io/en/latest/getting_started.html#in-rst).
+4. Install restructuredtext-lint to enable linter support.
+
+    ```pin install restructuredtext-lint```
+
+> Note that latest steps on how to install Python and sphinx, please refer to [this article](https://docs.readthedocs.io/en/latest/getting_started.html#in-rst).
 
 # Sample Project
 Generate a sample project to test out this extension. The test project has the following contents, like makefile, conf.py, and build folder. 
@@ -27,6 +31,25 @@ code .
 Now this project is opened in Visual Studio Code.
 
 You can preview .rst files as `conf.py` is at the root folder, and the default HTML output folder is `_build/html`.
+
+# Linter Settings
+The linter support wraps `restructuredtext-lint`.
+
+## Executable Path
+It expects `restructuredtext-lint` Python module to be installed and already added to the path. If it is installed but cannot be found, add the path to your preferences as seen below.
+```
+{
+    "restructuredtext.linter.executablePath": "PathToExecutable"
+}
+```
+
+## Lint onType or onSave or not at all
+
+By default the linter will lint on the fly but can be changed to linting as you save. Note that linting on save is most useful when auto-save is on. Use the setting below if to change the behavior with the values onType, onSave, and off.
+
+{
+    "restructuredtext.linter.run": "onType"
+}
 
 # Live Preview Settings
 You might need to set three settings so as to let this extension locate the generated HTML pages in some cases.
