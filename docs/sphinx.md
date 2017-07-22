@@ -36,7 +36,7 @@ You can preview .rst files as `conf.py` is at the root folder, and the default H
 The linter support wraps `restructuredtext-lint`.
 
 ## Executable Path
-It expects `restructuredtext-lint` Python module to be installed and already added to the path. If it is installed but cannot be found, add the path to your preferences as seen below.
+It expects `restructuredtext-lint` Python module to be installed and already added to the path. If it is installed but cannot be found, add the path to your preferences as seen below,
 ```
 {
     "restructuredtext.linter.executablePath": "PathToExecutable"
@@ -44,12 +44,22 @@ It expects `restructuredtext-lint` Python module to be installed and already add
 ```
 
 ## Lint onType or onSave or not at all
-
-By default the linter will lint on the fly but can be changed to linting as you save. Note that linting on save is most useful when auto-save is on. Use the setting below if to change the behavior with the values onType, onSave, and off.
-
+By default the linter will lint on the fly but can be changed to linting as you save. Note that linting on save is most useful when auto-save is on. Use the setting below if to change the behavior with the values onType, onSave, and off,
+```
 {
     "restructuredtext.linter.run": "onType"
 }
+```
+
+## Ignore Sphinx false positives
+`restructuredtext-linter` does not understand Sphinx elements, so it can report false positives. The following settings can filter out some of them,
+```
+{
+    "restructuredtext.linter.sphinxDirectives": ["toctree"],
+    "restructuredtext.linter.sphinxTextRoles": ["doc", "ref"]
+}
+```
+You can add more to reduce false positives reported by the linter feature.
 
 # Live Preview Settings
 You might need to set three settings so as to let this extension locate the generated HTML pages in some cases.
