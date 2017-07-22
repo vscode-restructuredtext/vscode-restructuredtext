@@ -19,8 +19,8 @@ export function activate(context: ExtensionContext) {
 
     context.subscriptions.push(d1, d2, d3, registration);
 
-    let linter = new RstLintingProvider();	
-	linter.activate(context.subscriptions);	
+    let linter = new RstLintingProvider();
+    linter.activate(context.subscriptions);
 
     workspace.onDidSaveTextDocument(document => {
         if (isRstFile(document)) {
