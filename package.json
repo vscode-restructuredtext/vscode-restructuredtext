@@ -165,6 +165,16 @@
 					"enum": ["onSave", "onType", "off"],
 					"default": "onType",
 					"description": "Whether the linter is run on save or on type or disabled."
+        },
+        "restructuredtext.linter.sphinxDirectives": {
+					"type": "string[]",
+					"default": ["toctree"],
+					"description": "Sphinx directives."
+        },
+        "restructuredtext.linter.sphinxTextRoles": {
+					"type": "string[]",
+					"default": ["doc", "ref"],
+					"description": "Sphinx text roles."
 				}
       }
     }

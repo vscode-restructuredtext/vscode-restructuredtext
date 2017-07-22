@@ -26,6 +26,9 @@ export default class RstLintingProvider implements Linter {
 	}
 
 	public process(lines: string[]): Diagnostic[] {
+		let section = workspace.getConfiguration(this.languageId);
+		let sphinxDirectives: string[] = section.get<string[]> ("linter.sphinxDirectives");//, ["toctree"]);
+		let sphinxTextRoles: string[] = section.get<string[]> ("linter.sphinxTextRoles");//, ["doc", "ref"]);
 		let diagnostics: Diagnostic[] = [];
 		lines.forEach(function (line) {
 			const regex = /([A-Z]+)\s(.+?):([0-9]+)\s(.+)/;
@@ -34,8 +37,6 @@ export default class RstLintingProvider implements Linter {
 				return;
 			}
 
-			let sphinxDirectives: string[] = ["toctree"];
-			let sphinxTextRoles: string[] = ["doc", "ref"];
 			const directiveFilter = /Unknown\sdirective\stype\s\"([a-zA-Z]+)"\./;
 			const directive = directiveFilter.exec(matches[4]);
 			if (directive !== null) {
