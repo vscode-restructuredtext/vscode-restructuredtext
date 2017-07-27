@@ -20,7 +20,7 @@ export default class RstLintingProvider implements Linter {
 			executable: section.get<string>('linter.executablePath', 'restructuredtext-lint'),
 			fileArgs: [],
 			bufferArgs: [],
-			extraArgs: [],
+			extraArgs: section.get<string[]>('linter.extraArgs'),
 			runTrigger: section.get<string>('linter.run', 'onType')
 		}
 	}

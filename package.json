@@ -156,26 +156,40 @@
           "description": "The full path of sphinx-build utility. This is an absolute path."
         },
         "restructuredtext.linter.executablePath": {
-					"type": "string",
-					"default": "restructuredtext-lint",
-					"description": "Points to the restructuredtext-lint exectuable."
-				},
-				"restructuredtext.linter.run": {
-					"type": "string",
-					"enum": ["onSave", "onType", "off"],
-					"default": "onType",
-					"description": "Whether the linter is run on save or on type or disabled."
+          "type": "string",
+          "default": "restructuredtext-lint",
+          "description": "Points to the restructuredtext-lint exectuable."
+        },
+        "restructuredtext.linter.run": {
+          "type": "string",
+          "enum": [
+            "onSave",
+            "onType",
+            "off"
+          ],
+          "default": "onType",
+          "description": "Whether the linter is run on save or on type or disabled."
+        },
+        "restructuredtext.linter.extraArgs": {
+          "type": "string[]",
+          "default": [],
+          "description": "Extra arguments to restructuredtext-lint."
         },
         "restructuredtext.linter.sphinxDirectives": {
-					"type": "string[]",
-					"default": ["toctree"],
-					"description": "Sphinx directives."
+          "type": "string[]",
+          "default": [
+            "toctree"
+          ],
+          "description": "Sphinx directives."
         },
         "restructuredtext.linter.sphinxTextRoles": {
-					"type": "string[]",
-					"default": ["doc", "ref"],
-					"description": "Sphinx text roles."
-				}
+          "type": "string[]",
+          "default": [
+            "doc",
+            "ref"
+          ],
+          "description": "Sphinx text roles."
+        }
       }
     }
   },
