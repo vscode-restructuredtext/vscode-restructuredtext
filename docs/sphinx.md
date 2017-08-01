@@ -14,7 +14,7 @@ This extension relies on specific sphinx setup documented below to lint code and
 
 4. Install restructuredtext-lint to enable linter support.
 
-    ```pin install restructuredtext-lint```
+    ```pip install restructuredtext-lint```
 
 > Note that latest steps on how to install Python and sphinx, please refer to [this article](https://docs.readthedocs.io/en/latest/getting_started.html#in-rst).
 
