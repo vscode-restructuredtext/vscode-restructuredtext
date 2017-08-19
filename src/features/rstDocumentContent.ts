@@ -39,7 +39,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
             build = RstDocumentContentProvider.loadSetting('sphinxBuildPath', null);
         }
         else {
-            build = python + " -msphinx";
+            build = python + " -m sphinx";
         }
 
         if (build == null) {

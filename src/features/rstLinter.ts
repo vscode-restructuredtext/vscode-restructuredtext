@@ -16,8 +16,21 @@ export default class RstLintingProvider implements Linter {
 		let section = workspace.getConfiguration(this.languageId);
 		if (!section) return;
 
+		var python = workspace.getConfiguration("python").get<string>("pythonPath", null);
+		var build: string;
+		if (python == null) {
+			build = section.get<string>('linter.executablePath', "restructuredtext-lint");
+		}
+		else {
+			build = python + " -m restructuredtext_lint.cli";
+		}
+
+		if (build == null) {
+			build = "restructuredtext-lint";
+		}
+
 		return {
-			executable: section.get<string>('linter.executablePath', 'restructuredtext-lint'),
+			executable: build,
 			fileArgs: [],
 			bufferArgs: [],
 			extraArgs: section.get<string[]>('linter.extraArgs'),
@@ -27,8 +40,8 @@ export default class RstLintingProvider implements Linter {
 
 	public process(lines: string[]): Diagnostic[] {
 		let section = workspace.getConfiguration(this.languageId);
-		let sphinxDirectives: string[] = section.get<string[]> ("linter.sphinxDirectives");//, ["toctree"]);
-		let sphinxTextRoles: string[] = section.get<string[]> ("linter.sphinxTextRoles");//, ["doc", "ref"]);
+		let sphinxDirectives: string[] = section.get<string[]>("linter.sphinxDirectives");//, ["toctree"]);
+		let sphinxTextRoles: string[] = section.get<string[]>("linter.sphinxTextRoles");//, ["doc", "ref"]);
 		let diagnostics: Diagnostic[] = [];
 		lines.forEach(function (line) {
 			const regex = /([A-Z]+)\s(.+?):([0-9]+)\s(.+)/;
@@ -47,7 +60,7 @@ export default class RstLintingProvider implements Linter {
 
 			const textRoleFilter = /Unknown\sinterpreted\stext\srole\s\"([a-zA-Z]+)"\./;
 			const textRole = textRoleFilter.exec(matches[4]);
-			if (textRole!== null) {
+			if (textRole !== null) {
 				if (sphinxTextRoles.indexOf(textRole[1]) > -1) {
 					return;
 				}
