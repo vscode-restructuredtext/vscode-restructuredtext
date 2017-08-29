@@ -9,7 +9,7 @@ import RstDocumentContentProvider from './features/rstDocumentContent';
 import * as path from "path";
 
 export function activate(context: ExtensionContext) {
-    
+
     let provider = new RstDocumentContentProvider(context);
     let registration = workspace.registerTextDocumentContentProvider("restructuredtext", provider);
 

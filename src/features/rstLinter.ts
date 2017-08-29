@@ -16,13 +16,15 @@ export default class RstLintingProvider implements Linter {
 		let section = workspace.getConfiguration(this.languageId);
 		if (!section) return;
 
+		var module: string[] = [];
 		var python = workspace.getConfiguration("python").get<string>("pythonPath", null);
 		var build: string;
 		if (python == null) {
 			build = section.get<string>('linter.executablePath', "restructuredtext-lint");
 		}
 		else {
-			build = python + " -m restructuredtext_lint.cli";
+			build = python;
+			module = module.concat(["-m", "restructuredtext_lint.cli"]);
 		}
 
 		if (build == null) {
@@ -31,6 +33,7 @@ export default class RstLintingProvider implements Linter {
 
 		return {
 			executable: build,
+			module: module,
 			fileArgs: [],
 			bufferArgs: [],
 			extraArgs: section.get<string[]>('linter.extraArgs'),

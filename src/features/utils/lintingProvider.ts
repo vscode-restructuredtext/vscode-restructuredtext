@@ -32,6 +32,7 @@ namespace RunTrigger {
 
 export interface LinterConfiguration {
 	executable:string,
+	module:string[],
 	fileArgs:string[],
 	bufferArgs:string[],
 	extraArgs:string[],
@@ -127,12 +128,13 @@ export class LintingProvider {
 			let diagnostics: vscode.Diagnostic[] = [];
 			
 			let options = vscode.workspace.rootPath ? { cwd: vscode.workspace.rootPath } : undefined;
-			let args: string[];
+			let args: string[] = [];
+			args = args.concat(this.linterConfiguration.module);
 			if (RunTrigger.from(this.linterConfiguration.runTrigger) === RunTrigger.onSave) {
-				args = this.linterConfiguration.fileArgs.slice(0);
+				args = args.concat(this.linterConfiguration.fileArgs.slice(0));
 				args.push(textDocument.fileName);
 			} else {
-				args = [textDocument.fileName];
+				args.push(textDocument.fileName);
 			}
 			args = args.concat(this.linterConfiguration.extraArgs);
 			
@@ -144,7 +146,7 @@ export class LintingProvider {
 				}
 				let message: string = null;
 				if ((<any>error).code === 'ENOENT') {
-					message = `Cannot lint ${textDocument.fileName}. The executable was not found. Use the '${this.linter.languageId}.executablePath' setting to configure the location of the executable`;
+					message = `Cannot lint ${textDocument.fileName}. The executable was not found. Use the '${this.linter.languageId}.linter.executablePath' setting to configure the location of the executable`;
 				} else {
 					message = error.message ? error.message : `Failed to run executable using path: ${executable}. Reason is unknown.`;
 				}
