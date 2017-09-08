@@ -1,0 +1,205 @@
+{
+  "name": "restructuredtext",
+  "displayName": "reStructuredText",
+  "description": "Edit reStructuredText (RST, ReST) with accurate live preview!",
+  "version": "37.0.0",
+  "publisher": "lextudio",
+  "engines": {
+    "vscode": "^1.9.0"
+  },
+  "devDependencies": {
+    "vscode": "^1.0.3",
+    "typescript": "^2.1.5",
+    "@types/node": "^7.0.5"
+  },
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "homepage": "https://github.com/vscode-restructuredtext/vscode-restructuredtext/blob/master/README.md",
+  "categories": [
+    "Languages",
+    "Snippets",
+    "Linters"
+  ],
+  "icon": "images/Document_icon.png",
+  "galleryBanner": {
+    "color": "#ACD1EC",
+    "theme": "light"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vscode-restructuredtext/vscode-restructuredtext.git"
+  },
+  "bugs": "https://github.com/vscode-restructuredtext/vscode-restructuredtext/issues",
+  "main": "./out/extension",
+  "activationEvents": [
+    "onCommand:restructuredtext.showPreview",
+    "onCommand:restructuredtext.showPreviewToSide",
+    "onCommand:restructuredtext.showSource",
+    "onLanguage:restructuredtext"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "restructuredtext",
+        "aliases": [
+          "reStructuredText",
+          "restructuredtext",
+          "RST",
+          "ReST",
+          "reST"
+        ],
+        "extensions": [
+          ".rst",
+          ".rest"
+        ]
+      }
+    ],
+    "grammars": [
+      {
+        "language": "restructuredtext",
+        "scopeName": "text.restructuredtext",
+        "path": "./syntaxes/restructuredtext.tmLanguage"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "restructuredtext",
+        "path": "./snippets/snippets.json"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "restructuredtext.showPreview",
+        "key": "shift+ctrl+r",
+        "mac": "shift+cmd+r",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "restructuredtext.showPreviewToSide",
+        "key": "ctrl+k r",
+        "mac": "cmd+k r",
+        "when": "editorTextFocus"
+      }
+    ],
+    "commands": [
+      {
+        "command": "restructuredtext.showPreview",
+        "title": "Toggle Preview",
+        "category": "reStructuredText",
+        "icon": {
+          "light": "./media/Preview.svg",
+          "dark": "./media/Preview_inverse.svg"
+        }
+      },
+      {
+        "command": "restructuredtext.showPreviewToSide",
+        "title": "Open Preview to the Side",
+        "category": "reStructuredText",
+        "icon": {
+          "light": "./media/PreviewOnRightPane_16x.svg",
+          "dark": "./media/PreviewOnRightPane_16x_dark.svg"
+        }
+      },
+      {
+        "command": "restructuredtext.showSource",
+        "title": "Show Source",
+        "category": "reStructuredText",
+        "icon": {
+          "light": "./media/ViewSource.svg",
+          "dark": "./media/ViewSource_inverse.svg"
+        }
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "when": "resourceLangId == restructuredtext",
+          "command": "restructuredtext.showPreviewToSide",
+          "alt": "restructuredtext.showPreview",
+          "group": "navigation"
+        },
+        {
+          "when": "resourceScheme == restructuredtext",
+          "command": "restructuredtext.showSource",
+          "group": "navigation"
+        }
+      ],
+      "explorer/context": [
+        {
+          "when": "resourceLangId == restructuredtext",
+          "command": "restructuredtext.showPreview",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "type": "object",
+      "title": "reStructuredText Configuration",
+      "properties": {
+        "restructuredtext.builtDocumentationPath": {
+          "type": "string",
+          "default": "${workspaceRoot}/_build/html",
+          "description": "HTML page output folder relative to workspace root. This is an absolute path, and you can use ${workspaceRoot} to represent workspace root folder."
+        },
+        "restructuredtext.confPath": {
+          "type": "string",
+          "default": "${workspaceRoot}",
+          "description": "The folder that contains conf.py relative to workspace root. This is an absolute path, and you can use ${workspaceRoot} to represent workspace root folder."
+        },
+        "restructuredtext.updateOnTextChanged": {
+          "type": "string",
+          "default": "true",
+          "description": "Flag to control whether text changed event triggers preview update."
+        },
+        "restructuredtext.sphinxBuildPath": {
+          "type": "string",
+          "default": null,
+          "description": "The full path of sphinx-build utility. This is an absolute path, and you can use ${workspaceRoot} to represent workspace root folder."
+        },
+        "restructuredtext.linter.executablePath": {
+          "type": "string",
+          "default": "restructuredtext-lint",
+          "description": "Points to the restructuredtext-lint exectuable."
+        },
+        "restructuredtext.linter.run": {
+          "type": "string",
+          "enum": [
+            "onSave",
+            "onType",
+            "off"
+          ],
+          "default": "onType",
+          "description": "Whether the linter is run on save or on type or disabled."
+        },
+        "restructuredtext.linter.extraArgs": {
+          "type": "string[]",
+          "default": [],
+          "description": "Extra arguments to restructuredtext-lint."
+        },
+        "restructuredtext.linter.sphinxDirectives": {
+          "type": "string[]",
+          "default": [
+            "toctree"
+          ],
+          "description": "Sphinx directives."
+        },
+        "restructuredtext.linter.sphinxTextRoles": {
+          "type": "string[]",
+          "default": [
+            "doc",
+            "ref"
+          ],
+          "description": "Sphinx text roles."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "tsc -p ./",
+    "compile": "tsc -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install"
+  },
+  "dependencies": {
+    "file-url": "^1.0.1",
+    "mustache": "^2.3.0"
+  }
+}
