@@ -199,13 +199,7 @@
     "postinstall": "node ./node_modules/vscode/bin/install"
   },
   "dependencies": {
-<<<<<<< HEAD
     "file-url": "^1.0.1",
     "mustache": "^2.3.0"
   }
 }
-=======
-    "file-url": "^1.0.1"
-  }
-}
->>>>>>> 9105a499c79fbb8a32b62d5f713498bd58b4783e
