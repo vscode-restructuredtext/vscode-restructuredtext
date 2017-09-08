@@ -9,15 +9,22 @@ import * as path from "path";
 let fileUrl = require("file-url");
 import { exec } from "child_process";
 import * as fs from "fs";
+<<<<<<< HEAD
 const Mustache = require('mustache');
+=======
+>>>>>>> 9105a499c79fbb8a32b62d5f713498bd58b4783e
 
 export default class RstDocumentContentProvider implements TextDocumentContentProvider {
     private _context: ExtensionContext;
     private _onDidChange = new EventEmitter<Uri>();
     private _waiting: boolean;
+<<<<<<< HEAD
     private _autoIndex: boolean;
     private _input: string;
     private _conf: string;
+=======
+    private _input: string;
+>>>>>>> 9105a499c79fbb8a32b62d5f713498bd58b4783e
     private _output: string;
     private _cmd: string;
     private _options: any;
@@ -26,13 +33,17 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
     constructor(context: ExtensionContext) {
         this._context = context;
         this._waiting = false;
+<<<<<<< HEAD
         this._autoIndex = false;
+=======
+>>>>>>> 9105a499c79fbb8a32b62d5f713498bd58b4783e
         this._channel = window.createOutputChannel("reStructuredText");
         context.subscriptions.push(this._channel);
     }
 
     public provideTextDocumentContent(uri: Uri): string | Thenable<string> {
         let root = workspace.rootPath;
+<<<<<<< HEAD
         this._autoIndex = RstDocumentContentProvider.loadSetting("autoIndex", 'false') === 'true';
         this._input = RstDocumentContentProvider.loadSetting("sourceDocumentationPath", root);
         this._conf = RstDocumentContentProvider.loadSetting("confPath", root);
@@ -40,6 +51,11 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
         let quotedOutput = "\"" + this._output + "\"";
         let quotedInput = "\"" + this._input + "\"";
         let quotedConf = "\"" + this._conf + "\"";
+=======
+        this._input = RstDocumentContentProvider.loadSetting("confPath", root);
+        this._output = RstDocumentContentProvider.loadSetting("builtDocumentationPath", path.join(root, "_build", "html"));
+        let quotedOutput = "\"" + this._output + "\"";
+>>>>>>> 9105a499c79fbb8a32b62d5f713498bd58b4783e
 
         var python = RstDocumentContentProvider.loadSetting("pythonPath", null, "python");
         var build: string;
@@ -57,6 +73,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
         this._options = { cwd: this._input };
         this._cmd = [
             build,
+<<<<<<< HEAD
             "-c",
             quotedConf,
             "-b html",
@@ -67,6 +84,13 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
 
         //return this.preview(uri);
         return this.auto_preview(uri);
+=======
+            "-b html",
+            ".",
+            quotedOutput
+        ].join(" ");
+        return this.preview(uri);
+>>>>>>> 9105a499c79fbb8a32b62d5f713498bd58b4783e
     }
 
     get onDidChange(): Event<Uri> {
@@ -125,6 +149,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
         return whole.substring(this._input.length);
     }
 
+<<<<<<< HEAD
     private auto_preview(uri): Thenable<string> {
         if (this._autoIndex) {
             return new Promise<string>((resolve, reject) => {
@@ -248,6 +273,8 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
 
     }
 
+=======
+>>>>>>> 9105a499c79fbb8a32b62d5f713498bd58b4783e
     private preview(uri: Uri): Thenable<string> {
         // Calculate full path to built html file.
         let whole = uri.fsPath;
