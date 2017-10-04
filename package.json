@@ -50,7 +50,8 @@
         "extensions": [
           ".rst",
           ".rest"
-        ]
+        ],
+        "configuration": "./language-configuration.json"
       }
     ],
     "grammars": [
