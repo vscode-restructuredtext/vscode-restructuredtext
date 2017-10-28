@@ -586,7 +586,7 @@
 					<key>comment</key>
 					<string>footnote reference [#]_ or [#foo]_</string>
 					<key>match</key>
-					<string>((\[#)[A-z0-9_]*(\]))(_)</string>
+					<string>((\[#)[A-z0-9_\-]*(\]))(_)</string>
 					<key>name</key>
 					<string>meta.link.footnote.auto.restructuredtext</string>
 				</dict>
