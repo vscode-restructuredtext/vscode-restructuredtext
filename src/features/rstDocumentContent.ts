@@ -29,8 +29,11 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
 
     public provideTextDocumentContent(uri: Uri): string | Thenable<string> {
         let root = workspace.rootPath;
-        this._input = RstDocumentContentProvider.loadSetting("confPath", root);
+        this._channel.appendLine("$(workspaceRoot): " + root);
+        this._input = RstDocumentContentProvider.loadSetting("confconfPathPath", root);
+        this._channel.appendLine("confPath: " + this._input);
         this._output = RstDocumentContentProvider.loadSetting("builtDocumentationPath", path.join(root, "_build", "html"));
+        this._channel.appendLine("builtDocumentationPath: " + this._output);
         let quotedOutput = "\"" + this._output + "\"";
 
         var python = RstDocumentContentProvider.loadSetting("pythonPath", null, "python");
