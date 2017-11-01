@@ -2,7 +2,7 @@
   "name": "restructuredtext",
   "displayName": "reStructuredText",
   "description": "Edit reStructuredText (RST, ReST) with accurate live preview!",
-  "version": "40.0.0",
+  "version": "41.0.0",
   "publisher": "lextudio",
   "engines": {
     "vscode": "^1.9.0"
