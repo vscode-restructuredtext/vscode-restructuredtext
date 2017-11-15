@@ -2,6 +2,7 @@
 import { workspace, Disposable, Diagnostic, DiagnosticSeverity, Range } from 'vscode';
 
 import { LintingProvider, LinterConfiguration, Linter } from './utils/lintingProvider';
+import RstDocumentContentProvider from './rstDocumentContent';
 
 export default class RstLintingProvider implements Linter {
 
@@ -17,7 +18,7 @@ export default class RstLintingProvider implements Linter {
 		if (!section) return;
 
 		var module: string[] = [];
-		var python = workspace.getConfiguration("python").get<string>("pythonPath", null);
+		var python = RstDocumentContentProvider.loadSetting('pythonPath', null, 'python');
 		var build: string;
 		if (python == null) {
 			build = section.get<string>('linter.executablePath', "restructuredtext-lint");
