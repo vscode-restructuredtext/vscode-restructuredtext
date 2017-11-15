@@ -7,6 +7,7 @@ import {
 import RstLintingProvider from './features/rstLinter';
 import RstDocumentContentProvider from './features/rstDocumentContent';
 import * as path from "path";
+import { Configuration } from "./features/utils/configuration";
 
 export function activate(context: ExtensionContext) {
 
@@ -29,7 +30,7 @@ export function activate(context: ExtensionContext) {
         }
     });
 
-    let updateOnTextChanged = RstDocumentContentProvider.loadSetting("updateOnTextChanged", "true");
+    let updateOnTextChanged = Configuration.loadSetting("updateOnTextChanged", "true");
     if (updateOnTextChanged === 'true') {
         workspace.onDidChangeTextDocument(event => {
             if (isRstFile(event.document)) {

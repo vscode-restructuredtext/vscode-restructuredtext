@@ -9,6 +9,7 @@ import * as path from "path";
 let fileUrl = require("file-url");
 import { exec } from "child_process";
 import * as fs from "fs";
+import { Configuration } from "./utils/configuration";
 
 export default class RstDocumentContentProvider implements TextDocumentContentProvider {
     private _context: ExtensionContext;
@@ -30,16 +31,16 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
     public provideTextDocumentContent(uri: Uri): string | Thenable<string> {
         let root = workspace.rootPath;
         this._channel.appendLine("$(workspaceRoot): " + root);
-        this._input = RstDocumentContentProvider.loadSetting("confPath", root);
+        this._input = Configuration.loadSetting("confPath", root);
         this._channel.appendLine("confPath: " + this._input);
-        this._output = RstDocumentContentProvider.loadSetting("builtDocumentationPath", path.join(root, "_build", "html"));
+        this._output = Configuration.loadSetting("builtDocumentationPath", path.join(root, "_build", "html"));
         this._channel.appendLine("builtDocumentationPath: " + this._output);
         let quotedOutput = "\"" + this._output + "\"";
 
-        var python = RstDocumentContentProvider.loadSetting("pythonPath", null, "python");
+        var python = Configuration.loadSetting("pythonPath", null, "python");
         var build: string;
         if (python == null) {
-            build = RstDocumentContentProvider.loadSetting('sphinxBuildPath', null);
+            build = Configuration.loadSetting('sphinxBuildPath', null);
         }
         else {
             build = python + " -m sphinx";
@@ -93,22 +94,6 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
                 ].join("");
             }
         );
-    }
-
-    public static loadSetting(
-        configSection: string, defaultValue: string, header: string = "restructuredtext", expand: boolean = true
-    ): string {
-        var result = workspace.getConfiguration(header).get(configSection, defaultValue);
-        if (expand && result != null) {
-            return RstDocumentContentProvider.expandMacro(result);
-        }
-
-        return result;
-    }
-
-    private static expandMacro(input: string): string {
-        let root = workspace.rootPath;
-        return input.replace("${workspaceRoot}", root);
     }
 
     private relativeDocumentationPath(whole: string): string {
