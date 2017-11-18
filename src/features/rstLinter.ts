@@ -48,6 +48,18 @@ export default class RstLintingProvider implements Linter {
 		let sphinxTextRoles: string[] = section.get<string[]>("linter.sphinxTextRoles");//, ["doc", "ref"]);
 		let diagnostics: Diagnostic[] = [];
 		lines.forEach(function (line) {
+			if (line.includes("No module named restructuredtext_lint"))
+			{
+				diagnostics.push({
+					range: new Range(0, 0, 0, Number.MAX_VALUE),
+					severity: DiagnosticSeverity.Error,
+					message: line,
+					code: null,
+					source: 'restructuredtext-lint'
+				});
+				return;
+			}
+
 			const regex = /([A-Z]+)\s(.+?):([0-9]+)\s(.+)/;
 			const matches = regex.exec(line);
 			if (matches === null) {

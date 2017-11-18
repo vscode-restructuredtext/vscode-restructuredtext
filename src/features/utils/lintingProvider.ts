@@ -146,7 +146,7 @@ export class LintingProvider {
 				}
 				let message: string = null;
 				if ((<any>error).code === 'ENOENT') {
-					message = `Cannot lint ${textDocument.fileName}. The executable was not found. Use the '${this.linter.languageId}.linter.executablePath' setting to configure the location of the executable`;
+					message = `Cannot lint ${textDocument.fileName}. The executable '${executable}' was not found. Use the '${this.linter.languageId}.linter.executablePath' setting to configure the location of the executable`;
 				} else {
 					message = error.message ? error.message : `Failed to run executable using path: ${executable}. Reason is unknown.`;
 				}
