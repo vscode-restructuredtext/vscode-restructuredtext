@@ -6,6 +6,7 @@ import {
 } from "vscode";
 import RstLintingProvider from './features/rstLinter';
 import RstDocumentContentProvider from './features/rstDocumentContent';
+import { underline } from './features/underline';
 import * as path from "path";
 import { Configuration } from "./features/utils/configuration";
 
@@ -19,6 +20,9 @@ export function activate(context: ExtensionContext) {
     let d3 = commands.registerCommand("restructuredtext.showSource", showSource);
 
     context.subscriptions.push(d1, d2, d3, registration);
+    context.subscriptions.push(
+        commands.registerTextEditorCommand('restructuredtext.features.underline.underline', underline)
+    );
 
     let linter = new RstLintingProvider();
     linter.activate(context.subscriptions);
