@@ -48,11 +48,19 @@ that VS Code provides. With live preview enabled, final look-and-feel is just on
 
   The shortcuts are
 
-  - `ctrl+shift+r`      Preview
-  - `ctrl+k r`          Preview to Side
+  - `ctrl+shift+r` (on Mac `cmd+shift+r`)      Preview
+  - `ctrl+k r` (on Mac `cmd+k r`)              Preview to Side
 
 >**Notice:** The preview feature requires Python to be installed. The `sphinx` Python module is also required. 
 Check out the [steps to configure sphinx](docs/sphinx.md).
+
+- Section Builder
+
+  The shortcut is `ctrl+=` (on Mac `cmd+=`). 
+  
+  Pressing the shortcut key would convert the current line under the cursor to a section, by adding adornment (underlines below the title text).
+
+  Pressing the shortcut key multiple times switches among the adornment characters.
 
 - Linter (Experimental, and **restructuredtext-lint must be configured in advanced**)
 
