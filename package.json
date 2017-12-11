@@ -2,7 +2,7 @@
   "name": "restructuredtext",
   "displayName": "reStructuredText",
   "description": "Edit reStructuredText (RST, ReST) with accurate live preview!",
-  "version": "43.0.0",
+  "version": "44.0.0",
   "publisher": "lextudio",
   "engines": {
     "vscode": "^1.11.0"
@@ -32,7 +32,7 @@
     "url": "https://github.com/vscode-restructuredtext/vscode-restructuredtext.git"
   },
   "bugs": "https://github.com/vscode-restructuredtext/vscode-restructuredtext/issues",
-  "main": "./out/extension",
+  "main": "./out/src/extension",
   "activationEvents": [
     "onCommand:restructuredtext.showPreview",
     "onCommand:restructuredtext.showPreviewToSide",
