@@ -37,13 +37,14 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
         this._channel.appendLine("builtDocumentationPath: " + this._output);
         let quotedOutput = "\"" + this._output + "\"";
 
-        var python = Configuration.loadSetting("pythonPath", null, "python");
-        var build: string;
-        if (python == null) {
-            build = Configuration.loadSetting('sphinxBuildPath', null);
-        }
-        else {
-            build = python + " -m sphinx";
+
+        var build = Configuration.loadSetting('sphinxBuildPath', null);
+        if (build == null) {
+            var python = Configuration.loadSetting("pythonPath", null, "python");
+            if (python != null)
+            {
+                build = python + " -m sphinx";
+            }
         }
 
         if (build == null) {

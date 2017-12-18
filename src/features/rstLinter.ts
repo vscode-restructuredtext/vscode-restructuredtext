@@ -18,14 +18,14 @@ export default class RstLintingProvider implements Linter {
 		if (!section) return;
 
 		var module: string[] = [];
-		var python = Configuration.loadSetting('pythonPath', null, 'python');
-		var build: string;
-		if (python == null) {
-			build = section.get<string>('linter.executablePath', "restructuredtext-lint");
-		}
-		else {
-			build = python;
-			module = module.concat(["-m", "restructuredtext_lint.cli"]);
+
+		var build = Configuration.loadSetting('linter.executablePath', null);
+		if (build == null) {
+			var python = Configuration.loadSetting('pythonPath', null, 'python');
+			if (python != null) {
+				build = python;
+				module = module.concat(["-m", "restructuredtext_lint.cli"]);
+			}
 		}
 
 		if (build == null) {
@@ -48,8 +48,7 @@ export default class RstLintingProvider implements Linter {
 		let sphinxTextRoles: string[] = section.get<string[]>("linter.sphinxTextRoles");//, ["doc", "ref"]);
 		let diagnostics: Diagnostic[] = [];
 		lines.forEach(function (line) {
-			if (line.includes("No module named restructuredtext_lint"))
-			{
+			if (line.includes("No module named")) {
 				diagnostics.push({
 					range: new Range(0, 0, 0, Number.MAX_VALUE),
 					severity: DiagnosticSeverity.Error,

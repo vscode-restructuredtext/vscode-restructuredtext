@@ -5,7 +5,7 @@
   "version": "44.0.0",
   "publisher": "lextudio",
   "engines": {
-    "vscode": "^1.11.0"
+    "vscode": "^1.15.0"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.43",
@@ -168,7 +168,7 @@
         },
         "restructuredtext.linter.executablePath": {
           "type": "string",
-          "default": "restructuredtext-lint",
+          "default": null,
           "description": "Points to the restructuredtext-lint exectuable."
         },
         "restructuredtext.linter.run": {
@@ -211,6 +211,8 @@
     "vstest": "node ./node_modules/vscode/bin/test"
   },
   "dependencies": {
-    "file-url": "^1.0.1"
+    "file-url": "^1.0.1",
+    "vscode": "^1.1.10",
+    "vscode-languageclient": "^3.5.0"
   }
 }
