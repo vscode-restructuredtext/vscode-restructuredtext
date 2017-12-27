@@ -42,6 +42,8 @@ It expects `restructuredtext-lint` Python module to be installed and already add
     "restructuredtext.linter.executablePath": "PathToExecutable"
 }
 ```
+> Note that this should be an absolute path.
+> If you don't set this setting, but `python.pythonPath`, then this extension will then pick up that setting instead. Also `python.pythonPath` should be an absolute path.
 
 ## Lint onType or onSave or not at all
 By default the linter will lint on the fly but can be changed to linting as you save. Note that linting on save is most useful when auto-save is on. Use the setting below if to change the behavior with the values onType, onSave, and off,
@@ -102,7 +104,7 @@ The value for `restructuredtext.sphinxBuildPath` above depends on your Python in
 On Windows Python can be installed to all possible locations and does not appear in PATH environment variable. Then you must set this value to the proper sphinx-build.exe file path.
 
 > Note that this should be an absolute path.
-> If you intend to use Python VirtualEnv setup, please set `python.pythonPath` accordingly, and this extension will then pick up that setting instead of `sphinxBuildPath`. Also `python.pythonPath` should be an absolute path.
+> If you don't set this setting, but `python.pythonPath`, then this extension will then pick up that setting instead. Also `python.pythonPath` should be an absolute path.
 
 # IntelliSense Settings
 
