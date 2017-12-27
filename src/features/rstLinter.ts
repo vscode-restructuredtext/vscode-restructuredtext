@@ -65,7 +65,7 @@ export default class RstLintingProvider implements Linter {
 				return;
 			}
 
-			const directiveFilter = /Unknown\sdirective\stype\s\"([a-zA-Z:]+)"\./;
+			const directiveFilter = /Unknown\sdirective\stype\s\"([a-zA-Z\:]+)"\./;
 			const directive = directiveFilter.exec(matches[4]);
 			if (directive !== null) {
 				if (sphinxDirectives.indexOf(directive[1]) > -1) {

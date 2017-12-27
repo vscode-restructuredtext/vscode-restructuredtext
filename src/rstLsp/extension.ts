@@ -18,9 +18,9 @@ export function activate(context: vscode.ExtensionContext, channel: vscode.Outpu
     var serverPath = ".rst/Server";
     if (os.platform() == "win32") {
         serverPath = serverPath + ".exe";
-        serverPath = context.asAbsolutePath(serverPath);
     }
 
+    serverPath = context.asAbsolutePath(serverPath);
     var fs = require('fs');
     let serverModule: string = null;
     if (fs.existsSync(serverPath)) {
