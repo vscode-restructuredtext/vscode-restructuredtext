@@ -16,7 +16,7 @@ export function activate(context: vscode.ExtensionContext, channel: vscode.Outpu
 
     // Defines the search path of your language server DLL. (.NET Core)
     const languageServerPaths = [
-        "../restructuredtext-antlr/Server/bin/release/netcoreapp2.0/win-x64/Server.exe"
+        "../restructuredtext-antlr/Server/bin/Debug/netcoreapp2.0/Server.dll"
     ]
 
     var serverPath = ".rst/Server";
@@ -27,10 +27,11 @@ export function activate(context: vscode.ExtensionContext, channel: vscode.Outpu
     serverPath = context.asAbsolutePath(serverPath);
     var fs = require('fs');
     let serverModule: string = null;
+//*
     if (fs.existsSync(serverPath)) {
         serverModule = serverPath;
     }
-
+//*/
     if (serverModule == null) {
         for (let p of languageServerPaths) {
             p = context.asAbsolutePath(p);
@@ -50,6 +51,14 @@ export function activate(context: vscode.ExtensionContext, channel: vscode.Outpu
         let serverOptions: ServerOptions = {
             run: { command: serverModule, args: [], options: { cwd: workPath } },
             debug: { command: serverModule, args: ["--debug"], options: { cwd: workPath } }
+        }
+
+        if (serverModule.indexOf(".dll") > -1)
+        {
+            serverOptions = {
+                run: { command: "dotnet", args: [serverModule], options: { cwd: workPath } },
+                debug: { command: "dotnet", args: [serverModule, "--debug"], options: { cwd: workPath } }
+            }
         }
 
         // Options to control the language client
