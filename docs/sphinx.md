@@ -125,6 +125,8 @@ To enable IntelliSense, change the value to `false`,
 }
 ```
 
+You need to restart Visual Studio Code for this change to take effect.
+
 # Troubleshooting Guide
 If any error happens, please follow the steps below to locate the possible causes.
 
