@@ -12,10 +12,7 @@ export function activate(context: vscode.ExtensionContext, channel: vscode.Outpu
 
     // Defines the search path of your language server DLL. (.NET Core)
     const languageServerPaths = [
-        "server/DemoLanguageServer.dll",
-        "../../DemoLanguageServer/bin/Debug/netcoreapp1.1/DemoLanguageServer.dll",
-        "../restructuredtext-antlr/Server/bin/Debug/netcoreapp1.1/win7-x64/publish/Server.exe",        
-        "../restructuredtext-antlr/Server/bin/Debug/netcoreapp1.1/Server.dll"
+        "../restructuredtext-antlr/Server/bin/release/netcoreapp2.0/win-x64/Server.exe"
     ]
 
     var serverPath = ".rst/Server";
@@ -47,15 +44,8 @@ export function activate(context: vscode.ExtensionContext, channel: vscode.Outpu
         // If the extension is launched in debug mode then the debug server options are used
         // Otherwise the run options are used
         let serverOptions: ServerOptions = {
-            run: { command: "dotnet", args: [serverModule], options: { cwd: workPath } },
-            debug: { command: "dotnet", args: [serverModule, "--debug"], options: { cwd: workPath } }
-        }
-
-        if (serverModule.indexOf('.exe') > -1) {
-            serverOptions = {
-                run: { command: serverModule, args: [], options: { cwd: workPath } },
-                debug: { command: serverModule, args: ["--debug"], options: { cwd: workPath } }
-            }
+            run: { command: serverModule, args: [], options: { cwd: workPath } },
+            debug: { command: serverModule, args: ["--debug"], options: { cwd: workPath } }
         }
 
         // Options to control the language client
