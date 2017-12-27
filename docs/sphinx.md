@@ -104,6 +104,25 @@ On Windows Python can be installed to all possible locations and does not appear
 > Note that this should be an absolute path.
 > If you intend to use Python VirtualEnv setup, please set `python.pythonPath` accordingly, and this extension will then pick up that setting instead of `sphinxBuildPath`. Also `python.pythonPath` should be an absolute path.
 
+# IntelliSense Settings
+
+This feature is disabled by default. To enable it, a new file `.vscode/settings.json` needs to be created under the root directory shown in your Explorer tab in Visual Studio Code.
+
+Its default content is as below,
+```
+{
+    "restructuredtext.languageServer.disabled": true
+}
+```
+
+To enable IntelliSense, change the value to `false`,
+
+```
+{
+    "restructuredtext.languageServer.disabled": false
+}
+```
+
 # Troubleshooting Guide
 If any error happens, please follow the steps below to locate the possible causes.
 

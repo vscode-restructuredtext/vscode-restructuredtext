@@ -11,7 +11,7 @@
 
 This extension provides rich reStructuredText language support for Visual Studio Code.
 Now you write reStructuredText scripts using the excellent IDE-like interface
-that VS Code provides. With live preview enabled, final look-and-feel is just one click away.
+that VS Code provides.
 
 Homepage for this extension is at [GitHub](https://github.com/vscode-restructuredtext/vscode-restructuredtext).
 
@@ -53,7 +53,7 @@ Homepage for this extension is at [GitHub](https://github.com/vscode-restructure
   - `ctrl+k r` (on Mac `cmd+k r`)              Preview to Side
 
 >**Notice:** The preview feature requires Python to be installed. The `sphinx` Python module is also required. 
-Check out the [steps to configure sphinx](docs/sphinx.md).
+Check out the [steps to configure sphinx support](docs/sphinx.md).
 
 - Section Builder
 
@@ -65,9 +65,19 @@ Check out the [steps to configure sphinx](docs/sphinx.md).
 
 - Linter (Experimental, and **restructuredtext-lint must be configured in advanced**)
 
+  Once configured properly, the linter scans the opened files and highlights those lines with issues detected.
+
+  The PROBLEMS tab should also show all issues detected for easy navigation.
+
 >**Notice:** The linter feature requires `restructuredtext-lint` Python module. 
-Check out the [steps to configure sphinx](docs/sphinx.md).
+Check out the [steps to configure sphinx support](docs/sphinx.md).
 Due to the facts that `restructuredtext-lint` does not support all Sphinx directives, there can be many false positives in its ouput.
+
+- IntelliSense (Experimental)
+
+  Once configured properly, suggestions would be provided when pressing `/` after lines such as `- :doc:` to help input file path much quicker.
+
+>**Notice:** This feature is disabled by default. Check out the [steps to configure sphinx support](docs/sphinx.md).
 
 ## How to install from Marketplace
 
@@ -100,3 +110,6 @@ The linter support is based on [Cody Hoover's ruby-linter](https://marketplace.v
 
 ### Live Preview
 The initial idea was brought from [Thomas Haakon Townsend's ReStructured Text Previewer](https://marketplace.visualstudio.com/items?itemName=tht13.rst-vscode), but soon after moving fully to Sphinx, this extension becomes its own beast.
+
+### IntelliSense
+The IntelliSense support is provided by the new [reStructuredText Language Server](https://github.com/lextm/restructuredtext-antlr).

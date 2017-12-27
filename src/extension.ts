@@ -27,10 +27,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
     let logger = new Logger(text => _channel.append(text));
 
-    let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, logger);
+    var disableLsp = Configuration.loadAnySetting("languageServer.disabled", true);
+    if (!disableLsp) {
+        let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, logger);
+    }
     
     // activate language services
-    let rstLspPromise = RstLanguageServer.activate(context, _channel);
+    let rstLspPromise = RstLanguageServer.activate(context, _channel, disableLsp);
 
     let provider = new RstDocumentContentProvider(context, _channel);
     let registration = vscode.workspace.registerTextDocumentContentProvider("restructuredtext", provider);

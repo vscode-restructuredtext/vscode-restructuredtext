@@ -7,7 +7,11 @@ import * as vscode from 'vscode';
 import { LanguageClient, ServerOptions, LanguageClientOptions } from 'vscode-languageclient';
 import * as path from "path";
 
-export function activate(context: vscode.ExtensionContext, channel: vscode.OutputChannel) {
+export function activate(context: vscode.ExtensionContext, channel: vscode.OutputChannel, disabled: boolean) {
+    if (disabled) {
+        return;
+    }
+    
     var os = require('os');
 
     // Defines the search path of your language server DLL. (.NET Core)

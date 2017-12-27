@@ -266,6 +266,11 @@
           ],
           "description": "Sphinx text roles."
         },
+        "restructuredtext.languageServer.disabled": {
+          "type":"boolean",
+          "default": true,
+          "description": "Flag to disable language server based IntelliSense if critical issues happen."
+        },
         "restructuredtext.languageServer.maxNumberOfProblems": {
           "type": "number",
           "default": 100,

@@ -8,21 +8,24 @@ import {
 import { worker } from "cluster";
 
 export class Configuration {
+    public static loadAnySetting<T>(
+        configSection: string, defaultValue: T, header: string = "restructuredtext"
+    ): T {
+        return workspace.getConfiguration(header).get(configSection, defaultValue);
+    }
+
     public static loadSetting(
         configSection: string, defaultValue: string, header: string = "restructuredtext", expand: boolean = true
     ): string {
-        var result = workspace.getConfiguration(header).get(configSection, defaultValue);
+        var result = this.loadAnySetting<string>(configSection, defaultValue, header);
         if (expand && result != null) {
             return this.expandMacro(result);
         }
-
         return result;
     }
-
     public static setRoot() {
         var old = workspace.getConfiguration("restructuredtext").get<string>("confPath");
-        if (old.indexOf("${workspaceRoot}") > -1)
-        {
+        if (old.indexOf("${workspaceRoot}") > -1) {
             workspace.getConfiguration("restructuredtext").update("confPath", this.expandMacro(old));
         }
     }
