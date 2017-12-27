@@ -5,6 +5,7 @@ import {
     TextDocumentContentProvider, EventEmitter,
     Event, Uri, TextDocument, OutputChannel
 } from "vscode";
+import { worker } from "cluster";
 
 export class Configuration {
     public static loadSetting(
@@ -16,6 +17,14 @@ export class Configuration {
         }
 
         return result;
+    }
+
+    public static setRoot() {
+        var old = workspace.getConfiguration("restructuredtext").get<string>("confPath");
+        if (old.indexOf("${workspaceRoot}") > -1)
+        {
+            workspace.getConfiguration("restructuredtext").update("confPath", this.expandMacro(old));
+        }
     }
 
     private static expandMacro(input: string): string {

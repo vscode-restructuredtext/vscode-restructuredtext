@@ -21,10 +21,10 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
     private _options: any;
     private _channel: OutputChannel;
 
-    constructor(context: ExtensionContext) {
+    constructor(context: ExtensionContext, channel: OutputChannel) {
         this._context = context;
         this._waiting = false;
-        this._channel = window.createOutputChannel("reStructuredText");
+        this._channel = channel;
         context.subscriptions.push(this._channel);
     }
 
@@ -36,8 +36,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
         this._output = Configuration.loadSetting("builtDocumentationPath", path.join(root, "_build", "html"));
         this._channel.appendLine("builtDocumentationPath: " + this._output);
         let quotedOutput = "\"" + this._output + "\"";
-
-
+        
         var build = Configuration.loadSetting('sphinxBuildPath', null);
         if (build == null) {
             var python = Configuration.loadSetting("pythonPath", null, "python");

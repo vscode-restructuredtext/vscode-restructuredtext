@@ -7,6 +7,14 @@
   "engines": {
     "vscode": "^1.15.0"
   },
+  "dependencies": {
+    "file-url": "^1.0.1",
+    "http-proxy-agent": "^2.0.0",
+    "https-proxy-agent": "^2.1.1",
+    "tmp": "0.0.33",
+    "vscode": "^1.1.10",
+    "vscode-languageclient": "^3.5.0"
+  },
   "devDependencies": {
     "@types/mocha": "^2.2.43",
     "@types/node": "^7.0.5",
@@ -15,6 +23,63 @@
     "typescript": "^2.1.5",
     "vscode": "^1.1.10"
   },
+  "runtimeDependencies": [
+    {
+      "description": "reStructuredText Language Server for Windows (x86)",
+      "url": "https://github.com/lextm/restructuredtext-antlr/releases/download/v0.9/win32_x86.zip",
+      "fallbackUrl": "https://github.com/lextm/restructuredtext-antlr/releases/download/v0.9/win32_x86.zip",
+      "installPath": ".rst",
+      "platforms": [
+        "win32"
+      ],
+      "architectures": [
+        "x86"
+      ],
+      "installTestPath": "./.rst/Server.exe"
+    },
+    {
+      "description": "reStructuredText Language Server for Windows (x64)",
+      "url": "https://github.com/lextm/restructuredtext-antlr/releases/download/v0.9/win32_x64.zip",
+      "fallbackUrl": "https://github.com/lextm/restructuredtext-antlr/releases/download/v0.9/win32_x64.zip",
+      "installPath": ".rst",
+      "platforms": [
+        "win32"
+      ],
+      "architectures": [
+        "x86_64"
+      ],
+      "installTestPath": "./.rst/Server.exe"
+    },
+    {
+      "description": "reStructuredText Language Server for macOS (x64)",
+      "url": "https://github.com/lextm/restructuredtext-antlr/releases/download/v0.9/darwin_x64.zip",
+      "fallbackUrl": "https://github.com/lextm/restructuredtext-antlr/releases/download/v0.9/darwin_x64.zip",
+      "installPath": ".rst",
+      "platforms": [
+        "darwin"
+      ],
+      "binaries": [
+        "./Server"
+      ],
+      "installTestPath": "./.rst/Server"
+    },
+    {
+      "description": "reStructuredText Language Server for Linux (x64)",
+      "url": "https://github.com/lextm/restructuredtext-antlr/releases/download/v0.9/linux_x64.zip",
+      "fallbackUrl": "https://github.com/lextm/restructuredtext-antlr/releases/download/v0.9/linux_x64.zip",
+      "installPath": ".rst",
+      "platforms": [
+        "linux"
+      ],
+      "architectures": [
+        "x86_64"
+      ],
+      "binaries": [
+        "./Server"
+      ],
+      "installTestPath": "./.rst/Server"
+    }
+  ],
   "license": "SEE LICENSE IN LICENSE.txt",
   "homepage": "https://github.com/vscode-restructuredtext/vscode-restructuredtext/blob/master/README.md",
   "categories": [
@@ -200,6 +265,21 @@
             "ref"
           ],
           "description": "Sphinx text roles."
+        },
+        "restructuredtext.languageServer.maxNumberOfProblems": {
+          "type": "number",
+          "default": 100,
+          "description": "Controls the maximum number of problems produced by the server."
+        },
+        "restructuredtext.languageServer.trace.server": {
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "off",
+          "description": "Traces the communication between VSCode and the demoLanguageServer service."
         }
       }
     }
@@ -209,10 +289,5 @@
     "compile": "tsc -watch -p ./",
     "postinstall": "node ./node_modules/vscode/bin/install",
     "vstest": "node ./node_modules/vscode/bin/test"
-  },
-  "dependencies": {
-    "file-url": "^1.0.1",
-    "vscode": "^1.1.10",
-    "vscode-languageclient": "^3.5.0"
   }
 }
