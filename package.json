@@ -2,7 +2,7 @@
   "name": "restructuredtext",
   "displayName": "reStructuredText",
   "description": "Edit reStructuredText (RST, ReST) with accurate live preview!",
-  "version": "47.0.0",
+  "version": "48.0.0",
   "publisher": "lextudio",
   "engines": {
     "vscode": "^1.15.0"
@@ -269,7 +269,7 @@
         },
         "restructuredtext.languageServer.disabled": {
           "type": "boolean",
-          "default": true,
+          "default": false,
           "description": "Flag to disable language server based IntelliSense if critical issues happen."
         },
         "restructuredtext.languageServer.maxNumberOfProblems": {
@@ -285,7 +285,7 @@
             "verbose"
           ],
           "default": "off",
-          "description": "Traces the communication between VSCode and the demoLanguageServer service."
+          "description": "Traces the communication between VSCode and the server."
         }
       }
     }

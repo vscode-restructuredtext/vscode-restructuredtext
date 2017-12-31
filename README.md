@@ -77,7 +77,7 @@ Due to the facts that `restructuredtext-lint` does not support all Sphinx direct
 
   Once configured properly, suggestions would be provided when pressing `/` after lines such as `- :doc:` to help input file path much quicker.
 
->**Notice:** This feature is disabled by default. Check out the [steps to configure sphinx support](docs/sphinx.md).
+>**Notice:** This feature is enabled by default since release 48.0.0. To disable it, check out the [steps to configure sphinx support](docs/sphinx.md).
 
 ## How to install from Marketplace
 

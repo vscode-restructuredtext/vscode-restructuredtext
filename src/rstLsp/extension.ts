@@ -11,27 +11,16 @@ export function activate(context: vscode.ExtensionContext, channel: vscode.Outpu
     if (disabled) {
         return;
     }
-    
-    var os = require('os');
 
     // Defines the search path of your language server DLL. (.NET Core)
     const languageServerPaths = [
+        ".rst/Server.exe",
+        ".rst/Server",
         "../restructuredtext-antlr/Server/bin/Debug/netcoreapp2.0/Server.dll"
     ]
 
-    var serverPath = ".rst/Server";
-    if (os.platform() == "win32") {
-        serverPath = serverPath + ".exe";
-    }
-
-    serverPath = context.asAbsolutePath(serverPath);
     var fs = require('fs');
     let serverModule: string = null;
-//*
-    if (fs.existsSync(serverPath)) {
-        serverModule = serverPath;
-    }
-//*/
     if (serverModule == null) {
         for (let p of languageServerPaths) {
             p = context.asAbsolutePath(p);
