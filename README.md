@@ -6,8 +6,8 @@
 [![Open Issues](https://vsmarketplacebadge.apphb.com/rating/lextudio.restructuredtext.svg) ](https://marketplace.visualstudio.com/items?itemName=lextudio.restructuredtext)
 [![Stories in Progress](https://img.shields.io/waffle/label/vscode-restructuredtext/vscode-restructuredtext/in%20progress.svg)](http://waffle.io/vscode-restructuredtext/vscode-restructuredtext) 
 
-> **Notice:**
-> Starting from 32.0.0 release, all path settings require absolute paths.
+> **News:**
+> IntelliSense has been added since 47.0.0 release, thanks to the [new Language Server](https://restructuredtext.net).
 
 This extension provides rich reStructuredText language support for Visual Studio Code.
 Now you write reStructuredText scripts using the excellent IDE-like interface
@@ -112,4 +112,4 @@ The linter support is based on [Cody Hoover's ruby-linter](https://marketplace.v
 The initial idea was brought from [Thomas Haakon Townsend's ReStructured Text Previewer](https://marketplace.visualstudio.com/items?itemName=tht13.rst-vscode), but soon after moving fully to Sphinx, this extension becomes its own beast.
 
 ### IntelliSense
-The IntelliSense support is provided by the new [reStructuredText Language Server](https://github.com/lextm/restructuredtext-antlr).
+The IntelliSense support is provided by the new [reStructuredText Language Server](https://restructuredtext.net).
