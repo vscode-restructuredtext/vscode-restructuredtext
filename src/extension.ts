@@ -27,7 +27,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
     let logger = new Logger(text => _channel.append(text));
 
-    var disableLsp = Configuration.loadAnySetting("languageServer.disabled", false);
+    var disableLsp = Configuration.loadAnySetting("languageServer.disabled", true);
 //*
     if (!disableLsp) {
         let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, logger);

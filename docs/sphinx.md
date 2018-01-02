@@ -108,28 +108,28 @@ On Windows Python can be installed to all possible locations and does not appear
 
 # IntelliSense Settings
 
-This feature is enabled by default. 
+This feature is disabled by default. 
 
-To disable it at directory level, a new file `.vscode/settings.json` needs to be created under the root directory shown in your Explorer tab in Visual Studio Code.
+To enable it at directory level, a new file `.vscode/settings.json` needs to be created under the root directory shown in your Explorer tab in Visual Studio Code.
 
 Its default content is as below,
-```
-{
-    "restructuredtext.languageServer.disabled": false
-}
-```
-
-To disable IntelliSense, change the value to `true`,
-
 ```
 {
     "restructuredtext.languageServer.disabled": true
 }
 ```
 
+To enable IntelliSense, change the value to `false`,
+
+```
+{
+    "restructuredtext.languageServer.disabled": false
+}
+```
+
 You need to restart Visual Studio Code for this change to take effect.
 
-> You can also disable it at machine level, by making this change in `Preferences -> Settings`.
+> You can also enable it at machine level, by making this change in `Preferences -> Settings`.
 
 # Troubleshooting Guide
 If any error happens, please follow the steps below to locate the possible causes.
