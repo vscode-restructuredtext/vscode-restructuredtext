@@ -248,19 +248,19 @@
           "description": "Whether the linter is run on save or on type or disabled."
         },
         "restructuredtext.linter.extraArgs": {
-          "type": "string[]",
+          "type": "array",
           "default": [],
           "description": "Extra arguments to restructuredtext-lint."
         },
         "restructuredtext.linter.sphinxDirectives": {
-          "type": "string[]",
+          "type": "array",
           "default": [
             "toctree"
           ],
           "description": "Sphinx directives."
         },
         "restructuredtext.linter.sphinxTextRoles": {
-          "type": "string[]",
+          "type": "array",
           "default": [
             "doc",
             "ref"
