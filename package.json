@@ -212,6 +212,11 @@
       "type": "object",
       "title": "reStructuredText Configuration",
       "properties": {
+        "restructuredtext.workspaceRoot": {
+          "type": "string",
+          "default": "${workspaceRoot}",
+          "description": "The workspace root. This is a setting for IntelliSense."
+        },
         "restructuredtext.builtDocumentationPath": {
           "type": "string",
           "default": "${workspaceRoot}/_build/html",

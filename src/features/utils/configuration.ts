@@ -23,10 +23,11 @@ export class Configuration {
         }
         return result;
     }
+    
     public static setRoot() {
-        var old = workspace.getConfiguration("restructuredtext").get<string>("confPath");
+        var old = workspace.getConfiguration("restructuredtext").get<string>("workspaceRoot");
         if (old.indexOf("${workspaceRoot}") > -1) {
-            workspace.getConfiguration("restructuredtext").update("confPath", this.expandMacro(old));
+            workspace.getConfiguration("restructuredtext").update("workspaceRoot", this.expandMacro(old));
         }
     }
 
