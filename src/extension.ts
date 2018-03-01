@@ -16,8 +16,6 @@ let _channel: vscode.OutputChannel = null;
 
 export async function activate(context: vscode.ExtensionContext): Promise<{ initializationFinished: Promise<void> }> {
 
-    Configuration.setRoot();
-
     const extensionId = 'lextudio.restructuredtext';
     const extension = vscode.extensions.getExtension(extensionId);
 
@@ -30,6 +28,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     var disableLsp = Configuration.loadAnySetting("languageServer.disabled", true);
 //*
     if (!disableLsp) {
+        Configuration.setRoot();
         let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, logger);
     }
 //*/
