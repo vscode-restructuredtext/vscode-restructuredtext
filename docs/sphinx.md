@@ -74,6 +74,7 @@ Its default content is as below,
     "restructuredtext.builtDocumentationPath" : "${workspaceRoot}/_build/html",
     "restructuredtext.confPath"               : "${workspaceRoot}",
     "restructuredtext.updateOnTextChanged"    : "true",
+    "restructuredtext.updateDelay"            : 300,
     "restructuredtext.sphinxBuildPath"        : null
 }
 ```
@@ -85,6 +86,7 @@ A file with customized values might look as below,
     "restructuredtext.builtDocumentationPath" : "${workspaceRoot}/build/html",
     "restructuredtext.confPath"               : "${workspaceRoot}/source",
     "restructuredtext.updateOnTextChanged"    : "false",
+    "restructuredtext.updateDelay"            : 1000,
     "restructuredtext.sphinxBuildPath"        : "C:\\Users\\lextm\\AppData\\Local\\Programs\\Python\\Python36\\Scripts\\sphinx-build.exe"
 }
 ```
