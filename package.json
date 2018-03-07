@@ -215,7 +215,7 @@
         "restructuredtext.workspaceRoot": {
           "type": "string",
           "default": "${workspaceRoot}",
-          "description": "The workspace root. This is a setting for IntelliSense."
+          "description": "Write-only. Don't modify the value. This is a reserved setting for IntelliSense."
         },
         "restructuredtext.builtDocumentationPath": {
           "type": "string",
@@ -231,6 +231,11 @@
           "type": "string",
           "default": "true",
           "description": "Flag to control whether text changed event triggers preview update."
+        },
+        "restructuredtext.updateDelay": {
+          "type": "number",
+          "default": "300",
+          "description": "Flag to control after how long a changed event triggers preview update."
         },
         "restructuredtext.sphinxBuildPath": {
           "type": "string",

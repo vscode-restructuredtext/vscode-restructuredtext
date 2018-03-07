@@ -20,6 +20,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
     private _cmd: string;
     private _options: any;
     private _channel: OutputChannel;
+    private _timeout: number;
 
     constructor(context: ExtensionContext, channel: OutputChannel) {
         this._context = context;
@@ -31,6 +32,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
     public provideTextDocumentContent(uri: Uri): string | Thenable<string> {
         let root = workspace.rootPath;
         this._channel.appendLine("$(workspaceRoot): " + root);
+        this._timeout = Configuration.loadAnySetting("updateDelay", 300);
         this._input = Configuration.loadSetting("confPath", root);
         this._channel.appendLine("confPath: " + this._input);
         this._output = Configuration.loadSetting("builtDocumentationPath", path.join(root, "_build", "html"));
@@ -70,7 +72,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
             setTimeout(() => {
                 this._waiting = false;
                 this._onDidChange.fire(uri);
-            }, 300);
+            }, this._timeout);
         }
     }
 
