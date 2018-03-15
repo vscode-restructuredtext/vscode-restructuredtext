@@ -49,10 +49,10 @@ export default class RstLintingProvider implements Linter {
 			if (line.includes("No module named")) {
 				diagnostics.push({
 					range: new Range(0, 0, 0, Number.MAX_VALUE),
-					severity: DiagnosticSeverity.Error,
+					severity: DiagnosticSeverity.Warning,
 					message: line,
 					code: null,
-					source: 'restructuredtext-lint'
+					source: 'restructuredtext'
 				});
 				return;
 			}
@@ -69,7 +69,7 @@ export default class RstLintingProvider implements Linter {
 				severity: DiagnosticSeverity.Warning,
 				message: matches[3],
 				code: null,
-				source: 'restructuredtext-lint'
+				source: 'restructuredtext'
 			});
 		});
 		return diagnostics;
