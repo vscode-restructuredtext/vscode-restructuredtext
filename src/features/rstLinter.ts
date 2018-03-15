@@ -24,12 +24,12 @@ export default class RstLintingProvider implements Linter {
 			var python = Configuration.loadSetting('pythonPath', null, 'python');
 			if (python != null) {
 				build = python;
-				module = module.concat(["-m", "restructuredtext_lint.cli"]);
+				module = module.concat(["-m", "doc8.main"]);
 			}
 		}
 
 		if (build == null) {
-			build = "restructuredtext-lint";
+			build = "doc8";
 		}
 
 		return {
@@ -44,8 +44,6 @@ export default class RstLintingProvider implements Linter {
 
 	public process(lines: string[]): Diagnostic[] {
 		let section = workspace.getConfiguration(this.languageId);
-		let sphinxDirectives: string[] = section.get<string[]>("linter.sphinxDirectives");//, ["toctree"]);
-		let sphinxTextRoles: string[] = section.get<string[]>("linter.sphinxTextRoles");//, ["doc", "ref"]);
 		let diagnostics: Diagnostic[] = [];
 		lines.forEach(function (line) {
 			if (line.includes("No module named")) {
@@ -59,33 +57,17 @@ export default class RstLintingProvider implements Linter {
 				return;
 			}
 
-			const regex = /([A-Z]+)\s(.+?):([0-9]+)\s(.+)/;
+			const regex = /(.+?):([0-9]+):\s(.+)/;
 			const matches = regex.exec(line);
 			if (matches === null) {
 				return;
 			}
 
-			const directiveFilter = /Unknown\sdirective\stype\s\"([a-zA-Z\:]+)"\./;
-			const directive = directiveFilter.exec(matches[4]);
-			if (directive !== null) {
-				if (sphinxDirectives.indexOf(directive[1]) > -1) {
-					return;
-				}
-			}
-
-			const textRoleFilter = /Unknown\sinterpreted\stext\srole\s\"([a-zA-Z]+)"\./;
-			const textRole = textRoleFilter.exec(matches[4]);
-			if (textRole !== null) {
-				if (sphinxTextRoles.indexOf(textRole[1]) > -1) {
-					return;
-				}
-			}
-
-			let lineNumber = parseInt(matches[3]) - 1;
+			let lineNumber = parseInt(matches[2]) - 1;
 			diagnostics.push({
 				range: new Range(lineNumber, 0, lineNumber, Number.MAX_VALUE),
-				severity: matches[1].toLowerCase().includes("error") ? DiagnosticSeverity.Error : DiagnosticSeverity.Warning,
-				message: matches[4],
+				severity: DiagnosticSeverity.Warning,
+				message: matches[3],
 				code: null,
 				source: 'restructuredtext-lint'
 			});

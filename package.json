@@ -245,7 +245,7 @@
         "restructuredtext.linter.executablePath": {
           "type": "string",
           "default": null,
-          "description": "Points to the restructuredtext-lint exectuable."
+          "description": "Points to the doc8 exectuable."
         },
         "restructuredtext.linter.run": {
           "type": "string",
@@ -260,22 +260,7 @@
         "restructuredtext.linter.extraArgs": {
           "type": "array",
           "default": [],
-          "description": "Extra arguments to restructuredtext-lint."
-        },
-        "restructuredtext.linter.sphinxDirectives": {
-          "type": "array",
-          "default": [
-            "toctree"
-          ],
-          "description": "Sphinx directives."
-        },
-        "restructuredtext.linter.sphinxTextRoles": {
-          "type": "array",
-          "default": [
-            "doc",
-            "ref"
-          ],
-          "description": "Sphinx text roles."
+          "description": "Extra arguments to doc8."
         },
         "restructuredtext.languageServer.disabled": {
           "type": "boolean",
