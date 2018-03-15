@@ -12,9 +12,9 @@ This extension relies on specific sphinx setup documented below to lint code and
 
     ```pip install sphinx sphinx-autobuild```
 
-4. Install restructuredtext-lint to enable linter support.
+4. Install doc8 to enable linter support.
 
-    ```pip install restructuredtext-lint```
+    ```pip install doc8```
 
 > Note that latest steps on how to install Python and sphinx, please refer to [this article](https://docs.readthedocs.io/en/latest/getting_started.html#in-rst).
 
@@ -33,10 +33,10 @@ Now this project is opened in Visual Studio Code.
 You can preview .rst files as `conf.py` is at the root folder, and the default HTML output folder is `_build/html`.
 
 # Linter Settings
-The linter support wraps `restructuredtext-lint`.
+The linter support wraps `doc8`.
 
 ## Executable Path
-It expects `restructuredtext-lint` Python module to be installed and already added to the path. If it is installed but cannot be found, add the path to your preferences as seen below,
+It expects `doc8` Python module to be installed and already added to the path. If it is installed but cannot be found, add the path to your preferences as seen below,
 ```
 {
     "restructuredtext.linter.executablePath": "PathToExecutable"
@@ -52,16 +52,6 @@ By default the linter will lint on the fly but can be changed to linting as you 
     "restructuredtext.linter.run": "onType"
 }
 ```
-
-## Ignore Sphinx false positives
-`restructuredtext-linter` does not understand Sphinx elements, so it can report false positives. The following settings can filter out some of them,
-```
-{
-    "restructuredtext.linter.sphinxDirectives": ["toctree"],
-    "restructuredtext.linter.sphinxTextRoles": ["doc", "ref"]
-}
-```
-You can add more to reduce false positives reported by the linter feature.
 
 # Live Preview Settings
 You might need to set three settings so as to let this extension locate the generated HTML pages in some cases.

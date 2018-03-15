@@ -63,15 +63,15 @@ Check out the [steps to configure sphinx support](docs/sphinx.md).
 
   Pressing the shortcut key multiple times switches among the adornment characters.
 
-- Linter (Experimental, and **restructuredtext-lint must be configured in advanced**)
+- Linter (Experimental, and **doc8 must be configured in advanced**)
 
   Once configured properly, the linter scans the opened files and highlights those lines with issues detected.
 
   The PROBLEMS tab should also show all issues detected for easy navigation.
 
->**Notice:** The linter feature requires `restructuredtext-lint` Python module. 
+>**Notice:** The linter feature requires `doc8` Python module. 
 Check out the [steps to configure sphinx support](docs/sphinx.md).
-Due to the facts that `restructuredtext-lint` does not support all Sphinx directives, there can be many false positives in its ouput.
+Due to the facts that `doc8` does not support all Sphinx directives, there can be many false positives in its ouput.
 
 - IntelliSense (Experimental)
 
