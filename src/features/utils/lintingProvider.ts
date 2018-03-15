@@ -127,7 +127,7 @@ export class LintingProvider {
 			let decoded = []
 			let diagnostics: vscode.Diagnostic[] = [];
 			
-			let options = vscode.workspace.rootPath ? { cwd: vscode.workspace.rootPath } : undefined;
+			let options = vscode.workspace.rootPath ? { cwd: vscode.workspace.rootPath, shell: true } : undefined;
 			let args: string[] = [];
 			args = args.concat(this.linterConfiguration.module);
 			if (RunTrigger.from(this.linterConfiguration.runTrigger) === RunTrigger.onSave) {
@@ -161,7 +161,7 @@ export class LintingProvider {
 				let lines = decoder.getLines();
 				if (lines && lines.length > 0) {
 					diagnostics = this.linter.process(lines);
-				}					
+				}
 				this.diagnosticCollection.set(textDocument.uri, diagnostics);
 				resolve();
 			}
