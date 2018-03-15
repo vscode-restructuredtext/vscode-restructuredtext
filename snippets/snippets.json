@@ -124,5 +124,11 @@
 		"body": ":kbd:`${1:shortcut}` $0",
 		"description": "Keyboard Shortcut",
 		"scope": "text.restructuredtext"		
+	},
+	"literalinclude": {
+		"prefix": "literalinclude",
+		"body": ".. literalinclude:: ${1:path}\n$0",
+		"description": "Literal Include",
+		"scope": "text.restructuredtext"
 	}
 }
