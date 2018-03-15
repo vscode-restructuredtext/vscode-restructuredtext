@@ -6,9 +6,6 @@
 [![Open Issues](https://vsmarketplacebadge.apphb.com/rating/lextudio.restructuredtext.svg) ](https://marketplace.visualstudio.com/items?itemName=lextudio.restructuredtext)
 [![Stories in Progress](https://img.shields.io/waffle/label/vscode-restructuredtext/vscode-restructuredtext/in%20progress.svg)](http://waffle.io/vscode-restructuredtext/vscode-restructuredtext) 
 
-> **News:**
-> IntelliSense has been added since 47.0.0 release, thanks to the [new Language Server](https://restructuredtext.net).
-
 This extension provides rich reStructuredText language support for Visual Studio Code.
 Now you write reStructuredText scripts using the excellent IDE-like interface
 that VS Code provides.
@@ -19,71 +16,18 @@ Homepage for this extension is at [GitHub](https://github.com/vscode-restructure
 
 ## Features
 
-- Syntax highlighting
-- Code snippets
-  - `code`  			Code block
-  - `image` 			Image
-  - `figure`            Figure
-  - `link`  			Link
-  - `attention` 		Attention
-  - `note`				Note
-  - `warning`			Warning
-  - `error`				Error
-  - `hint`				Hint
-  - `important`			Important
-  - `caution`			Caution
-  - `danger`			Danger
-  - `tip`				Tip
-  - `admonition` 		Admonition
-  - `rubric`			Rubric (footnote)
-  - `doc`               Doc reference
-  - `ref`               Label reference
-  - `label`			Label
-  - `download` 		Download
-  - `file`				File
-  - `kbd`				Keyboard Shortcut
-
-  To trigger snippets, please refer to [Visual Studio Code shortcuts](https://code.visualstudio.com/docs/customization/keybindings).
-  
-- Live Preview (Experimental, and **Sphinx must be configured in advanced**)
-
-  The shortcuts are
-
-  - `ctrl+shift+r` (on Mac `cmd+shift+r`)      Preview
-  - `ctrl+k r` (on Mac `cmd+k r`)              Preview to Side
-
->**Notice:** The preview feature requires Python to be installed. The `sphinx` Python module is also required. 
-Check out the [steps to configure sphinx support](docs/sphinx.md).
-
-- Section Builder
-
-  The shortcut is `ctrl+=` (on Mac `cmd+=`). 
-  
-  Pressing the shortcut key would convert the current line under the cursor to a section, by adding adornment (underlines below the title text).
-
-  Pressing the shortcut key multiple times switches among the adornment characters.
-
-- Linter (Experimental, and **doc8 must be configured in advanced**)
-
-  Once configured properly, the linter scans the opened files and highlights those lines with issues detected.
-
-  The PROBLEMS tab should also show all issues detected for easy navigation.
-
->**Notice:** The linter feature requires `doc8` Python module. 
-Check out the [steps to configure sphinx support](docs/sphinx.md).
-Due to the facts that `doc8` does not support all Sphinx directives, there can be many false positives in its ouput.
-
-- IntelliSense (Experimental)
-
-  Once configured properly, suggestions would be provided when pressing `/` after lines such as `- :doc:` to help input file path much quicker.
-
->**Notice:** This feature is disabled by default. Check out the [steps to configure sphinx support](docs/sphinx.md).
+- Syntax Highlighting
+- [Code Snippets](docs/snippets.md)
+- [Live Preview](docs/sphinx.md)
+- [Section Builder](docs/section.md)
+- [Linter](docs/sphinx.md)
+- [IntelliSense](docs/languageserver.md) (**Experimental**)
 
 ## How to install from Marketplace
 
 This extension is hosted at [Visual Studio Marketplace](https://marketplace.visualstudio.com/items/lextudio.restructuredtext)
 
-1. Upgrade to Visual Studio Code 1.3.0 or above.
+1. Upgrade to Visual Studio Code 1.15.0 or above.
 1. Switch to the Extensions view by clicking the fifth icon in the left most bar.
 1. Type "restructuredtext" in the search box and hit Enter key.
 1. Click "Install" button to install "reStructuredText" extension.
