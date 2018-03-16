@@ -23,6 +23,8 @@ Homepage for this extension is at [GitHub](https://github.com/vscode-restructure
 - [Linter](docs/sphinx.md)
 - [IntelliSense](docs/languageserver.md) (**Experimental**)
 
+Frequent Asked Questions can be found [here](https://github.com/vscode-restructuredtext/vscode-restructuredtext/issues?q=is%3Aissue+label%3A%22faq+candidate%22+).
+
 ## How to install from Marketplace
 
 This extension is hosted at [Visual Studio Marketplace](https://marketplace.visualstudio.com/items/lextudio.restructuredtext)
