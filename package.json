@@ -146,14 +146,14 @@
       },
       {
         "command": "restructuredtext.showPreviewToSide",
-        "key": "ctrl+k r",
-        "mac": "cmd+k r",
+        "key": "ctrl+k ctrl+r",
+        "mac": "cmd+k cmd+r",
         "when": "editorTextFocus"
       },
       {
         "command": "restructuredtext.features.underline.underline",
-        "key": "ctrl+=",
-        "mac": "cmd+=",
+        "key": "ctrl+k ctrl+=",
+        "mac": "cmd+k cmd+=",
         "when": "editorTextFocus"
       }
     ],

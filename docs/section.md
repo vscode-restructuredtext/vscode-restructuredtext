@@ -1,5 +1,5 @@
 # Section Builder
-The shortcut is `ctrl+=` (on Mac `cmd+=`).
+The shortcut is `ctrl+k ctrl+=` (on Mac `cmd+k cmd+=`).
 
 Pressing the shortcut key would convert the current line under the cursor to
 a section, by adding adornment (underlines below the title text).

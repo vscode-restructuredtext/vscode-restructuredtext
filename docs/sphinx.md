@@ -2,8 +2,8 @@
 
 The Live Preview shortcuts are
 
-  - `ctrl+shift+r` (on Mac `cmd+shift+r`)      Preview
-  - `ctrl+k r` (on Mac `cmd+k r`)              Preview to Side
+  - `ctrl+shift+r` (on Mac `cmd+shift+r`)               Preview
+  - `ctrl+k ctrl+r` (on Mac `cmd+k cmd+r`)              Preview to Side
 
 Linting is automatically enabled if the linter `doc8` is installed. The
 linter scans the opened files and highlights those lines with issues
