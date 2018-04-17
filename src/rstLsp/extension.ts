@@ -53,7 +53,10 @@ export function activate(context: vscode.ExtensionContext, channel: vscode.Outpu
         // Options to control the language client
         let clientOptions: LanguageClientOptions = {
             // Register the server for plain text documents
-            documentSelector: ['restructuredtext'],
+            documentSelector: [
+                { language: 'restructuredtext', scheme: 'file' },
+                { language: 'restructuredtext', scheme: 'untitled' }
+            ],
             synchronize: {
                 // Synchronize the setting section 'lspSample' to the server
                 configurationSection: 'restructuredtext',
