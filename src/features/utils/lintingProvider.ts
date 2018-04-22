@@ -107,7 +107,10 @@ export class LintingProvider {
 	}
 
 	private triggerLint(textDocument: vscode.TextDocument): void {
-		if (textDocument.languageId !== this.linter.languageId || this.executableNotFound || RunTrigger.from(this.linterConfiguration.runTrigger) === RunTrigger.off){
+		if (textDocument.languageId !== this.linter.languageId || 
+			textDocument.uri.scheme !== "file" ||
+			this.executableNotFound ||
+			RunTrigger.from(this.linterConfiguration.runTrigger) === RunTrigger.off){
 			return;
 		}
 		let key = textDocument.uri.toString();
