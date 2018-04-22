@@ -10,18 +10,16 @@ This extension provides rich reStructuredText language support for Visual Studio
 Now you write reStructuredText scripts using the excellent IDE-like interface
 that VS Code provides.
 
-Homepage for this extension is at [GitHub](https://github.com/vscode-restructuredtext/vscode-restructuredtext).
-
 ![reStructuredText in Visual Studio Code](images/vscode.png)
 
 ## Features
 
 - Syntax Highlighting
-- [Code Snippets](docs/snippets.md)
-- [Live Preview](docs/sphinx.md)
-- [Section Builder](docs/section.md)
-- [Linter](docs/sphinx.md)
-- [IntelliSense](docs/languageserver.md) (**Experimental**)
+- Code Snippets
+- Live Preview
+- Section Builder
+- Linter
+- IntelliSense(**Experimental**)
 
 Frequent Asked Questions can be found [here](https://github.com/vscode-restructuredtext/vscode-restructuredtext/issues?q=is%3Aissue+label%3A%22faq+candidate%22+).
 
@@ -34,9 +32,11 @@ This extension is hosted at [Visual Studio Marketplace](https://marketplace.visu
 1. Type "restructuredtext" in the search box and hit Enter key.
 1. Click "Install" button to install "reStructuredText" extension.
 
+After installation please visit [the homepage for this extension](https://www.restructuredtext.net) to learn how to use it.
+
 ## Contributing to the code
 
-Check out the [development documentation](docs/development.md) for more details
+Check out the [development documentation](https://www.restructuredtext.net/en/latest/articles/development.html) for more details
 on how to contribute to this extension!
 
 Check the [dashboard on work items](https://waffle.io/vscode-restructuredtext/vscode-restructuredtext).
