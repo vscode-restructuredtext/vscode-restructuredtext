@@ -31,7 +31,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
 
     public provideTextDocumentContent(uri: Uri): string | Thenable<string> {
         let root = workspace.rootPath;
-        this._channel.appendLine("$(workspaceRoot): " + root);
+        this._channel.appendLine("${workspaceRoot}: " + root);
         this._timeout = Configuration.loadAnySetting("updateDelay", 300);
         this._input = Configuration.loadSetting("confPath", root);
         this._channel.appendLine("confPath: " + this._input);
