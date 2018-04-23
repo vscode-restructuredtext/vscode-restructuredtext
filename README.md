@@ -32,7 +32,7 @@ This extension is hosted at [Visual Studio Marketplace](https://marketplace.visu
 1. Type "restructuredtext" in the search box and hit Enter key.
 1. Click "Install" button to install "reStructuredText" extension.
 
-After installation please visit [the homepage for this extension](https://www.restructuredtext.net) to learn how to use it.
+After installation, please visit [the homepage for this extension](https://www.restructuredtext.net) to learn how to use it.
 
 ## Contributing to the code
 
