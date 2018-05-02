@@ -103,6 +103,15 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
     }
 
     private preview(uri: Uri): Thenable<string> {
+        let confFile = path.join(this._input, "conf.py");
+        var fs = require('fs');
+        if (!fs.existsSync(path)) {
+            let errorMessage = "Cannot find " + confFile + ". Please review the value of 'restructuredtext.confPath'.";
+            console.error(errorMessage);
+            this._channel.appendLine("Error: " + errorMessage);
+            return;
+        }
+
         // Calculate full path to built html file.
         let whole = uri.fsPath;
         if (whole.endsWith(".rendered"))
@@ -143,36 +152,20 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
                     }
                 }
 
-                fs.stat(finalName, (error, stat) => {
-                    if (error !== null) {
+                fs.readFile(finalName, "utf8", (err, data) => {
+                    if (err === null) {
+                        let fixed = this.fixLinks(data, finalName);
+                        resolve(fixed);
+                    } else {
                         let errorMessage = [
-                            error.name,
-                            error.message,
-                            error.stack
+                            err.name,
+                            err.message,
+                            err.stack
                         ].join("\n");
                         console.error(errorMessage);
                         this._channel.appendLine("Error: " + errorMessage);
                         reject(errorMessage);
-                        return;
-                        //} else if(err.code === 'ENOENT') {
-                        //    fs.writeFile('log.txt', 'Some log\n');
                     }
-
-                    fs.readFile(finalName, "utf8", (err, data) => {
-                        if (err === null) {
-                            let fixed = this.fixLinks(data, finalName);
-                            resolve(fixed);
-                        } else {
-                            let errorMessage = [
-                                err.name,
-                                err.message,
-                                err.stack
-                            ].join("\n");
-                            console.error(errorMessage);
-                            this._channel.appendLine("Error: " + errorMessage);
-                            reject(errorMessage);
-                        }
-                    });
                 });
             });
         });
