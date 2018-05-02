@@ -2,7 +2,7 @@
   "name": "restructuredtext",
   "displayName": "reStructuredText",
   "description": "reStructuredText language support (RST/ReST linter, preview, IntelliSense and more)",
-  "version": "61.0.0",
+  "version": "62.0.0",
   "publisher": "lextudio",
   "engines": {
     "vscode": "^1.15.0"
