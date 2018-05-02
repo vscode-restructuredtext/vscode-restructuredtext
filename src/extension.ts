@@ -23,6 +23,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
     _channel = vscode.window.createOutputChannel("reStructuredText");
 
+    _channel.appendLine("Please visit https://www.restructuredtext.net to learn how to configure the extension.");
+    _channel.appendLine("The troubleshooting guide can be found at https://www.restructuredtext.net/en/latest/articles/troubleshooting.html.");
+    _channel.appendLine("");
+    _channel.appendLine("");
     let logger = new Logger(text => _channel.append(text));
 
     var disableLsp = Configuration.loadAnySetting("languageServer.disabled", true);
