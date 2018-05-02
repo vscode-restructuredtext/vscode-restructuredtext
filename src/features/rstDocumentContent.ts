@@ -102,14 +102,15 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
         return whole.substring(this._input.length);
     }
 
-    private preview(uri: Uri): Thenable<string> {
+    private preview(uri: Uri): string | Thenable<string> {
+        let help = "Cannot show preview page. Please check OUTPUT | reStructuredText for more information and visit the troubleshooting guide at https://www.restructuredtext.net/en/latest/articles/troubleshooting.html .";
         let confFile = path.join(this._input, "conf.py");
         var fs = require('fs');
         if (!fs.existsSync(path)) {
             let errorMessage = "Cannot find " + confFile + ". Please review the value of 'restructuredtext.confPath'.";
             console.error(errorMessage);
             this._channel.appendLine("Error: " + errorMessage);
-            return;
+            return help;
         }
 
         // Calculate full path to built html file.
@@ -138,8 +139,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
                     ].join("\n");
                     console.error(errorMessage);
                     this._channel.appendLine("Error: " + errorMessage);
-                    reject(errorMessage);
-                    return;
+                    resolve(help);
                 }
 
                 if (process.platform === "win32" && stderr) {
@@ -147,8 +147,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
                     if (errorMessage.indexOf("Exception occurred:") > -1) {
                         console.error(errorMessage);
                         this._channel.appendLine("Error: " + errorMessage);
-                        reject(errorMessage);
-                        return;
+                        resolve(help);
                     }
                 }
 
@@ -164,7 +163,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
                         ].join("\n");
                         console.error(errorMessage);
                         this._channel.appendLine("Error: " + errorMessage);
-                        reject(errorMessage);
+                        resolve(help);
                     }
                 });
             });
