@@ -103,10 +103,10 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
     }
 
     private preview(uri: Uri): string | Thenable<string> {
-        let help = "Cannot show preview page. Please check OUTPUT | reStructuredText for more information and visit the troubleshooting guide at https://www.restructuredtext.net/en/latest/articles/troubleshooting.html .";
+        let help = "<p>Cannot show preview page.</p><p>Please check OUTPUT | reStructuredText for more information.</p><p>You can visit the troubleshooting guide at https://www.restructuredtext.net/en/latest/articles/troubleshooting.html .</p>";
         let confFile = path.join(this._input, "conf.py");
         var fs = require('fs');
-        if (!fs.existsSync(path)) {
+        if (!fs.existsSync(confFile)) {
             let errorMessage = "Cannot find " + confFile + ". Please review the value of 'restructuredtext.confPath'.";
             console.error(errorMessage);
             this._channel.appendLine("Error: " + errorMessage);
