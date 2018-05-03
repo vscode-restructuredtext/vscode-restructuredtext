@@ -103,14 +103,14 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
     }
 
     private preview(uri: Uri): string | Thenable<string> {
-        let help = "<p>Cannot show preview page.</p><p>Please check OUTPUT | reStructuredText for more information.</p><p>You can visit the troubleshooting guide at https://www.restructuredtext.net/en/latest/articles/troubleshooting.html .</p>";
+        let help = "<p>Cannot show preview page.</p><p>You can visit the troubleshooting guide at https://www.restructuredtext.net/en/latest/articles/troubleshooting.html .</p>";
         let confFile = path.join(this._input, "conf.py");
         var fs = require('fs');
         if (!fs.existsSync(confFile)) {
-            let errorMessage = "Cannot find " + confFile + ". Please review the value of 'restructuredtext.confPath'.";
+            let errorMessage = "Cannot find '" + confFile + "'. Please review the value of 'restructuredtext.confPath' in Workspace Settings.";
             console.error(errorMessage);
             this._channel.appendLine("Error: " + errorMessage);
-            return help;
+            return help + "<p>" + errorMessage + "</p>";
         }
 
         // Calculate full path to built html file.
@@ -131,6 +131,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
             exec(this._cmd, this._options, (error, stdout, stderr) => {
                 if (error) {
                     let errorMessage = [
+                        "Cannot run sphinx command '" + this._cmd + "'. Please review the value of 'restructuredtext.sphinxBuildPath' in Workspace Settings.",
                         error.name,
                         error.message,
                         error.stack,
@@ -139,15 +140,19 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
                     ].join("\n");
                     console.error(errorMessage);
                     this._channel.appendLine("Error: " + errorMessage);
-                    resolve(help);
+                    resolve(help + "<p>" + errorMessage + "</p>");
                 }
 
                 if (process.platform === "win32" && stderr) {
-                    let errorMessage = stderr.toString();
-                    if (errorMessage.indexOf("Exception occurred:") > -1) {
+                    var errText = stderr.toString();
+                    if (errText.indexOf("Exception occurred:") > -1) {
+                        let errorMessage = [
+                            "Cannot run sphinx command '" + this._cmd + "' on Windows. Please review the value of 'restructuredtext.sphinxBuildPath' in Workspace Settings.",
+                            errText
+                        ].join("\n");
                         console.error(errorMessage);
                         this._channel.appendLine("Error: " + errorMessage);
-                        resolve(help);
+                        resolve(help + "<p>" + errorMessage + "</p>");
                     }
                 }
 
@@ -157,13 +162,14 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
                         resolve(fixed);
                     } else {
                         let errorMessage = [
+                            "Cannot read page '" + finalName + "'.  Please review the value of 'restructuredtext.builtDocumentationPath' in Workspace Settings.",
                             err.name,
                             err.message,
                             err.stack
                         ].join("\n");
                         console.error(errorMessage);
                         this._channel.appendLine("Error: " + errorMessage);
-                        resolve(help);
+                        resolve(help + "<p>" + errorMessage + "</p>");
                     }
                 });
             });
