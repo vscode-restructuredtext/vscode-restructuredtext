@@ -44,7 +44,7 @@ Check the [dashboard on work items](https://waffle.io/vscode-restructuredtext/vs
 ## License
 
 This extension is [licensed under the MIT License](LICENSE.txt).  Please see the
-[third-party notices](Third Party Notices.txt) file for details on the third-party
+[third-party notices](https://www.restructuredtext.net/en/latest/articles/thirdparties.html) file for details on the third-party
 files that we include with releases of this project.
 
 ## Acknowledgements
