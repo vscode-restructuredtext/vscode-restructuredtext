@@ -98,19 +98,24 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
         );
     }
 
+    private showHelp(error: string): string {
+        let help = "<p>Cannot show preview page.</p>\
+        <p>You can visit the troubleshooting guide at https://www.restructuredtext.net/en/latest/articles/troubleshooting.html .</p>";
+        return help + "<p>" + error + "</p>";
+    }
+
     private relativeDocumentationPath(whole: string): string {
         return whole.substring(this._input.length);
     }
 
     private preview(uri: Uri): string | Thenable<string> {
-        let help = "<p>Cannot show preview page.</p><p>You can visit the troubleshooting guide at https://www.restructuredtext.net/en/latest/articles/troubleshooting.html .</p>";
         let confFile = path.join(this._input, "conf.py");
         var fs = require('fs');
         if (!fs.existsSync(confFile)) {
             let errorMessage = "Cannot find '" + confFile + "'. Please review the value of 'restructuredtext.confPath' in Workspace Settings.";
             console.error(errorMessage);
             this._channel.appendLine("Error: " + errorMessage);
-            return help + "<p>" + errorMessage + "</p>";
+            return this.showHelp(errorMessage);
         }
 
         // Calculate full path to built html file.
@@ -140,7 +145,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
                     ].join("\n");
                     console.error(errorMessage);
                     this._channel.appendLine("Error: " + errorMessage);
-                    resolve(help + "<p>" + errorMessage + "</p>");
+                    resolve(this.showHelp(errorMessage));
                 }
 
                 if (process.platform === "win32" && stderr) {
@@ -152,7 +157,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
                         ].join("\n");
                         console.error(errorMessage);
                         this._channel.appendLine("Error: " + errorMessage);
-                        resolve(help + "<p>" + errorMessage + "</p>");
+                        resolve(this.showHelp(errorMessage));
                     }
                 }
 
@@ -169,7 +174,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
                         ].join("\n");
                         console.error(errorMessage);
                         this._channel.appendLine("Error: " + errorMessage);
-                        resolve(help + "<p>" + errorMessage + "</p>");
+                        resolve(this.showHelp(errorMessage));
                     }
                 });
             });
