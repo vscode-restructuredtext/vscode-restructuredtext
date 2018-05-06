@@ -100,7 +100,8 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
 
     private showHelp(error: string): string {
         let help = "<p>Cannot show preview page.</p>\
-        <p>You can visit the troubleshooting guide at https://www.restructuredtext.net/en/latest/articles/troubleshooting.html .</p>";
+        <p>Diagnostics information has been written to OUTPUT | reStructuredText panel.</p>\
+        <p>More information can be found in the troubleshooting guide at https://www.restructuredtext.net/en/latest/articles/troubleshooting.html .</p>";
         return help + "<p>" + error + "</p>";
     }
 
