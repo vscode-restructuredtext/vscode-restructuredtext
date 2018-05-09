@@ -19,7 +19,7 @@ that VS Code provides.
 - Live Preview
 - Section Builder
 - Linter
-- IntelliSense(**Experimental**)
+- IntelliSense (**Experimental**)
 
 Frequent Asked Questions can be found [here](https://github.com/vscode-restructuredtext/vscode-restructuredtext/issues?q=is%3Aissue+label%3A%22faq+candidate%22+).
 
