@@ -21,14 +21,12 @@ export function activate(context: vscode.ExtensionContext, channel: vscode.Outpu
 
     var fs = require('fs');
     let serverModule: string = null;
-    if (serverModule == null) {
-        for (let p of languageServerPaths) {
-            p = context.asAbsolutePath(p);
-            // console.log(p);
-            if (fs.existsSync(p)) {
-                serverModule = p;
-                break;
-            }
+    for (let p of languageServerPaths) {
+        p = context.asAbsolutePath(p);
+        // console.log(p);
+        if (fs.existsSync(p)) {
+            serverModule = p;
+            break;
         }
     }
 
@@ -60,7 +58,7 @@ export function activate(context: vscode.ExtensionContext, channel: vscode.Outpu
             synchronize: {
                 // Synchronize the setting section 'lspSample' to the server
                 configurationSection: 'restructuredtext',
-                // Notify the server about file changes to '.clientrc files contain in the workspace
+                // Notify the server about file changes to '.clientrc' files contain in the workspace
                 fileEvents: [
                     vscode.workspace.createFileSystemWatcher('**/conf.py'),
                     vscode.workspace.createFileSystemWatcher("**/.rst"),
