@@ -227,6 +227,11 @@
           "default": "${workspaceRoot}",
           "description": "The folder that contains conf.py relative to workspace root. This is an absolute path, and you can use ${workspaceRoot} to represent workspace root folder."
         },
+        "restructuredtext.confInSameOrParentDir": {
+          "type": "boolean",
+          "default": true,
+          "description": "Search for Sphinx conf.py in the same directory as the file being edited or a parent directory."
+        },
         "restructuredtext.updateOnTextChanged": {
           "type": "string",
           "default": "true",

@@ -30,20 +30,28 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
     }
 
     public provideTextDocumentContent(uri: Uri): string | Thenable<string> {
-        let root = workspace.rootPath;
-        this._channel.appendLine("${workspaceRoot}: " + root);
         this._timeout = Configuration.loadAnySetting("updateDelay", 300);
-        this._input = Configuration.loadSetting("confPath", root);
-        this._channel.appendLine("confPath: " + this._input);
-        this._output = Configuration.loadSetting("builtDocumentationPath", path.join(root, "_build", "html"));
+
+        // Get path to the source RST file
+        let rstPath = uri.fsPath;
+        if (rstPath.endsWith(".rendered"))
+            rstPath = rstPath.substring(0, rstPath.lastIndexOf("."));
+        this._channel.appendLine("Source file: " + rstPath);
+
+        // Get the directory where the conf.py file is located
+        this._input = this.findConfPyDir(rstPath);
+        this._channel.appendLine("Sphinx conf.py directory: " + this._input);
+
+        // The directory where Sphinx will write the html output
+        let defaultOutput = path.join(this._input, "_build", "html");
+        this._output = Configuration.loadSetting("builtDocumentationPath", defaultOutput);
         this._channel.appendLine("builtDocumentationPath: " + this._output);
         let quotedOutput = "\"" + this._output + "\"";
-        
+
         var build = Configuration.loadSetting('sphinxBuildPath', null);
         if (build == null) {
             var python = Configuration.loadSetting("pythonPath", null, "python");
-            if (python != null)
-            {
+            if (python != null) {
                 build = python + " -m sphinx";
             }
         }
@@ -52,6 +60,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
             build = "sphinx-build";
         }
 
+        // Configure the sphinx-build command
         this._options = { cwd: this._input };
         this._cmd = [
             build,
@@ -59,7 +68,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
             ".",
             quotedOutput
         ].join(" ");
-        return this.preview(uri);
+        return this.preview(rstPath);
     }
 
     get onDidChange(): Event<Uri> {
@@ -76,11 +85,50 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
         }
     }
 
-    private errorSnippet(error: string): string {
-        return `
-                <body>
-                    ${error}
-                </body>`;
+    private findConfPyDir(rstPath: string): string {
+        // Sanity check - the file we are previewing must exist
+        if (!fs.existsSync(rstPath) || !fs.statSync(rstPath).isFile) {
+            return this.showError("Internal error: RST extension got invalid file name: " + rstPath);
+        }
+
+        // Check directory where RST file is located and parent directories for the conf.py file
+        let walkDirs = Configuration.loadAnySetting("confInSameOrParentDir", true);
+        this._channel.appendLine("confInSameOrParentDir: " + walkDirs);
+
+        // Used if confInSameOrParentDir directory walking is disabled or fails
+        this._channel.appendLine("${workspaceRoot}: " + workspace.rootPath);
+        let confPathFromSettings = Configuration.loadSetting("confPath", workspace.rootPath);
+        this._channel.appendLine("confPath: " + confPathFromSettings);
+
+        // Directory walking turned off, just return the configured value
+        if (!walkDirs)
+            return confPathFromSettings;
+
+        // Walk the directory up from the RST file directory looking for the conf.py file
+        let dirName = rstPath;
+        while (true) {
+            // Get the name of the parent directory
+            let parentDir = path.normalize(dirName + "/..");
+
+            // Check if we are at the root directory already to avoid an infinte loop
+            if (parentDir == dirName)
+                break;
+
+            // Sanity check - the parent directory must exist
+            if (!fs.existsSync(parentDir) || !fs.statSync(parentDir).isDirectory)
+                break;
+
+            // Check this directory  for conf.py
+            this._channel.appendLine("Looking for conf.py in: " + parentDir);
+            let confPath = path.join(parentDir, "conf.py");
+            if (fs.existsSync(confPath) && fs.statSync(confPath).isFile)
+                return parentDir;
+
+            dirName = parentDir;
+        }
+
+        // Fallback to the configured / default value
+        return confPathFromSettings;
     }
 
     private fixLinks(document: string, documentPath: string): string {
@@ -105,30 +153,29 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
         return help + "<p>" + error + "</p>";
     }
 
+    private showError(errorMessage: string) {
+        console.error(errorMessage);
+        this._channel.appendLine("Error: " + errorMessage);
+        return this.showHelp(errorMessage);
+    }
+
     private relativeDocumentationPath(whole: string): string {
         return whole.substring(this._input.length);
     }
 
-    private preview(uri: Uri): string | Thenable<string> {
+    private preview(rstPath: string): string | Thenable<string> {
         let confFile = path.join(this._input, "conf.py");
         var fs = require('fs');
         if (!fs.existsSync(confFile)) {
-            let errorMessage = "Cannot find '" + confFile + "'. Please review the value of 'restructuredtext.confPath' in Workspace Settings.";
-            console.error(errorMessage);
-            this._channel.appendLine("Error: " + errorMessage);
-            return this.showHelp(errorMessage);
+            return this.showError("Cannot find '" + confFile + "'. Please review the value of 'restructuredtext.confPath' in Workspace Settings.");
         }
 
         // Calculate full path to built html file.
-        let whole = uri.fsPath;
-        if (whole.endsWith(".rendered"))
-            whole = whole.substring(0, whole.lastIndexOf("."));
+        let whole = rstPath;
         let ext = whole.lastIndexOf(".");
         whole = whole.substring(0, ext) + ".html";
 
         let finalName = path.join(this._output, this.relativeDocumentationPath(whole));
-
-        this._channel.appendLine("Source file: " + uri.fsPath);
         this._channel.appendLine("Compiler: " + this._cmd);
         this._channel.appendLine("HTML file: " + finalName);
 
