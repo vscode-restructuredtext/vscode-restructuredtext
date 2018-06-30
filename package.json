@@ -220,12 +220,12 @@
         "restructuredtext.builtDocumentationPath": {
           "type": "string",
           "default": null,
-          "description": "Sphinx HTML output folder. Defaults to 'restructuredtext.confPath'/_build/html This is an absolute path, and you can use ${workspaceRoot} to represent workspace root folder."
+          "description": "Sphinx's HTML output folder. Defaults to 'restructuredtext.confPath'/_build/html This is an absolute path, and you can use ${workspaceRoot} to represent the workspace root folder."
         },
         "restructuredtext.confPath": {
           "type": "string",
           "default": null,
-          "description": "The folder that contains conf.py. Set this if the directory is not found automatically. This is an absolute path, and you can use ${workspaceRoot} to represent workspace root folder."
+          "description": "Sphinx's configuration folder containing conf.py. Set this option if the path is not found automatically. This is an absolute path, and you can use ${workspaceRoot} to represent the workspace root folder."
         },
         "restructuredtext.updateOnTextChanged": {
           "type": "string",
@@ -240,12 +240,12 @@
         "restructuredtext.sphinxBuildPath": {
           "type": "string",
           "default": null,
-          "description": "The full path of sphinx-build utility. This is an absolute path, and you can use ${workspaceRoot} to represent workspace root folder."
+          "description": "The full path of the sphinx-build executable. This is an absolute path, and you can use ${workspaceRoot} to represent the workspace root folder."
         },
         "restructuredtext.linter.executablePath": {
           "type": "string",
           "default": null,
-          "description": "Points to the doc8 exectuable."
+          "description": "Points to the doc8 executable."
         },
         "restructuredtext.linter.run": {
           "type": "string",
