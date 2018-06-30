@@ -219,18 +219,13 @@
         },
         "restructuredtext.builtDocumentationPath": {
           "type": "string",
-          "default": "${workspaceRoot}/_build/html",
-          "description": "HTML page output folder relative to workspace root. This is an absolute path, and you can use ${workspaceRoot} to represent workspace root folder."
+          "default": null,
+          "description": "Sphinx HTML output folder. Defaults to 'restructuredtext.confPath'/_build/html This is an absolute path, and you can use ${workspaceRoot} to represent workspace root folder."
         },
         "restructuredtext.confPath": {
           "type": "string",
-          "default": "${workspaceRoot}",
-          "description": "The folder that contains conf.py relative to workspace root. This is an absolute path, and you can use ${workspaceRoot} to represent workspace root folder."
-        },
-        "restructuredtext.confInSameOrParentDir": {
-          "type": "boolean",
-          "default": true,
-          "description": "Search for Sphinx conf.py in the same directory as the file being edited or a parent directory."
+          "default": null,
+          "description": "The folder that contains conf.py. Set this if the directory is not found automatically. This is an absolute path, and you can use ${workspaceRoot} to represent workspace root folder."
         },
         "restructuredtext.updateOnTextChanged": {
           "type": "string",

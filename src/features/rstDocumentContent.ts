@@ -10,6 +10,7 @@ let fileUrl = require("file-url");
 import { exec } from "child_process";
 import * as fs from "fs";
 import { Configuration } from "./utils/configuration";
+import { ConfPyFinder } from "./utils/confPyFinder";
 
 export default class RstDocumentContentProvider implements TextDocumentContentProvider {
     private _context: ExtensionContext;
@@ -29,7 +30,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
         context.subscriptions.push(this._channel);
     }
 
-    public provideTextDocumentContent(uri: Uri): string | Thenable<string> {
+    public provideTextDocumentContent(uri: Uri): Promise<string> {
         this._timeout = Configuration.loadAnySetting("updateDelay", 300);
 
         // Get path to the source RST file
@@ -39,36 +40,41 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
         this._channel.appendLine("Source file: " + rstPath);
 
         // Get the directory where the conf.py file is located
-        this._input = this.findConfPyDir(rstPath);
-        this._channel.appendLine("Sphinx conf.py directory: " + this._input);
+        return ConfPyFinder.findConfDir(rstPath, this._channel).then(confDir => {
+            this._input = confDir;
+            this._channel.appendLine("Sphinx conf.py directory: " + this._input);
 
-        // The directory where Sphinx will write the html output
-        let defaultOutput = path.join(this._input, "_build", "html");
-        this._output = Configuration.loadSetting("builtDocumentationPath", defaultOutput);
-        this._channel.appendLine("builtDocumentationPath: " + this._output);
-        let quotedOutput = "\"" + this._output + "\"";
+            // The directory where Sphinx will write the html output
+            let out = Configuration.loadSetting("builtDocumentationPath", null);
+            if (out == null)
+                this._output = path.join(this._input, "_build", "html");
+            else
+                this._output = out;
+            this._channel.appendLine("Sphinx html directory: " + this._output);
+            let quotedOutput = "\"" + this._output + "\"";
 
-        var build = Configuration.loadSetting('sphinxBuildPath', null);
-        if (build == null) {
-            var python = Configuration.loadSetting("pythonPath", null, "python");
-            if (python != null) {
-                build = python + " -m sphinx";
+            var build = Configuration.loadSetting('sphinxBuildPath', null);
+            if (build == null) {
+                var python = Configuration.loadSetting("pythonPath", null, "python");
+                if (python != null) {
+                    build = python + " -m sphinx";
+                }
             }
-        }
 
-        if (build == null) {
-            build = "sphinx-build";
-        }
+            if (build == null) {
+                build = "sphinx-build";
+            }
 
-        // Configure the sphinx-build command
-        this._options = { cwd: this._input };
-        this._cmd = [
-            build,
-            "-b html",
-            ".",
-            quotedOutput
-        ].join(" ");
-        return this.preview(rstPath);
+            // Configure the sphinx-build command
+            this._options = { cwd: this._input };
+            this._cmd = [
+                build,
+                "-b html",
+                ".",
+                quotedOutput
+            ].join(" ");
+            return this.preview(rstPath);
+        });
     }
 
     get onDidChange(): Event<Uri> {
@@ -83,52 +89,6 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
                 this._onDidChange.fire(uri);
             }, this._timeout);
         }
-    }
-
-    private findConfPyDir(rstPath: string): string {
-        // Sanity check - the file we are previewing must exist
-        if (!fs.existsSync(rstPath) || !fs.statSync(rstPath).isFile) {
-            return this.showError("Internal error: RST extension got invalid file name: " + rstPath);
-        }
-
-        // Check directory where RST file is located and parent directories for the conf.py file
-        let walkDirs = Configuration.loadAnySetting("confInSameOrParentDir", true);
-        this._channel.appendLine("confInSameOrParentDir: " + walkDirs);
-
-        // Used if confInSameOrParentDir directory walking is disabled or fails
-        this._channel.appendLine("${workspaceRoot}: " + workspace.rootPath);
-        let confPathFromSettings = Configuration.loadSetting("confPath", workspace.rootPath);
-        this._channel.appendLine("confPath: " + confPathFromSettings);
-
-        // Directory walking turned off, just return the configured value
-        if (!walkDirs)
-            return confPathFromSettings;
-
-        // Walk the directory up from the RST file directory looking for the conf.py file
-        let dirName = rstPath;
-        while (true) {
-            // Get the name of the parent directory
-            let parentDir = path.normalize(dirName + "/..");
-
-            // Check if we are at the root directory already to avoid an infinte loop
-            if (parentDir == dirName)
-                break;
-
-            // Sanity check - the parent directory must exist
-            if (!fs.existsSync(parentDir) || !fs.statSync(parentDir).isDirectory)
-                break;
-
-            // Check this directory  for conf.py
-            this._channel.appendLine("Looking for conf.py in: " + parentDir);
-            let confPath = path.join(parentDir, "conf.py");
-            if (fs.existsSync(confPath) && fs.statSync(confPath).isFile)
-                return parentDir;
-
-            dirName = parentDir;
-        }
-
-        // Fallback to the configured / default value
-        return confPathFromSettings;
     }
 
     private fixLinks(document: string, documentPath: string): string {
@@ -153,7 +113,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
         return help + "<p>" + error + "</p>";
     }
 
-    private showError(errorMessage: string) {
+    private showError(errorMessage: string): string {
         console.error(errorMessage);
         this._channel.appendLine("Error: " + errorMessage);
         return this.showHelp(errorMessage);
@@ -191,9 +151,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
                         "",
                         stderr.toString()
                     ].join("\n");
-                    console.error(errorMessage);
-                    this._channel.appendLine("Error: " + errorMessage);
-                    resolve(this.showHelp(errorMessage));
+                    resolve(this.showError(errorMessage));
                 }
 
                 if (process.platform === "win32" && stderr) {
@@ -203,9 +161,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
                             "Cannot run sphinx command '" + this._cmd + "' on Windows. Please review the value of 'restructuredtext.sphinxBuildPath' in Workspace Settings.",
                             errText
                         ].join("\n");
-                        console.error(errorMessage);
-                        this._channel.appendLine("Error: " + errorMessage);
-                        resolve(this.showHelp(errorMessage));
+                        resolve(this.showError(errorMessage));
                     }
                 }
 
@@ -220,9 +176,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
                             err.message,
                             err.stack
                         ].join("\n");
-                        console.error(errorMessage);
-                        this._channel.appendLine("Error: " + errorMessage);
-                        resolve(this.showHelp(errorMessage));
+                        resolve(this.showError(errorMessage));
                     }
                 });
             });
