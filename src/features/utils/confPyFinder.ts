@@ -50,7 +50,6 @@ export class ConfPyFinder {
 
         // Found multiple conf.py files, let the user decide
         return window.showQuickPick(paths, {
-            matchOnDescription: true,
             placeHolder: `Select 1 of ${paths.length} Sphinx directories`
         });
     }
