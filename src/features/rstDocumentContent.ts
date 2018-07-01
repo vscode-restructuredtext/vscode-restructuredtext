@@ -10,7 +10,7 @@ let fileUrl = require("file-url");
 import { exec } from "child_process";
 import * as fs from "fs";
 import { Configuration } from "./utils/configuration";
-import { ConfPyFinder } from "./utils/confPyFinder";
+import { RstTransformerSelector, RstTransformerConfig } from "./utils/confPyFinder";
 
 export default class RstDocumentContentProvider implements TextDocumentContentProvider {
     private _context: ExtensionContext;
@@ -22,6 +22,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
     private _options: any;
     private _channel: OutputChannel;
     private _timeout: number;
+    private _rstTransformerConfig: RstTransformerConfig;
 
     constructor(context: ExtensionContext, channel: OutputChannel) {
         this._context = context;
@@ -40,40 +41,77 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
         this._channel.appendLine("Source file: " + rstPath);
 
         // Get the directory where the conf.py file is located
-        return ConfPyFinder.findConfDir(rstPath, this._channel).then(confDir => {
-            this._input = confDir;
-            this._channel.appendLine("Sphinx conf.py directory: " + this._input);
+        return this.getRstTransformerConfig(rstPath).then(rstTransformerConf => {
+            this._rstTransformerConfig = rstTransformerConf;
+            this._input = rstTransformerConf.confPyDirectory;
+            let htmlPath = "";
 
-            // The directory where Sphinx will write the html output
-            let out = Configuration.loadSetting("builtDocumentationPath", null);
-            if (out == null)
-                this._output = path.join(this._input, "_build", "html");
-            else
-                this._output = out;
-            this._channel.appendLine("Sphinx html directory: " + this._output);
-            let quotedOutput = "\"" + this._output + "\"";
+            // Configure Sphinx
+            if (rstTransformerConf.useSphinx) {
+                this._channel.appendLine("Sphinx conf.py directory: " + this._input);
 
-            var build = Configuration.loadSetting('sphinxBuildPath', null);
-            if (build == null) {
-                var python = Configuration.loadSetting("pythonPath", null, "python");
-                if (python != null) {
-                    build = python + " -m sphinx";
+                // The directory where Sphinx will write the html output
+                let out = Configuration.loadSetting("builtDocumentationPath", null);
+                if (out == null)
+                    this._output = path.join(this._input, "_build", "html");
+                else
+                    this._output = out;
+                this._channel.appendLine("Sphinx html directory: " + this._output);
+                let quotedOutput = "\"" + this._output + "\"";
+
+                var build = Configuration.loadSetting('sphinxBuildPath', null);
+                if (build == null) {
+                    var python = Configuration.loadSetting("pythonPath", null, "python");
+                    if (python != null) {
+                        build = python + " -m sphinx";
+                    }
+                }
+
+                if (build == null) {
+                    build = "sphinx-build";
+                }
+
+                // Configure the sphinx-build command
+                this._options = { cwd: this._input };
+                this._cmd = [
+                    build,
+                    "-b html",
+                    ".",
+                    quotedOutput
+                ].join(" ");
+
+                // Calculate full path to built html file.
+                let whole = rstPath;
+                let ext = whole.lastIndexOf(".");
+                whole = whole.substring(0, ext) + ".html";
+                htmlPath = path.join(this._output, this.relativeDocumentationPath(whole));
+
+                // Make sure the conf.py file exists
+                let confFile = path.join(this._input, "conf.py");
+                var fs = require('fs');
+                if (!fs.existsSync(confFile)) {
+                    return this.showError("Cannot find '" + confFile + "'. Please review the value of 'restructuredtext.confPath' in Workspace Settings.");
                 }
             }
+            // Configure rst2html.py
+            else {
+                var build = Configuration.loadSetting('rst2htmlCommand', null);
+                if (build == null) {
+                    build = "rst2html.py";
+                }
 
-            if (build == null) {
-                build = "sphinx-build";
+                let htmlBase = path.basename(rstPath) + "_rst2html_output.html";
+                htmlPath = path.join(this._input, htmlBase);
+
+                // Configure the rst2html.py command
+                this._options = { cwd: this._input };
+                this._cmd = [
+                    build,
+                    "'" + path.basename(rstPath) + "'",
+                    "'" + htmlBase + "'"
+                ].join(" ");
             }
-
-            // Configure the sphinx-build command
-            this._options = { cwd: this._input };
-            this._cmd = [
-                build,
-                "-b html",
-                ".",
-                quotedOutput
-            ].join(" ");
-            return this.preview(rstPath);
+            return this.preview(htmlPath);
         });
     }
 
@@ -106,6 +144,13 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
         );
     }
 
+    private async getRstTransformerConfig(rstPath): Promise<RstTransformerConfig> {
+        if (this._rstTransformerConfig)
+            return Promise.resolve(this._rstTransformerConfig);
+        else
+            return RstTransformerSelector.findConfDir(rstPath, this._channel);
+    }
+
     private showHelp(error: string): string {
         let help = "<p>Cannot show preview page.</p>\
         <p>Diagnostics information has been written to OUTPUT | reStructuredText panel.</p>\
@@ -123,23 +168,11 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
         return whole.substring(this._input.length);
     }
 
-    private preview(rstPath: string): string | Thenable<string> {
-        let confFile = path.join(this._input, "conf.py");
-        var fs = require('fs');
-        if (!fs.existsSync(confFile)) {
-            return this.showError("Cannot find '" + confFile + "'. Please review the value of 'restructuredtext.confPath' in Workspace Settings.");
-        }
-
-        // Calculate full path to built html file.
-        let whole = rstPath;
-        let ext = whole.lastIndexOf(".");
-        whole = whole.substring(0, ext) + ".html";
-
-        let finalName = path.join(this._output, this.relativeDocumentationPath(whole));
+    private preview(htmlPath: string): string | Thenable<string> {
         this._channel.appendLine("Compiler: " + this._cmd);
-        this._channel.appendLine("HTML file: " + finalName);
+        this._channel.appendLine("HTML file: " + htmlPath);
 
-        // Display file.
+        // Build and display file.
         return new Promise<string>((resolve, reject) => {
             exec(this._cmd, this._options, (error, stdout, stderr) => {
                 if (error) {
@@ -165,13 +198,13 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
                     }
                 }
 
-                fs.readFile(finalName, "utf8", (err, data) => {
+                fs.readFile(htmlPath, "utf8", (err, data) => {
                     if (err === null) {
-                        let fixed = this.fixLinks(data, finalName);
+                        let fixed = this.fixLinks(data, htmlPath);
                         resolve(fixed);
                     } else {
                         let errorMessage = [
-                            "Cannot read page '" + finalName + "'.  Please review the value of 'restructuredtext.builtDocumentationPath' in Workspace Settings.",
+                            "Cannot read page '" + htmlPath + "'.  Please review the value of 'restructuredtext.builtDocumentationPath' in Workspace Settings.",
                             err.name,
                             err.message,
                             err.stack

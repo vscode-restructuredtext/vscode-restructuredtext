@@ -2,32 +2,57 @@
 
 import * as path from "path";
 import * as fs from "fs";
-import { workspace, window, OutputChannel, Uri } from "vscode";
+import { workspace, window, OutputChannel, Uri, QuickPickItem } from "vscode";
 import { Configuration } from "./configuration";
 
-export class ConfPyFinder {
-    public static async findConfDir(rstPath: string, channel: OutputChannel): Promise<string> {
+
+/**
+ * Configuration for how to transform rst files to html. Either use Sphinx
+ * with a gven conf.py file, or use rst2html without any configuration
+ */
+export class RstTransformerConfig implements QuickPickItem {
+    public label: string;
+    public description: string = "Use Sphinx with the selected conf.py path";
+    public confPyDirectory: string;
+    public useSphinx: boolean = true;
+}
+
+/**
+ * 
+ */
+export class RstTransformerSelector {
+    public static async findConfDir(rstPath: string, channel: OutputChannel): Promise<RstTransformerConfig> {
         // Sanity check - the file we are previewing must exist
         if (!fs.existsSync(rstPath) || !fs.statSync(rstPath).isFile) {
             return Promise.reject("RST extension got invalid file name: " + rstPath);
         }
 
-        let paths: string[] = [];
+        let configurations: RstTransformerConfig[] = [];
+        let pathStrings: string[] = [];
 
-        // A path may be configured
+        // A path may be configured in the settings. Include this path
         let confPathFromSettings = Configuration.loadSetting("confPath", null);
         if (confPathFromSettings != null) {
-            channel.appendLine("Using Spinx conf.py path from " +
-                "restructuredtext.confPath settings: " + confPathFromSettings);
-            return Promise.resolve(confPathFromSettings);
+            let pth = path.join(path.normalize(confPathFromSettings), "conf.py");
+            let qpSettings = new RstTransformerConfig();
+            qpSettings.label = "$(gear) Sphinx: " + pth;
+            qpSettings.description += " (from restructuredtext.confPath setting)";
+            qpSettings.confPyDirectory = path.dirname(pth);
+            configurations.push(qpSettings);
+            pathStrings.push(pth);
         }
 
         // Add path to a directory containing conf.py if it is not already stored
         function addPaths(pathsToAdd: string[]) {
             pathsToAdd.forEach(confPath => {
-                let pth = path.dirname(confPath);
-                if (paths.indexOf(pth) == -1)
-                    paths.push(pth);
+                let pth = path.normalize(confPath);
+                if (pathStrings.indexOf(pth) == -1) {
+                    let qp = new RstTransformerConfig();
+                    qp.label = "$(primitive-dot) Sphinx: " + pth;
+                    qp.confPyDirectory = path.dirname(pth);
+                    configurations.push(qp);
+                    pathStrings.push(pth);
+                }
             });
         }
 
@@ -37,20 +62,22 @@ export class ConfPyFinder {
         const paths2: string[] = findConfPyFilesInParentDirs(rstPath);
         addPaths(paths1);
         addPaths(paths2);
-        channel.appendLine("Found conf.py paths: " + JSON.stringify(paths));
+        channel.appendLine("Found conf.py paths: " + JSON.stringify(pathStrings));
 
-        // Default to the workspace root path if nothing was found
-        if (paths.length == 0)
-            return Promise.resolve(workspace.rootPath);
+        // The user can chose to use rst2hml.py instead of Sphinx
+        let qpRstToHtml = new RstTransformerConfig();
+        qpRstToHtml.label = "$(code) Use rst2hmtl.py";
+        qpRstToHtml.description = "Do not use Sphinx, but rst2html.py instead";
+        qpRstToHtml.confPyDirectory = path.dirname(rstPath);
+        qpRstToHtml.useSphinx = false;
+        configurations.push(qpRstToHtml);
 
-        // Found only one conf.py, using that one
-        if (paths.length == 1) {
-            return Promise.resolve(paths[0]);
-        }
+        if (configurations.length == 1)
+            return Promise.resolve(configurations[0]);
 
         // Found multiple conf.py files, let the user decide
-        return window.showQuickPick(paths, {
-            placeHolder: `Select 1 of ${paths.length} Sphinx directories`
+        return window.showQuickPick(configurations, {
+            placeHolder: "Select how to generate html from rst files"
         });
     }
 }
