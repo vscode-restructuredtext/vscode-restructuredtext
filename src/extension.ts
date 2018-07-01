@@ -11,6 +11,7 @@ import * as path from "path";
 import { Configuration } from "./features/utils/configuration";
 import { Logger } from "./logger";
 import { ExtensionDownloader } from "./ExtensionDownloader";
+import RstTransformerStatus from "./features/utils/statusBar";
 
 let _channel: vscode.OutputChannel = null;
 
@@ -30,19 +31,24 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     let logger = new Logger(text => _channel.append(text));
 
     var disableLsp = Configuration.loadAnySetting("languageServer.disabled", true);
-//*
+    //*
     if (!disableLsp) {
         Configuration.setRoot();
         let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, logger);
     }
-//*/
+    //*/
 
     // activate language services
     let rstLspPromise = RstLanguageServer.activate(context, _channel, disableLsp);
 
-    let provider = new RstDocumentContentProvider(context, _channel);
+    // Status bar to show the active rst->html transformer configuration
+    let status = new RstTransformerStatus();
+
+    // The reStructuredText preview provider
+    let provider = new RstDocumentContentProvider(context, _channel, status);
     let registration = vscode.workspace.registerTextDocumentContentProvider("restructuredtext", provider);
 
+    // Hook up the provider to user commands
     let d1 = vscode.commands.registerCommand("restructuredtext.showPreview", showPreview);
     let d2 = vscode.commands.registerCommand("restructuredtext.showPreviewToSide", uri => showPreview(uri, true));
     let d3 = vscode.commands.registerCommand("restructuredtext.showSource", showSource);
@@ -51,6 +57,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     context.subscriptions.push(
         vscode.commands.registerTextEditorCommand('restructuredtext.features.underline.underline', underline)
     );
+
+    // Hook up the status bar to document change events
+    vscode.commands.registerCommand("restructuredtext.resetRstTransformer",
+        provider.resetRstTransformerConfig, provider);
+    vscode.window.onDidChangeActiveTextEditor(status.update, status, context.subscriptions);
+    status.update();
 
     let linter = new RstLintingProvider();
     linter.activate(context.subscriptions);
@@ -83,10 +95,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
     return {
         initializationFinished: Promise.all([rstLspPromise])
-        .then(promiseResult => {
-            // This promise resolver simply swallows the result of Promise.all. When we decide we want to expose this level of detail
-            // to other extensions then we will design that return type and implement it here.
-        })
+            .then(promiseResult => {
+                // This promise resolver simply swallows the result of Promise.all. When we decide we want to expose this level of detail
+                // to other extensions then we will design that return type and implement it here.
+            })
     };
 }
 

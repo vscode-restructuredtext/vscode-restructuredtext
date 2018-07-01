@@ -1,9 +1,8 @@
 'use strict';
 
 import {
-    workspace, window, ExtensionContext,
-    TextDocumentContentProvider, EventEmitter,
-    Event, Uri, TextDocument, OutputChannel
+    ExtensionContext, TextDocumentContentProvider, EventEmitter, Event,
+    Uri, OutputChannel
 } from "vscode";
 import * as path from "path";
 let fileUrl = require("file-url");
@@ -11,6 +10,7 @@ import { exec } from "child_process";
 import * as fs from "fs";
 import { Configuration } from "./utils/configuration";
 import { RstTransformerSelector, RstTransformerConfig } from "./utils/confPyFinder";
+import RstTransformerStatus from "./utils/statusBar";
 
 export default class RstDocumentContentProvider implements TextDocumentContentProvider {
     private _context: ExtensionContext;
@@ -23,11 +23,14 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
     private _channel: OutputChannel;
     private _timeout: number;
     private _rstTransformerConfig: RstTransformerConfig;
+    private _rstTransformerStatus: RstTransformerStatus;
 
-    constructor(context: ExtensionContext, channel: OutputChannel) {
+    constructor(context: ExtensionContext, channel: OutputChannel,
+        status: RstTransformerStatus) {
         this._context = context;
         this._waiting = false;
         this._channel = channel;
+        this._rstTransformerStatus = status;
         context.subscriptions.push(this._channel);
     }
 
@@ -42,9 +45,14 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
 
         // Get the directory where the conf.py file is located
         return this.getRstTransformerConfig(rstPath).then(rstTransformerConf => {
+            if (rstTransformerConf == null)
+                return this.showError("You must select a RST -> HTML transformer from the menu that was shown");
+            this._rstTransformerStatus.setConfiguration(rstTransformerConf.label);
             this._rstTransformerConfig = rstTransformerConf;
             this._input = rstTransformerConf.confPyDirectory;
             let htmlPath = "";
+            let fixStyle = false; // force bg color to white and foreground to black
+            let readStdout = false; // Get HTML from stdout
 
             // Configure Sphinx
             if (rstTransformerConf.useSphinx) {
@@ -100,18 +108,17 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
                     build = "rst2html.py";
                 }
 
-                let htmlBase = path.basename(rstPath) + "_rst2html_output.html";
-                htmlPath = path.join(this._input, htmlBase);
-
                 // Configure the rst2html.py command
                 this._options = { cwd: this._input };
                 this._cmd = [
                     build,
                     "'" + path.basename(rstPath) + "'",
-                    "'" + htmlBase + "'"
                 ].join(" ");
+                fixStyle = true;
+                readStdout = true;
+                htmlPath = rstPath + ".html";
             }
-            return this.preview(htmlPath);
+            return this.preview(htmlPath, fixStyle, readStdout);
         });
     }
 
@@ -127,6 +134,11 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
                 this._onDidChange.fire(uri);
             }, this._timeout);
         }
+    }
+
+    public resetRstTransformerConfig(uri: Uri) {
+        this._rstTransformerConfig = null;
+        this.update(uri);
     }
 
     private fixLinks(document: string, documentPath: string): string {
@@ -168,7 +180,8 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
         return whole.substring(this._input.length);
     }
 
-    private preview(htmlPath: string): string | Thenable<string> {
+    private preview(htmlPath: string, fixStyle: boolean, readStdout: boolean):
+        string | Thenable<string> {
         this._channel.appendLine("Compiler: " + this._cmd);
         this._channel.appendLine("HTML file: " + htmlPath);
 
@@ -198,21 +211,32 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
                     }
                 }
 
-                fs.readFile(htmlPath, "utf8", (err, data) => {
-                    if (err === null) {
-                        let fixed = this.fixLinks(data, htmlPath);
-                        resolve(fixed);
-                    } else {
-                        let errorMessage = [
-                            "Cannot read page '" + htmlPath + "'.  Please review the value of 'restructuredtext.builtDocumentationPath' in Workspace Settings.",
-                            err.name,
-                            err.message,
-                            err.stack
-                        ].join("\n");
-                        resolve(this.showError(errorMessage));
-                    }
-                });
+                if (readStdout) {
+                    resolve(this.prepareHtml(stdout, htmlPath, fixStyle));
+                }
+                else {
+                    fs.readFile(htmlPath, "utf8", (err, data) => {
+                        if (err === null) {
+                            resolve(this.prepareHtml(data, htmlPath, fixStyle));
+                        } else {
+                            let errorMessage = [
+                                "Cannot read page '" + htmlPath + "'.  Please review the value of 'restructuredtext.builtDocumentationPath' in Workspace Settings.",
+                                err.name,
+                                err.message,
+                                err.stack
+                            ].join("\n");
+                            resolve(this.showError(errorMessage));
+                        }
+                    });
+                }
             });
         });
+    }
+
+    private prepareHtml(html: string, htmlPath: string, fixStyle: boolean): string {
+        let fixed = this.fixLinks(html, htmlPath);
+        if (fixStyle)
+            fixed += "<style>html, body {background: #fff;color: #000;}</style>";
+        return fixed;
     }
 }
