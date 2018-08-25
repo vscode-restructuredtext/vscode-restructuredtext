@@ -11,7 +11,7 @@ export class Configuration {
     public static loadAnySetting<T>(
         configSection: string, defaultValue: T, header: string = "restructuredtext"
     ): T {
-        return workspace.getConfiguration(header).get(configSection, defaultValue);
+        return workspace.getConfiguration(header, null).get(configSection, defaultValue);
     }
 
     public static loadSetting(
