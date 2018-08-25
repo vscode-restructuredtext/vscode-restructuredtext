@@ -2,7 +2,7 @@
 
 import {
     ExtensionContext, TextDocumentContentProvider, EventEmitter, Event,
-    Uri, OutputChannel
+    Uri, OutputChannel, window
 } from "vscode";
 import * as path from "path";
 let fileUrl = require("file-url");
@@ -139,6 +139,15 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
     public resetRstTransformerConfig(uri: Uri) {
         this._rstTransformerConfig = null;
         this.update(uri);
+        if (window.activeTextEditor) {
+            // we are relaxed and don't check for markdown files
+            this.getRstTransformerConfig(window.activeTextEditor.document.uri.path).then(rstTransformerConf => {
+                if (rstTransformerConf == null)
+                    return this.showError("You must select a RST -> HTML transformer from the menu that was shown");
+                this._rstTransformerStatus.setConfiguration(rstTransformerConf.label);
+                this._rstTransformerConfig = rstTransformerConf;
+            })
+        }
     }
 
     private fixLinks(document: string, documentPath: string): string {
@@ -156,7 +165,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
         );
     }
 
-    private async getRstTransformerConfig(rstPath): Promise<RstTransformerConfig> {
+    private async getRstTransformerConfig(rstPath: string): Promise<RstTransformerConfig> {
         if (this._rstTransformerConfig)
             return Promise.resolve(this._rstTransformerConfig);
         else
