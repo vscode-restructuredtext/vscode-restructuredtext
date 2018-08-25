@@ -23,7 +23,7 @@ export class Configuration {
         }
         return result;
     }
-    
+
     public static setRoot() {
         var old = workspace.getConfiguration("restructuredtext").get<string>("workspaceRoot");
         if (old.indexOf("${workspaceRoot}") > -1) {

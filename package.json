@@ -219,13 +219,13 @@
         },
         "restructuredtext.builtDocumentationPath": {
           "type": "string",
-          "default": "${workspaceRoot}/_build/html",
-          "description": "HTML page output folder relative to workspace root. This is an absolute path, and you can use ${workspaceRoot} to represent workspace root folder."
+          "default": null,
+          "description": "Sphinx's HTML output folder. Defaults to 'restructuredtext.confPath'/_build/html This is an absolute path, and you can use ${workspaceRoot} to represent the workspace root folder."
         },
         "restructuredtext.confPath": {
           "type": "string",
-          "default": "${workspaceRoot}",
-          "description": "The folder that contains conf.py relative to workspace root. This is an absolute path, and you can use ${workspaceRoot} to represent workspace root folder."
+          "default": null,
+          "description": "Sphinx's configuration folder containing conf.py. Set this option if the path is not found automatically. This is an absolute path, and you can use ${workspaceRoot} to represent the workspace root folder."
         },
         "restructuredtext.updateOnTextChanged": {
           "type": "string",
@@ -240,12 +240,17 @@
         "restructuredtext.sphinxBuildPath": {
           "type": "string",
           "default": null,
-          "description": "The full path of sphinx-build utility. This is an absolute path, and you can use ${workspaceRoot} to represent workspace root folder."
+          "description": "The full path of the sphinx-build executable. This is an absolute path, and you can use ${workspaceRoot} to represent the workspace root folder."
+        },
+        "restructuredtext.rst2htmlCommand": {
+          "type": "string",
+          "default": null,
+          "description": "The full path of the rst2html.py executable. This is an absolute path, and you can use ${workspaceRoot} to represent the workspace root folder."
         },
         "restructuredtext.linter.executablePath": {
           "type": "string",
           "default": null,
-          "description": "Points to the doc8 exectuable."
+          "description": "Points to the doc8 executable."
         },
         "restructuredtext.linter.run": {
           "type": "string",
