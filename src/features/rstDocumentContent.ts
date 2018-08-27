@@ -49,13 +49,14 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
                 return this.showError("You must select a RST -> HTML transformer from the menu that was shown", "");
             this._rstTransformerStatus.setConfiguration(rstTransformerConf.label);
             this._rstTransformerConfig = rstTransformerConf;
+            Configuration.saveSetting("confPath", rstTransformerConf.confPyDirectory);
             this._input = rstTransformerConf.confPyDirectory;
             let htmlPath = "";
             let fixStyle = false; // force bg color to white and foreground to black
             let readStdout = false; // Get HTML from stdout
 
             // Configure Sphinx
-            if (rstTransformerConf.useSphinx) {
+            if (rstTransformerConf.confPyDirectory != "") {
                 this._channel.appendLine("Sphinx conf.py directory: " + this._input);
 
                 // The directory where Sphinx will write the html output
@@ -112,10 +113,9 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
                 }
 
                 // Configure the rst2html.py command
-                this._options = { cwd: this._input };
                 this._cmd = [
                     build,
-                    "'" + path.basename(rstPath) + "'",
+                    "'" + rstPath + "'",
                 ].join(" ");
                 fixStyle = true;
                 readStdout = true;
@@ -141,6 +141,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
 
     public resetRstTransformerConfig(uri: Uri) {
         this._rstTransformerConfig = null;
+        Configuration.saveSetting("confPath", undefined);
         this.update(uri);
         if (window.activeTextEditor) {
             // we are relaxed and don't check for markdown files
@@ -149,6 +150,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
                     return this.showError("You must select a RST -> HTML transformer from the menu that was shown", "");
                 this._rstTransformerStatus.setConfiguration(rstTransformerConf.label);
                 this._rstTransformerConfig = rstTransformerConf;
+                Configuration.saveSetting("confPath", rstTransformerConf.confPyDirectory);
             })
         }
     }

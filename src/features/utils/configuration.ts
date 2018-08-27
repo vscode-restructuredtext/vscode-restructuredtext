@@ -1,17 +1,20 @@
 'use strict';
 
 import {
-    workspace, window, ExtensionContext,
-    TextDocumentContentProvider, EventEmitter,
-    Event, Uri, TextDocument, OutputChannel
+    workspace
 } from "vscode";
-import { worker } from "cluster";
 
 export class Configuration {
     public static loadAnySetting<T>(
         configSection: string, defaultValue: T, header: string = "restructuredtext"
     ): T {
         return workspace.getConfiguration(header, null).get(configSection, defaultValue);
+    }
+
+    public static saveAnySetting<T>(
+        configSection: string, value: T, header: string = "restructuredtext"
+    ) {
+        workspace.getConfiguration(header, null).update(configSection, value);
     }
 
     public static loadSetting(
@@ -24,10 +27,16 @@ export class Configuration {
         return result;
     }
 
+    public static saveSetting(
+        configSection: string, defaultValue: string, header: string = "restructuredtext"
+    ) {
+        this.saveAnySetting<string>(configSection, defaultValue, header);
+    }
+
     public static setRoot() {
-        var old = workspace.getConfiguration("restructuredtext").get<string>("workspaceRoot");
+        var old = this.loadSetting("workspaceRoot", null);
         if (old.indexOf("${workspaceRoot}") > -1) {
-            workspace.getConfiguration("restructuredtext").update("workspaceRoot", this.expandMacro(old));
+            this.saveSetting("workspaceRoot", this.expandMacro(old));
         }
     }
 

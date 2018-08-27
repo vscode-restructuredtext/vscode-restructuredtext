@@ -14,7 +14,6 @@ export class RstTransformerConfig implements QuickPickItem {
     public label: string;
     public description: string = "Use Sphinx with the selected conf.py path";
     public confPyDirectory: string;
-    public useSphinx: boolean = true;
 }
 
 /**
@@ -33,13 +32,21 @@ export class RstTransformerSelector {
         // A path may be configured in the settings. Include this path
         let confPathFromSettings = Configuration.loadSetting("confPath", null);
         if (confPathFromSettings != null) {
+            if (confPathFromSettings == "")
+            {
+                let qpRstToHtml = new RstTransformerConfig();
+                qpRstToHtml.label = "$(code) Use rst2html.py";
+                qpRstToHtml.description = "Do not use Sphinx, but rst2html.py instead";
+                qpRstToHtml.confPyDirectory = "";
+                return Promise.resolve(qpRstToHtml);
+            }
+
             let pth = path.join(path.normalize(confPathFromSettings), "conf.py");
             let qpSettings = new RstTransformerConfig();
             qpSettings.label = "$(gear) Sphinx: " + pth;
             qpSettings.description += " (from restructuredtext.confPath setting)";
             qpSettings.confPyDirectory = path.dirname(pth);
-            configurations.push(qpSettings);
-            pathStrings.push(pth);
+            return Promise.resolve(qpSettings);
         }
 
         // Add path to a directory containing conf.py if it is not already stored
@@ -66,10 +73,9 @@ export class RstTransformerSelector {
 
         // The user can chose to use rst2hml.py instead of Sphinx
         let qpRstToHtml = new RstTransformerConfig();
-        qpRstToHtml.label = "$(code) Use rst2hmtl.py";
+        qpRstToHtml.label = "$(code) Use rst2html.py";
         qpRstToHtml.description = "Do not use Sphinx, but rst2html.py instead";
-        qpRstToHtml.confPyDirectory = path.dirname(rstPath);
-        qpRstToHtml.useSphinx = false;
+        qpRstToHtml.confPyDirectory = "";
         configurations.push(qpRstToHtml);
 
         if (configurations.length == 1)
