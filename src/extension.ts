@@ -1,7 +1,5 @@
 "use strict";
 import * as vscode from "vscode";
-import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient';
-
 import * as RstLanguageServer from './rstLsp/extension';
 import * as util from './common';
 import RstLintingProvider from './features/rstLinter';
@@ -66,6 +64,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
     let linter = new RstLintingProvider();
     linter.activate(context.subscriptions);
+
+    vscode.workspace.onDidOpenTextDocument(document =>{
+        if (isRstFile(document)) {
+            provider.showStatus(document.uri, status);
+        }
+    });
 
     vscode.workspace.onDidSaveTextDocument(document => {
         if (isRstFile(document)) {

@@ -139,6 +139,17 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
         }
     }
 
+    public showStatus(uri: Uri, status: RstTransformerStatus) {
+        var setting = Configuration.loadSetting("confPath", null);
+        if (setting != null)
+        {
+            this.getRstTransformerConfig(uri.path).then(rstTransformerConf => {
+                status.setConfiguration(rstTransformerConf.label);
+                status.update();
+            });
+        }
+    }
+
     public resetRstTransformerConfig(uri: Uri) {
         this._rstTransformerConfig = null;
         Configuration.saveSetting("confPath", undefined);
@@ -151,7 +162,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
                 this._rstTransformerStatus.setConfiguration(rstTransformerConf.label);
                 this._rstTransformerConfig = rstTransformerConf;
                 Configuration.saveSetting("confPath", rstTransformerConf.confPyDirectory);
-            })
+            });
         }
     }
 
