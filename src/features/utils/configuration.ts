@@ -11,16 +11,10 @@ export class Configuration {
         return workspace.getConfiguration(header, null).get(configSection, defaultValue);
     }
 
-    public static saveAnySetting<T>(
+    public static async saveAnySetting<T>(
         configSection: string, value: T, header: string = "restructuredtext"
     ) {
-        var old = workspace.getConfiguration(header, null).get(configSection);
-        if (value == old)
-        {
-            return;
-        }
-        
-        workspace.getConfiguration(header, null).update(configSection, value);
+        await workspace.getConfiguration(header, null).update(configSection, value);
     }
 
     public static loadSetting(
@@ -33,10 +27,10 @@ export class Configuration {
         return result;
     }
 
-    public static saveSetting(
+    public static async saveSetting(
         configSection: string, defaultValue: string, header: string = "restructuredtext"
     ) {
-        this.saveAnySetting<string>(configSection, defaultValue, header);
+        await this.saveAnySetting<string>(configSection, defaultValue, header);
     }
 
     public static setRoot() {

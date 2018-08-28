@@ -150,18 +150,18 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
         }
     }
 
-    public resetRstTransformerConfig(uri: Uri) {
+    public async resetRstTransformerConfig(uri: Uri) {
         this._rstTransformerConfig = null;
-        Configuration.saveSetting("confPath", undefined);
+        await Configuration.saveSetting("confPath", undefined);
         this.update(uri);
         if (window.activeTextEditor) {
             // we are relaxed and don't check for markdown files
-            this.getRstTransformerConfig(window.activeTextEditor.document.uri.path).then(rstTransformerConf => {
+            this.getRstTransformerConfig(window.activeTextEditor.document.uri.path).then(async rstTransformerConf => {
                 if (rstTransformerConf == null)
                     return this.showError("You must select a RST -> HTML transformer from the menu that was shown", "");
                 this._rstTransformerStatus.setConfiguration(rstTransformerConf.label);
                 this._rstTransformerConfig = rstTransformerConf;
-                Configuration.saveSetting("confPath", rstTransformerConf.confPyDirectory);
+                await Configuration.saveSetting("confPath", rstTransformerConf.confPyDirectory);
             });
         }
     }
