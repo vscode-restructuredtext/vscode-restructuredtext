@@ -14,6 +14,12 @@ export class Configuration {
     public static saveAnySetting<T>(
         configSection: string, value: T, header: string = "restructuredtext"
     ) {
+        var old = workspace.getConfiguration(header, null).get(configSection);
+        if (value == old)
+        {
+            return;
+        }
+        
         workspace.getConfiguration(header, null).update(configSection, value);
     }
 
