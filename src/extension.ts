@@ -1,15 +1,15 @@
-"use strict";
-import * as vscode from "vscode";
-import * as RstLanguageServer from './rstLsp/extension';
+'use strict';
+import * as path from 'path';
+import * as vscode from 'vscode';
 import * as util from './common';
-import RstLintingProvider from './features/rstLinter';
+import { ExtensionDownloader } from './ExtensionDownloader';
 import RstDocumentContentProvider from './features/rstDocumentContent';
+import RstLintingProvider from './features/rstLinter';
 import { underline } from './features/underline';
-import * as path from "path";
-import { Configuration } from "./features/utils/configuration";
-import { Logger } from "./logger";
-import { ExtensionDownloader } from "./ExtensionDownloader";
-import RstTransformerStatus from "./features/utils/statusBar";
+import { Configuration } from './features/utils/configuration';
+import RstTransformerStatus from './features/utils/statusBar';
+import { Logger } from './logger';
+import * as RstLanguageServer from './rstLsp/extension';
 
 let _channel: vscode.OutputChannel = null;
 
@@ -20,67 +20,69 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
     util.setExtensionPath(extension.extensionPath);
 
-    _channel = vscode.window.createOutputChannel("reStructuredText");
+    _channel = vscode.window.createOutputChannel('reStructuredText');
 
-    _channel.appendLine("Please visit https://www.restructuredtext.net to learn how to configure the extension.");
-    _channel.appendLine("The troubleshooting guide can be found at https://www.restructuredtext.net/en/latest/articles/troubleshooting.html.");
-    _channel.appendLine("");
-    _channel.appendLine("");
-    let logger = new Logger(text => _channel.append(text));
+    _channel.appendLine('Please visit https://www.restructuredtext.net to learn how to configure the extension.');
+    _channel.appendLine('');
+    _channel.appendLine('');
+    const logger = new Logger((text) => _channel.append(text));
 
-    var disableLsp = Configuration.loadAnySetting("languageServer.disabled", true);
-    //*
+    const disableLsp = Configuration.loadAnySetting('languageServer.disabled', true);
+    // *
     if (!disableLsp) {
-        Configuration.setRoot();
-        let runtimeDependenciesExist = await ensureRuntimeDependencies(extension, logger);
+        await Configuration.setRoot();
+        await ensureRuntimeDependencies(extension, logger);
     }
-    //*/
+    // */
 
     // activate language services
-    let rstLspPromise = RstLanguageServer.activate(context, _channel, disableLsp);
+    const rstLspPromise = RstLanguageServer.activate(context, _channel, disableLsp);
 
     // Status bar to show the active rst->html transformer configuration
-    let status = new RstTransformerStatus();
+    const status = new RstTransformerStatus();
 
     // The reStructuredText preview provider
-    let provider = new RstDocumentContentProvider(context, _channel, status);
-    let registration = vscode.workspace.registerTextDocumentContentProvider("restructuredtext", provider);
+    const provider = new RstDocumentContentProvider(context, _channel, status);
+    const registration = vscode.workspace.registerTextDocumentContentProvider('restructuredtext', provider);
 
     // Hook up the provider to user commands
-    let d1 = vscode.commands.registerCommand("restructuredtext.showPreview", showPreview);
-    let d2 = vscode.commands.registerCommand("restructuredtext.showPreviewToSide", uri => showPreview(uri, true));
-    let d3 = vscode.commands.registerCommand("restructuredtext.showSource", showSource);
+    const d1 = vscode.commands.registerCommand('restructuredtext.showPreview', showPreview);
+    const d2 = vscode.commands.registerCommand('restructuredtext.showPreviewToSide',
+        async (uri) => await showPreview(uri, true));
+    const d3 = vscode.commands.registerCommand('restructuredtext.showSource', showSource);
 
     context.subscriptions.push(d1, d2, d3, registration);
     context.subscriptions.push(
-        vscode.commands.registerTextEditorCommand('restructuredtext.features.underline.underline', underline)
+        vscode.commands.registerTextEditorCommand('restructuredtext.features.underline.underline', underline),
     );
 
     // Hook up the status bar to document change events
-    vscode.commands.registerCommand("restructuredtext.resetRstTransformer",
-        provider.resetRstTransformerConfig, provider);
+    context.subscriptions.push(
+        vscode.commands.registerCommand('restructuredtext.resetRstTransformer',
+            provider.resetRstTransformerConfig, provider),
+    );
     vscode.window.onDidChangeActiveTextEditor(status.update, status, context.subscriptions);
     status.update();
 
-    let linter = new RstLintingProvider();
+    const linter = new RstLintingProvider();
     linter.activate(context.subscriptions);
 
-    vscode.workspace.onDidOpenTextDocument(document =>{
+    vscode.workspace.onDidOpenTextDocument((document) => {
         if (isRstFile(document)) {
             provider.showStatus(document.uri, status);
         }
     });
 
-    vscode.workspace.onDidSaveTextDocument(document => {
+    vscode.workspace.onDidSaveTextDocument((document) => {
         if (isRstFile(document)) {
             const uri = getRstUri(document.uri);
             provider.update(uri);
         }
     });
 
-    let updateOnTextChanged = Configuration.loadSetting("updateOnTextChanged", "true");
+    const updateOnTextChanged = Configuration.loadSetting('updateOnTextChanged', 'true');
     if (updateOnTextChanged === 'true') {
-        vscode.workspace.onDidChangeTextDocument(event => {
+        vscode.workspace.onDidChangeTextDocument((event) => {
             if (isRstFile(event.document)) {
                 const uri = getRstUri(event.document.uri);
                 provider.update(uri);
@@ -89,7 +91,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     }
 
     vscode.workspace.onDidChangeConfiguration(() => {
-        vscode.workspace.textDocuments.forEach(document => {
+        vscode.workspace.textDocuments.forEach((document) => {
             if (document.uri.scheme === 'restructuredtext') {
                 // update all generated md documents
                 provider.update(document.uri);
@@ -99,16 +101,17 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
     return {
         initializationFinished: Promise.all([rstLspPromise])
-            .then(promiseResult => {
-                // This promise resolver simply swallows the result of Promise.all. When we decide we want to expose this level of detail
+            .then((promiseResult) => {
+                // This promise resolver simply swallows the result of Promise.all.
+                // When we decide we want to expose this level of detail
                 // to other extensions then we will design that return type and implement it here.
-            })
+            }),
     };
 }
 
 function ensureRuntimeDependencies(extension: vscode.Extension<any>, logger: Logger): Promise<boolean> {
     return util.installFileExists(util.InstallFileType.Lock)
-        .then(exists => {
+        .then((exists) => {
             if (!exists) {
                 const downloader = new ExtensionDownloader(_channel, logger, extension.packageJSON);
                 return downloader.installRuntimeDependencies();
@@ -127,7 +130,7 @@ function getRstUri(uri: vscode.Uri) {
     return uri.with({ scheme: 'restructuredtext', path: uri.path + '.rendered', query: uri.toString() });
 }
 
-function showPreview(uri?: vscode.Uri, sideBySide: boolean = false) {
+async function showPreview(uri?: vscode.Uri, sideBySide: boolean = false) {
     let resource = uri;
     if (!(resource instanceof vscode.Uri)) {
         if (vscode.window.activeTextEditor) {
@@ -139,18 +142,16 @@ function showPreview(uri?: vscode.Uri, sideBySide: boolean = false) {
     if (!(resource instanceof vscode.Uri)) {
         if (!vscode.window.activeTextEditor) {
             // this is most likely toggling the preview
-            return vscode.commands.executeCommand('restructuredtext.showSource');
+            return await vscode.commands.executeCommand('restructuredtext.showSource');
         }
         // nothing found that could be shown or toggled
         return;
     }
 
-    let thenable = vscode.commands.executeCommand('vscode.previewHtml',
+    return await vscode.commands.executeCommand('vscode.previewHtml',
         getRstUri(resource),
         getViewColumn(sideBySide),
         `Preview '${path.basename(resource.fsPath)}'`);
-
-    return thenable;
 }
 
 function getViewColumn(sideBySide): vscode.ViewColumn {
@@ -173,24 +174,24 @@ function getViewColumn(sideBySide): vscode.ViewColumn {
     return active.viewColumn;
 }
 
-function showSource(mdUri: vscode.Uri) {
+async function showSource(mdUri: vscode.Uri) {
     if (!mdUri) {
-        return vscode.commands.executeCommand('workbench.action.navigateBack');
+        return await vscode.commands.executeCommand('workbench.action.navigateBack');
     }
 
     const docUri = vscode.Uri.parse(mdUri.query);
 
-    for (let editor of vscode.window.visibleTextEditors) {
+    for (const editor of vscode.window.visibleTextEditors) {
         if (editor.document.uri.toString() === docUri.toString()) {
-            return vscode.window.showTextDocument(editor.document, editor.viewColumn);
+            return await vscode.window.showTextDocument(editor.document, editor.viewColumn);
         }
     }
 
-    return vscode.workspace.openTextDocument(docUri).then(doc => {
-        return vscode.window.showTextDocument(doc);
-    });
+    const doc = await vscode.workspace.openTextDocument(docUri);
+    return await vscode.window.showTextDocument(doc);
 }
 
 // this method is called when your extension is deactivated
+// tslint:disable-next-line:no-empty
 export function deactivate() {
 }

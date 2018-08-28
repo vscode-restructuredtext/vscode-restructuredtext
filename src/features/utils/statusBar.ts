@@ -1,7 +1,6 @@
-"use strict"
+'use strict';
 
-import { window, StatusBarItem, StatusBarAlignment, OutputChannel } from 'vscode';
-
+import { StatusBarAlignment, StatusBarItem, window } from 'vscode';
 
 /**
  * Status bar updates. Shows the selected RstTransformerConfig when a
@@ -11,29 +10,28 @@ import { window, StatusBarItem, StatusBarAlignment, OutputChannel } from 'vscode
  */
 export default class RstTransformerStatus {
     private _statusBarItem: StatusBarItem;
-    private _selectedConfig: string = "";
+    private _selectedConfig: string = '';
 
     constructor() {
         this._statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left);
-        this._statusBarItem.command = "restructuredtext.resetRstTransformer";
-        this._statusBarItem.tooltip = "The active rst to html transformer (click to reset)";
+        this._statusBarItem.command = 'restructuredtext.resetRstTransformer';
+        this._statusBarItem.tooltip = 'The active rst to html transformer (click to reset)';
     }
 
-    setConfiguration(conf: string) {
+    public setConfiguration(conf: string) {
         this._selectedConfig = conf;
         this.update();
     }
 
-    update() {
-        let editor = window.activeTextEditor;
+    public update() {
+        const editor = window.activeTextEditor;
 
         if (this._selectedConfig &&
             // editor is null for the preview window
             (editor == null || editor.document.languageId === 'restructuredtext')) {
             this._statusBarItem.text = this._selectedConfig;
             this._statusBarItem.show();
-        }
-        else {
+        } else {
             this._statusBarItem.hide();
         }
     }

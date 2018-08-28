@@ -1,0 +1,11 @@
+{
+    "extends": "tslint:recommended",
+    "rules":{
+        "await-promise": true,
+        "no-return-await": true,
+        "promise-function-async": true,
+        "no-floating-promises": true,
+        "quotemark": [true, "single"],
+        "variable-name": [true, "allow-leading-underscore"]
+    }
+}

@@ -4,8 +4,9 @@
 import * as vscode from 'vscode';
 
 // list of underline characters, from higher level to lower level
-// Use the recommended items from http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#sections, and remove '`' and '_' as the syntax file does not like them.
-const underlineChars = ['=', '-', ':', '.', '\'', '"', '~', '^', '*', '+', '#'];
+// Use the recommended items from http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#sections,
+// and remove '`' and '_' as the syntax file does not like them.
+const underlineChars = ['=', '-', ':', '.', "'", '"', '~', '^', '*', '+', '#'];
 
 /**
  * Analyze current underline char and return the underline character corresponding
@@ -15,7 +16,7 @@ const underlineChars = ['=', '-', ':', '.', '\'', '"', '~', '^', '*', '+', '#'];
  * @return - The next underline char in the list of precedence
  */
 export function nextUnderlineChar(current: string): string {
-    const nextCharIndex = (underlineChars.indexOf(current) + 1) % underlineChars.length;
+    const nextCharIndex = (underlineChars.indexOf(current + 1) % underlineChars.length);
     return underlineChars[nextCharIndex];
 }
 
@@ -36,37 +37,38 @@ export function currentUnderlineChar(currentLine: string, nextLine: string): str
     return null;
 }
 
-
 /**
  * Underline current line. If it's already underlined, pick up the underline character
- * corresponding to the next subtitle level and replace the current underline.
+ * corresponding to the nextitle level and replace the current underline.
  */
-export function underline(textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, args: any[]) {
-    textEditor.selections.forEach(selection => {
+export function underline(textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) {
+    textEditor.selections.forEach((selection) => {
         const position = selection.active;
         const line = textEditor.document.lineAt(position.line).text;
         if (line === '') {
             return; // don't underline empty lines
         }
+
         let underlineChar = null;
         let nextLine = null;
         if (position.line < textEditor.document.lineCount - 1) {
             nextLine = textEditor.document.lineAt(position.line + 1).text;
             underlineChar = currentUnderlineChar(line, nextLine);
         }
+
         if (underlineChar === null) {
             edit.insert(
                 new vscode.Position(position.line, line.length),
-                '\n' + '='.repeat(line.length)
+                '\n' + '='.repeat(line.length),
             );
         } else {
             const nextLineRange = new vscode.Range(
                 new vscode.Position(position.line + 1, 0),
-                new vscode.Position(position.line + 1, nextLine.length)
+                new vscode.Position(position.line + 1, nextLine.length),
             );
             edit.replace(
                 nextLineRange,
-                nextUnderlineChar(underlineChar).repeat(line.length)
+                nextUnderlineChar(underlineChar).repeat(line.length),
             );
         }
     });

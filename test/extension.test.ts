@@ -16,7 +16,7 @@ suite("reStructuredText tests", () => {
             const newpos = new vscode.Position(0, 5);
             editor.selection = new vscode.Selection(newpos, newpos);
             return editor.edit(edit => {
-                underline.underline(editor, edit, null);
+                underline.underline(editor, edit);
             });
         }).then(() => {
             assert.equal(textDocument.getText(), 'hello\n=====');
@@ -34,7 +34,7 @@ suite("reStructuredText tests", () => {
             const newpos = new vscode.Position(0, 5);
             editor.selection = new vscode.Selection(newpos, newpos);
             return editor.edit(edit => {
-                underline.underline(editor, edit, null);
+                underline.underline(editor, edit);
             });
         }).then(() => {
             assert.equal(textDocument.getText(), 'hello\n-----');
