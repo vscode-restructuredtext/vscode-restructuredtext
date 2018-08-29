@@ -45,14 +45,10 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
         this._channel.appendLine('Source file: ' + rstPath);
 
         // Get the directory where the conf.py file is located
-        const rstTransformerConf = await this.getRstTransformerConfig(rstPath);
+        const rstTransformerConf = await this.refreshConfig(rstPath);
         if (rstTransformerConf == null) {
-            return this.showError('You must select a RST -> HTML transformer from the menu that was shown', '');
+            this.showError('You must select a RST -> HTML transformer from the menu that was shown', '');
         }
-
-        this._rstTransformerStatus.setConfiguration(rstTransformerConf.label);
-        this._rstTransformerConfig = rstTransformerConf;
-        await Configuration.saveSetting('confPath', rstTransformerConf.confPyDirectory);
 
         let htmlPath = '';
         let fixStyle = false; // force bg color to white and foreground to black
@@ -142,32 +138,27 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
         }
     }
 
-    public showStatus(uri: Uri, status: RstTransformerStatus) {
+    public async showStatus(uri: Uri, status: RstTransformerStatus) {
         const setting = Configuration.loadSetting('confPath', null);
-        if (setting != null) {
-            this.getRstTransformerConfig(uri.path).then((rstTransformerConf) => {
-                status.setConfiguration(rstTransformerConf.label);
-                status.update();
-            });
+        if (setting == null) {
+            return;
         }
+
+        const rstTransformerConf = await this.getRstTransformerConfig(uri.path);
+        status.setConfiguration(rstTransformerConf.label);
+        status.update();
     }
 
     public async resetRstTransformerConfig(uri: Uri) {
         this._rstTransformerConfig = null;
         await Configuration.saveSetting('confPath', undefined);
         this.update(uri);
-        if (window.activeTextEditor) {
-            // we are relaxed and don't check for markdown files
-            this.getRstTransformerConfig(window.activeTextEditor.document.uri.path).then(async (rstTransformerConf) => {
-                if (rstTransformerConf == null) {
-                    return this.showError('You must select a RST -> HTML transformer from the menu that was shown', '');
-                }
-
-                this._rstTransformerStatus.setConfiguration(rstTransformerConf.label);
-                this._rstTransformerConfig = rstTransformerConf;
-                await Configuration.saveSetting('confPath', rstTransformerConf.confPyDirectory);
-            });
+        if (!window.activeTextEditor) {
+            return;
         }
+
+        // we are relaxed and don't check for markdown files
+        await this.refreshConfig(window.activeTextEditor.document.uri.path);
     }
 
     private fixLinks(document: string, documentPath: string): string {
@@ -287,5 +278,17 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
         }
 
         return fixed;
+    }
+
+    private async refreshConfig(rstPath: string): Promise<RstTransformerConfig> {
+        const rstTransformerConf = await this.getRstTransformerConfig(rstPath);
+        if (rstTransformerConf == null) {
+            return null;
+        }
+
+        this._rstTransformerStatus.setConfiguration(rstTransformerConf.label);
+        this._rstTransformerConfig = rstTransformerConf;
+        await Configuration.saveSetting('confPath', rstTransformerConf.confPyDirectory);
+        return rstTransformerConf;
     }
 }

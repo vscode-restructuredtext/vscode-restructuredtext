@@ -67,15 +67,15 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     const linter = new RstLintingProvider();
     linter.activate(context.subscriptions);
 
-    vscode.workspace.onDidOpenTextDocument((document) => {
+    vscode.workspace.onDidOpenTextDocument(async (document) => {
         if (isRstFile(document)) {
-            provider.showStatus(document.uri, status);
+            await provider.showStatus(document.uri, status);
         }
     });
 
     vscode.workspace.onDidSaveTextDocument((document) => {
         if (isRstFile(document)) {
-            const uri = getRstUri(document.uri);
+            const uri = getPreviewUri(document.uri);
             provider.update(uri);
         }
     });
@@ -84,7 +84,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     if (updateOnTextChanged === 'true') {
         vscode.workspace.onDidChangeTextDocument((event) => {
             if (isRstFile(event.document)) {
-                const uri = getRstUri(event.document.uri);
+                const uri = getPreviewUri(event.document.uri);
                 provider.update(uri);
             }
         });
@@ -126,7 +126,7 @@ function isRstFile(document: vscode.TextDocument) {
         && document.uri.scheme !== 'restructuredtext'; // prevent processing of own documents
 }
 
-function getRstUri(uri: vscode.Uri) {
+function getPreviewUri(uri: vscode.Uri) {
     return uri.with({ scheme: 'restructuredtext', path: uri.path + '.rendered', query: uri.toString() });
 }
 
@@ -149,7 +149,7 @@ async function showPreview(uri?: vscode.Uri, sideBySide: boolean = false) {
     }
 
     return await vscode.commands.executeCommand('vscode.previewHtml',
-        getRstUri(resource),
+        getPreviewUri(resource),
         getViewColumn(sideBySide),
         `Preview '${path.basename(resource.fsPath)}'`);
 }

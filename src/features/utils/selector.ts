@@ -40,7 +40,7 @@ export class RstTransformerSelector {
                 const pth = path.normalize(confPath);
                 if (pathStrings.indexOf(pth) === -1) {
                     const qp = new RstTransformerConfig();
-                    qp.label = '$(primitive-dot) Sphinx: ' + pth;
+                    qp.label = '$(gear) Sphinx: ' + pth;
                     qp.confPyDirectory = path.dirname(pth);
                     configurations.push(qp);
                     pathStrings.push(pth);
