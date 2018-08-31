@@ -17,7 +17,7 @@ export class RstTransformerConfig implements QuickPickItem {
 /**
  * Returns a list of conf.py files in the workspace
  */
-export async function findConfPyFiles(): Promise<string[]> {
+export async function findConfPyFiles(resource: Uri): Promise<string[]> {
     if (!workspace.workspaceFolders) {
         return [];
     }
@@ -26,12 +26,17 @@ export async function findConfPyFiles(): Promise<string[]> {
             /*include*/ '{**/conf.py}',
             /*exclude*/ '{}',
             /*maxResults*/ 100);
-    return urisToPaths(items);
+    return urisToPaths(items, resource);
 }
 
-function urisToPaths(uris: Uri[]): string[] {
+function urisToPaths(uris: Uri[], resource: Uri): string[] {
     const paths: string[] = [];
-    uris.forEach((uri) => paths.push(uri.fsPath));
+    const workspaceFolder = workspace.getWorkspaceFolder(resource);
+    uris.forEach((uri) => {
+        if (uri.fsPath.startsWith(workspaceFolder.uri.fsPath)) {
+            paths.push(uri.fsPath);
+        }
+    });
     return paths;
 }
 

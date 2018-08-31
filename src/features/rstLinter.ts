@@ -19,9 +19,9 @@ export default class RstLintingProvider implements Linter {
 
 		var module: string[] = [];
 
-		var build = Configuration.loadSetting('linter.executablePath', null);
+		var build = Configuration.loadSetting('linter.executablePath', null, null);
 		if (build == null) {
-			var python = Configuration.loadSetting('pythonPath', null, 'python');
+			var python = Configuration.loadSetting('pythonPath', null, null, 'python');
 			if (python != null) {
 				build = python;
 				module = module.concat(["-m", "doc8.main"]);

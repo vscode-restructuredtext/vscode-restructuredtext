@@ -2,14 +2,15 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { OutputChannel, window } from 'vscode';
+import { OutputChannel, Uri, window } from 'vscode';
 import { Configuration } from './configuration';
 import { findConfPyFiles, findConfPyFilesInParentDirs, RstTransformerConfig } from './confPyFinder';
 /**
  *
  */
 export class RstTransformerSelector {
-    public static async findConfDir(rstPath: string, channel: OutputChannel): Promise<RstTransformerConfig> {
+    public static async findConfDir(resource: Uri, channel: OutputChannel): Promise<RstTransformerConfig> {
+        const rstPath = resource.path;
         // Sanity check - the file we are previewing must exist
         if (!fs.existsSync(rstPath) || !fs.statSync(rstPath).isFile) {
             return Promise.reject('RST extension got invalid file name: ' + rstPath);
@@ -17,7 +18,7 @@ export class RstTransformerSelector {
         const configurations: RstTransformerConfig[] = [];
         const pathStrings: string[] = [];
         // A path may be configured in the settings. Include this path
-        const confPathFromSettings = Configuration.loadSetting('confPath', null);
+        const confPathFromSettings = Configuration.loadSetting('confPath', null, resource);
         if (confPathFromSettings != null) {
             if (confPathFromSettings === '') {
                 const rst2html = new RstTransformerConfig();
@@ -49,7 +50,7 @@ export class RstTransformerSelector {
         }
         // Search for unique conf.py paths in the workspace and in parent
         // directories (useful when opening a single file, not a workspace)
-        const paths1: string[] = await findConfPyFiles();
+        const paths1: string[] = await findConfPyFiles(resource);
         const paths2: string[] = findConfPyFilesInParentDirs(rstPath);
         addPaths(paths1);
         addPaths(paths2);

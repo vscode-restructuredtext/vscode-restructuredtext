@@ -33,19 +33,16 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
         context.subscriptions.push(this._channel);
     }
 
-    public async provideTextDocumentContent(uri: Uri): Promise<string> {
-        this._timeout = Configuration.loadAnySetting('updateDelay', 300);
+    public async provideTextDocumentContent(resource: Uri): Promise<string> {
+        const uri = this.getOriginalUri(resource);
+        this._timeout = Configuration.loadAnySetting('updateDelay', 300, uri);
 
         // Get path to the source RST file
-        let rstPath = uri.fsPath;
-        if (rstPath.endsWith('.rendered')) {
-            rstPath = rstPath.substring(0, rstPath.lastIndexOf('.'));
-        }
-
+        const rstPath = uri.fsPath;
         this._channel.appendLine('Source file: ' + rstPath);
 
         // Get the directory where the conf.py file is located
-        const rstTransformerConf = await this.refreshConfig(rstPath);
+        const rstTransformerConf = await this.refreshConfig(uri);
         if (rstTransformerConf == null) {
             this.showError('You must select a RST -> HTML transformer from the menu that was shown', '');
         }
@@ -60,7 +57,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
             this._channel.appendLine('Sphinx conf.py directory: ' + this._input);
 
             // The directory where Sphinx will write the html output
-            const out = Configuration.loadSetting('builtDocumentationPath', null);
+            const out = Configuration.loadSetting('builtDocumentationPath', null, uri);
             if (out == null) {
                 this._output = path.join(this._input, '_build', 'html');
             } else {
@@ -70,9 +67,9 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
             this._channel.appendLine('Sphinx html directory: ' + this._output);
             const quotedOutput = '"' + this._output + '"';
 
-            let build = Configuration.loadSetting('sphinxBuildPath', null);
+            let build = Configuration.loadSetting('sphinxBuildPath', null, uri);
             if (build == null) {
-                const python = Configuration.loadSetting('pythonPath', null, 'python');
+                const python = Configuration.loadSetting('pythonPath', null, uri, 'python');
                 if (python != null) {
                     build = python + ' -m sphinx';
                 }
@@ -107,7 +104,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
             }
         } else {
             // Configure rst2html.py
-            let build = Configuration.loadSetting('rst2htmlCommand', null);
+            let build = Configuration.loadSetting('rst2htmlCommand', null, uri);
             if (build == null) {
                 build = 'rst2html.py';
             }
@@ -139,26 +136,26 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
     }
 
     public async showStatus(uri: Uri, status: RstTransformerStatus) {
-        const setting = Configuration.loadSetting('confPath', null);
+        const setting = Configuration.loadSetting('confPath', null, uri);
         if (setting == null) {
             return;
         }
 
-        const rstTransformerConf = await this.getRstTransformerConfig(uri.path);
+        const rstTransformerConf = await this.getRstTransformerConfig(uri);
         status.setConfiguration(rstTransformerConf.label);
         status.update();
     }
 
     public async resetRstTransformerConfig(uri: Uri) {
         this._rstTransformerConfig = null;
-        await Configuration.saveSetting('confPath', undefined);
+        await Configuration.saveSetting('confPath', undefined, uri);
         this.update(uri);
         if (!window.activeTextEditor) {
             return;
         }
 
         // we are relaxed and don't check for markdown files
-        await this.refreshConfig(window.activeTextEditor.document.uri.path);
+        await this.refreshConfig(window.activeTextEditor.document.uri);
     }
 
     private fixLinks(document: string, documentPath: string): string {
@@ -178,11 +175,11 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
         );
     }
 
-    private async getRstTransformerConfig(rstPath: string): Promise<RstTransformerConfig> {
+    private async getRstTransformerConfig(resource: Uri): Promise<RstTransformerConfig> {
         if (this._rstTransformerConfig) {
             return this._rstTransformerConfig;
         } else {
-            return RstTransformerSelector.findConfDir(rstPath, this._channel);
+            return RstTransformerSelector.findConfDir(resource, this._channel);
         }
     }
 
@@ -280,15 +277,19 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
         return fixed;
     }
 
-    private async refreshConfig(rstPath: string): Promise<RstTransformerConfig> {
-        const rstTransformerConf = await this.getRstTransformerConfig(rstPath);
+    private async refreshConfig(resource: Uri): Promise<RstTransformerConfig> {
+        const rstTransformerConf = await this.getRstTransformerConfig(resource);
         if (rstTransformerConf == null) {
             return null;
         }
 
         this._rstTransformerStatus.setConfiguration(rstTransformerConf.label);
         this._rstTransformerConfig = rstTransformerConf;
-        await Configuration.saveSetting('confPath', rstTransformerConf.confPyDirectory);
+        await Configuration.saveSetting('confPath', rstTransformerConf.confPyDirectory, resource);
         return rstTransformerConf;
+    }
+
+    private getOriginalUri(uri: Uri): Uri {
+        return uri.with({ scheme: 'file', path: uri.path, query: uri.toString() });
     }
 }

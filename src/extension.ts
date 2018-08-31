@@ -27,7 +27,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     _channel.appendLine('');
     const logger = new Logger((text) => _channel.append(text));
 
-    const disableLsp = Configuration.loadAnySetting('languageServer.disabled', true);
+    const disableLsp = Configuration.loadAnySetting('languageServer.disabled', true, null);
     // *
     if (!disableLsp) {
         await Configuration.setRoot();
@@ -75,17 +75,15 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
     vscode.workspace.onDidSaveTextDocument((document) => {
         if (isRstFile(document)) {
-            const uri = getPreviewUri(document.uri);
-            provider.update(uri);
+            provider.update(document.uri);
         }
     });
 
-    const updateOnTextChanged = Configuration.loadSetting('updateOnTextChanged', 'true');
+    const updateOnTextChanged = Configuration.loadSetting('updateOnTextChanged', 'true', null);
     if (updateOnTextChanged === 'true') {
         vscode.workspace.onDidChangeTextDocument((event) => {
             if (isRstFile(event.document)) {
-                const uri = getPreviewUri(event.document.uri);
-                provider.update(uri);
+                provider.update(event.document.uri);
             }
         });
     }
@@ -126,10 +124,6 @@ function isRstFile(document: vscode.TextDocument) {
         && document.uri.scheme !== 'restructuredtext'; // prevent processing of own documents
 }
 
-function getPreviewUri(uri: vscode.Uri) {
-    return uri.with({ scheme: 'restructuredtext', path: uri.path + '.rendered', query: uri.toString() });
-}
-
 async function showPreview(uri?: vscode.Uri, sideBySide: boolean = false) {
     let resource = uri;
     if (!(resource instanceof vscode.Uri)) {
@@ -148,10 +142,15 @@ async function showPreview(uri?: vscode.Uri, sideBySide: boolean = false) {
         return;
     }
 
+    const preview = getPreviewUri(resource);
     return await vscode.commands.executeCommand('vscode.previewHtml',
-        getPreviewUri(resource),
+        preview,
         getViewColumn(sideBySide),
-        `Preview '${path.basename(resource.fsPath)}'`);
+        `Preview '${path.basename(preview.fsPath)}'`);
+}
+
+function getPreviewUri(uri: vscode.Uri) {
+    return uri.with({ scheme: 'restructuredtext', path: uri.path, query: uri.toString() });
 }
 
 function getViewColumn(sideBySide): vscode.ViewColumn {

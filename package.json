@@ -5,15 +5,14 @@
   "version": "70.0.0",
   "publisher": "lextudio",
   "engines": {
-    "vscode": "^1.15.0"
+    "vscode": "^1.16.0"
   },
   "dependencies": {
     "file-url": "^1.0.1",
-    "http-proxy-agent": "^2.0.0",
-    "https-proxy-agent": "^2.1.1",
+    "http-proxy-agent": "^2.1.0",
+    "https-proxy-agent": "^2.2.1",
     "tmp": "0.0.33",
-    "vsce": "^1.35.0",
-    "vscode": "^1.1.10",
+    "vsce": "^1.47.0",
     "vscode-languageclient": "^3.5.0"
   },
   "devDependencies": {
@@ -22,7 +21,7 @@
     "mocha": "^4.0.1",
     "ts-node": "^3.3.0",
     "typescript": "^2.1.5",
-    "vscode": "^1.1.10"
+    "vscode": "^1.1.21"
   },
   "runtimeDependencies": [
     {
@@ -214,18 +213,18 @@
       "properties": {
         "restructuredtext.workspaceRoot": {
           "type": "string",
-          "default": "${workspaceRoot}",
+          "default": "${workspaceFolder}",
           "description": "Write-only. Don't modify the value. This is a reserved setting for IntelliSense."
         },
         "restructuredtext.builtDocumentationPath": {
           "type": "string",
           "default": null,
-          "description": "Sphinx's HTML output folder. Defaults to 'restructuredtext.confPath'/_build/html This is an absolute path, and you can use ${workspaceRoot} to represent the workspace root folder."
+          "description": "Sphinx's HTML output folder. Defaults to 'restructuredtext.confPath'/_build/html This is an absolute path, and you can use ${workspaceFolder} to represent the workspace root folder."
         },
         "restructuredtext.confPath": {
           "type": "string",
           "default": null,
-          "description": "Sphinx's configuration folder containing conf.py. Set this option if the path is not found automatically. This is an absolute path, and you can use ${workspaceRoot} to represent the workspace root folder."
+          "description": "Sphinx's configuration folder containing conf.py. Set this option if the path is not found automatically. This is an absolute path, and you can use ${workspaceFolder} to represent the workspace root folder."
         },
         "restructuredtext.updateOnTextChanged": {
           "type": "string",
@@ -240,12 +239,12 @@
         "restructuredtext.sphinxBuildPath": {
           "type": "string",
           "default": null,
-          "description": "The full path of the sphinx-build executable. This is an absolute path, and you can use ${workspaceRoot} to represent the workspace root folder."
+          "description": "The full path of the sphinx-build executable. This is an absolute path, and you can use ${workspaceFolder} to represent the workspace root folder."
         },
         "restructuredtext.rst2htmlCommand": {
           "type": "string",
           "default": null,
-          "description": "The full path of the rst2html.py executable. This is an absolute path, and you can use ${workspaceRoot} to represent the workspace root folder."
+          "description": "The full path of the rst2html.py executable. This is an absolute path, and you can use ${workspaceFolder} to represent the workspace root folder."
         },
         "restructuredtext.linter.executablePath": {
           "type": "string",
