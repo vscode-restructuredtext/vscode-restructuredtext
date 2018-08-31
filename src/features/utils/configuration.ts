@@ -1,7 +1,7 @@
 'use strict';
 
 import {
-    Uri, workspace,
+    Uri, workspace, WorkspaceFolder,
 } from 'vscode';
 
 export class Configuration {
@@ -51,11 +51,17 @@ export class Configuration {
             return input;
         }
 
-        const root = workspace.getWorkspaceFolder(resource);
         let path: string;
-        if (root == null) {
+        if (!workspace.workspaceFolders) {
             path = workspace.rootPath;
         } else {
+            let root: WorkspaceFolder;
+            if (workspace.workspaceFolders.length === 1) {
+                root = workspace.workspaceFolders[0];
+            } else {
+                root = workspace.getWorkspaceFolder(resource);
+            }
+
             path = root.uri.path;
         }
 
