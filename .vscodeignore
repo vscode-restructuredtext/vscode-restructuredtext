@@ -4,6 +4,7 @@ typings/**
 **/*.ts
 .gitignore
 tsconfig.json
+tslint.json
 build/**
 bin/EditorServices.log
 bin/DebugAdapter.log
