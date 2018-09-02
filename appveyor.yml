@@ -3,6 +3,8 @@ skip_tags: true
 image: Visual Studio 2017
 before_build:
   - npm install -g vsce
+  - npm --version
+  - node --version
 build_script:
   - .\build.bat
 after_build:
