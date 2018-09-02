@@ -5,6 +5,8 @@ before_build:
   - npm install -g vsce
 build_script:
   - .\build.bat
+after_build:
+  - dir
 test: off
 artifacts:
   - path: '*.vsix'

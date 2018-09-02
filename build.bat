@@ -1,3 +1,3 @@
 npm install
 vsce package
-dir
+@IF %ERRORLEVEL% NEQ 0 EXIT /b 1
