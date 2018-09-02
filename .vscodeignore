@@ -13,3 +13,6 @@ bin/*.vshost.*
 install.Lock
 *.vsix
 .editorconfig
+appveyor.yml
+build.bat
+.travis.yml

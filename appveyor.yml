@@ -1,0 +1,11 @@
+version: 1.0.{build}
+skip_tags: true
+image: Visual Studio 2017
+before_build:
+  - npm install -g vsce
+build_script:
+  - .\build.bat
+test: off
+artifacts:
+  - path: '*.vsix'
+    name: Offline installer
