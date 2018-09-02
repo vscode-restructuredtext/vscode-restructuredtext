@@ -10,7 +10,7 @@ import { findConfPyFiles, findConfPyFilesInParentDirs, RstTransformerConfig } fr
  */
 export class RstTransformerSelector {
     public static async findConfDir(resource: Uri, channel: OutputChannel): Promise<RstTransformerConfig> {
-        const rstPath = resource.path;
+        const rstPath = resource.fsPath;
         // Sanity check - the file we are previewing must exist
         if (!fs.existsSync(rstPath) || !fs.statSync(rstPath).isFile) {
             return Promise.reject('RST extension got invalid file name: ' + rstPath);
