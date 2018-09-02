@@ -8,6 +8,7 @@ before_build:
 build_script:
   - .\build.bat
 after_build:
+  - vsce package
   - dir
 test: off
 artifacts:
