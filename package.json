@@ -5,15 +5,15 @@
   "version": "72.0.0",
   "publisher": "lextudio",
   "engines": {
-    "vscode": "^1.15.0"
+    "vscode": "^1.16.0"
   },
   "dependencies": {
     "file-url": "^1.0.1",
-    "http-proxy-agent": "^2.0.0",
-    "https-proxy-agent": "^2.1.1",
+    "http-proxy-agent": "^2.1.0",
+    "https-proxy-agent": "^2.2.1",
     "tmp": "0.0.33",
-    "vsce": "^1.35.0",
-    "vscode": "^1.1.10",
+    "vsce": "^1.47.0",
+    "vscode": "^1.1.21",
     "vscode-languageclient": "^3.5.0"
   },
   "devDependencies": {
@@ -21,8 +21,7 @@
     "@types/node": "^7.0.5",
     "mocha": "^4.0.1",
     "ts-node": "^3.3.0",
-    "typescript": "^2.1.5",
-    "vscode": "^1.1.10"
+    "typescript": "^2.1.5"
   },
   "runtimeDependencies": [
     {
