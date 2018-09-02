@@ -4,7 +4,6 @@ node_modules/
 vscode-restructuredtext.zip
 vscps-preview.zip
 *.vsix
-package-lock\.json
 /.rst
 
 install\.Lock
