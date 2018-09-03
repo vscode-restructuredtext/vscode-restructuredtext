@@ -62,7 +62,7 @@ export class Configuration {
                 root = workspace.getWorkspaceFolder(resource);
             }
 
-            path = root.uri.path;
+            path = root.uri.fsPath;
         }
 
         return input
