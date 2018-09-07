@@ -75,7 +75,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
     vscode.workspace.onDidSaveTextDocument((document) => {
         if (isRstFile(document)) {
-            provider.update(document.uri);
+            provider.update(getPreviewUri(document.uri));
         }
     });
 
@@ -83,7 +83,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     if (updateOnTextChanged === 'true') {
         vscode.workspace.onDidChangeTextDocument((event) => {
             if (isRstFile(event.document)) {
-                provider.update(event.document.uri);
+                provider.update(getPreviewUri(event.document.uri));
             }
         });
     }
