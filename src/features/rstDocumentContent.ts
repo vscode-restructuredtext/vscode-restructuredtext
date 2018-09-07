@@ -196,7 +196,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
                 <h4>More Information</h4>\
                 <p>Diagnostics information has been written to OUTPUT | reStructuredText panel.</p>\
                 <p>The troubleshooting guide can be found at</p>\
-                <pre>https://www.restructuredtext.net/en/latest/articles/troubleshooting.html</pre>\
+                <pre>https://docs.restructuredtext.net/articles/troubleshooting.html</pre>\
               </header>\
             </article>\
           </section>\
