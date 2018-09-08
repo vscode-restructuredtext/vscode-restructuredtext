@@ -190,7 +190,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
               <header>\
                 <h2>Cannot show preview page.</h2>\
                 <h4>Description:</h4>\
-                <p>' + description + '</p>\
+                ' + description + '\
                 <h4>Detailed error message</h4>\
                 <pre>' + error + '</pre>\
                 <h4>More Information</h4>\
@@ -217,6 +217,7 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
     private preview(htmlPath: string, fixStyle: boolean, readStdout: boolean):
         Promise<string> {
         this._channel.appendLine('Compiler: ' + this._cmd);
+        this._channel.appendLine('Working directory: ' + this._input);
         this._channel.appendLine('HTML file: ' + htmlPath);
 
         // Build and display file.
@@ -224,7 +225,15 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
             exec(this._cmd, this._options, (error, stdout, stderr) => {
                 if (error) {
                     const description =
-                        'Cannot preview. Please review "restructuredtext.sphinxBuildPath" setting.';
+                        '<p>Cannot generate preview page.</p>\
+                        <p>Possible causes are,</p>\
+                        <ul>\
+                        <li>Python is not installed properly.</li>\
+                        <li>Sphinx is not installed properly (if preview uses "conf.py").</li>\
+                        <li>Wrong value is set on "restructuredtext.sphinxBuildPath".</li>\
+                        <li>A wrong "conf.py" file is selected.</li>\
+                        <li>DocUtil is not installed properly (if preview uses "rst2html.py").</li>\
+                        </ul>';
                     const errorMessage = [
                         error.name,
                         error.message,
@@ -239,7 +248,15 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
                     const errText = stderr.toString();
                     if (errText.indexOf('Exception occurred:') > -1) {
                         const description =
-                            'Cannot preview on Windows. Please review "restructuredtext.sphinxBuildPath" setting.';
+                            '<p>Cannot generate preview page on Windows.</p>\
+                            <p>Possible causes are,</p>\
+                            <ul>\
+                            <li>Python is not installed properly.</li>\
+                            <li>Sphinx is not installed properly (if preview uses "conf.py").</li>\
+                            <li>Wrong value is set on "restructuredtext.sphinxBuildPath".</li>\
+                            <li>A wrong "conf.py" file is selected.</li>\
+                            <li>DocUtil is not installed properly (if preview uses "rst2html.py").</li>\
+                            </ul>';
                         resolve(this.showError(description, errText));
                     }
                 }
@@ -252,9 +269,12 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
                             resolve(this.prepareHtml(data, htmlPath, fixStyle));
                         } else {
                             const description =
-                                'Cannot read page "' +
-                                htmlPath +
-                                '".  Please review "restructuredtext.builtDocumentationPath" setting.';
+                                '<p>Cannot read preview page "' + htmlPath + '".</p>\
+                                <p>Possible causes are,</p>\
+                                <ul>\
+                                <li>A wrong "conf.py" file is selected.</li>\
+                                <li>Wrong value is set on "restructuredtext.builtDocumentationPath".</li>\
+                                </ul>';
                             const errorMessage = [
                                 err.name,
                                 err.message,

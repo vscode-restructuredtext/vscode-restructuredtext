@@ -36,11 +36,11 @@ This extension is hosted at [Visual Studio Marketplace](https://marketplace.visu
 1. Type "restructuredtext" in the search box and hit Enter key.
 1. Click "Install" button to install "reStructuredText" extension.
 
-After installation, please visit [the homepage for this extension](https://www.restructuredtext.net) to learn how to use it.
+After installing this extension, please visit [the homepage for this extension](https://docs.restructuredtext.net) to learn how to use it.
 
 ## Contributing to the code
 
-Check out the [development documentation](https://www.restructuredtext.net/en/latest/articles/development.html) for more details
+Check out the [development documentation](https://docs.restructuredtext.net/en/latest/articles/development.html) for more details
 on how to contribute to this extension!
 
 Check the [dashboard on work items](https://waffle.io/vscode-restructuredtext/vscode-restructuredtext).
@@ -48,7 +48,7 @@ Check the [dashboard on work items](https://waffle.io/vscode-restructuredtext/vs
 ## License
 
 This extension is [licensed under the MIT License](LICENSE.txt).  Please see the
-[third-party notices](https://www.restructuredtext.net/en/latest/articles/thirdparties.html) file for details on the third-party
+[third-party notices](https://docs.restructuredtext.net/en/latest/articles/thirdparties.html) file for details on the third-party
 files that we include with releases of this project.
 
 ## Acknowledgements
@@ -62,4 +62,4 @@ The linter support is based on [Cody Hoover's ruby-linter](https://marketplace.v
 The initial idea was brought from [Thomas Haakon Townsend's ReStructured Text Previewer](https://marketplace.visualstudio.com/items?itemName=tht13.rst-vscode), but soon after moving fully to Sphinx, this extension becomes its own beast.
 
 ### IntelliSense
-The IntelliSense support is provided by the new [reStructuredText Language Server](https://restructuredtext.net).
+The IntelliSense support is provided by the reStructuredText Language Server.
