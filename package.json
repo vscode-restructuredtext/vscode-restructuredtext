@@ -154,6 +154,12 @@
         "key": "ctrl+k ctrl+=",
         "mac": "cmd+k cmd+=",
         "when": "editorTextFocus"
+      },
+      {
+        "command": "restructuredtext.features.underline.underlineReverse",
+        "key": "ctrl+k ctrl+-",
+        "mac": "cmd+k cmd+-",
+        "when": "editorTextFocus"
       }
     ],
     "commands": [

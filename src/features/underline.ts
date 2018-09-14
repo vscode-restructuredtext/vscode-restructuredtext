@@ -15,8 +15,9 @@ const underlineChars = ['=', '-', ':', '.', '\'', '"', '~', '^', '*', '+', '#'];
  * @param current - The current underline character
  * @return - The next underline char in the list of precedence
  */
-export function nextUnderlineChar(current: string): string {
-    const nextCharIndex = (underlineChars.indexOf(current) + 1) % underlineChars.length;
+export function nextUnderlineChar(current: string, reverse: boolean = false): string {
+    const nextIndex = underlineChars.indexOf(current) + (reverse ? -1 : 1);
+    const nextCharIndex = nextIndex >= 0 ? nextIndex % underlineChars.length : nextIndex + underlineChars.length;
     return underlineChars[nextCharIndex];
 }
 
@@ -41,7 +42,7 @@ export function currentUnderlineChar(currentLine: string, nextLine: string): str
  * Underline current line. If it's already underlined, pick up the underline character
  * corresponding to the nextitle level and replace the current underline.
  */
-export function underline(textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit) {
+export function underline(textEditor: vscode.TextEditor, edit: vscode.TextEditorEdit, reverse: boolean = false) {
     textEditor.selections.forEach((selection) => {
         const position = selection.active;
         const line = textEditor.document.lineAt(position.line).text;
@@ -66,10 +67,8 @@ export function underline(textEditor: vscode.TextEditor, edit: vscode.TextEditor
                 new vscode.Position(position.line + 1, 0),
                 new vscode.Position(position.line + 1, nextLine.length),
             );
-            edit.replace(
-                nextLineRange,
-                nextUnderlineChar(underlineChar).repeat(line.length),
-            );
+            const replacement = nextUnderlineChar(underlineChar, reverse);
+            edit.replace(nextLineRange, replacement.repeat(line.length));
         }
     });
 }

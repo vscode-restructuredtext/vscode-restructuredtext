@@ -54,6 +54,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     context.subscriptions.push(d1, d2, d3, registration);
     context.subscriptions.push(
         vscode.commands.registerTextEditorCommand('restructuredtext.features.underline.underline', underline),
+        vscode.commands.registerTextEditorCommand('restructuredtext.features.underline.underlineReverse',
+            (textEditor, edit) => underline(textEditor, edit, true)),
     );
 
     // Hook up the status bar to document change events
