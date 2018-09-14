@@ -43,8 +43,8 @@ suite("reStructuredText tests", () => {
 
     test("nextLineChar", () => {
         assert.equal(underline.nextUnderlineChar('='), '-');
-        assert.equal(underline.nextUnderlineChar('-'), '~');
-        assert.equal(underline.nextUnderlineChar('~'), '+');
-        assert.equal(underline.nextUnderlineChar('+'), '=');
+        assert.equal(underline.nextUnderlineChar('-'), ':');
+        assert.equal(underline.nextUnderlineChar(':'), '.');
+        assert.equal(underline.nextUnderlineChar('.'), '\'');
     });
 });
