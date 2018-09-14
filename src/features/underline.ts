@@ -6,7 +6,7 @@ import * as vscode from 'vscode';
 // list of underline characters, from higher level to lower level
 // Use the recommended items from http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#sections,
 // and remove '`' and '_' as the syntax file does not like them.
-const underlineChars = ['=', '-', ':', '.', "'", '"', '~', '^', '*', '+', '#'];
+const underlineChars = ['=', '-', ':', '.', '\'', '"', '~', '^', '*', '+', '#'];
 
 /**
  * Analyze current underline char and return the underline character corresponding
@@ -16,7 +16,7 @@ const underlineChars = ['=', '-', ':', '.', "'", '"', '~', '^', '*', '+', '#'];
  * @return - The next underline char in the list of precedence
  */
 export function nextUnderlineChar(current: string): string {
-    const nextCharIndex = ((underlineChars.indexOf(current) + 1) % underlineChars.length);
+    const nextCharIndex = (underlineChars.indexOf(current) + 1) % underlineChars.length;
     return underlineChars[nextCharIndex];
 }
 
