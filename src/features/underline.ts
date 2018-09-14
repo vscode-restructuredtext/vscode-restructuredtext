@@ -16,7 +16,7 @@ const underlineChars = ['=', '-', ':', '.', "'", '"', '~', '^', '*', '+', '#'];
  * @return - The next underline char in the list of precedence
  */
 export function nextUnderlineChar(current: string): string {
-    const nextCharIndex = (underlineChars.indexOf(current + 1) % underlineChars.length);
+    const nextCharIndex = ((underlineChars.indexOf(current) + 1) % underlineChars.length);
     return underlineChars[nextCharIndex];
 }
 
