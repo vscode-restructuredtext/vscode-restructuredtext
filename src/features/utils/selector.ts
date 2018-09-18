@@ -33,6 +33,7 @@ export class RstTransformerSelector {
             qpSettings.label = '$(gear) Sphinx: ' + pth;
             qpSettings.description += ' (from restructuredtext.confPath setting)';
             qpSettings.confPyDirectory = path.dirname(pth);
+            qpSettings.confPyDirectoryFromSettings = true;
             return qpSettings;
         }
         // Add path to a directory containing conf.py if it is not already stored
@@ -43,6 +44,7 @@ export class RstTransformerSelector {
                     const qp = new RstTransformerConfig();
                     qp.label = '$(gear) Sphinx: ' + pth;
                     qp.confPyDirectory = path.dirname(pth);
+                    qp.confPyDirectoryFromSettings = false;
                     configurations.push(qp);
                     pathStrings.push(pth);
                 }

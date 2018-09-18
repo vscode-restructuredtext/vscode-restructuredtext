@@ -305,7 +305,9 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
 
         this._rstTransformerStatus.setConfiguration(rstTransformerConf.label);
         this._rstTransformerConfig = rstTransformerConf;
-        await Configuration.saveSetting('confPath', rstTransformerConf.confPyDirectory, resource);
+        if (!rstTransformerConf.confPyDirectoryFromSettings) {
+            await Configuration.saveSetting('confPath', rstTransformerConf.confPyDirectory, resource);
+        }
         return rstTransformerConf;
     }
 
