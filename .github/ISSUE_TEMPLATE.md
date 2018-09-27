@@ -1,4 +1,4 @@
-Please follow [the troubleshooting guide](https://github.com/vscode-restructuredtext/vscode-restructuredtext/blob/master/docs/sphinx.md#troubleshooting-guide) to locate the culprit.
+Please follow [the troubleshooting guide](https://docs.restructuredtext.net/articles/troubleshooting.html) to locate the culprit.
 
 If troubleshooting does not reveal any useful information, provide the following information to create a new issue,
 
