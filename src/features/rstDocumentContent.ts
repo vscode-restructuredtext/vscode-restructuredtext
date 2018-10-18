@@ -13,7 +13,6 @@ import { RstTransformerSelector } from './utils/selector';
 import RstTransformerStatus from './utils/statusBar';
 
 export default class RstDocumentContentProvider implements TextDocumentContentProvider {
-    private _context: ExtensionContext;
     private _onDidChange = new EventEmitter<Uri>();
     private _waiting: boolean;
     private _input: string;
@@ -26,7 +25,6 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
     private _rstTransformerStatus: RstTransformerStatus;
 
     constructor(context: ExtensionContext, channel: OutputChannel, status: RstTransformerStatus) {
-        this._context = context;
         this._waiting = false;
         this._channel = channel;
         this._rstTransformerStatus = status;
@@ -55,6 +53,17 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
         if (rstTransformerConf.confPyDirectory !== '') {
             this._input = rstTransformerConf.confPyDirectory;
             this._channel.appendLine('Sphinx conf.py directory: ' + this._input);
+
+            // Make sure the conf.py file exists
+            let confFile = path.join(this._input, 'conf.py');
+            if (!fs.existsSync(confFile)) {
+                await this.resetRstTransformerConfig(uri);
+
+                this._channel.appendLine('conf.py not found. Refresh the settings.');
+                this._input = rstTransformerConf.confPyDirectory;
+                this._channel.appendLine('Sphinx conf.py directory: ' + this._input);
+                confFile = path.join(this._input, 'conf.py');
+            }
 
             // The directory where Sphinx will write the html output
             const out = Configuration.loadSetting('builtDocumentationPath', null, uri);
@@ -93,15 +102,6 @@ export default class RstDocumentContentProvider implements TextDocumentContentPr
             const ext = whole.lastIndexOf('.');
             whole = whole.substring(0, ext) + '.html';
             htmlPath = path.join(this._output, this.relativeDocumentationPath(whole));
-
-            // Make sure the conf.py file exists
-            const confFile = path.join(this._input, 'conf.py');
-            if (!fs.existsSync(confFile)) {
-                return this.showError(
-                    'Cannot find "conf.py". Please review "restructuredtext.confPath" setting.',
-                    'Current "conf.py" setting is "' + confFile + '".',
-                );
-            }
         } else {
             // Configure rst2html.py
             let build = Configuration.loadSetting('rst2htmlCommand', null, uri);
