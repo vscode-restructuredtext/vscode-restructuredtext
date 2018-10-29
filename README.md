@@ -38,6 +38,11 @@ This extension is hosted at [Visual Studio Marketplace](https://marketplace.visu
 
 After installing this extension, please visit [the homepage for this extension](https://docs.restructuredtext.net) to learn how to use it.
 
+## How to activate preview
+
+- Toggle Preview - ctrl+shift+r
+- Open Preview to the Side - ctrl+k r
+
 ## Contributing to the code
 
 Check out the [development documentation](https://docs.restructuredtext.net/en/latest/articles/development.html) for more details
