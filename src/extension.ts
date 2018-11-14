@@ -99,6 +99,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
         });
     });
 
+    vscode.languages.setLanguageConfiguration('restructuredtext', {
+        comments: {
+            lineComment: '..'
+        }
+    })
     return {
         initializationFinished: Promise.all([rstLspPromise])
             .then((promiseResult) => {
