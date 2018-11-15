@@ -2,18 +2,17 @@
   "name": "restructuredtext",
   "displayName": "reStructuredText",
   "description": "reStructuredText language support (RST/ReST linter, preview, IntelliSense and more)",
-  "version": "79.0.0",
+  "version": "80.0.0",
   "publisher": "lextudio",
   "engines": {
-    "vscode": "^1.16.0"
+    "vscode": "^1.23.0"
   },
   "dependencies": {
     "file-url": "^1.0.1",
     "http-proxy-agent": "^2.1.0",
     "https-proxy-agent": "^2.2.1",
     "tmp": "0.0.33",
-    "vsce": "^1.47.0",
-    "vscode": "^1.1.21",
+    "vscode": "^1.1.18",
     "vscode-languageclient": "^3.5.0"
   },
   "devDependencies": {
