@@ -11,7 +11,7 @@ export class LineDecoder {
 		this.lines = [];
 	}
 
-	public write(buffer: NodeBuffer): string[] {
+	public write(buffer: Buffer): string[] {
 		var result: string[] = [];
 		var value = this.remaining
 			? this.remaining + this.stringDecoder.write(buffer)

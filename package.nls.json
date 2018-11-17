@@ -1,0 +1,16 @@
+{
+	"displayName": "reStructuredText",
+	"description": "reStructuredText language support (RST/ReST linter, preview, IntelliSense and more)",
+	"restructuredtext.preview.doubleClickToSwitchToEditor.desc": "Double click in the rst preview to switch to the editor.",
+	"restructuredtext.preview.markEditorSelection.desc": "Mark the current editor selection in the preview.",
+	"restructuredtext.preview.scrollEditorWithPreview.desc": "When a preview is scrolled, update the view of the editor.",
+	"restructuredtext.preview.scrollPreviewWithEditor.desc": "When an editor is scrolled, update the view of the preview.",
+	"restructuredtext.preview.title" : "Open Preview",
+	"restructuredtext.previewSide.title" : "Open Preview to the Side",
+	"restructuredtext.showLockedPreviewToSide.title": "Open Locked Preview to the Side",
+	"restructuredtext.showSource.title" : "Show Source",
+	"restructuredtext.showPreviewSecuritySelector.title": "Change Preview Security Settings",
+	"restructuredtext.trace.desc": "Enable debug logging for this extension.",
+	"restructuredtext.preview.refresh.title": "Refresh Preview",
+	"restructuredtext.preview.toggleLock.title": "Toggle Preview Locking"
+}

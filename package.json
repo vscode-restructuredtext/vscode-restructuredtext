@@ -1,26 +1,34 @@
 {
   "name": "restructuredtext",
-  "displayName": "reStructuredText",
-  "description": "reStructuredText language support (RST/ReST linter, preview, IntelliSense and more)",
+  "displayName": "%displayName%",
+  "description": "%discription%",
   "version": "80.0.0",
   "publisher": "lextudio",
   "engines": {
-    "vscode": "^1.23.0"
+    "vscode": "^1.26.0"
   },
   "dependencies": {
     "file-url": "^1.0.1",
     "http-proxy-agent": "^2.1.0",
     "https-proxy-agent": "^2.2.1",
     "tmp": "0.0.33",
-    "vscode": "^1.1.18",
-    "vscode-languageclient": "^3.5.0"
+    "lodash.throttle": "^4.1.1",
+    "vscode-languageclient": "^3.5.0",
+    "vscode-nls": "^4.0.0"
   },
   "devDependencies": {
-    "@types/mocha": "^2.2.43",
-    "@types/node": "^7.0.5",
-    "mocha": "^4.0.1",
+    "@studio/changes": "^1.7.0",
+    "@types/lodash.throttle": "^4.1.4",
+    "@types/mocha": "^5.2.5",
+    "@types/node": "^10.11.3",
+    "mocha": "^5.2.0",
+    "ts-loader": "^5.2.1",
     "ts-node": "^3.3.0",
-    "typescript": "^2.1.5"
+    "tslib": "^1.9.3",
+    "typescript": "^3.1.1",
+    "vscode": "^1.1.21",
+    "webpack": "^4.20.0",
+    "webpack-cli": "^3.1.2"
   },
   "runtimeDependencies": [
     {
@@ -98,11 +106,17 @@
   "bugs": "https://github.com/vscode-restructuredtext/vscode-restructuredtext/issues",
   "main": "./out/src/extension",
   "activationEvents": [
+    "workspaceContains:**/*.rst",
+    "onLanguage:restructuredtext",
+    "onCommand:restructuredtext.preview.toggleLock",
+    "onCommand:restructuredtext.preview.refresh",
     "onCommand:restructuredtext.showPreview",
     "onCommand:restructuredtext.showPreviewToSide",
+    "onCommand:restructuredtext.showLockedPreviewToSide",
     "onCommand:restructuredtext.showSource",
-    "onCommand:restructuredtext.features.underline.underline",
-    "onLanguage:restructuredtext"
+    "onCommand:restructuredtext.showPreviewSecuritySelector",
+    "onWebviewPanel:restructuredtext.preview",
+    "onCommand:restructuredtext.features.underline.underline"
   ],
   "contributes": {
     "languages": [
@@ -111,6 +125,8 @@
         "aliases": [
           "reStructuredText",
           "restructuredtext",
+          "ReStructured Text",
+          "reStructured Text",
           "RST",
           "ReST",
           "reST"
@@ -140,31 +156,31 @@
         "command": "restructuredtext.showPreview",
         "key": "shift+ctrl+r",
         "mac": "shift+cmd+r",
-        "when": "editorTextFocus"
+        "when": "editorLangId == restructuredtext"
       },
       {
         "command": "restructuredtext.showPreviewToSide",
         "key": "ctrl+k ctrl+r",
         "mac": "cmd+k cmd+r",
-        "when": "editorTextFocus"
+        "when": "editorLangId == restructuredtext"
       },
       {
         "command": "restructuredtext.features.underline.underline",
         "key": "ctrl+k ctrl+=",
         "mac": "cmd+k cmd+=",
-        "when": "editorTextFocus"
+        "when": "editorLangId == restructuredtext"
       },
       {
         "command": "restructuredtext.features.underline.underlineReverse",
         "key": "ctrl+k ctrl+-",
         "mac": "cmd+k cmd+-",
-        "when": "editorTextFocus"
+        "when": "editorLangId == restructuredtext"
       }
     ],
     "commands": [
       {
         "command": "restructuredtext.showPreview",
-        "title": "Toggle Preview",
+        "title": "%restructuredtext.preview.title%",
         "category": "reStructuredText",
         "icon": {
           "light": "./media/Preview.svg",
@@ -173,7 +189,16 @@
       },
       {
         "command": "restructuredtext.showPreviewToSide",
-        "title": "Open Preview to the Side",
+        "title": "%restructuredtext.previewSide.title%",
+        "category": "reStructuredText",
+        "icon": {
+          "light": "./media/PreviewOnRightPane_16x.svg",
+          "dark": "./media/PreviewOnRightPane_16x_dark.svg"
+        }
+      },
+      {
+        "command": "restructuredtext.showLockedPreviewToSide",
+        "title": "%restructuredtext.showLockedPreviewToSide.title%",
         "category": "reStructuredText",
         "icon": {
           "light": "./media/PreviewOnRightPane_16x.svg",
@@ -182,12 +207,27 @@
       },
       {
         "command": "restructuredtext.showSource",
-        "title": "Show Source",
+        "title": "%restructuredtext.showSource.title%",
         "category": "reStructuredText",
         "icon": {
           "light": "./media/ViewSource.svg",
           "dark": "./media/ViewSource_inverse.svg"
         }
+      },
+      {
+        "command": "restructuredtext.showPreviewSecuritySelector",
+        "title": "%restructuredtext.showPreviewSecuritySelector.title%",
+        "category": "reStructuredText"
+      },
+      {
+        "command": "restructuredtext.preview.refresh",
+        "title": "%restructuredtext.preview.refresh.title%",
+        "category": "reStructuredText"
+      },
+      {
+        "command": "restructuredtext.preview.toggleLock",
+        "title": "%restructuredtext.preview.toggleLock.title%",
+        "category": "reStructuredText"
       }
     ],
     "menus": {
@@ -199,9 +239,24 @@
           "group": "navigation"
         },
         {
-          "when": "resourceScheme == restructuredtext",
+          "when": "restructuredtextPreviewFocus",
           "command": "restructuredtext.showSource",
           "group": "navigation"
+        },
+        {
+          "command": "restructuredtext.preview.refresh",
+          "when": "restructuredtextPreviewFocus",
+          "group": "restructuredtext"
+        },
+        {
+          "command": "restructuredtext.preview.toggleLock",
+          "when": "restructuredtextPreviewFocus",
+          "group": "restructuredtext"
+        },
+        {
+          "command": "restructuredtext.showPreviewSecuritySelector",
+          "when": "restructuredtextPreviewFocus",
+          "group": "restructuredtext"
         }
       ],
       "explorer/context": [
@@ -210,12 +265,87 @@
           "command": "restructuredtext.showPreview",
           "group": "navigation"
         }
+      ],
+      "explorer/title/context": [
+        {
+          "when": "resourceLangId == restructuredtext",
+          "command": "restructuredtext.showPreview",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "restructuredtext.showPreview",
+          "when": "editorLangId == restructuredtext",
+          "group": "navigation"
+        },
+        {
+          "command": "restructuredtext.showPreviewToSide",
+          "when": "editorLangId == restructuredtext",
+          "group": "navigation"
+        },
+        {
+          "command": "restructuredtext.showLockedPreviewToSide",
+          "when": "editorLangId == restructuredtext",
+          "group": "navigation"
+        },
+        {
+          "command": "restructuredtext.showSource",
+          "when": "restructuredtextPreviewFocus",
+          "group": "navigation"
+        },
+        {
+          "command": "restructuredtext.showPreviewSecuritySelector",
+          "when": "editorLangId == restructuredtext"
+        },
+        {
+          "command": "restructuredtext.showPreviewSecuritySelector",
+          "when": "restructuredtextPreviewFocus"
+        },
+        {
+          "command": "restructuredtext.preview.toggleLock",
+          "when": "restructuredtextPreviewFocus"
+        }
       ]
     },
     "configuration": {
       "type": "object",
       "title": "reStructuredText Configuration",
       "properties": {
+        "restructuredtext.preview.scrollPreviewWithEditor": {
+          "type": "boolean",
+          "default": true,
+          "description": "%restructuredtext.preview.scrollPreviewWithEditor.desc%",
+          "scope": "resource"
+        },
+        "restructuredtext.preview.markEditorSelection": {
+          "type": "boolean",
+          "default": true,
+          "description": "%restructuredtext.preview.markEditorSelection.desc%",
+          "scope": "resource"
+        },
+        "restructuredtext.preview.scrollEditorWithPreview": {
+          "type": "boolean",
+          "default": true,
+          "description": "%restructuredtext.preview.scrollEditorWithPreview.desc%",
+          "scope": "resource"
+        },
+        "restructuredtext.preview.doubleClickToSwitchToEditor": {
+          "type": "boolean",
+          "default": true,
+          "description": "%restructuredtext.preview.doubleClickToSwitchToEditor.desc%",
+          "scope": "resource"
+        },
+        "restructuredtext.trace": {
+          "type": "string",
+          "enum": [
+            "off",
+            "verbose"
+          ],
+          "default": "off",
+          "description": "%restructuredtext.trace.desc%",
+          "scope": "window"
+        },
         "restructuredtext.workspaceRoot": {
           "type": "string",
           "default": "${workspaceFolder}",
@@ -295,9 +425,15 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "tsc -p ./",
-    "compile": "tsc -watch -p ./",
+    "vscode:prepublish": "npm run compile",
+    "compile": "npm run build-ext && npm run build-preview",
+    "build-ext": "npx tsc -p ./tsconfig.json",
+    "build-preview": "./node_modules/.bin/webpack-cli",
+    "watch": "npx tsc -watch -p ./tsconfig.json",
     "postinstall": "node ./node_modules/vscode/bin/install",
-    "vstest": "node ./node_modules/vscode/bin/test"
+    "test": "npm run compile && node ./node_modules/vscode/bin/test",
+    "preversion": "npm run compile",
+    "version": "./node_modules/.bin/changes",
+    "postversion": "git push --follow-tags"
   }
 }
