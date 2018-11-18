@@ -104,7 +104,7 @@
     "url": "https://github.com/vscode-restructuredtext/vscode-restructuredtext.git"
   },
   "bugs": "https://github.com/vscode-restructuredtext/vscode-restructuredtext/issues",
-  "main": "./out/src/extension",
+  "main": "./out/extension",
   "activationEvents": [
     "workspaceContains:**/*.rst",
     "onLanguage:restructuredtext",
