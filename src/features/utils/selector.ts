@@ -21,11 +21,11 @@ export class RstTransformerSelector {
         const confPathFromSettings = Configuration.loadSetting('confPath', null, resource);
         if (confPathFromSettings != null) {
             if (confPathFromSettings === '') {
-                const rst2html = new RstTransformerConfig();
-                rst2html.label = '$(code) Use rst2html.py';
-                rst2html.description = 'Do not use Sphinx, but rst2html.py instead';
-                rst2html.confPyDirectory = '';
-                return rst2html;
+                const docutil = new RstTransformerConfig();
+                docutil.label = '$(code) Use docutil';
+                docutil.description = 'Do not use Sphinx, but docutil instead';
+                docutil.confPyDirectory = '';
+                return docutil;
             }
 
             const pth = path.join(path.normalize(confPathFromSettings), 'conf.py');
@@ -55,10 +55,10 @@ export class RstTransformerSelector {
         addPaths(paths1);
         addPaths(paths2);
         channel.appendLine('Found conf.py paths: ' + JSON.stringify(pathStrings));
-        // The user can chose to use rst2hml.py instead of Sphinx
+        // The user can chose to use docutil instead of Sphinx
         const qpRstToHtml = new RstTransformerConfig();
-        qpRstToHtml.label = '$(code) Use rst2html.py';
-        qpRstToHtml.description = 'Do not use Sphinx, but rst2html.py instead';
+        qpRstToHtml.label = '$(code) Use docutil';
+        qpRstToHtml.description = 'Do not use Sphinx, but docutil instead';
         qpRstToHtml.confPyDirectory = '';
         configurations.push(qpRstToHtml);
         if (configurations.length === 1) {
