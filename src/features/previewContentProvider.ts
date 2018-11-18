@@ -69,16 +69,27 @@ export class RSTContentProvider {
 		const csp = this.getCspForResource(sourceUri, nonce);
 
 		const body = await this.engine.preview(rstDocument);
-		const parsedDoc = body.split(/\r?\n/).map((l,i) => 
-			l.replace(this.TAG_RegEx, (
-				match: string, p1: string, p2: string, p3: string, 
-				p4: string, p5: string, p6: string, offset: number) => 
-			typeof p5 !== "string" ? 
-			`<${p1} class="code-line" data-line="${i+1}" ${p2}` : 
-			`<${p1} ${p3} class="${p5} code-line" data-line="${i+1}" ${p6}`)
-		).join("\n");
 		if (body.search('</head>') > -1) {
-			const newHead = body.replace('</head>', `
+			let elementCount: number = 0;
+			let canStart: boolean = false;
+			const parsedDoc = body.split(/\r?\n/).map((l,i) => {
+				if (l.search('<div itemprop="articleBody">') > -1) {
+					canStart = true;
+				}
+				if (!canStart) {
+					return l;
+				}				
+				return l.replace(this.TAG_RegEx, (
+					match: string, p1: string, p2: string, p3: string, 
+					p4: string, p5: string, p6: string, offset: number) => {
+					elementCount++;
+					return typeof p5 !== "string" ? 
+					`<${p1} class="code-line" data-line="${elementCount}" ${p2}` : 
+					`<${p1} ${p3} class="${p5} code-line" data-line="${elementCount}" ${p6}`;
+				});
+			}
+			).join("\n");
+			const newHead = parsedDoc.replace('</head>', `
 			<meta id="vscode-rst-preview-data"
 			data-settings="${JSON.stringify(initialData).replace(/"/g, '&quot;')}"
 			data-strings="${JSON.stringify(previewStrings).replace(/"/g, '&quot;')}"
@@ -96,6 +107,14 @@ export class RSTContentProvider {
 			`);
 			return newAll;
 		} else {		
+			const parsedDoc = body.split(/\r?\n/).map((l,i) => 
+				l.replace(this.TAG_RegEx, (
+					match: string, p1: string, p2: string, p3: string, 
+					p4: string, p5: string, p6: string, offset: number) => 
+				typeof p5 !== "string" ? 
+				`<${p1} class="code-line" data-line="${i+1}" ${p2}` : 
+				`<${p1} ${p3} class="${p5} code-line" data-line="${i+1}" ${p6}`)
+			).join("\n");
 			return `<!DOCTYPE html>
 				<html>
 				<head>

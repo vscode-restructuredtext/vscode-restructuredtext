@@ -215,11 +215,12 @@ export class RSTEngine {
 
   public async preview(doc: TextDocument): Promise<string> {
     try {
-      if (this.status == null || this.status.config == null) {
+      if (this.status == null) {
         return this.compile(doc.fileName, doc.uri, '');
-      } else {
-        return this.compile(doc.fileName, doc.uri, this.status.config.confPyDirectory);
+      } else if (this.status.config == null) {
+          this.status.update();
       }
+      return this.compile(doc.fileName, doc.uri, this.status.config.confPyDirectory);
     } catch (e) {
       return this.errorSnippet(e.toString());
     }
