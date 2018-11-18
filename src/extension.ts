@@ -30,7 +30,7 @@ export function getExtensionPath(): string {
 
 let _channel: vscode.OutputChannel = null;
 
-export async function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext): Promise<{ initializationFinished: Promise<void> }> {
 	extensionPath = context.extensionPath;
 
 	const extensionId = 'lextudio.restructuredtext';
