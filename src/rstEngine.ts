@@ -168,15 +168,16 @@ export class RSTEngine {
     return document.replace(
         new RegExp('((?:src|href)=[\'\"])(.*?)([\'\"])', 'gmi'),
         (subString: string, p1: string, p2: string, p3: string): string => {
-            const fileUrl = require('file-url');
-            return [
+            const newUrl = [
                 p1,
-                fileUrl(path.join(
+                'vscode-resource:',
+                path.join(
                     path.dirname(documentPath),
                     p2,
-                )),
+                ),
                 p3,
             ].join('');
+            return newUrl;
         },
     );
   }

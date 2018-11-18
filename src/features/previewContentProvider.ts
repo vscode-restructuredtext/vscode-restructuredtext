@@ -77,25 +77,45 @@ export class RSTContentProvider {
 			`<${p1} class="code-line" data-line="${i+1}" ${p2}` : 
 			`<${p1} ${p3} class="${p5} code-line" data-line="${i+1}" ${p6}`)
 		).join("\n");
-		return `<!DOCTYPE html>
-			<html>
-			<head>
-				<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
-				${csp}
-				<meta id="vscode-rst-preview-data"
-					data-settings="${JSON.stringify(initialData).replace(/"/g, '&quot;')}"
-					data-strings="${JSON.stringify(previewStrings).replace(/"/g, '&quot;')}"
-					data-state="${JSON.stringify(state || {}).replace(/"/g, '&quot;')}">
-				<script src="${this.extensionResourcePath('pre.js')}" nonce="${nonce}"></script>
-				<script src="${this.extensionResourcePath('index.js')}" nonce="${nonce}"></script>
-				${this.getStyles(sourceUri, nonce, config)}
-				<base href="${rstDocument.uri.with({ scheme: 'vscode-resource' }).toString(true)}">
-			</head>
-			<body class="vscode-body ${config.scrollBeyondLastLine ? 'scrollBeyondLastLine' : ''} ${config.wordWrap ? 'wordWrap' : ''} ${config.rstEditorSelection ? 'showEditorSelection' : ''}">
-				${parsedDoc}
-				<div class="code-line" data-line="${rstDocument.lineCount}"></div>
+		if (body.search('</head>') > -1) {
+			const newHead = body.replace('</head>', `
+			<meta id="vscode-rst-preview-data"
+			data-settings="${JSON.stringify(initialData).replace(/"/g, '&quot;')}"
+			data-strings="${JSON.stringify(previewStrings).replace(/"/g, '&quot;')}"
+			data-state="${JSON.stringify(state || {}).replace(/"/g, '&quot;')}">
+		<script src="${this.extensionResourcePath('pre.js')}" nonce="${nonce}"></script>
+		<script src="${this.extensionResourcePath('index.js')}" nonce="${nonce}"></script>
+		<base href="${rstDocument.uri.with({ scheme: 'vscode-resource' }).toString(true)}">
+		</head>
+			`);
+			const newBody = newHead.replace('<body class="', 
+			`<body class="vscode-body ${config.scrollBeyondLastLine ? 'scrollBeyondLastLine' : ''} ${config.wordWrap ? 'wordWrap' : ''} ${config.rstEditorSelection ? 'showEditorSelection' : ''} `);
+			const newAll = newBody.replace('</body>', `
+			    <div class="code-line" data-line="${rstDocument.lineCount}"></div>
 			</body>
-			</html>`;
+			`);
+			return newAll;
+		} else {		
+			return `<!DOCTYPE html>
+				<html>
+				<head>
+					<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+					${csp}
+					<meta id="vscode-rst-preview-data"
+						data-settings="${JSON.stringify(initialData).replace(/"/g, '&quot;')}"
+						data-strings="${JSON.stringify(previewStrings).replace(/"/g, '&quot;')}"
+						data-state="${JSON.stringify(state || {}).replace(/"/g, '&quot;')}">
+					<script src="${this.extensionResourcePath('pre.js')}" nonce="${nonce}"></script>
+					<script src="${this.extensionResourcePath('index.js')}" nonce="${nonce}"></script>
+					${this.getStyles(sourceUri, nonce, config)}
+					<base href="${rstDocument.uri.with({ scheme: 'vscode-resource' }).toString(true)}">
+				</head>
+				<body class="vscode-body ${config.scrollBeyondLastLine ? 'scrollBeyondLastLine' : ''} ${config.wordWrap ? 'wordWrap' : ''} ${config.rstEditorSelection ? 'showEditorSelection' : ''}">
+					${parsedDoc}
+					<div class="code-line" data-line="${rstDocument.lineCount}"></div>
+				</body>
+				</html>`;
+		}
 	}
 
 	private extensionResourcePath(mediaFile: string): string {

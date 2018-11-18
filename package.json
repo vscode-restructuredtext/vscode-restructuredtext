@@ -8,7 +8,6 @@
     "vscode": "^1.26.0"
   },
   "dependencies": {
-    "file-url": "^1.0.1",
     "http-proxy-agent": "^2.1.0",
     "https-proxy-agent": "^2.2.1",
     "tmp": "0.0.33",
