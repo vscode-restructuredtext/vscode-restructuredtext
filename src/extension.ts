@@ -19,6 +19,7 @@ import { ExtensionDownloader } from './ExtensionDownloader';
 import RstLintingProvider from './features/rstLinter';
 import { underline } from './features/underline';
 import { Configuration } from './features/utils/configuration';
+import RstTransformerStatus from './features/utils/statusBar';
 import { Logger } from './logger';
 import * as RstLanguageServer from './rstLsp/extension';
 
@@ -56,12 +57,26 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 	// activate language services
 	const rstLspPromise = RstLanguageServer.activate(context, _channel, disableLsp);
 
+	// Status bar to show the active rst->html transformer configuration
+	const status = new RstTransformerStatus(_channel);
+
+	// Hook up the status bar to document change events
+	context.subscriptions.push(
+		vscode.commands.registerCommand('restructuredtext.resetStatus',
+			status.reset, status),
+	);
+
+	vscode.window.onDidChangeActiveTextEditor(status.update, status, context.subscriptions);
+	status.update();
+	
+	// Section creation support.
 	context.subscriptions.push(
 		vscode.commands.registerTextEditorCommand('restructuredtext.features.underline.underline', underline),
 		vscode.commands.registerTextEditorCommand('restructuredtext.features.underline.underlineReverse',
 			(textEditor, edit) => underline(textEditor, edit, true)),
 	);
 
+	// Linter support
 	const linter = new RstLintingProvider();
 	linter.activate(context.subscriptions);
 
