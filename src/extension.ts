@@ -91,7 +91,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 	const previewManager = new RSTPreviewManager(contentProvider, logger1);
 	context.subscriptions.push(previewManager);
 
-
 	const previewSecuritySelector = new PreviewSecuritySelector(cspArbiter, previewManager);
 
 	const commandManager = new CommandManager();

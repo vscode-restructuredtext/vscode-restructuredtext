@@ -19,9 +19,9 @@ export class RSTEngine {
     return `<html><body>${error}</body></html>`;
   }
 
-  public async compile(fileName: string, uri: Uri): Promise<string> {
+  public async compile(fileName: string, uri: Uri, confPyDirectory: string): Promise<string> {
     this.logger.log(`Compiling file: ${fileName}`);
-    if (this.status.config.confPyDirectory === '') {
+    if (confPyDirectory === '') {
       // docutil
       return this.python.exec(
         path.join(__dirname, "..", "python", "preview.py"),
@@ -29,7 +29,7 @@ export class RSTEngine {
       );
     } else {
       // sphinx
-      let input = this.status.config.confPyDirectory;
+      let input = confPyDirectory;
       this.channel.appendLine('Sphinx conf.py directory: ' + input);
 
       // Make sure the conf.py file exists
@@ -37,7 +37,7 @@ export class RSTEngine {
       if (!fs.existsSync(confFile)) {
         await this.status.reset();
         this.channel.appendLine('conf.py not found. Refresh the settings.');
-        input = this.status.config.confPyDirectory;
+        input = confPyDirectory;
         this.channel.appendLine('Sphinx conf.py directory: ' + input);
         confFile = path.join(input, 'conf.py');
       }
@@ -154,6 +154,7 @@ export class RSTEngine {
       });
     });
   }
+  
   private prepareHtml(html: string, htmlPath: string, fixStyle: boolean): string {
     let fixed = this.fixLinks(html, htmlPath);
     if (fixStyle) {
@@ -213,7 +214,11 @@ export class RSTEngine {
 
   public async preview(doc: TextDocument): Promise<string> {
     try {
-      return this.compile(doc.fileName, doc.uri);
+      if (this.status == null || this.status.config == null) {
+        return this.compile(doc.fileName, doc.uri, '');
+      } else {
+        return this.compile(doc.fileName, doc.uri, this.status.config.confPyDirectory);
+      }
     } catch (e) {
       return this.errorSnippet(e.toString());
     }
