@@ -22,6 +22,7 @@ import {
 } from "./initialize";
 import { Python } from "../python";
 import { Logger1 } from "../logger1";
+import { RSTContentProvider } from '../features/previewContentProvider';
 
 // Defines a Mocha test suite to group tests of similar kind together
 let engine: RSTEngine;
@@ -30,6 +31,7 @@ let logger: Logger1 = {
   log: () => void 0,
   updateConfiguration: () => void 0
 } as any;
+let channel: vscode.OutputChannel;
 suite("Extension Tests", function() {
   suiteSetup(async function() {
     this.timeout(30000);
@@ -37,7 +39,10 @@ suite("Extension Tests", function() {
       await initialize();
       python = new Python(logger);
       await python.awaitReady();
-      engine = new RSTEngine(python, logger, null, null);
+
+      channel = vscode.window.createOutputChannel('reStructuredText');
+
+      engine = new RSTEngine(python, logger, null, channel);
     } catch (e) {
       throw e;
     }
@@ -108,4 +113,27 @@ suite("Extension Tests", function() {
       );
     });
   });
+
+  test("Sphinx to HTML", async function() {
+    this.timeout(30000);
+    const editor = await openFile(path.join(samplePath, "sphinx", "index.rst"));
+    const val = await engine.compile(path.join(samplePath, "sphinx", "index.rst"), editor.document.uri, path.join(samplePath, 'sphinx'));
+    return new Promise((res, rej) => {
+      fs.readFile(
+        path.join(samplePath, "index.html"),
+        "utf8",
+        (err, expected) => {
+          if (err) {
+            rej(err);
+          }
+          assert.equal(
+            val.split(/\r?\n/).join("\n"),
+            expected.split(/\r?\n/).join("\n"),
+            "Generated HTML does not match expected"
+          );
+          res();
+        }
+      );
+    });
+  });  
 });
