@@ -13,7 +13,7 @@ import { RstTransformerConfig } from './confPyFinder';
  */
 export default class RstTransformerStatus {
     private _statusBarItem: StatusBarItem;
-    private _cache: string;
+    public config: RstTransformerConfig;
     private _channel: OutputChannel;
 
     constructor(channel: OutputChannel) {
@@ -24,13 +24,13 @@ export default class RstTransformerStatus {
     }
 
     public setLabel() {
-        this._statusBarItem.text = this._cache;
+        this._statusBarItem.text = this.config.label;
     }
 
     public async update() {
         const editor = window.activeTextEditor;
         if (editor != null && editor.document.languageId === 'restructuredtext') {
-            if (!this._cache) {
+            if (!this.config) {
                 let resource = editor.document.uri;
                 await this.refreshConfig(resource);
             }
@@ -58,7 +58,7 @@ export default class RstTransformerStatus {
             return null;
         }
 
-        this._cache = rstTransformerConf.label;
+        this.config = rstTransformerConf;
         await Configuration.saveSetting('confPath', rstTransformerConf.confPyDirectory, resource);
         return rstTransformerConf;
     }

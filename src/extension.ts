@@ -85,7 +85,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
 	const python: Python = new Python(logger1);
 	await python.awaitReady();
-	const engine: RSTEngine = new RSTEngine(python, logger1);
+	const engine: RSTEngine = new RSTEngine(python, logger1, status, _channel);
 
 	const contentProvider = new RSTContentProvider(context, cspArbiter, engine, logger1);
 	const previewManager = new RSTPreviewManager(contentProvider, logger1);
