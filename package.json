@@ -1,7 +1,7 @@
 {
   "name": "restructuredtext",
   "displayName": "%displayName%",
-  "description": "%discription%",
+  "description": "%description%",
   "version": "81.0.0",
   "publisher": "lextudio",
   "engines": {
@@ -12,6 +12,7 @@
     "https-proxy-agent": "^2.2.1",
     "tmp": "0.0.33",
     "lodash.throttle": "^4.1.1",
+    "vscode": "^1.1.21",
     "vscode-languageclient": "^3.5.0",
     "vscode-nls": "^4.0.0"
   },
@@ -25,7 +26,6 @@
     "ts-node": "^3.3.0",
     "tslib": "^1.9.3",
     "typescript": "^3.1.1",
-    "vscode": "^1.1.21",
     "webpack": "^4.20.0",
     "webpack-cli": "^3.1.2"
   },

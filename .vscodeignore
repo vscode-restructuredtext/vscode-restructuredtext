@@ -2,7 +2,7 @@
 .vscode/**
 .vscode-test/**
 typings/**
-**/*.ts
+src/**/*.ts
 .gitignore
 tsconfig.json
 tslint.json
