@@ -57,7 +57,7 @@ export class Logger1 {
 	}
 
 	private readTrace(): Trace {
-		return Trace.fromString(vscode.workspace.getConfiguration().get<string>('rst.trace', 'off'));
+		return Trace.fromString(vscode.workspace.getConfiguration().get<string>('restructuredtext.trace', 'off'));
 	}
 
 	private static data2String(data: any): string {

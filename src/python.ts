@@ -5,8 +5,8 @@ import { Logger1 } from "./logger1";
 export class Python {
   private version: 2 | 3 | null = null;
   private pythonPath = vscode.workspace
-    .getConfiguration("rst", null)
-    .get<string>("preview.pythonPath", "python");
+    .getConfiguration("python", null)
+    .get<string>("pythonPath", "python");
   private ready: boolean = false;
 
   public constructor(private readonly logger: Logger1) {

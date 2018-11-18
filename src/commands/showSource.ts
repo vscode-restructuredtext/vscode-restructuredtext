@@ -8,7 +8,7 @@ import { Command } from '../commandManager';
 import { RSTPreviewManager } from '../features/previewManager';
 
 export class ShowSourceCommand implements Command {
-	public readonly id = 'rst.showSource';
+	public readonly id = 'restructuredtext.showSource';
 
 	public constructor(
 		private readonly previewManager: RSTPreviewManager

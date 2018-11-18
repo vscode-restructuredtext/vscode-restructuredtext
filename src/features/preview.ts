@@ -19,7 +19,7 @@ const localize = nls.loadMessageBundle();
 
 export class RSTPreview {
 
-	public static viewType = 'rst.preview';
+	public static viewType = 'restructuredtext.preview';
 
 	private _resource: vscode.Uri;
 	private _locked: boolean;

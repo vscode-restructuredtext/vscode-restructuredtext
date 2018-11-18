@@ -7,7 +7,7 @@ import { Command } from '../commandManager';
 import { RSTPreviewManager } from '../features/previewManager';
 
 export class ToggleLockCommand implements Command {
-	public readonly id = 'rst.preview.toggleLock';
+	public readonly id = 'restructuredtext.preview.toggleLock';
 
 	public constructor(
 		private readonly previewManager: RSTPreviewManager

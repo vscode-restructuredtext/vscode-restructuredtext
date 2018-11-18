@@ -10,7 +10,7 @@ import { isRSTFile } from '../util/file';
 import { RSTPreviewManager } from '../features/previewManager';
 
 export class ShowPreviewSecuritySelectorCommand implements Command {
-	public readonly id = 'rst.showPreviewSecuritySelector';
+	public readonly id = 'restructuredtext.showPreviewSecuritySelector';
 
 	public constructor(
 		private readonly previewSecuritySelector: PreviewSecuritySelector,

@@ -7,7 +7,7 @@ import { Command } from '../commandManager';
 import { RSTPreviewManager } from '../features/previewManager';
 
 export class RefreshPreviewCommand implements Command {
-	public readonly id = 'rst.preview.refresh';
+	public readonly id = 'restructuredtext.preview.refresh';
 
 	public constructor(
 		private readonly webviewManager: RSTPreviewManager

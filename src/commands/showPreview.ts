@@ -30,7 +30,7 @@ async function showPreview(
 	if (!(resource instanceof vscode.Uri)) {
 		if (!vscode.window.activeTextEditor) {
 			// this is most likely toggling the preview
-			return vscode.commands.executeCommand('rst.showSource');
+			return vscode.commands.executeCommand('restructuredtext.showSource');
 		}
 		// nothing found that could be shown or toggled
 		return;
@@ -46,7 +46,7 @@ async function showPreview(
 }
 
 export class ShowPreviewCommand implements Command {
-	public readonly id = 'rst.showPreview';
+	public readonly id = 'restructuredtext.showPreview';
 
 	public constructor(
 		private readonly webviewManager: RSTPreviewManager,
@@ -63,7 +63,7 @@ export class ShowPreviewCommand implements Command {
 }
 
 export class ShowPreviewToSideCommand implements Command {
-	public readonly id = 'rst.showPreviewToSide';
+	public readonly id = 'restructuredtext.showPreviewToSide';
 
 	public constructor(
 		private readonly webviewManager: RSTPreviewManager,
@@ -79,7 +79,7 @@ export class ShowPreviewToSideCommand implements Command {
 
 
 export class ShowLockedPreviewToSideCommand implements Command {
-	public readonly id = 'rst.showLockedPreviewToSide';
+	public readonly id = 'restructuredtext.showLockedPreviewToSide';
 
 	public constructor(
 		private readonly webviewManager: RSTPreviewManager
