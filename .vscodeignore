@@ -1,6 +1,7 @@
 .github/**
 .vscode/**
 .vscode-test/**
+test-resources/**
 typings/**
 src/**/*.ts
 .gitignore
