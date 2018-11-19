@@ -22,7 +22,6 @@ import {
 } from "./initialize";
 import { Python } from "../python";
 import { Logger1 } from "../logger1";
-import { RSTContentProvider } from '../features/previewContentProvider';
 
 // Defines a Mocha test suite to group tests of similar kind together
 let engine: RSTEngine;
@@ -55,27 +54,13 @@ suite("Extension Tests", function() {
     closeActiveWindows().then(done, done);
   });
 
-  // test("Example 1 open", function(done) {
-  // const vm = new myExtension.ViewManager();
-  //     openFile(path.join(samplePath, "example1.rst")).then(editor => {
-  //         vm.preview(editor.document.uri, false);
-  //         done();
-  //     });
-  // });
-
   test("Example 1 full preview", async function() {
     this.timeout(30000);
-    const editor = await openFile(path.join(samplePath, "example1.rst"));
+    const editor = await openFile(path.join(samplePath, "docutils", "example1.rst"));
     const val = await engine.preview(editor.document);
-    // await vscode.commands.executeCommand("rst.showPreviewToSide");
-    // await wait(2000);
-    // if (!vscode.window.activeTextEditor) {
-    //   throw new Error("Failed to preview");
-    // }
-    // const val = (vscode.window.activeTextEditor as vscode.TextEditor).document.getText();
     return new Promise((res, rej) => {
       fs.readFile(
-        path.join(samplePath, "example1Full.html"),
+        path.join(samplePath, "docutils", "example1Full.html"),
         "utf8",
         (err, expected) => {
           if (err) {
@@ -94,11 +79,11 @@ suite("Extension Tests", function() {
 
   test("Example 1 to HTML", async function() {
     this.timeout(30000);
-    const editor = await openFile(path.join(samplePath, "example1.rst"));
-    const val = await engine.compile(path.join(samplePath, "example1.rst"), editor.document.uri, '');
+    const editor = await openFile(path.join(samplePath, "docutils", "example1.rst"));
+    const val = await engine.compile(path.join(samplePath, "docutils", "example1.rst"), editor.document.uri, '', true);
     return new Promise((res, rej) => {
       fs.readFile(
-        path.join(samplePath, "example1.html"),
+        path.join(samplePath, "docutils", "example1.html"),
         "utf8",
         (err, expected) => {
           if (err) {
@@ -118,7 +103,7 @@ suite("Extension Tests", function() {
   test("Sphinx to HTML", async function() {
     this.timeout(30000);
     const editor = await openFile(path.join(samplePath, "sphinx", "index.rst"));
-    const val = await engine.compile(path.join(samplePath, "sphinx", "index.rst"), editor.document.uri, path.join(samplePath, 'sphinx'));
+    const val = await engine.compile(path.join(samplePath, "sphinx", "index.rst"), editor.document.uri, path.join(samplePath, 'sphinx'), false);
     return new Promise((res, rej) => {
       fs.readFile(
         path.join(samplePath, "index.html"),

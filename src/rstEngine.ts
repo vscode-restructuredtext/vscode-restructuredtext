@@ -19,7 +19,7 @@ export class RSTEngine {
     return `<html><body>${error}</body></html>`;
   }
 
-  public async compile(fileName: string, uri: Uri, confPyDirectory: string): Promise<string> {
+  public async compile(fileName: string, uri: Uri, confPyDirectory: string, fixLinks: boolean): Promise<string> {
     this.logger.log(`Compiling file: ${fileName}`);
     if (confPyDirectory === '') {
       // docutil
@@ -80,11 +80,11 @@ export class RSTEngine {
       const ext = whole.lastIndexOf('.');
       whole = whole.substring(0, ext) + '.html';
       let htmlPath = path.join(output, this.relativeDocumentationPath(whole, input));
-      return this.previewPage(htmlPath, cmd, input, options);
+      return this.previewPage(htmlPath, cmd, input, options, fixLinks);
     }
   }
 
-  private previewPage(htmlPath: string, cmd: string, input: string, options: any): Promise<string> {
+  private previewPage(htmlPath: string, cmd: string, input: string, options: any, fixLinks: boolean): Promise<string> {
     this.channel.appendLine('Compiler: ' + cmd);
     this.channel.appendLine('Working directory: ' + input);
     this.channel.appendLine('HTML file: ' + htmlPath);
@@ -132,7 +132,11 @@ export class RSTEngine {
 
         fs.readFile(htmlPath, 'utf8', (err, data) => {
           if (err === null) {
-            resolve(this.fixLinks(data, htmlPath));
+            if (fixLinks) {
+              resolve(this.fixLinks(data, htmlPath));
+            } else {
+              resolve(data);
+            }
           } else {
             const description =
               '<p>Cannot read preview page "' + htmlPath + '".</p>\
@@ -205,11 +209,11 @@ export class RSTEngine {
   public async preview(doc: TextDocument): Promise<string> {
     try {
       if (this.status == null) {
-        return this.compile(doc.fileName, doc.uri, '');
+        return this.compile(doc.fileName, doc.uri, '', true);
       } else if (this.status.config == null) {
         await this.status.refreshConfig(doc.uri);
       }
-      return this.compile(doc.fileName, doc.uri, this.status.config.confPyDirectory);
+      return this.compile(doc.fileName, doc.uri, this.status.config.confPyDirectory, true);
     } catch (e) {
       return this.errorSnippet(e.toString());
     }
