@@ -6,7 +6,7 @@ import { QuickPickItem, Uri, workspace } from 'vscode';
 
 /**
  * Configuration for how to transform rst files to html. Either use Sphinx
- * with a gven conf.py file, or use rst2html without any configuration
+ * with a gven conf.py file, or use docutils without any configuration
  */
 export class RstTransformerConfig implements QuickPickItem {
     public label: string;

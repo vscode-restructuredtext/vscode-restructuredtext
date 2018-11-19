@@ -101,7 +101,7 @@ export class RSTEngine {
                   <li>Sphinx is not installed properly (if preview uses "conf.py").</li>\
                   <li>Wrong value is set on "restructuredtext.sphinxBuildPath".</li>\
                   <li>A wrong "conf.py" file is selected.</li>\
-                  <li>DocUtil is not installed properly (if preview uses "rst2html.py").</li>\
+                  <li>DocUtils is not installed properly (if preview uses docutils).</li>\
                   </ul>';
           const errorMessage = [
             error.name,
@@ -124,44 +124,33 @@ export class RSTEngine {
                       <li>Sphinx is not installed properly (if preview uses "conf.py").</li>\
                       <li>Wrong value is set on "restructuredtext.sphinxBuildPath".</li>\
                       <li>A wrong "conf.py" file is selected.</li>\
-                      <li>DocUtil is not installed properly (if preview uses "rst2html.py").</li>\
+                      <li>DocUtils is not installed properly (if preview uses docutils).</li>\
                       </ul>';
             resolve(this.showError(description, errText));
           }
         }
 
-        {
-          fs.readFile(htmlPath, 'utf8', (err, data) => {
-            if (err === null) {
-              resolve(this.prepareHtml(data, htmlPath, false));
-            } else {
-              const description =
-                '<p>Cannot read preview page "' + htmlPath + '".</p>\
-                          <p>Possible causes are,</p>\
-                          <ul>\
-                          <li>A wrong "conf.py" file is selected.</li>\
-                          <li>Wrong value is set on "restructuredtext.builtDocumentationPath".</li>\
-                          </ul>';
-              const errorMessage = [
-                err.name,
-                err.message,
-                err.stack,
-              ].join('\n');
-              resolve(this.showError(description, errorMessage));
-            }
-          });
-        }
+        fs.readFile(htmlPath, 'utf8', (err, data) => {
+          if (err === null) {
+            resolve(this.fixLinks(data, htmlPath));
+          } else {
+            const description =
+              '<p>Cannot read preview page "' + htmlPath + '".</p>\
+                        <p>Possible causes are,</p>\
+                        <ul>\
+                        <li>A wrong "conf.py" file is selected.</li>\
+                        <li>Wrong value is set on "restructuredtext.builtDocumentationPath".</li>\
+                        </ul>';
+            const errorMessage = [
+              err.name,
+              err.message,
+              err.stack,
+            ].join('\n');
+            resolve(this.showError(description, errorMessage));
+          }
+        });
       });
     });
-  }
-  
-  private prepareHtml(html: string, htmlPath: string, fixStyle: boolean): string {
-    let fixed = this.fixLinks(html, htmlPath);
-    if (fixStyle) {
-        fixed += '<style>html, body {background: #fff;color: #000;}</style>';
-    }
-
-    return fixed;
   }
 
   private fixLinks(document: string, documentPath: string): string {

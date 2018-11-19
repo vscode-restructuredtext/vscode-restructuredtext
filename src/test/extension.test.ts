@@ -94,7 +94,8 @@ suite("Extension Tests", function() {
 
   test("Example 1 to HTML", async function() {
     this.timeout(30000);
-    const val = await engine.compile(path.join(samplePath, "example1.rst"), null, '');
+    const editor = await openFile(path.join(samplePath, "example1.rst"));
+    const val = await engine.compile(path.join(samplePath, "example1.rst"), editor.document.uri, '');
     return new Promise((res, rej) => {
       fs.readFile(
         path.join(samplePath, "example1.html"),

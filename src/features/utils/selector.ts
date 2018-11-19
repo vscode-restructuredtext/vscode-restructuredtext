@@ -19,13 +19,15 @@ export class RstTransformerSelector {
         const pathStrings: string[] = [];
         // A path may be configured in the settings. Include this path
         const confPathFromSettings = Configuration.loadSetting('confPath', null, resource);
+
+        const docutils = new RstTransformerConfig();
+        docutils.label = '$(code) Use docutils';
+        docutils.description = 'Do not use Sphinx, but docutils instead';
+        docutils.confPyDirectory = '';
+
         if (confPathFromSettings != null) {
             if (confPathFromSettings === '') {
-                const docutil = new RstTransformerConfig();
-                docutil.label = '$(code) Use docutil';
-                docutil.description = 'Do not use Sphinx, but docutil instead';
-                docutil.confPyDirectory = '';
-                return docutil;
+                return docutils;
             }
 
             const pth = path.join(path.normalize(confPathFromSettings), 'conf.py');
@@ -55,15 +57,18 @@ export class RstTransformerSelector {
         addPaths(paths1);
         addPaths(paths2);
         channel.appendLine('Found conf.py paths: ' + JSON.stringify(pathStrings));
-        // The user can chose to use docutil instead of Sphinx
-        const qpRstToHtml = new RstTransformerConfig();
-        qpRstToHtml.label = '$(code) Use docutil';
-        qpRstToHtml.description = 'Do not use Sphinx, but docutil instead';
-        qpRstToHtml.confPyDirectory = '';
-        configurations.push(qpRstToHtml);
         if (configurations.length === 1) {
+            // only one conf.py.
             return configurations[0];
         }
+
+        // The user can choose to use docutils instead of Sphinx
+        configurations.push(docutils);
+        if (configurations.length === 1) {
+            // no conf.py.
+            return configurations[0];
+        }
+
         // Found multiple conf.py files, let the user decide
         return window.showQuickPick(configurations, {
             placeHolder: 'Select how to generate html from rst files',

@@ -375,11 +375,6 @@
           "default": null,
           "description": "The full path of the sphinx-build executable. This is an absolute path, and you can use ${workspaceFolder} to represent the workspace root folder."
         },
-        "restructuredtext.rst2htmlCommand": {
-          "type": "string",
-          "default": null,
-          "description": "The full path of the rst2html.py executable. This is an absolute path, and you can use ${workspaceFolder} to represent the workspace root folder."
-        },
         "restructuredtext.linter.executablePath": {
           "type": "string",
           "default": null,
