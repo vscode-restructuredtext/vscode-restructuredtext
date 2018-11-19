@@ -57,10 +57,6 @@ export class RstTransformerSelector {
         addPaths(paths1);
         addPaths(paths2);
         channel.appendLine('Found conf.py paths: ' + JSON.stringify(pathStrings));
-        if (configurations.length === 1) {
-            // only one conf.py.
-            return configurations[0];
-        }
 
         // The user can choose to use docutils instead of Sphinx
         configurations.push(docutils);
