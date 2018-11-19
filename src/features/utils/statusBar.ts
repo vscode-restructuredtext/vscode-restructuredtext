@@ -52,7 +52,7 @@ export default class RstTransformerStatus {
         }
     }
 
-    private async refreshConfig(resource: Uri): Promise<RstTransformerConfig> {
+    public async refreshConfig(resource: Uri): Promise<RstTransformerConfig> {
         const rstTransformerConf = await RstTransformerSelector.findConfDir(resource, this._channel);
         if (rstTransformerConf == null) {
             return null;

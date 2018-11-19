@@ -10,3 +10,4 @@ vscps-preview.zip
 install\.Lock
 
 test-resources/sphinx/_build/html/
+test-resources/**/settings.json

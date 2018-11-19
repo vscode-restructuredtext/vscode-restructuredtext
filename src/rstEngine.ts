@@ -207,7 +207,7 @@ export class RSTEngine {
       if (this.status == null) {
         return this.compile(doc.fileName, doc.uri, '');
       } else if (this.status.config == null) {
-          this.status.update();
+        await this.status.refreshConfig(doc.uri);
       }
       return this.compile(doc.fileName, doc.uri, this.status.config.confPyDirectory);
     } catch (e) {
