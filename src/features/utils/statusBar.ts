@@ -59,7 +59,7 @@ export default class RstTransformerStatus {
         }
 
         this.config = rstTransformerConf;
-        await Configuration.saveSetting('confPath', rstTransformerConf.confPyDirectory, resource);
+        await Configuration.saveSetting('confPath', rstTransformerConf.confPyDirectory, resource, true);
         return rstTransformerConf;
     }
 }

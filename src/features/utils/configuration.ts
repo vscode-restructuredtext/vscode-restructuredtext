@@ -34,8 +34,11 @@ export class Configuration {
     }
 
     public static async saveSetting(
-        configSection: string, value: string, resource: Uri, header: string = 'restructuredtext',
+        configSection: string, value: string, resource: Uri, insertMacro: boolean = false, header: string = 'restructuredtext',
     ): Promise<string> {
+        if (insertMacro) {
+            value = this.insertMacro(value, resource);
+        }
         return await this.saveAnySetting<string>(configSection, value, resource, header);
     }
 
@@ -44,6 +47,32 @@ export class Configuration {
         if (old.indexOf('${workspaceRoot}') > -1) {
             await this.saveSetting('workspaceRoot', this.expandMacro(old, resource), resource);
         }
+    }
+
+    private static insertMacro(input: string, resource: Uri): string {
+        if (resource == null) {
+            return input;
+        }
+
+        let path: string;
+        if (!workspace.workspaceFolders) {
+            path = workspace.rootPath;
+        } else {
+            let root: WorkspaceFolder;
+            if (workspace.workspaceFolders.length === 1) {
+                root = workspace.workspaceFolders[0];
+            } else {
+                root = workspace.getWorkspaceFolder(resource);
+            }
+
+            path = root.uri.fsPath;
+        }
+
+        if (input.startsWith(path)) {
+            return input
+                .replace(path, '${workspaceFolder}');
+        }
+        return input;
     }
 
     private static expandMacro(input: string, resource: Uri): string {
