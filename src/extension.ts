@@ -8,7 +8,7 @@ import { CommandManager } from './commandManager';
 import * as commands from './commands/index';
 import { RSTContentProvider } from './features/previewContentProvider';
 import { RSTPreviewManager } from './features/previewManager';
-import { Logger1 } from './logger1';
+import { Logger } from './logger';
 import { ExtensionContentSecurityPolicyArbiter, PreviewSecuritySelector } from './security';
 import { Python } from './python';
 import { RSTEngine } from './rstEngine';
@@ -37,7 +37,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
 	util.setExtensionPath(context.extensionPath);
 
-	const logger1 = new Logger1();
+	const logger1 = new Logger();
 	logger1.log('Please visit https://docs.restructuredtext.net to learn how to configure the extension.');
 
 	const disableLsp = Configuration.getLanguageServerDisabled();
@@ -113,7 +113,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 	};
 }
 
-function ensureRuntimeDependencies(extension: vscode.Extension<any>, logger: Logger1): Promise<boolean> {
+function ensureRuntimeDependencies(extension: vscode.Extension<any>, logger: Logger): Promise<boolean> {
     return util.installFileExists(util.InstallFileType.Lock)
         .then((exists) => {
             if (!exists) {

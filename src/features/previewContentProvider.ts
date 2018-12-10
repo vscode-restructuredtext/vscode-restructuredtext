@@ -9,7 +9,7 @@ import * as path from 'path';
 import * as nls from 'vscode-nls';
 const localize = nls.loadMessageBundle();
 
-import { Logger1 } from '../logger1';
+import { Logger } from '../logger';
 import { ContentSecurityPolicyArbiter, RSTPreviewSecurityLevel } from '../security';
 import { RSTPreviewConfigurationManager, RSTPreviewConfiguration } from './previewConfig';
 import { RSTEngine } from '../rstEngine';
@@ -40,7 +40,7 @@ export class RSTContentProvider {
 		private readonly context: vscode.ExtensionContext,
 		private readonly cspArbiter: ContentSecurityPolicyArbiter,
 		private readonly engine: RSTEngine,
-		private readonly logger: Logger1
+		private readonly logger: Logger
 	) { }
 
 	private readonly TAG_RegEx = /^\s*?\<(p|h[1-6]|img|code|blockquote|li)((\s+.*?)(class="(.*?)")(.*?\>)|\>|\>|\/\>|\s+.*?\>)/;

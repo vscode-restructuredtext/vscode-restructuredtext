@@ -30,7 +30,7 @@ function isString(value: any): value is string {
 	return Object.prototype.toString.call(value) === '[object String]';
 }
 
-export class Logger1 {
+export class Logger {
 	private trace?: Trace;
 
 	private readonly outputChannel = lazy(() => vscode.window.createOutputChannel('reStructuredText'));
@@ -43,7 +43,7 @@ export class Logger1 {
 		if (this.trace === Trace.Verbose) {
 			this.appendLine(`[Log - ${(new Date().toLocaleTimeString())}] ${message}`);
 			if (data) {
-				this.appendLine(Logger1.data2String(data));
+				this.appendLine(Logger.data2String(data));
 			}
 		}
 	}

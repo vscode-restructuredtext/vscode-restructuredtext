@@ -2,7 +2,7 @@ import { TextDocument, OutputChannel, Uri } from "vscode";
 import * as path from "path";
 import * as fs from 'fs';
 import { Python } from "./python";
-import { Logger1 } from "./logger1";
+import { Logger } from "./logger";
 import RstTransformerStatus from './features/utils/statusBar';
 import { Configuration } from './features/utils/configuration';
 import { exec } from 'child_process';
@@ -10,7 +10,7 @@ import { exec } from 'child_process';
 export class RSTEngine {
   public constructor(
     private readonly python: Python,
-    private readonly logger: Logger1,
+    private readonly logger: Logger,
     private readonly status: RstTransformerStatus,
     private readonly channel: OutputChannel
   ) { }

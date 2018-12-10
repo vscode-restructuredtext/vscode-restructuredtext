@@ -21,12 +21,12 @@ import {
   wait
 } from "./initialize";
 import { Python } from "../python";
-import { Logger1 } from "../logger1";
+import { Logger } from "../logger";
 
 // Defines a Mocha test suite to group tests of similar kind together
 let engine: RSTEngine;
 let python: Python;
-let logger: Logger1 = {
+let logger: Logger = {
   log: () => void 0,
   updateConfiguration: () => void 0
 } as any;

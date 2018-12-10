@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { Logger1 } from '../logger1';
+import { Logger } from '../logger';
 import { disposeAll } from '../util/dispose';
 import { RSTFileTopmostLineMonitor } from '../util/topmostLineMonitor';
 import { RSTPreview, PreviewSettings } from './preview';
@@ -23,7 +23,7 @@ export class RSTPreviewManager implements vscode.WebviewPanelSerializer {
 
 	public constructor(
 		private readonly _contentProvider: RSTContentProvider,
-		private readonly _logger: Logger1,
+		private readonly _logger: Logger,
 	) {
 		this._disposables.push(vscode.window.registerWebviewPanelSerializer(RSTPreview.viewType, this));
 	}

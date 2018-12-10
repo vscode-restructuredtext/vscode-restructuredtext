@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 //import TelemetryReporter from 'vscode-extension-telemetry';
 import * as util from './common';
-import { Logger1 } from './logger1';
+import { Logger } from './logger';
 import { PackageManager, Status, PackageError } from './packages';
 import { PlatformInformation } from './platform';
 
@@ -17,7 +17,7 @@ export class ExtensionDownloader
 {
     public constructor(
         private channel: vscode.OutputChannel,
-        private logger: Logger1,
+        private logger: Logger,
         //private reporter: TelemetryReporter /* optional */,
         private packageJSON: any) {
     }

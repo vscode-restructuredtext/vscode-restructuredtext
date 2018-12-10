@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { exec, ExecException } from "child_process";
-import { Logger1 } from "./logger1";
+import { Logger } from "./logger";
 import { Configuration } from './features/utils/configuration';
 import { fileExists } from './common';
 
@@ -9,7 +9,7 @@ export class Python {
   private pythonPath = Configuration.getPythonPath();
   private ready: boolean = false;
 
-  public constructor(private readonly logger: Logger1) {
+  public constructor(private readonly logger: Logger) {
     this.setup();
   }
 

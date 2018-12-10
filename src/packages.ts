@@ -11,7 +11,7 @@ import * as tmp from 'tmp';
 import { parse as parseUrl } from 'url';
 import * as yauzl from 'yauzl';
 import * as util from './common';
-import { Logger1 } from './logger1';
+import { Logger } from './logger';
 import { PlatformInformation } from './platform';
 import { getProxyAgent } from './proxy';
 
@@ -54,14 +54,14 @@ export class PackageManager {
         tmp.setGracefulCleanup();
     }
 
-    public DownloadPackages(logger: Logger1, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
+    public DownloadPackages(logger: Logger, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
         return this.GetPackages()
             .then(packages => {
                 return util.buildPromiseChain(packages, pkg => maybeDownloadPackage(pkg, logger, status, proxy, strictSSL));
             });
     }
 
-    public InstallPackages(logger: Logger1, status: Status): Promise<void> {
+    public InstallPackages(logger: Logger, status: Status): Promise<void> {
         return this.GetPackages()
             .then(packages => {
                 return util.buildPromiseChain(packages, pkg => installPackage(pkg, logger, status));
@@ -125,7 +125,7 @@ function getNoopStatus(): Status {
     };
 }
 
-function maybeDownloadPackage(pkg: Package, logger: Logger1, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
+function maybeDownloadPackage(pkg: Package, logger: Logger, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
     return doesPackageTestPathExist(pkg).then((exists: boolean) => {
         if (!exists) {
             return downloadPackage(pkg, logger, status, proxy, strictSSL);
@@ -135,7 +135,7 @@ function maybeDownloadPackage(pkg: Package, logger: Logger1, status: Status, pro
     });
 }
 
-function downloadPackage(pkg: Package, logger: Logger1, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
+function downloadPackage(pkg: Package, logger: Logger, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
     status = status || getNoopStatus();
 
     logger.append(`Downloading package '${pkg.description}' `);
@@ -173,7 +173,7 @@ function downloadPackage(pkg: Package, logger: Logger1, status: Status, proxy: s
     });
 }
 
-function downloadFile(urlString: string, pkg: Package, logger: Logger1, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
+function downloadFile(urlString: string, pkg: Package, logger: Logger, status: Status, proxy: string, strictSSL: boolean): Promise<void> {
     const url = parseUrl(urlString);
 
     const options: https.RequestOptions = {
@@ -248,7 +248,7 @@ function downloadFile(urlString: string, pkg: Package, logger: Logger1, status: 
     });
 }
 
-function installPackage(pkg: Package, logger: Logger1, status?: Status): Promise<void> {
+function installPackage(pkg: Package, logger: Logger, status?: Status): Promise<void> {
 
     if (!pkg.tmpFile) {
         // Download of this package was skipped, so there is nothing to install

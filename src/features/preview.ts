@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 
-import { Logger1 } from '../logger1';
+import { Logger } from '../logger';
 import { RSTContentProvider } from './previewContentProvider';
 import { disposeAll } from '../util/dispose';
 
@@ -39,7 +39,7 @@ export class RSTPreview {
 		state: any,
 		contentProvider: RSTContentProvider,
 		previewConfigurations: RSTPreviewConfigurationManager,
-		logger: Logger1,
+		logger: Logger,
 		topmostLineMonitor: RSTFileTopmostLineMonitor,
 	): Promise<RSTPreview> {
 		const resource = vscode.Uri.parse(state.resource);
@@ -70,7 +70,7 @@ export class RSTPreview {
 		locked: boolean,
 		contentProvider: RSTContentProvider,
 		previewConfigurations: RSTPreviewConfigurationManager,
-		logger: Logger1,
+		logger: Logger,
 		topmostLineMonitor: RSTFileTopmostLineMonitor,
 	): RSTPreview {
 		const webview = vscode.window.createWebviewPanel(
@@ -97,7 +97,7 @@ export class RSTPreview {
 		locked: boolean,
 		private readonly _contentProvider: RSTContentProvider,
 		private readonly _previewConfigurations: RSTPreviewConfigurationManager,
-		private readonly _logger: Logger1,
+		private readonly _logger: Logger,
 		topmostLineMonitor: RSTFileTopmostLineMonitor,
 	) {
 		this._resource = resource;
