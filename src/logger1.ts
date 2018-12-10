@@ -52,8 +52,12 @@ export class Logger1 {
 		this.trace = this.readTrace();
 	}
 
-	private appendLine(value: string) {
+	public appendLine(value: string = '') {
 		return this.outputChannel.value.appendLine(value);
+	}
+
+	public append(value: string) {
+		return this.outputChannel.value.append(value);
 	}
 
 	private readTrace(): Trace {

@@ -13,14 +13,12 @@ import { ExtensionContentSecurityPolicyArbiter, PreviewSecuritySelector } from '
 import { Python } from './python';
 import { RSTEngine } from './rstEngine';
 
-import * as path from 'path';
 import * as util from './common';
 import { ExtensionDownloader } from './ExtensionDownloader';
 import RstLintingProvider from './features/rstLinter';
 import { underline } from './features/underline';
 import { Configuration } from './features/utils/configuration';
 import RstTransformerStatus from './features/utils/statusBar';
-import { Logger } from './logger';
 import * as RstLanguageServer from './rstLsp/extension';
 
 let extensionPath = "";
@@ -39,18 +37,14 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
 	util.setExtensionPath(context.extensionPath);
 
-	_channel = vscode.window.createOutputChannel('reStructuredText');
-
-	_channel.appendLine('Please visit https://www.restructuredtext.net to learn how to configure the extension.');
-	_channel.appendLine('');
-	_channel.appendLine('');
-	const logger = new Logger((text) => _channel.append(text));
+	const logger1 = new Logger1();
+	logger1.log('Please visit https://docs.restructuredtext.net to learn how to configure the extension.');
 
 	const disableLsp = Configuration.getLanguageServerDisabled();
 	// *
 	if (!disableLsp) {
 		await Configuration.setRoot();
-		await ensureRuntimeDependencies(extension, logger);
+		await ensureRuntimeDependencies(extension, logger1);
 	}
 	// */
 
@@ -81,7 +75,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 	linter.activate(context.subscriptions);
 
 	const cspArbiter = new ExtensionContentSecurityPolicyArbiter(context.globalState, context.workspaceState);
-	const logger1 = new Logger1();
 
 	const python: Python = new Python(logger1);
 	await python.awaitReady();
@@ -120,7 +113,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 	};
 }
 
-function ensureRuntimeDependencies(extension: vscode.Extension<any>, logger: Logger): Promise<boolean> {
+function ensureRuntimeDependencies(extension: vscode.Extension<any>, logger: Logger1): Promise<boolean> {
     return util.installFileExists(util.InstallFileType.Lock)
         .then((exists) => {
             if (!exists) {

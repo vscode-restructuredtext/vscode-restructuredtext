@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 //import TelemetryReporter from 'vscode-extension-telemetry';
 import * as util from './common';
-import { Logger } from './logger';
+import { Logger1 } from './logger1';
 import { PackageManager, Status, PackageError } from './packages';
 import { PlatformInformation } from './platform';
 
@@ -17,13 +17,13 @@ export class ExtensionDownloader
 {
     public constructor(
         private channel: vscode.OutputChannel,
-        private logger: Logger,
+        private logger: Logger1,
         //private reporter: TelemetryReporter /* optional */,
         private packageJSON: any) {
     }
 
     public installRuntimeDependencies(): Promise<boolean> {
-        this.logger.append('Installing reStructuredText dependencies...');
+        this.logger.log('Installing reStructuredText dependencies...');
         this.channel.show();
 
         let statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
