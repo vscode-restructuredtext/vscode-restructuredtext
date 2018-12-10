@@ -167,7 +167,7 @@ export class RSTEngine {
           }
             const newUrl = [
                 p1,
-                'vscode-resource:',
+                process.platform === 'win32' ? 'vscode-resource:\\' : 'vscode-resource:',
                 path.join(
                     path.dirname(documentPath),
                     p2,
