@@ -65,12 +65,13 @@ export class RSTContentProvider {
 
 		this.logger.log('provideTextDocumentContent', initialData);
 
+		const body = await this.engine.preview(rstDocument);
+		const useSphinx = body.search('</head>') > -1;
 		// Content Security Policy
 		const nonce = new Date().getTime() + '' + new Date().getMilliseconds();
-		const csp = this.getCspForResource(sourceUri, nonce);
-
-		const body = await this.engine.preview(rstDocument);
-		if (body.search('</head>') > -1) {
+		const csp = this.getCspForResource(sourceUri, nonce, useSphinx);
+		
+		if (useSphinx) {
 			// sphinx based preview.
 			let elementCount: number = 0;
 			let canStart: boolean = false;
@@ -216,8 +217,12 @@ export class RSTContentProvider {
 			${this.computeCustomStyleSheetIncludes(resource, config)}`;
 	}
 
-	private getCspForResource(resource: vscode.Uri, nonce: string): string {
-		switch (this.cspArbiter.getSecurityLevelForResource(resource)) {
+	private getCspForResource(resource: vscode.Uri, nonce: string, useSphinx: boolean): string {
+		let securityLevel = this.cspArbiter.getSecurityLevelForResource(resource);
+		if (useSphinx) {
+			securityLevel = RSTPreviewSecurityLevel.AllowScriptsAndAllContent;
+		}
+		switch (securityLevel) {
 			case RSTPreviewSecurityLevel.AllowInsecureContent:
 				return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: http: https: data:; media-src vscode-resource: http: https: data:; script-src 'nonce-${nonce}'; style-src vscode-resource: 'unsafe-inline' http: https: data:; font-src vscode-resource: http: https: data:;">`;
 
