@@ -1,12 +1,12 @@
 import * as vscode from "vscode";
 import { exec, ExecException } from "child_process";
 import { Logger1 } from "./logger1";
+import { Configuration } from './features/utils/configuration';
+import { fileExists } from './common';
 
 export class Python {
   private version: 2 | 3 | null = null;
-  private pythonPath = vscode.workspace
-    .getConfiguration("python", null)
-    .get<string>("pythonPath", "python");
+  private pythonPath = Configuration.getPythonPath();
   private ready: boolean = false;
 
   public constructor(private readonly logger: Logger1) {
@@ -31,26 +31,42 @@ export class Python {
   private async setup(): Promise<void> {
     await this.getVersion();
     if (!(await this.checkDocutilsInstall())) {
-      await this.installDocutils();
+      vscode.window.showWarningMessage("Previewer docutils cannot be found.");
+    }
+
+    const sphinx = Configuration.getSphinxPath();
+    if (!(await this.checkSphinxInstall() || (sphinx != null && await fileExists(sphinx)))) {
+      vscode.window.showWarningMessage("Previewer sphinx-build cannot be found.");
+    }
+
+    const doc8 = Configuration.getLinterPath();
+    if (!(await this.checkDoc8Install() || (doc8 != null && await fileExists(doc8)))) {
+      vscode.window.showWarningMessage("Linter doc8 cannot be found.");
     }
     this.ready = true;
-  }
-
-  private async installDocutils(): Promise<void> {
-    try {
-      await this.exec("-m", "pip", "install", "docutils");
-    } catch (e) {
-      this.logger.log("Failed to install docutils");
-      vscode.window.showErrorMessage(
-        "Could not install docutils. Please run `pip install docutils` to use this " +
-          "extension, or check your python path."
-      );
-    }
   }
 
   private async checkDocutilsInstall(): Promise<boolean> {
     try {
       await this.exec("-c", '"import docutils;"');
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  private async checkDoc8Install(): Promise<boolean> {
+    try {
+      await this.exec("-c", '"import doc8.main;"');
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  private async checkSphinxInstall(): Promise<boolean> {
+    try {
+      await this.exec("-c", '"import sphinx;"');
       return true;
     } catch (e) {
       return false;

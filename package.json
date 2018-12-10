@@ -2,7 +2,7 @@
   "name": "restructuredtext",
   "displayName": "%displayName%",
   "description": "%description%",
-  "version": "83.0.0",
+  "version": "84.0.0",
   "publisher": "lextudio",
   "engines": {
     "vscode": "^1.26.0"
@@ -341,44 +341,51 @@
             "off",
             "verbose"
           ],
-          "default": "off",
+          "default": "verbose",
           "description": "%restructuredtext.trace.desc%",
           "scope": "window"
         },
         "restructuredtext.workspaceRoot": {
           "type": "string",
           "default": "${workspaceFolder}",
-          "description": "Write-only. Don't modify the value. This is a reserved setting for IntelliSense."
+          "description": "Write-only. Don't modify the value. This is a reserved setting for IntelliSense.",
+          "scope": "resource"
         },
         "restructuredtext.builtDocumentationPath": {
           "type": "string",
           "default": null,
-          "description": "Sphinx's HTML output folder. Defaults to 'restructuredtext.confPath'/_build/html This is an absolute path, and you can use ${workspaceFolder} to represent the workspace root folder."
+          "description": "Sphinx's HTML output folder. Defaults to 'restructuredtext.confPath'/_build/html This is an absolute path, and you can use ${workspaceFolder} to represent the workspace root folder.",
+          "scope": "resource"
         },
         "restructuredtext.confPath": {
           "type": "string",
           "default": null,
-          "description": "Sphinx's configuration folder containing conf.py. Set this option if the path is not found automatically. This is an absolute path, and you can use ${workspaceFolder} to represent the workspace root folder."
+          "description": "Sphinx's configuration folder containing conf.py. Set this option if the path is not found automatically. This is an absolute path, and you can use ${workspaceFolder} to represent the workspace root folder.",
+          "scope": "resource"
         },
         "restructuredtext.updateOnTextChanged": {
           "type": "string",
           "default": "true",
-          "description": "Flag to control whether text changed event triggers preview update."
+          "description": "Flag to control whether text changed event triggers preview update.",
+          "scope": "resource"
         },
         "restructuredtext.updateDelay": {
           "type": "number",
           "default": "300",
-          "description": "Flag to control after how long a changed event triggers preview update."
+          "description": "Flag to control after how long a changed event triggers preview update.",
+          "scope": "resource"
         },
         "restructuredtext.sphinxBuildPath": {
           "type": "string",
           "default": null,
-          "description": "The full path of the sphinx-build executable. This is an absolute path, and you can use ${workspaceFolder} to represent the workspace root folder."
+          "description": "The full path of the sphinx-build executable. This is an absolute path, and you can use ${workspaceFolder} to represent the workspace root folder.",
+          "scope": "resource"
         },
         "restructuredtext.linter.executablePath": {
           "type": "string",
           "default": null,
-          "description": "Points to the doc8 executable."
+          "description": "Points to the doc8 executable.",
+          "scope": "resource"
         },
         "restructuredtext.linter.run": {
           "type": "string",
@@ -388,22 +395,26 @@
             "off"
           ],
           "default": "onType",
-          "description": "Whether the linter is run on save or on type or disabled."
+          "description": "Whether the linter is run on save or on type or disabled.",
+          "scope": "resource"
         },
         "restructuredtext.linter.extraArgs": {
           "type": "array",
           "default": [],
-          "description": "Extra arguments to doc8."
+          "description": "Extra arguments to doc8.",
+          "scope": "resource"
         },
         "restructuredtext.languageServer.disabled": {
           "type": "boolean",
           "default": true,
-          "description": "Flag to disable language server based IntelliSense if critical issues happen."
+          "description": "Flag to disable language server based IntelliSense if critical issues happen.",
+          "scope": "resource"
         },
         "restructuredtext.languageServer.maxNumberOfProblems": {
           "type": "number",
           "default": 100,
-          "description": "Controls the maximum number of problems produced by the server."
+          "description": "Controls the maximum number of problems produced by the server.",
+          "scope": "resource"
         },
         "restructuredtext.languageServer.trace.server": {
           "type": "string",
@@ -413,7 +424,14 @@
             "verbose"
           ],
           "default": "off",
-          "description": "Traces the communication between VSCode and the server."
+          "description": "Traces the communication between VSCode and the server.",
+          "scope": "resource"
+        },
+        "restructuredtext.experimental": {
+          "type": "boolean",
+          "default": false,
+          "description": "Flag to enable experimental features.",
+          "scope": "resource"
         }
       }
     }

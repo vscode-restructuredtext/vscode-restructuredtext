@@ -18,7 +18,7 @@ export class RstTransformerSelector {
         const configurations: RstTransformerConfig[] = [];
         const pathStrings: string[] = [];
         // A path may be configured in the settings. Include this path
-        const confPathFromSettings = Configuration.loadSetting('confPath', null, resource);
+        const confPathFromSettings = Configuration.getConfPath(resource);
 
         const docutils = new RstTransformerConfig();
         docutils.label = '$(code) Use docutils';

@@ -33,7 +33,7 @@ function isString(value: any): value is string {
 export class Logger1 {
 	private trace?: Trace;
 
-	private readonly outputChannel = lazy(() => vscode.window.createOutputChannel('RST'));
+	private readonly outputChannel = lazy(() => vscode.window.createOutputChannel('reStructuredText'));
 
 	constructor() {
 		this.updateConfiguration();

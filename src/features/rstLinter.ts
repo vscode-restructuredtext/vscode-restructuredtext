@@ -1,5 +1,5 @@
 'use strict';
-import { workspace, Disposable, Diagnostic, DiagnosticSeverity, Range } from 'vscode';
+import { workspace, Disposable, Diagnostic, DiagnosticSeverity, Range, Uri } from 'vscode';
 
 import { LintingProvider, LinterConfiguration, Linter } from './utils/lintingProvider';
 import { Configuration } from './utils/configuration';
@@ -13,15 +13,15 @@ export default class RstLintingProvider implements Linter {
 		provider.activate(subscriptions)
 	}
 
-	public loadConfiguration(): LinterConfiguration {
+	public loadConfiguration(resource: Uri): LinterConfiguration {
 		let section = workspace.getConfiguration(this.languageId);
 		if (!section) return;
 
 		var module: string[] = [];
 
-		var build = Configuration.loadSetting('linter.executablePath', null, null);
+		var build = Configuration.getLinterPath(resource);
 		if (build == null) {
-			var python = Configuration.loadSetting('pythonPath', null, null, 'python');
+			var python = Configuration.getPythonPath(resource);
 			if (python != null) {
 				build = python;
 				module = module.concat(["-m", "doc8.main"]);

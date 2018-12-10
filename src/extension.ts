@@ -46,7 +46,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 	_channel.appendLine('');
 	const logger = new Logger((text) => _channel.append(text));
 
-	const disableLsp = Configuration.loadAnySetting('languageServer.disabled', true, null);
+	const disableLsp = Configuration.getLanguageServerDisabled();
 	// *
 	if (!disableLsp) {
 		await Configuration.setRoot();

@@ -46,7 +46,7 @@ export default class RstTransformerStatus {
         const editor = window.activeTextEditor;
         if (editor != null && editor.document.languageId === 'restructuredtext') {
             let resource = editor.document.uri;
-            await Configuration.saveSetting('confPath', undefined, resource);
+            await Configuration.setConfPath(undefined, resource, false);
             this.refreshConfig(resource);
             this.setLabel();
         }
@@ -59,7 +59,7 @@ export default class RstTransformerStatus {
         }
 
         this.config = rstTransformerConf;
-        await Configuration.saveSetting('confPath', rstTransformerConf.confPyDirectory, resource, true);
+        await Configuration.setConfPath(rstTransformerConf.confPyDirectory, resource, true);
         return rstTransformerConf;
     }
 }

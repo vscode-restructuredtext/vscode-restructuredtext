@@ -41,7 +41,7 @@ export interface LinterConfiguration {
 
 export interface Linter {
 	languageId:string,
-	loadConfiguration:()=>LinterConfiguration,
+	loadConfiguration:(resource: vscode.Uri)=>LinterConfiguration,
 	process:(output:string[])=>vscode.Diagnostic[]	
 }
 
@@ -64,10 +64,10 @@ export class LintingProvider {
 
 	public activate(subscriptions: vscode.Disposable[]) {
 		this.diagnosticCollection = vscode.languages.createDiagnosticCollection();
-		subscriptions.push(this);
-		vscode.workspace.onDidChangeConfiguration(this.loadConfiguration, this, subscriptions);
-		this.loadConfiguration();
-
+		subscriptions.push(this);		
+		vscode.workspace.onDidChangeConfiguration(this.resetConfiguration, this, subscriptions);
+		this.resetConfiguration();
+		
 		vscode.workspace.onDidOpenTextDocument(this.triggerLint, this, subscriptions);
 		vscode.workspace.onDidCloseTextDocument((textDocument)=> {
 			this.diagnosticCollection.delete(textDocument.uri);
@@ -75,7 +75,7 @@ export class LintingProvider {
 		}, null, subscriptions);
 
 		// Lint all open documents documents
-		vscode.workspace.textDocuments.forEach(this.triggerLint, this);
+		// vscode.workspace.textDocuments.forEach(this.triggerLint, this);
 	}
 
 	public dispose(): void {
@@ -83,9 +83,14 @@ export class LintingProvider {
 		this.diagnosticCollection.dispose();
 	}
 
-	private loadConfiguration(): void {
+	private resetConfiguration(): void {
+		this.linterConfiguration = null;
+		vscode.workspace.textDocuments.forEach(this.triggerLint, this);
+	}
+
+	private loadConfiguration(resource: vscode.Uri): void {
 		let oldExecutable = this.linterConfiguration && this.linterConfiguration.executable;
-		this.linterConfiguration = this.linter.loadConfiguration();
+		this.linterConfiguration = this.linter.loadConfiguration(resource);
 		
 		this.delayers = Object.create(null);
 		if (this.executableNotFound) {
@@ -103,10 +108,13 @@ export class LintingProvider {
 		}		
 		this.documentListener = vscode.workspace.onDidSaveTextDocument(this.triggerLint, this);
 		// Configuration has changed. Reevaluate all documents.
-		vscode.workspace.textDocuments.forEach(this.triggerLint, this);
 	}
 
 	private triggerLint(textDocument: vscode.TextDocument): void {
+		if (this.linterConfiguration === null) {
+			this.loadConfiguration(textDocument.uri);
+		}
+		
 		if (textDocument.languageId !== this.linter.languageId || 
 			textDocument.uri.scheme !== "file" ||
 			this.executableNotFound ||

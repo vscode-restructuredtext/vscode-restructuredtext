@@ -13,6 +13,7 @@ import { Logger1 } from '../logger1';
 import { ContentSecurityPolicyArbiter, RSTPreviewSecurityLevel } from '../security';
 import { RSTPreviewConfigurationManager, RSTPreviewConfiguration } from './previewConfig';
 import { RSTEngine } from '../rstEngine';
+import { Configuration } from './utils/configuration';
 
 /**
  * Strings used inside the html preview.
@@ -70,6 +71,7 @@ export class RSTContentProvider {
 
 		const body = await this.engine.preview(rstDocument);
 		if (body.search('</head>') > -1) {
+			// sphinx based preview.
 			let elementCount: number = 0;
 			let canStart: boolean = false;
 			const parsedDoc = body.split(/\r?\n/).map((l,i) => {
@@ -105,6 +107,10 @@ export class RSTContentProvider {
 			    <div class="code-line" data-line="${rstDocument.lineCount}"></div>
 			</body>
 			`);
+        	this.logger.log("Document line count: " + rstDocument.lineCount + "; element count: " + elementCount);
+			if (rstDocument.lineCount < elementCount) {
+				this.logger.log("WARN: documentl line count is less than element count.");
+			}
 			return newAll;
 		} else {		
 			const parsedDoc = body.split(/\r?\n/).map((l,i) => 

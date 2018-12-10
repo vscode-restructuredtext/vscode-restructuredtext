@@ -44,7 +44,7 @@ export class RSTEngine {
 
       // The directory where Sphinx will write the html output
       let output: string;
-      const out = Configuration.loadSetting('builtDocumentationPath', null, uri);
+      const out = Configuration.getOutputFolder(uri);
       if (out == null) {
         output = path.join(input, '_build', 'html');
       } else {
@@ -54,9 +54,9 @@ export class RSTEngine {
       this.channel.appendLine('Sphinx html directory: ' + output);
       const quotedOutput = '"' + output + '"';
 
-      let build = Configuration.loadSetting('sphinxBuildPath', null, uri);
+      let build = Configuration.getSphinxPath(uri);
       if (build == null) {
-        const python = Configuration.loadSetting('pythonPath', null, uri, 'python');
+        const python = Configuration.getPythonPath(uri);
         if (python != null) {
           build = python + ' -m sphinx';
         }
@@ -161,6 +161,10 @@ export class RSTEngine {
     return document.replace(
         new RegExp('((?:src|href)=[\'\"])(.*?)([\'\"])', 'gmi'),
         (subString: string, p1: string, p2: string, p3: string): string => {
+          const lower = p2.toLowerCase();
+          if (p2.startsWith('#') || lower.startsWith('http://') || lower.startsWith('https://')) {
+              return subString;
+          }
             const newUrl = [
                 p1,
                 'vscode-resource:',
