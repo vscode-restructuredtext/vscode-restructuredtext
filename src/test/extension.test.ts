@@ -30,7 +30,7 @@ let logger: Logger = {
   log: () => void 0,
   updateConfiguration: () => void 0
 } as any;
-let channel: vscode.OutputChannel;
+
 suite("Extension Tests", function() {
   suiteSetup(async function() {
     this.timeout(30000);
@@ -39,9 +39,7 @@ suite("Extension Tests", function() {
       python = new Python(logger);
       await python.awaitReady();
 
-      channel = vscode.window.createOutputChannel('reStructuredText');
-
-      engine = new RSTEngine(python, logger, null, channel);
+      engine = new RSTEngine(python, logger, null);
     } catch (e) {
       throw e;
     }

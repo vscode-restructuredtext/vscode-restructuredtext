@@ -1,9 +1,10 @@
 'use strict';
 
-import { StatusBarAlignment, StatusBarItem, window, Uri, OutputChannel } from 'vscode';
+import { StatusBarAlignment, StatusBarItem, window, Uri } from 'vscode';
 import { Configuration } from './configuration';
 import { RstTransformerSelector } from './selector';
 import { RstTransformerConfig } from './confPyFinder';
+import { Logger } from '../../logger';
 
 /**
  * Status bar updates. Shows the selected RstTransformerConfig when a
@@ -14,13 +15,13 @@ import { RstTransformerConfig } from './confPyFinder';
 export default class RstTransformerStatus {
     private _statusBarItem: StatusBarItem;
     public config: RstTransformerConfig;
-    private _channel: OutputChannel;
+    private _logger: Logger;
 
-    constructor(channel: OutputChannel) {
+    constructor(logger: Logger) {
         this._statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left);
         this._statusBarItem.command = 'restructuredtext.resetStatus';
         this._statusBarItem.tooltip = 'The active rst to html transformer (click to reset)';
-        this._channel = channel;
+        this._logger = logger;
     }
 
     public setLabel() {
@@ -53,7 +54,7 @@ export default class RstTransformerStatus {
     }
 
     public async refreshConfig(resource: Uri): Promise<RstTransformerConfig> {
-        const rstTransformerConf = await RstTransformerSelector.findConfDir(resource, this._channel);
+        const rstTransformerConf = await RstTransformerSelector.findConfDir(resource, this._logger);
         if (rstTransformerConf == null) {
             return null;
         }

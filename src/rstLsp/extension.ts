@@ -6,8 +6,9 @@
 import * as vscode from 'vscode';
 import { LanguageClient, ServerOptions, LanguageClientOptions } from 'vscode-languageclient';
 import * as path from "path";
+import { Logger } from '../logger';
 
-export function activate(context: vscode.ExtensionContext, channel: vscode.OutputChannel, disabled: boolean) {
+export function activate(context: vscode.ExtensionContext, logger: Logger, disabled: boolean) {
     if (disabled) {
         return;
     }

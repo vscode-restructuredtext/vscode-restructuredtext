@@ -60,6 +60,10 @@ export class Logger {
 		return this.outputChannel.value.append(value);
 	}
 
+	public show() {
+		this.outputChannel.value.show();
+	}
+
 	private readTrace(): Trace {
 		return Trace.fromString(vscode.workspace.getConfiguration().get<string>('restructuredtext.trace', 'off'));
 	}

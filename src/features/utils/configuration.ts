@@ -29,8 +29,8 @@ export class Configuration {
         return Configuration.loadAnySetting('languageServer.disabled', true, null);
     }
 
-    public static setConfPath(value: string, resource: Uri = null, insertMacro: boolean): void {
-        Configuration.saveSetting('confPath', value, resource, insertMacro);
+    public static async setConfPath(value: string, resource: Uri = null, insertMacro: boolean): Promise<string> {
+        return await Configuration.saveSetting('confPath', value, resource, insertMacro);
     }
 
     public static async setRoot(resource: Uri = null) {

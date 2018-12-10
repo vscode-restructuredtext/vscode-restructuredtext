@@ -12,7 +12,6 @@ export class RSTEngine {
     private readonly python: Python,
     private readonly logger: Logger,
     private readonly status: RstTransformerStatus,
-    private readonly channel: OutputChannel
   ) { }
 
   private errorSnippet(error: string): string {
@@ -30,15 +29,15 @@ export class RSTEngine {
     } else {
       // sphinx
       let input = confPyDirectory;
-      this.channel.appendLine('Sphinx conf.py directory: ' + input);
+      this.logger.appendLine('Sphinx conf.py directory: ' + input);
 
       // Make sure the conf.py file exists
       let confFile = path.join(input, 'conf.py');
       if (!fs.existsSync(confFile)) {
         await this.status.reset();
-        this.channel.appendLine('conf.py not found. Refresh the settings.');
+        this.logger.appendLine('conf.py not found. Refresh the settings.');
         input = confPyDirectory;
-        this.channel.appendLine('Sphinx conf.py directory: ' + input);
+        this.logger.appendLine('Sphinx conf.py directory: ' + input);
         confFile = path.join(input, 'conf.py');
       }
 
@@ -51,7 +50,7 @@ export class RSTEngine {
         output = out;
       }
 
-      this.channel.appendLine('Sphinx html directory: ' + output);
+      this.logger.appendLine('Sphinx html directory: ' + output);
       const quotedOutput = '"' + output + '"';
 
       let build = Configuration.getSphinxPath(uri);
@@ -85,9 +84,9 @@ export class RSTEngine {
   }
 
   private previewPage(htmlPath: string, cmd: string, input: string, options: any, fixLinks: boolean): Promise<string> {
-    this.channel.appendLine('Compiler: ' + cmd);
-    this.channel.appendLine('Working directory: ' + input);
-    this.channel.appendLine('HTML file: ' + htmlPath);
+    this.logger.appendLine('Compiler: ' + cmd);
+    this.logger.appendLine('Working directory: ' + input);
+    this.logger.appendLine('HTML file: ' + htmlPath);
 
     // Build and display file.
     return new Promise<string>((resolve, reject) => {
@@ -201,8 +200,8 @@ export class RSTEngine {
   }
 
   private showError(description: string, errorMessage: string): string {
-    this.channel.appendLine('Description: ' + description);
-    this.channel.appendLine('Error: ' + errorMessage);
+    this.logger.appendLine('Description: ' + description);
+    this.logger.appendLine('Error: ' + errorMessage);
     return this.showHelp(description, errorMessage);
   }
 

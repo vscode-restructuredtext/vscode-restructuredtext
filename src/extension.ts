@@ -27,8 +27,6 @@ export function getExtensionPath(): string {
 	return extensionPath;
 }
 
-let _channel: vscode.OutputChannel = null;
-
 export async function activate(context: vscode.ExtensionContext): Promise<{ initializationFinished: Promise<void> }> {
 	extensionPath = context.extensionPath;
 
@@ -37,22 +35,22 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
 	util.setExtensionPath(context.extensionPath);
 
-	const logger1 = new Logger();
-	logger1.log('Please visit https://docs.restructuredtext.net to learn how to configure the extension.');
+	const logger = new Logger();
+	logger.log('Please visit https://docs.restructuredtext.net to learn how to configure the extension.');
 
 	const disableLsp = Configuration.getLanguageServerDisabled();
 	// *
 	if (!disableLsp) {
 		await Configuration.setRoot();
-		await ensureRuntimeDependencies(extension, logger1);
+		await ensureRuntimeDependencies(extension, logger);
 	}
 	// */
 
 	// activate language services
-	const rstLspPromise = RstLanguageServer.activate(context, _channel, disableLsp);
+	const rstLspPromise = RstLanguageServer.activate(context, logger, disableLsp);
 
 	// Status bar to show the active rst->html transformer configuration
-	const status = new RstTransformerStatus(_channel);
+	const status = new RstTransformerStatus(logger);
 
 	// Hook up the status bar to document change events
 	context.subscriptions.push(
@@ -76,12 +74,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
 	const cspArbiter = new ExtensionContentSecurityPolicyArbiter(context.globalState, context.workspaceState);
 
-	const python: Python = new Python(logger1);
-	await python.awaitReady();
-	const engine: RSTEngine = new RSTEngine(python, logger1, status, _channel);
+	const python: Python = new Python(logger);
+	// await python.awaitReady();
+	const engine: RSTEngine = new RSTEngine(python, logger, status);
 
-	const contentProvider = new RSTContentProvider(context, cspArbiter, engine, logger1);
-	const previewManager = new RSTPreviewManager(contentProvider, logger1);
+	const contentProvider = new RSTContentProvider(context, cspArbiter, engine, logger);
+	const previewManager = new RSTPreviewManager(contentProvider, logger);
 	context.subscriptions.push(previewManager);
 
 	const previewSecuritySelector = new PreviewSecuritySelector(cspArbiter, previewManager);
@@ -99,7 +97,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 	commandManager.register(new commands.ToggleLockCommand(previewManager));
 
 	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(() => {
-		logger1.updateConfiguration();
+		logger.updateConfiguration();
 		previewManager.updateConfiguration();
 	}));
 
@@ -117,7 +115,7 @@ function ensureRuntimeDependencies(extension: vscode.Extension<any>, logger: Log
     return util.installFileExists(util.InstallFileType.Lock)
         .then((exists) => {
             if (!exists) {
-                const downloader = new ExtensionDownloader(_channel, logger, extension.packageJSON);
+                const downloader = new ExtensionDownloader(logger, extension.packageJSON);
                 return downloader.installRuntimeDependencies();
             } else {
                 return true;

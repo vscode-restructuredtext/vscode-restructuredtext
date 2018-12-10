@@ -16,7 +16,6 @@ import { PlatformInformation } from './platform';
 export class ExtensionDownloader
 {
     public constructor(
-        private channel: vscode.OutputChannel,
         private logger: Logger,
         //private reporter: TelemetryReporter /* optional */,
         private packageJSON: any) {
@@ -24,7 +23,7 @@ export class ExtensionDownloader
 
     public installRuntimeDependencies(): Promise<boolean> {
         this.logger.log('Installing reStructuredText dependencies...');
-        this.channel.show();
+        this.logger.show();
 
         let statusItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right);
         let status: Status = {

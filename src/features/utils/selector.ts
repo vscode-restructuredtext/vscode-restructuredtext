@@ -2,14 +2,15 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { OutputChannel, Uri, window } from 'vscode';
+import { Uri, window } from 'vscode';
 import { Configuration } from './configuration';
 import { findConfPyFiles, findConfPyFilesInParentDirs, RstTransformerConfig } from './confPyFinder';
+import { Logger } from '../../logger';
 /**
  *
  */
 export class RstTransformerSelector {
-    public static async findConfDir(resource: Uri, channel: OutputChannel): Promise<RstTransformerConfig> {
+    public static async findConfDir(resource: Uri, logger: Logger): Promise<RstTransformerConfig> {
         const rstPath = resource.fsPath;
         // Sanity check - the file we are previewing must exist
         if (!fs.existsSync(rstPath) || !fs.statSync(rstPath).isFile) {
@@ -56,7 +57,7 @@ export class RstTransformerSelector {
         const paths2: string[] = findConfPyFilesInParentDirs(rstPath);
         addPaths(paths1);
         addPaths(paths2);
-        channel.appendLine('Found conf.py paths: ' + JSON.stringify(pathStrings));
+        logger.appendLine('Found conf.py paths: ' + JSON.stringify(pathStrings));
 
         // The user can choose to use docutils instead of Sphinx
         configurations.push(docutils);
