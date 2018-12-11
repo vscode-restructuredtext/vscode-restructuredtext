@@ -47,7 +47,10 @@ export default class RstTransformerStatus {
         const editor = window.activeTextEditor;
         if (editor != null && editor.document.languageId === 'restructuredtext') {
             let resource = editor.document.uri;
-            await Configuration.setConfPath(undefined, resource, false);
+            const newValue = await Configuration.setConfPath(undefined, resource, false);
+            if (newValue !== undefined) {
+                this._logger.appendLine("reset failed.");
+            }
             this.refreshConfig(resource);
             this.setLabel();
         }

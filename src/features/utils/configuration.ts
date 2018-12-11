@@ -104,7 +104,7 @@ export class Configuration {
     }
 
     private static expandMacro(input: string, resource: Uri): string {
-        if (resource == null) {
+        if (resource == null || input.indexOf('${') === -1) {
             return input;
         }
 
@@ -119,11 +119,17 @@ export class Configuration {
                 root = workspace.getWorkspaceFolder(resource);
             }
 
-            path = root.uri.fsPath;
+            if (root != null) {
+                path = root.uri.fsPath;
+            }
         }
 
-        return input
-            .replace('${workspaceRoot}', path)
-            .replace('${workspaceFolder}', path);
+        if (path != null) {
+            return input
+                .replace('${workspaceRoot}', path)
+                .replace('${workspaceFolder}', path);
+        }
+
+        return input;
     }
 }
