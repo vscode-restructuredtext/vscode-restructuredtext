@@ -2,7 +2,7 @@
   "name": "restructuredtext",
   "displayName": "%displayName%",
   "description": "%description%",
-  "version": "87.0.0",
+  "version": "88.0.0",
   "publisher": "lextudio",
   "engines": {
     "vscode": "^1.26.0"
@@ -259,13 +259,6 @@
         }
       ],
       "explorer/context": [
-        {
-          "when": "resourceLangId == restructuredtext",
-          "command": "restructuredtext.showPreview",
-          "group": "navigation"
-        }
-      ],
-      "explorer/title/context": [
         {
           "when": "resourceLangId == restructuredtext",
           "command": "restructuredtext.showPreview",
