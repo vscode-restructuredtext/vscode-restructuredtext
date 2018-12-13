@@ -6,6 +6,8 @@ import * as vscode from 'vscode';
 
 import { ThrottledDelayer } from './async';
 import { LineDecoder } from './lineDecoder';
+import { Logger } from '../../logger';
+import { Configuration } from './configuration';
 
 enum RunTrigger {
 	onSave,
@@ -57,8 +59,10 @@ export class LintingProvider {
 	
 	
 	private linter:Linter;
-	constructor(linter:Linter) {
+	private logger: Logger;
+	constructor(linter:Linter, logger: Logger) {
 		this.linter = linter;
+		this.logger = logger;
 		this.executableNotFound = false;
 	}
 
@@ -138,7 +142,8 @@ export class LintingProvider {
 			let decoded = []
 			let diagnostics: vscode.Diagnostic[] = [];
 			
-			let options = vscode.workspace.rootPath ? { cwd: vscode.workspace.rootPath, shell: true } : undefined;
+			const rootPath = Configuration.GetRootPath(textDocument.uri);
+			let options = rootPath ? { rootPath, shell: true } : undefined;
 			let args: string[] = [];
 			args = args.concat(this.linterConfiguration.module);
 			if (RunTrigger.from(this.linterConfiguration.runTrigger) === RunTrigger.onSave) {
@@ -150,6 +155,7 @@ export class LintingProvider {
 			args = args.concat(this.linterConfiguration.extraArgs);
 			
 			let childProcess = cp.spawn(executable, args, options);
+			this.logger.log(`Execute linting: ${executable} ${args.join(' ')} in ${rootPath}.`)
 			childProcess.on('error', (error: Error) => {
 				if (this.executableNotFound) {
 					resolve();
@@ -161,6 +167,7 @@ export class LintingProvider {
 				} else {
 					message = error.message ? error.message : `Failed to run executable using path: ${executable}. Reason is unknown.`;
 				}
+				this.logger.log(message);
 				vscode.window.showInformationMessage(message);
 				this.executableNotFound = true;
 				resolve();

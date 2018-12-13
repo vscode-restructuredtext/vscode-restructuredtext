@@ -3,13 +3,17 @@ import { workspace, Disposable, Diagnostic, DiagnosticSeverity, Range, Uri } fro
 
 import { LintingProvider, LinterConfiguration, Linter } from './utils/lintingProvider';
 import { Configuration } from './utils/configuration';
+import { Logger } from '../logger';
 
 export default class RstLintingProvider implements Linter {
 
 	public languageId = 'restructuredtext';
 
+	public constructor(private readonly logger: Logger) {
+	}
+
 	public activate(subscriptions: Disposable[]) {
-		let provider = new LintingProvider(this);
+		let provider = new LintingProvider(this, this.logger);
 		provider.activate(subscriptions)
 	}
 

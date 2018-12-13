@@ -108,6 +108,17 @@ export class Configuration {
             return input;
         }
 
+        const path = this.GetRootPath(resource)
+        if (path != null) {
+            return input
+                .replace('${workspaceRoot}', path)
+                .replace('${workspaceFolder}', path);
+        }
+
+        return input;
+    }
+
+    public static GetRootPath(resource: Uri): string {
         let path: string;
         if (!workspace.workspaceFolders) {
             path = workspace.rootPath;
@@ -124,12 +135,6 @@ export class Configuration {
             }
         }
 
-        if (path != null) {
-            return input
-                .replace('${workspaceRoot}', path)
-                .replace('${workspaceFolder}', path);
-        }
-
-        return input;
+        return path;
     }
 }

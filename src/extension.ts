@@ -69,7 +69,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 	);
 
 	// Linter support
-	const linter = new RstLintingProvider();
+	const linter = new RstLintingProvider(logger);
 	linter.activate(context.subscriptions);
 
 	const cspArbiter = new ExtensionContentSecurityPolicyArbiter(context.globalState, context.workspaceState);
