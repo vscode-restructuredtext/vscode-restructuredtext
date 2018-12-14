@@ -14,7 +14,7 @@ This extension provides rich reStructuredText language support for Visual Studio
 Now you write reStructuredText scripts using the excellent IDE-like interface
 that VS Code provides.
 
-![reStructuredText in Visual Studio Code](images/vscode.png)
+![reStructuredText in Visual Studio Code](images/main.gif)
 
 ## Features
 
