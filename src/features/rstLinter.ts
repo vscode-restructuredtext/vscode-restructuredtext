@@ -1,5 +1,5 @@
 'use strict';
-import { workspace, Disposable, Diagnostic, DiagnosticSeverity, Range, Uri } from 'vscode';
+import { Disposable, Diagnostic, DiagnosticSeverity, Range, Uri } from 'vscode';
 
 import { LintingProvider, LinterConfiguration, Linter } from './utils/lintingProvider';
 import { Configuration } from './utils/configuration';
@@ -18,8 +18,6 @@ export default class RstLintingProvider implements Linter {
 	}
 
 	public loadConfiguration(resource: Uri): LinterConfiguration {
-		let section = workspace.getConfiguration(this.languageId);
-		if (!section) return;
 
 		var module: string[] = [];
 
@@ -41,13 +39,12 @@ export default class RstLintingProvider implements Linter {
 			module: module,
 			fileArgs: [],
 			bufferArgs: [],
-			extraArgs: section.get<string[]>('linter.extraArgs'),
-			runTrigger: section.get<string>('linter.run', 'onType')
+			extraArgs: Configuration.getExtraArgs(resource),
+			runTrigger: Configuration.getRunType(resource)
 		}
 	}
 
 	public process(lines: string[]): Diagnostic[] {
-		let section = workspace.getConfiguration(this.languageId);
 		let diagnostics: Diagnostic[] = [];
 		lines.forEach(function (line) {
 			if (line.includes("No module named")) {

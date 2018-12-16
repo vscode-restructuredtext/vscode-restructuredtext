@@ -21,6 +21,14 @@ export class Configuration {
         return Configuration.loadSetting('linter.executablePath', null, resource);
     }
 
+    public static getExtraArgs(resource: Uri = null): string[] {
+        return Configuration.loadAnySetting<string[]>('linter.extraArgs', null, resource);
+    }
+
+    public static getRunType(resource: Uri = null): string {
+        return Configuration.loadAnySetting<string>('linter.run', 'onType', resource);
+    }
+
     public static getPythonPath(resource: Uri = null): string {
         return Configuration.loadSetting('pythonPath', null, resource, 'python');
     }

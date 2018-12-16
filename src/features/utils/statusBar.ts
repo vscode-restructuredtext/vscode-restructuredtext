@@ -31,8 +31,9 @@ export default class RstTransformerStatus {
     public async update() {
         const editor = window.activeTextEditor;
         if (editor != null && editor.document.languageId === 'restructuredtext') {
-            if (!this.config) {
-                let resource = editor.document.uri;
+            const resource = editor.document.uri;
+            const workspaceRoot = Configuration.GetRootPath(resource);
+            if (!this.config || this.config.workspaceRoot !== workspaceRoot) {
                 await this.refreshConfig(resource);
             }
 

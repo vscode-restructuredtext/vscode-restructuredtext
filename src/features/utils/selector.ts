@@ -20,11 +20,13 @@ export class RstTransformerSelector {
         const pathStrings: string[] = [];
         // A path may be configured in the settings. Include this path
         const confPathFromSettings = Configuration.getConfPath(resource);
+        const workspaceRoot = Configuration.GetRootPath(resource);
 
         const docutils = new RstTransformerConfig();
         docutils.label = '$(code) Use docutils';
         docutils.description = 'Do not use Sphinx, but docutils instead';
         docutils.confPyDirectory = '';
+        docutils.workspaceRoot = workspaceRoot;
 
         if (confPathFromSettings != null) {
             if (confPathFromSettings === '') {
@@ -36,6 +38,7 @@ export class RstTransformerSelector {
             qpSettings.label = '$(gear) Sphinx: ' + pth;
             qpSettings.description += ' (from restructuredtext.confPath setting)';
             qpSettings.confPyDirectory = path.dirname(pth);
+            qpSettings.workspaceRoot = workspaceRoot;
             return qpSettings;
         }
         // Add path to a directory containing conf.py if it is not already stored
@@ -46,6 +49,7 @@ export class RstTransformerSelector {
                     const qp = new RstTransformerConfig();
                     qp.label = '$(gear) Sphinx: ' + pth;
                     qp.confPyDirectory = path.dirname(pth);
+                    qp.workspaceRoot = workspaceRoot;
                     configurations.push(qp);
                     pathStrings.push(pth);
                 }
