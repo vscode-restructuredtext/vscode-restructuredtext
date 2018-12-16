@@ -26,9 +26,8 @@ export class RSTPreviewConfiguration {
 
 	private constructor(resource: vscode.Uri) {
 		const editorConfig = vscode.workspace.getConfiguration('editor', resource);
-		const rstConfig = vscode.workspace.getConfiguration('rst', resource);
+		const rstConfig = vscode.workspace.getConfiguration('restructuredtext', resource);
 		const rstEditorConfig = vscode.workspace.getConfiguration('[rst]', resource);
-
 
 		this.scrollBeyondLastLine = editorConfig.get<boolean>('scrollBeyondLastLine', false);
 
@@ -42,7 +41,6 @@ export class RSTPreviewConfiguration {
 		this.lineBreaks = !!rstConfig.get<boolean>('preview.breaks', false);
 		this.doubleClickToSwitchToEditor = !!rstConfig.get<boolean>('preview.doubleClickToSwitchToEditor', true);
 		this.rstEditorSelection = !!rstConfig.get<boolean>('preview.markEditorSelection', true);
-		this.pythonPath = rstConfig.get<string>("preview.pythonPath", "python");
 
 		this.fontFamily = rstConfig.get<string | undefined>('preview.fontFamily', undefined);
 		this.fontSize = Math.max(8, +rstConfig.get<number>('preview.fontSize', NaN));
