@@ -20,20 +20,38 @@ export class Python {
   public async setup(resource: Uri): Promise<void> {
     this.pythonPath = Configuration.getPythonPath(resource);
     await this.getVersion();
-    if (!(await this.checkDocutilsInstall())) {
-      vscode.window.showWarningMessage("Previewer docutils cannot be found.");
-    }
-
-    const sphinx = Configuration.getSphinxPath(resource);
-    if (!(await this.checkSphinxInstall() || (sphinx != null && await fileExists(sphinx)))) {
-      vscode.window.showWarningMessage("Previewer sphinx-build cannot be found.");
+    if (Configuration.getConfPath(resource) === '') {
+      if (!(await this.checkDocutilsInstall())) {
+        this.logger.log("Started to install docutils...");
+        await this.installDocUtils();
+      }
+    } else {
+      const sphinx = Configuration.getSphinxPath(resource);
+      if (!(await this.checkSphinxInstall() || (sphinx != null && await fileExists(sphinx)))) {
+        this.logger.log("Started to install sphinx...");
+        await this.installSphinx();
+      }
     }
 
     const doc8 = Configuration.getLinterPath(resource);
     if (!(await this.checkDoc8Install() || (doc8 != null && await fileExists(doc8)))) {
-      vscode.window.showWarningMessage("Linter doc8 cannot be found.");
+      this.logger.log("Started to install doc8...");
+      await this.installDoc8();
     }
     this.ready = true;
+  }
+
+  private async installDocUtils(): Promise<void> {
+    try {
+      await this.exec("-m", "pip", "install", "docutils");
+      this.logger.log("Finished installing docutils");
+    } catch (e) {
+      this.logger.log("Failed to install docutils");
+      vscode.window.showErrorMessage(
+        "Could not install docutils. Please run `pip install docutils` to use this " +
+          "extension, or check your python path."
+      );
+    }
   }
 
   private async checkDocutilsInstall(): Promise<boolean> {
@@ -45,12 +63,38 @@ export class Python {
     }
   }
 
+  private async installDoc8(): Promise<void> {
+    try {
+      await this.exec("-m", "pip", "install", "doc8");
+      this.logger.log("Finished installing doc8");
+    } catch (e) {
+      this.logger.log("Failed to install doc8");
+      vscode.window.showErrorMessage(
+        "Could not install doc8. Please run `pip install doc8` to use this " +
+          "extension, or check your python path."
+      );
+    }
+  }
+
   private async checkDoc8Install(): Promise<boolean> {
     try {
       await this.exec("-c", '"import doc8.main;"');
       return true;
     } catch (e) {
       return false;
+    }
+  }
+
+  private async installSphinx(): Promise<void> {
+    try {
+      await this.exec("-m", "pip", "install", "sphinx", "sphinx-autobuild");
+      this.logger.log("Finished installing sphinx");
+    } catch (e) {
+      this.logger.log("Failed to install sphinx");
+      vscode.window.showErrorMessage(
+        "Could not install sphinx. Please run `pip install sphinx sphinx-autobuild` to use this " +
+          "extension, or check your python path."
+      );
     }
   }
 
