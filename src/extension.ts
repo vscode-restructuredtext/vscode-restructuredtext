@@ -20,6 +20,7 @@ import { underline } from './features/underline';
 import { Configuration } from './features/utils/configuration';
 import RstTransformerStatus from './features/utils/statusBar';
 import * as RstLanguageServer from './rstLsp/extension';
+import { openSync } from 'fs';
 
 let extensionPath = "";
 
@@ -38,7 +39,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 	const logger = new Logger();
 	logger.log('Please visit https://docs.restructuredtext.net to learn how to configure the extension.');
 
-	const disableLsp = Configuration.getLanguageServerDisabled();
+	const disableLsp = !platformIsSupported(logger) || Configuration.getLanguageServerDisabled();
 	// *
 	if (!disableLsp) {
 		await Configuration.setRoot();
@@ -120,4 +121,41 @@ function ensureRuntimeDependencies(extension: vscode.Extension<any>, logger: Log
                 return true;
             }
         });
+}
+
+function platformIsSupported(logger: Logger): boolean {
+	var getos = require('getos')
+ 
+	let dist: string;
+	let platform: string;
+	getos(function(e,os) {
+	  if(e) {
+		  logger.log("Failed to learn the OS.");
+		  logger.log(e);
+		  return;
+	  }
+	  logger.log("Your OS is:" +JSON.stringify(os));
+	  dist = os.dist;
+	  platform = os.os;
+	});
+
+	if (platform === 'darwin' || platform === 'windows') {
+		return true;
+	}
+
+	if (!dist) {
+		logger.log("Unknown distribution.");
+		return false;
+	}
+
+	const supportedPlatforms = Configuration.getSupportedPlatforms();
+    supportedPlatforms.forEach(item => {
+		if (dist.toLowerCase().indexOf(item) > -1 ) {
+			logger.log("Supported distribution.");
+			return true;
+		}
+	});
+
+	logger.log("Not-supported distribution.")
+	return false;
 }

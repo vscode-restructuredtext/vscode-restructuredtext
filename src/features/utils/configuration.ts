@@ -37,6 +37,10 @@ export class Configuration {
         return Configuration.loadAnySetting('languageServer.disabled', true, null);
     }
 
+    public static getSupportedPlatforms(resource: Uri = null): string[] {
+        return Configuration.loadAnySetting<string[]>("languageServer.supportedPlatforms", [], null);
+    }
+
     public static async setConfPath(value: string, resource: Uri = null, insertMacro: boolean): Promise<string> {
         return await Configuration.saveSetting('confPath', value, resource, insertMacro);
     }

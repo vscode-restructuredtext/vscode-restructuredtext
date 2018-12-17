@@ -14,7 +14,8 @@
     "lodash.throttle": "^4.1.1",
     "vscode": "^1.1.21",
     "vscode-languageclient": "^3.5.0",
-    "vscode-nls": "^4.0.0"
+    "vscode-nls": "^4.0.0",
+    "getos": "^3.1.1"
   },
   "devDependencies": {
     "@studio/changes": "^1.7.0",
@@ -401,6 +402,21 @@
           "type": "boolean",
           "default": true,
           "description": "Flag to disable language server based IntelliSense if critical issues happen.",
+          "scope": "resource"
+        },
+        "restructuredtext.languageServer.supportedPlatforms": {
+          "type": "array",
+          "default": [
+            "Ubuntu Linux",
+            "Fedora",
+            "Debian",
+            "Linux Mint",
+            "SUSE Linux",
+            "Alpine Linux",
+            "RHEL",
+            "Centos"
+          ],
+          "description": "Supported platforms of IntelliSense.",
           "scope": "resource"
         },
         "restructuredtext.languageServer.maxNumberOfProblems": {
