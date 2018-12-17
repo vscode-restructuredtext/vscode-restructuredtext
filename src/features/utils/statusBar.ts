@@ -5,6 +5,7 @@ import { Configuration } from './configuration';
 import { RstTransformerSelector } from './selector';
 import { RstTransformerConfig } from './confPyFinder';
 import { Logger } from '../../logger';
+import { Python } from '../../python';
 
 /**
  * Status bar updates. Shows the selected RstTransformerConfig when a
@@ -16,12 +17,14 @@ export default class RstTransformerStatus {
     private _statusBarItem: StatusBarItem;
     public config: RstTransformerConfig;
     private _logger: Logger;
+    private python: Python;
 
-    constructor(logger: Logger) {
+    constructor(python: Python, logger: Logger) {
         this._statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left);
         this._statusBarItem.command = 'restructuredtext.resetStatus';
         this._statusBarItem.tooltip = 'The active rst to html transformer (click to reset)';
         this._logger = logger;
+        this.python = python;
     }
 
     public setLabel() {
@@ -35,6 +38,7 @@ export default class RstTransformerStatus {
             const workspaceRoot = Configuration.GetRootPath(resource);
             if (!this.config || this.config.workspaceRoot !== workspaceRoot) {
                 await this.refreshConfig(resource);
+                this.python.setup(resource);
             }
 
             this.setLabel();

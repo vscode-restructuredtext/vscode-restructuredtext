@@ -49,8 +49,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 	// activate language services
 	const rstLspPromise = RstLanguageServer.activate(context, logger, disableLsp);
 
+	const python: Python = new Python(logger);
 	// Status bar to show the active rst->html transformer configuration
-	const status = new RstTransformerStatus(logger);
+	const status = new RstTransformerStatus(python, logger);
 
 	// Hook up the status bar to document change events
 	context.subscriptions.push(
@@ -74,8 +75,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
 	const cspArbiter = new ExtensionContentSecurityPolicyArbiter(context.globalState, context.workspaceState);
 
-	const python: Python = new Python(logger);
-	// await python.awaitReady();
 	const engine: RSTEngine = new RSTEngine(python, logger, status);
 
 	const contentProvider = new RSTContentProvider(context, cspArbiter, engine, logger);

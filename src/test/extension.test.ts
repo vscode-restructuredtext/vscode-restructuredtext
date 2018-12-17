@@ -37,7 +37,6 @@ suite("Extension Tests", function() {
     try {
       await initialize();
       python = new Python(logger);
-      await python.awaitReady();
 
       engine = new RSTEngine(python, logger, null);
     } catch (e) {

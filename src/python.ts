@@ -3,43 +3,33 @@ import { exec, ExecException } from "child_process";
 import { Logger } from "./logger";
 import { Configuration } from './features/utils/configuration';
 import { fileExists } from './common';
+import { Uri } from 'vscode';
 
 export class Python {
   private version: 2 | 3 | null = null;
-  private pythonPath = Configuration.getPythonPath();
+  private pythonPath: string;
   private ready: boolean = false;
 
   public constructor(private readonly logger: Logger) {
-    this.setup();
   }
 
   public isReady(): boolean {
     return this.ready;
   }
 
-  public async awaitReady(): Promise<void> {
-    return new Promise<void>((res, rej) => {
-      const int = setInterval(() => {
-        if (this.ready) {
-          clearInterval(int);
-          res();
-        }
-      }, 500);
-    });
-  }
-
-  private async setup(): Promise<void> {
+  public async setup(resource: Uri): Promise<void> {
+    this.pythonPath = Configuration.getPythonPath(resource);
     await this.getVersion();
     if (!(await this.checkDocutilsInstall())) {
       vscode.window.showWarningMessage("Previewer docutils cannot be found.");
     }
 
-    const sphinx = Configuration.getSphinxPath();
+    const sphinx = Configuration.getSphinxPath(resource);
     if (!(await this.checkSphinxInstall() || (sphinx != null && await fileExists(sphinx)))) {
       vscode.window.showWarningMessage("Previewer sphinx-build cannot be found.");
     }
 
-    const doc8 = Configuration.getLinterPath();
+    const doc8 = Configuration.getLinterPath(resource);
     if (!(await this.checkDoc8Install() || (doc8 != null && await fileExists(doc8)))) {
       vscode.window.showWarningMessage("Linter doc8 cannot be found.");
     }
