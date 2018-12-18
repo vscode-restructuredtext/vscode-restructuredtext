@@ -307,7 +307,7 @@
       "properties": {
         "restructuredtext.conflictingExtensions": {
           "type": "array",
-          "default": ["tht13.rst-vscode", "samosad.tt"],
+          "default": ["tht13.rst-vscode"],
           "description": "Extensions that might lead to conflicts.",
           "scope":"application"
         },

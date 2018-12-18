@@ -42,7 +42,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 	conflicting.forEach(element => {
 		const found = vscode.extensions.getExtension(element);
 		if (found) {
-			const message = `Found conflicting extension ${element}.`;
+			const message = `Found conflicting extension ${element}. Please uninstall it.`;
 			logger.log(message);
 			vscode.window.showErrorMessage(message);
 		}
