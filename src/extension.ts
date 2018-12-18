@@ -33,11 +33,20 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
 	const extensionId = 'lextudio.restructuredtext';
 	const extension = vscode.extensions.getExtension(extensionId);
-
 	util.setExtensionPath(context.extensionPath);
 
 	const logger = new Logger();
 	logger.log('Please visit https://docs.restructuredtext.net to learn how to configure the extension.');
+
+	const conflicting = Configuration.getConflictingExtensions();
+	conflicting.forEach(element => {
+		const found = vscode.extensions.getExtension(element);
+		if (found) {
+			const message = `Found conflicting extension ${element}.`;
+			logger.log(message);
+			vscode.window.showErrorMessage(message);
+		}
+	});
 
 	const disableLsp = !platformIsSupported(logger) || Configuration.getLanguageServerDisabled();
 	// *

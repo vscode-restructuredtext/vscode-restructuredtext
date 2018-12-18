@@ -5,6 +5,11 @@ import {
 } from 'vscode';
 
 export class Configuration {
+
+    public static getConflictingExtensions(resource: Uri = null): string[] {
+        return Configuration.loadAnySetting<string[]>('conflictingExtensions', null, resource);
+    }
+
     public static getSphinxPath(resource: Uri = null): string {
         return Configuration.loadSetting('sphinxBuildPath', null, resource);
     }

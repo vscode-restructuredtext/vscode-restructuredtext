@@ -305,6 +305,12 @@
       "type": "object",
       "title": "reStructuredText Configuration",
       "properties": {
+        "restructuredtext.conflictingExtensions": {
+          "type": "array",
+          "default": ["tht13.rst-vscode", "samosad.tt"],
+          "description": "Extensions that might lead to conflicts.",
+          "scope":"application"
+        },
         "restructuredtext.preview.scrollPreviewWithEditor": {
           "type": "boolean",
           "default": true,
