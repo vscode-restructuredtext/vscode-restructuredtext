@@ -40,7 +40,8 @@ export default class RstLintingProvider implements Linter {
 			fileArgs: [],
 			bufferArgs: [],
 			extraArgs: Configuration.getExtraArgs(resource),
-			runTrigger: Configuration.getRunType(resource)
+			runTrigger: Configuration.getRunType(resource),
+			rootPath: Configuration.GetRootPath(resource)
 		}
 	}
 

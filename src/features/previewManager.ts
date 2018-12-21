@@ -11,7 +11,6 @@ import { RSTPreview, PreviewSettings } from './preview';
 import { RSTPreviewConfigurationManager } from './previewConfig';
 import { RSTContentProvider } from './previewContentProvider';
 
-
 export class RSTPreviewManager implements vscode.WebviewPanelSerializer {
 	private static readonly rstPreviewActiveContextKey = 'rstPreviewFocus';
 

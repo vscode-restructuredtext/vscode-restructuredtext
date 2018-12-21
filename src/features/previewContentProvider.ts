@@ -13,7 +13,6 @@ import { Logger } from '../logger';
 import { ContentSecurityPolicyArbiter, RSTPreviewSecurityLevel } from '../security';
 import { RSTPreviewConfigurationManager, RSTPreviewConfiguration } from './previewConfig';
 import { RSTEngine } from '../rstEngine';
-import { Configuration } from './utils/configuration';
 
 /**
  * Strings used inside the html preview.

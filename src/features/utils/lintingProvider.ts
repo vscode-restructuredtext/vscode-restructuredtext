@@ -8,6 +8,7 @@ import { ThrottledDelayer } from './async';
 import { LineDecoder } from './lineDecoder';
 import { Logger } from '../../logger';
 import { Configuration } from './configuration';
+import { TextDocument } from 'vscode-languageclient';
 
 enum RunTrigger {
 	onSave,
@@ -39,6 +40,7 @@ export interface LinterConfiguration {
 	bufferArgs:string[],
 	extraArgs:string[],
 	runTrigger:string,
+	rootPath: string
 }
 
 export interface Linter {
@@ -70,6 +72,11 @@ export class LintingProvider {
 		this.diagnosticCollection = vscode.languages.createDiagnosticCollection();
 		subscriptions.push(this);		
 		vscode.workspace.onDidChangeConfiguration(this.resetConfiguration, this, subscriptions);
+		vscode.workspace.onDidSaveTextDocument((textDocument) => {
+			if (textDocument.fileName.endsWith("settings.json")) {
+				this.resetConfiguration();
+			}
+		}, null, subscriptions);
 		this.resetConfiguration();
 		
 		vscode.workspace.onDidOpenTextDocument(this.triggerLint, this, subscriptions);
@@ -115,16 +122,18 @@ export class LintingProvider {
 	}
 
 	private triggerLint(textDocument: vscode.TextDocument): void {
-		if (this.linterConfiguration === null) {
+		const currentFolder = Configuration.GetRootPath(textDocument.uri);
+		if (this.linterConfiguration === null || (currentFolder && this.linterConfiguration.rootPath !== currentFolder)) {
 			this.loadConfiguration(textDocument.uri);
 		}
-		
+
 		if (textDocument.languageId !== this.linter.languageId || 
 			textDocument.uri.scheme !== "file" ||
 			this.executableNotFound ||
 			RunTrigger.from(this.linterConfiguration.runTrigger) === RunTrigger.off){
 			return;
 		}
+
 		let key = textDocument.uri.toString();
 		let delayer = this.delayers[key];
 		if (!delayer) {
@@ -137,9 +146,7 @@ export class LintingProvider {
 	private doLint(textDocument: vscode.TextDocument): Promise<void> {
 		return new Promise<void>((resolve, reject) => {
 			let executable = this.linterConfiguration.executable;
-			let filePath = textDocument.fileName;
 			let decoder = new LineDecoder();
-			let decoded = []
 			let diagnostics: vscode.Diagnostic[] = [];
 			
 			const rootPath = Configuration.GetRootPath(textDocument.uri);
