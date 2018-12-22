@@ -65,6 +65,11 @@ export default class RstLintingProvider implements Linter {
 				return;
 			}
 
+			if (matches[1].endsWith(".py")) {
+				// doc8 internal issues.
+				return;
+			}
+
 			let lineNumber = parseInt(matches[2]) - 1;
 			diagnostics.push({
 				range: new Range(lineNumber, 0, lineNumber, Number.MAX_VALUE),
