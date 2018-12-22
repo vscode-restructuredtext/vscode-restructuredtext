@@ -39,7 +39,7 @@ export default class RstLintingProvider implements Linter {
 			module: module,
 			fileArgs: [],
 			bufferArgs: [],
-			extraArgs: Configuration.getExtraArgs(resource),
+			extraArgs: Configuration.getExtraArgs(resource).map((value, index) => { return Configuration.expandMacro(value, resource)}),
 			runTrigger: Configuration.getRunType(resource),
 			rootPath: Configuration.GetRootPath(resource)
 		}

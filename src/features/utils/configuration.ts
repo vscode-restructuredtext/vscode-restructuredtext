@@ -120,7 +120,7 @@ export class Configuration {
         return input;
     }
 
-    private static expandMacro(input: string, resource: Uri): string {
+    public static expandMacro(input: string, resource: Uri): string {
         if (resource == null || input.indexOf('${') === -1) {
             return input;
         }
