@@ -34,7 +34,8 @@ function urisToPaths(uris: Uri[], resource: Uri): string[] {
     const paths: string[] = [];
     const workspaceFolder = workspace.getWorkspaceFolder(resource);
     uris.forEach((uri) => {
-        if (uri.fsPath.startsWith(workspaceFolder.uri.fsPath)) {
+        const folder = workspace.getWorkspaceFolder(uri);
+        if (folder === workspaceFolder) {
             paths.push(uri.fsPath);
         }
     });
