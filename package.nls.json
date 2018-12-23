@@ -1,6 +1,10 @@
 {
 	"displayName": "reStructuredText",
 	"description": "reStructuredText language support (RST/ReST linter, preview, IntelliSense and more)",
+	"restructuredtext.styles.dec": "A list of URLs or local paths to CSS style sheets to use from the restructuredtext preview. Relative paths are interpreted relative to the folder open in the explorer. If there is no open folder, they are interpreted relative to the location of the restructuredtext file. All '\\' need to be written as '\\\\'.",
+	"restructuredtext.preview.fontFamily.desc": "Controls the font family used in the restructuredtext preview.",
+	"restructuredtext.preview.fontSize.desc": "Controls the font size in pixels used in the restructuredtext preview.",
+	"restructuredtext.preview.lineHeight.desc": "Controls the line height used in the restructuredtext preview. This number is relative to the font size.",
 	"restructuredtext.preview.doubleClickToSwitchToEditor.desc": "Double click in the rst preview to switch to the editor.",
 	"restructuredtext.preview.markEditorSelection.desc": "Mark the current editor selection in the preview.",
 	"restructuredtext.preview.scrollEditorWithPreview.desc": "When a preview is scrolled, update the view of the editor.",

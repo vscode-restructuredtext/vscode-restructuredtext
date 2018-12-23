@@ -303,7 +303,7 @@
     },
     "configuration": {
       "type": "object",
-      "title": "reStructuredText Configuration",
+      "title": "reStructuredText",
       "properties": {
         "restructuredtext.conflictingExtensions": {
           "type": "array",
@@ -312,6 +312,30 @@
           ],
           "description": "Extensions that might lead to conflicts.",
           "scope": "application"
+        },
+        "restructuredtext.styles": {
+          "type": "array",
+          "default": [],
+          "description": "%restructuredtext.styles.dec%",
+          "scope": "resource"
+        },
+        "restructuredtext.preview.fontFamily": {
+          "type": "string",
+          "default": "-apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'HelveticaNeue-Light', 'Ubuntu', 'Droid Sans', sans-serif",
+          "description": "%restructuredtext.preview.fontFamily.desc%",
+          "scope": "resource"
+        },
+        "restructuredtext.preview.fontSize": {
+          "type": "number",
+          "default": 14,
+          "description": "%restructuredtext.preview.fontSize.desc%",
+          "scope": "resource"
+        },
+        "restructuredtext.preview.lineHeight": {
+          "type": "number",
+          "default": 1.6,
+          "description": "%restructuredtext.preview.lineHeight.desc%",
+          "scope": "resource"
         },
         "restructuredtext.preview.scrollPreviewWithEditor": {
           "type": "boolean",
