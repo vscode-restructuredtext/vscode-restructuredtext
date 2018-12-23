@@ -148,7 +148,7 @@ function platformIsSupported(logger: Logger): boolean {
 	  platform = os.os;
 	});
 
-	if (platform === 'darwin' || platform === 'windows') {
+	if (platform === 'darwin' || platform === 'win32') {
 		return true;
 	}
 
