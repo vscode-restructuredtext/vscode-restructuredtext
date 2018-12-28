@@ -28,7 +28,9 @@ export default class RstTransformerStatus {
     }
 
     public setLabel() {
-        this._statusBarItem.text = this.config.label;
+        if (this.config) {
+            this._statusBarItem.text = this.config.label;
+        }
     }
 
     public async update() {
