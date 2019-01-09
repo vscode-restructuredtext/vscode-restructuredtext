@@ -22,21 +22,30 @@ export class Python {
     await this.getVersion();
     if (Configuration.getConfPath(resource) === '') {
       if (!(await this.checkDocutilsInstall())) {
-        this.logger.log("Started to install docutils...");
-        await this.installDocUtils();
+        var choice = await vscode.window.showInformationMessage("Preview engine docutil is not installed.", "Install", "No now");
+        if (choice === "Install") {
+          this.logger.log("Started to install docutils...");
+          await this.installDocUtils();
+        }
       }
     } else {
       const sphinx = Configuration.getSphinxPath(resource);
       if (!(await this.checkSphinxInstall() || (sphinx != null && await fileExists(sphinx)))) {
-        this.logger.log("Started to install sphinx...");
-        await this.installSphinx();
+        var choice = await vscode.window.showInformationMessage("Preview engine sphinx is not installed.", "Install", "Not now");
+        if (choice === "Install") {
+          this.logger.log("Started to install sphinx...");
+          await this.installSphinx();
+        }
       }
     }
 
     const doc8 = Configuration.getLinterPath(resource);
     if (!(await this.checkDoc8Install() || (doc8 != null && await fileExists(doc8)))) {
-      this.logger.log("Started to install doc8...");
-      await this.installDoc8();
+      var choice = await vscode.window.showInformationMessage("Linter doc8 is not installed.", "Install", "Not now");
+      if (choice === "Install") {
+        this.logger.log("Started to install doc8...");
+        await this.installDoc8();
+      }
     }
     this.ready = true;
   }
