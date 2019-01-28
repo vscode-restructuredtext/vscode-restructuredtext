@@ -18,7 +18,7 @@ export class Python {
   }
 
   public async setup(resource: Uri): Promise<void> {
-    this.pythonPath = Configuration.getPythonPath(resource);
+    this.pythonPath = `"${Configuration.getPythonPath(resource)}"`;
     await this.getVersion();
     if (Configuration.getConfPath(resource) === '') {
       if (!(await this.checkDocutilsInstall())) {
@@ -139,7 +139,7 @@ export class Python {
   public exec(...args: string[]): Promise<string> {
     const cmd = [this.pythonPath, ...args];
     return new Promise<string>((resolve, reject) => {
-      this.logger.log(`Running cmd: python ${args.join(" ")}`);
+      this.logger.log(`Running cmd: ${this.pythonPath} ${args.join(" ")}`);
       exec(
         cmd.join(" "),
         (error: ExecException | null, stdout: string, stderr: string) => {
