@@ -1,163 +1,169 @@
 {
 	"code": {
 		"prefix": "code",
-		"body": ".. code-block:: ${1:language}\n$0",
+		"body": "\n.. code-block:: ${2:language}\n\n   ${TM_SELECTED_TEXT}${1:}\n$0\n",
 		"description": "Code",
 		"scope": "text.restructuredtext"
 	},
 	"image": {
 		"prefix": "image",
-		"body": ".. image:: ${1:path}\n$0",
+		"body": "\n.. image:: ${TM_SELECTED_TEXT/[\r\n]/ /g}${1:}\n",
 		"description": "Image",
 		"scope": "text.restructuredtext"
 	},
 	"figure": {
 		"prefix": "figure",
-		"body": ".. figure:: ${1:path}\n\n   $0",
+		"body": "\n.. figure:: ${TM_SELECTED_TEXT/[\r\n]/ /g}${1:}\n\n   ${2:caption}\n$0\n",
 		"description": "Figure",
 		"scope": "text.restructuredtext"
 	},
 	"link": {
 		"prefix": "link",
-		"body": "`${1:Title} <${2:http://link}>`_ ",
+		"body": "`${TM_SELECTED_TEXT/[\r\n]/ /g}${1:} <https://${2:link}>`_ ",
 		"description": "Link",
+		"scope": "text.restructuredtext"
+	},
+	"todo": {
+		"prefix": "todo",
+		"body": "\n.. todo::\n\n   ${TM_SELECTED_TEXT}${1:}\n",
+		"description": "Todo",
 		"scope": "text.restructuredtext"
 	},
 	"attention": {
 		"prefix": "attention",
-		"body": ".. attention:: ${1:text}\n$0",
+		"body": "\n.. attention::\n\n   ${TM_SELECTED_TEXT}${1:}\n",
 		"description": "Attention",
 		"scope": "text.restructuredtext"
 	},
 	"note": {
 		"prefix": "note",
-		"body": ".. note:: ${1:text}\n$0",
+		"body": "\n.. note::\n\n   ${TM_SELECTED_TEXT}${1:}\n",
 		"description": "Note",
 		"scope": "text.restructuredtext"
 	},
 	"warning": {
 		"prefix": "warning",
-		"body": ".. warning:: ${1:text}\n$0",
+		"body": "\n.. warning::\n\n   ${TM_SELECTED_TEXT}${1:}\n",
 		"description": "Warning",
 		"scope": "text.restructuredtext"
 	},
 	"error": {
 		"prefix": "error",
-		"body": ".. error:: ${1:text}\n$0",
+		"body": "\n.. error::\n\n   ${TM_SELECTED_TEXT}${1:}\n",
 		"description": "Error",
 		"scope": "text.restructuredtext"
 	},
 	"hint": {
 		"prefix": "hint",
-		"body": ".. hint:: ${1:text}\n$0",
+		"body": "\n.. hint::\n\n   ${TM_SELECTED_TEXT}${1:}\n",
 		"description": "Hint",
 		"scope": "text.restructuredtext"
 	},
 	"important": {
 		"prefix": "important",
-		"body": ".. important:: ${1:text}\n$0",
+		"body": "\n.. important::\n\n   ${TM_SELECTED_TEXT}${1:}\n",
 		"description": "Important",
 		"scope": "text.restructuredtext"
 	},
 	"caution": {
 		"prefix": "caution",
-		"body": ".. caution:: ${1:text}\n$0",
+		"body": "\n.. caution::\n\n   ${TM_SELECTED_TEXT}${1:}\n",
 		"description": "Caution",
 		"scope": "text.restructuredtext"
 	},
 	"danger": {
 		"prefix": "danger",
-		"body": ".. danger:: ${1:text}\n$0",
+		"body": "\n.. danger::\n\n   ${TM_SELECTED_TEXT}${1:}\n",
 		"description": "Danger",
 		"scope": "text.restructuredtext"
 	},
 	"tip": {
 		"prefix": "tip",
-		"body": ".. tip:: ${1:text}\n$0",
+		"body": "\n.. tip::\n\n   ${TM_SELECTED_TEXT}${1:}\n",
 		"description": "Tip",
 		"scope": "text.restructuredtext"
 	},
 	"admonition": {
 		"prefix": "admonition",
-		"body": ".. admonition:: ${1:text}\n$0",
+		"body": "\n.. admonition::\n\n   ${TM_SELECTED_TEXT}${1:}\n",
 		"description": "Admonition",
 		"scope": "text.restructuredtext"
 	},
 	"rubric": {
 		"prefix": "rubric",
-		"body": ".. rubric:: ${1:text}\n$0",
+		"body": "\n.. rubric::\n\n   ${TM_SELECTED_TEXT}${1:}\n",
 		"description": "Rubric",
 		"scope": "text.restructuredtext"
 	},
 	"doc": {
 		"prefix": "doc",
-		"body": ":doc:`/${1:text}` $0",
+		"body": ":doc:`${TM_SELECTED_TEXT/[\r\n]/ /g}${1:}`$0",
 		"description": "Doc reference",
 		"scope": "text.restructuredtext"
 	},
 	"ref": {
 		"prefix": "ref",
-		"body": ":ref:`${1:Label}` $0",
+		"body": ":ref:`${TM_SELECTED_TEXT/[\r\n]/ /g}${1:}`$0",
 		"description": "Label reference",
 		"scope": "text.restructuredtext"
 	},
 	"label": {
 		"prefix": "label",
-		"body": ".. _${1:Title}:\n\n$0",
+		"body": "\n.. _${TM_SELECTED_TEXT/[\r\n]/ /g}${1:}:\n\n$0",
 		"description": "Label",
 		"scope": "text.restructuredtext"
 	},
 	"download": {
 		"prefix": "download",
-		"body": ":download:`${1:Title} <${2:path}>` $0",
+		"body": ":download:`${TM_SELECTED_TEXT/[\r\n]/ /g}${1:} <${2:path}>`$0",
 		"description": "Download",
 		"scope": "text.restructuredtext"		
 	},
 	"numref": {
 		"prefix": "numref",
-		"body": ":numref:`${1:Title} <${2:figure}>` $0",
+		"body": ":numref:`${TM_SELECTED_TEXT/[\r\n]/ /g}${1:} <${2:figure}>`$0",
 		"description": "Cross-referencing Figure",
 		"scope": "text.restructuredtext"		
 	},
 	"math": {
 		"prefix": "math",
-		"body": ":math:`${1:expression}` $0",
+		"body": ":math:`${TM_SELECTED_TEXT/[\r\n]/ /g}${1:}`$0",
 		"description": "Math Expression",
 		"scope": "text.restructuredtext"		
 	},
 	"command": {
 		"prefix": "command",
-		"body": ":command:`${1:Title}` $0",
+		"body": ":command:`${TM_SELECTED_TEXT/[\r\n]/ /g}${1:}`$0",
 		"description": "Command",
 		"scope": "text.restructuredtext"		
 	},
 	"file": {
 		"prefix": "file",
-		"body": ":file:`${1:path}` $0",
+		"body": ":file:`${TM_SELECTED_TEXT/[\r\n]/ /g}${1:}`$0",
 		"description": "File",
 		"scope": "text.restructuredtext"		
 	},
 	"guilabel": {
 		"prefix": "guilabel",
-		"body": ":guilabel:`${1:Title}` $0",
+		"body": ":guilabel:`${TM_SELECTED_TEXT/[\r\n]/ /g}${1:}`$0",
 		"description": "GUI Label",
 		"scope": "text.restructuredtext"		
 	},
 	"key": {
 		"prefix": "key",
-		"body": ":kbd:`${1:shortcut}` $0",
+		"body": ":kbd:`${TM_SELECTED_TEXT/[\r\n]/ /g}${1:}`$0",
 		"description": "Keyboard Shortcut",
 		"scope": "text.restructuredtext"		
 	},
 	"menu": {
 		"prefix": "menu",
-		"body": ":menuselection:`${1:Title} --> ${2:Title2}` $0",
+		"body": ":menuselection:`${TM_SELECTED_TEXT/[\r\n]/ /g}${1:}`$0",
 		"description": "Menu Selection",
 		"scope": "text.restructuredtext"		
 	},
 	"literalinclude": {
 		"prefix": "literalinclude",
-		"body": ".. literalinclude:: ${1:path}\n$0",
+		"body": "\n.. literalinclude:: ${TM_SELECTED_TEXT/[\r\n]/ /g}${1:}\n",
 		"description": "Literal Include",
 		"scope": "text.restructuredtext"
 	}
