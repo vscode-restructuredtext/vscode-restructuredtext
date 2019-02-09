@@ -139,7 +139,7 @@
 	},
 	"guilabel": {
 		"prefix": "guilabel",
-		"body": ":guilable:`${1:Title}` $0",
+		"body": ":guilabel:`${1:Title}` $0",
 		"description": "GUI Label",
 		"scope": "text.restructuredtext"		
 	},
