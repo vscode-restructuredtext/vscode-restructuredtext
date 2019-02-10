@@ -125,14 +125,27 @@ export class Configuration {
             return input;
         }
 
-        const path = this.GetRootPath(resource)
-        if (path != null) {
-            return input
-                .replace('${workspaceRoot}', path)
-                .replace('${workspaceFolder}', path);
+        let expanded: string;
+        if (input.indexOf('${env:') > -1) {
+            expanded = input.replace(/\$\{env\:(.+)\}/, (match, p1)=>
+                {
+                    const variable = process.env[p1];
+                    return variable == null ? '' : variable;
+                });
+        } else {
+            expanded = input;
         }
 
-        return input;
+        if (expanded.indexOf('${') > -1) {
+            const path = this.GetRootPath(resource);
+            if (path != null) {
+                return expanded
+                    .replace('${workspaceRoot}', path)
+                    .replace('${workspaceFolder}', path);
+            }
+        }
+
+        return expanded;
     }
 
     public static GetRootPath(resource: Uri): string {
