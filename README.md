@@ -1,10 +1,10 @@
 # reStructuredText Language Support for Visual Studio Code
 
-[![Gitter](https://badges.gitter.im/vscode-restructuredtext/vscode-restructuredtext.svg)](https://gitter.im/vscode-restructuredtext/vscode-restructuredtext?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-[![Current Version](https://vsmarketplacebadge.apphb.com/version/lextudio.restructuredtext.svg)](https://marketplace.visualstudio.com/items?itemName=lextudio.restructuredtext)
-[![Install Count](https://vsmarketplacebadge.apphb.com/installs/lextudio.restructuredtext.svg)](https://marketplace.visualstudio.com/items?itemName=lextudio.restructuredtext)
-[![Download Count](https://vsmarketplacebadge.apphb.com/downloads/lextudio.restructuredtext.svg)](https://marketplace.visualstudio.com/items?itemName=lextudio.restructuredtext)
-[![Build Status](https://dev.azure.com/lextudio/vscode-restructuredtext/_apis/build/status/vscode-restructuredtext.vscode-restructuredtext?branchName=master)](https://dev.azure.com/lextudio/vscode-restructuredtext/_build/latest?definitionId=2&branchName=master)
+[![Build Status](https://img.shields.io/azure-devops/build/lextudio/vscode-restructuredtext/2/master.svg)](https://dev.azure.com/lextudio/vscode-restructuredtext/_build/latest?definitionId=2&branchName=master)
+[![Current Version](https://img.shields.io/visual-studio-marketplace/v/lextudio.restructuredtext.svg)](https://marketplace.visualstudio.com/items?itemName=lextudio.restructuredtext)
+[![Install Count](https://img.shields.io/visual-studio-marketplace/i/lextudio.restructuredtext.svg)](https://marketplace.visualstudio.com/items?itemName=lextudio.restructuredtext)
+[![Download Count](https://img.shields.io/visual-studio-marketplace/d/lextudio.restructuredtext.svg)](https://marketplace.visualstudio.com/items?itemName=lextudio.restructuredtext)
+[![Gitter](https://img.shields.io/gitter/room/vscode-restructuredtext/vscode-restructuredtext.svg)](https://gitter.im/vscode-restructuredtext/vscode-restructuredtext)
 
 This extension provides rich reStructuredText language support for Visual Studio Code.
 Now you write reStructuredText scripts using the excellent IDE-like interface
