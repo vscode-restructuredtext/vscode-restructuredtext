@@ -21,30 +21,39 @@ export class Python {
     this.pythonPath = `"${Configuration.getPythonPath(resource)}"`;
     await this.getVersion();
     if (Configuration.getConfPath(resource) === '') {
-      if (!(await this.checkDocutilsInstall())) {
-        var choice = await vscode.window.showInformationMessage("Preview engine docutil is not installed.", "Install", "No now");
+      if (!Configuration.getDocUtilDisabled() && !(await this.checkDocutilsInstall())) {
+        var choice = await vscode.window.showInformationMessage("Preview engine docutil is not installed.", "Install", "No now", "Do not show again");
         if (choice === "Install") {
           this.logger.log("Started to install docutils...");
           await this.installDocUtils();
+        } else if (choice === "Do not show again") {
+          this.logger.log("Disabled docutil engine.");
+          await Configuration.setDocUtilDisabled();
         }
       }
     } else {
       const sphinx = Configuration.getSphinxPath(resource);
-      if (!(await this.checkSphinxInstall() || (sphinx != null && await fileExists(sphinx)))) {
-        var choice = await vscode.window.showInformationMessage("Preview engine sphinx is not installed.", "Install", "Not now");
+      if (!Configuration.getSphinxDisabled() && !(await this.checkSphinxInstall() || (sphinx != null && await fileExists(sphinx)))) {
+        var choice = await vscode.window.showInformationMessage("Preview engine sphinx is not installed.", "Install", "Not now", "Do not show again");
         if (choice === "Install") {
           this.logger.log("Started to install sphinx...");
           await this.installSphinx();
+        } else if (choice === "Do not show again") {
+          this.logger.log("Disabled sphinx engine.");
+          await Configuration.setSphinxDisabled();
         }
       }
     }
 
     const doc8 = Configuration.getLinterPath(resource);
-    if (!(await this.checkDoc8Install() || (doc8 != null && await fileExists(doc8)))) {
-      var choice = await vscode.window.showInformationMessage("Linter doc8 is not installed.", "Install", "Not now");
+    if (!Configuration.getLinterDisabled() && !(await this.checkDoc8Install() || (doc8 != null && await fileExists(doc8)))) {
+      var choice = await vscode.window.showInformationMessage("Linter doc8 is not installed.", "Install", "Not now", "Do not show again");
       if (choice === "Install") {
         this.logger.log("Started to install doc8...");
         await this.installDoc8();
+      } else if (choice === "Do not show again") {
+        this.logger.log("Disabled linter.");
+        await Configuration.setLinterDisabled();
       }
     }
     this.ready = true;

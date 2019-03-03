@@ -38,6 +38,18 @@ export class Configuration {
         return Configuration.loadSetting('pythonPath', null, resource, 'python');
     }
 
+    public static getLinterDisabled(resource: Uri = null): boolean {
+        return Configuration.loadAnySetting('linter.disabled', true, null);
+    }
+
+    public static getSphinxDisabled(resource: Uri = null): boolean {
+        return Configuration.loadAnySetting('preview.sphinx.disabled', true, null);
+    }
+
+    public static getDocUtilDisabled(resource: Uri = null): boolean {
+        return Configuration.loadAnySetting('preview.docutil.disabled', true, null);
+    }
+
     public static getLanguageServerDisabled(resource: Uri = null): boolean {
         return Configuration.loadAnySetting('languageServer.disabled', true, null);
     }
@@ -52,6 +64,18 @@ export class Configuration {
 
     public static async setConfPath(value: string, resource: Uri = null, insertMacro: boolean): Promise<string> {
         return await Configuration.saveSetting('confPath', value, resource, insertMacro);
+    }
+
+    public static async setLinterDisabled(resource: Uri = null) {
+        await Configuration.saveAnySetting('linter.disabled', true, resource);
+    }
+
+    public static async setSphinxDisabled(resource: Uri = null) {
+        await Configuration.saveAnySetting('preview.sphinx.disabled', true, resource);
+    }
+
+    public static async setDocUtilDisabled(resource: Uri = null) {
+        await Configuration.saveAnySetting('preview.docutil.disabled', true, resource);
     }
 
     public static async setRoot(resource: Uri = null) {
