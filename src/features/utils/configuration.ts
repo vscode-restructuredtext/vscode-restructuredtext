@@ -46,6 +46,10 @@ export class Configuration {
         return Configuration.loadAnySetting<string[]>("languageServer.supportedPlatforms", [], null);
     }
 
+    public static getUpdateDelay(resource: Uri = null): number {
+        return Configuration.loadAnySetting<number>("updateDelay", 300, resource);
+    }
+
     public static async setConfPath(value: string, resource: Uri = null, insertMacro: boolean): Promise<string> {
         return await Configuration.saveSetting('confPath', value, resource, insertMacro);
     }

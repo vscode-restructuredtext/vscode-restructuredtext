@@ -15,6 +15,8 @@ import { getVisibleLine, RSTFileTopmostLineMonitor } from '../util/topmostLineMo
 import { RSTPreviewConfigurationManager } from './previewConfig';
 import { isRSTFile } from '../util/file';
 import { getExtensionPath } from '../extension';
+import { Configuration } from './utils/configuration';
+
 const localize = nls.loadMessageBundle();
 
 export class RSTPreview {
@@ -215,7 +217,8 @@ export class RSTPreview {
 			if (isResourceChange || this.firstUpdate) {
 				this.doUpdate();
 			} else {
-				this.throttleTimer = setTimeout(() => this.doUpdate(), 300);
+			    const timeout = Configuration.getUpdateDelay();
+				this.throttleTimer = setTimeout(() => this.doUpdate(), timeout);
 			}
 		}
 
