@@ -12,6 +12,7 @@
     "http-proxy-agent": "^2.1.0",
     "https-proxy-agent": "^2.2.1",
     "lodash.throttle": "^4.1.1",
+    "meaw": "^4.1.0",
     "mkdirp": "^0.5.1",
     "tmp": "0.0.33",
     "vscode-languageclient": "^3.5.0",

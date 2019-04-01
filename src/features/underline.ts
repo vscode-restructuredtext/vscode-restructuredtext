@@ -2,6 +2,7 @@
  * This module provides utility functions to handle underline title levels
  */
 import * as vscode from 'vscode';
+import * as meaw from 'meaw';
 
 // list of underline characters, from higher level to lower level
 // Use the recommended items from http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#sections,
@@ -57,10 +58,11 @@ export function underline(textEditor: vscode.TextEditor, edit: vscode.TextEditor
             underlineChar = currentUnderlineChar(line, nextLine);
         }
 
+        const lineWidth = underlineWidth(line);
         if (underlineChar === null) {
             edit.insert(
                 new vscode.Position(position.line, line.length),
-                '\n' + '='.repeat(line.length),
+                '\n' + '='.repeat(lineWidth),
             );
         } else {
             const nextLineRange = new vscode.Range(
@@ -68,7 +70,17 @@ export function underline(textEditor: vscode.TextEditor, edit: vscode.TextEditor
                 new vscode.Position(position.line + 1, nextLine.length),
             );
             const replacement = nextUnderlineChar(underlineChar, reverse);
-            edit.replace(nextLineRange, replacement.repeat(line.length));
+            edit.replace(nextLineRange, replacement.repeat(lineWidth));
         }
     });
+}
+
+/**
+ * Return the column width of unicode text.
+ * See https://sourceforge.net/p/docutils/code/HEAD/tree/tags/docutils-0.14/docutils/utils/__init__.py#l643
+ * 
+ * TODO: consider the count of combining chars same as docutils.
+ */
+export function underlineWidth(line: string): number {
+    return meaw.computeWidth(line.normalize());
 }
