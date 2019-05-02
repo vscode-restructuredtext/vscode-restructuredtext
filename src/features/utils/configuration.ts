@@ -3,6 +3,8 @@
 import {
     Uri, workspace, WorkspaceFolder,
 } from 'vscode';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export class Configuration {
 
@@ -35,7 +37,13 @@ export class Configuration {
     }
 
     public static getPythonPath(resource: Uri = null): string {
-        return Configuration.loadSetting('pythonPath', null, resource, 'python');
+        const primary = Configuration.loadSetting('pythonPath', null, resource, 'python');
+        // assume pythonPath is relative to workspace root.
+        const optional = path.join(Configuration.GetRootPath(resource), primary);
+        if (fs.existsSync(optional)) {
+            return optional;
+        }
+        return primary;
     }
 
     public static getLinterDisabled(resource: Uri = null): boolean {
