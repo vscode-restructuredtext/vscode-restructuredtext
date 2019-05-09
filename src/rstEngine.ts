@@ -23,8 +23,8 @@ export class RSTEngine {
     if (confPyDirectory === '') {
       // docutil
       return this.python.exec(
-        path.join(__dirname, "..", "python", "preview.py"),
-        fileName
+        '"' + path.join(__dirname, "..", "python", "preview.py") + '"',
+        '"' + fileName + '"'
       );
     } else {
       // sphinx
