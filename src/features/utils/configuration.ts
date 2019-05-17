@@ -39,9 +39,11 @@ export class Configuration {
     public static getPythonPath(resource: Uri = null): string {
         const primary = Configuration.loadSetting('pythonPath', null, resource, 'python');
         // assume pythonPath is relative to workspace root.
-        const optional = path.join(Configuration.GetRootPath(resource), primary);
-        if (fs.existsSync(optional)) {
-            return optional;
+        if (primary) {
+            const optional = path.join(Configuration.GetRootPath(resource), primary);
+            if (fs.existsSync(optional)) {
+                return optional;
+            }
         }
         return primary;
     }

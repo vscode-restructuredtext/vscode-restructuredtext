@@ -18,44 +18,51 @@ export class Python {
   }
 
   public async setup(resource: Uri): Promise<void> {
-    this.pythonPath = `"${Configuration.getPythonPath(resource)}"`;
-    await this.getVersion();
-    if (Configuration.getConfPath(resource) === '') {
-      if (!Configuration.getDocUtilDisabled() && !(await this.checkDocutilsInstall())) {
-        var choice = await vscode.window.showInformationMessage("Preview engine docutil is not installed.", "Install", "No now", "Do not show again");
+    const path = Configuration.getPythonPath(resource);
+    if (path) {
+      this.pythonPath = `"${path}"`;
+      await this.getVersion();
+      if (Configuration.getConfPath(resource) === '') {
+        if (!Configuration.getDocUtilDisabled() && !(await this.checkDocutilsInstall())) {
+          var choice = await vscode.window.showInformationMessage("Preview engine docutil is not installed.", "Install", "No now", "Do not show again");
+          if (choice === "Install") {
+            this.logger.log("Started to install docutils...");
+            await this.installDocUtils();
+          } else if (choice === "Do not show again") {
+            this.logger.log("Disabled docutil engine.");
+            await Configuration.setDocUtilDisabled();
+          }
+        }
+      } else {
+        const sphinx = Configuration.getSphinxPath(resource);
+        if (!Configuration.getSphinxDisabled() && !(await this.checkSphinxInstall() || (sphinx != null && await fileExists(sphinx)))) {
+          var choice = await vscode.window.showInformationMessage("Preview engine sphinx is not installed.", "Install", "Not now", "Do not show again");
+          if (choice === "Install") {
+            this.logger.log("Started to install sphinx...");
+            await this.installSphinx();
+          } else if (choice === "Do not show again") {
+            this.logger.log("Disabled sphinx engine.");
+            await Configuration.setSphinxDisabled();
+          }
+        }
+      }
+
+      const doc8 = Configuration.getLinterPath(resource);
+      if (!Configuration.getLinterDisabled() && !(await this.checkDoc8Install() || (doc8 != null && await fileExists(doc8)))) {
+        var choice = await vscode.window.showInformationMessage("Linter doc8 is not installed.", "Install", "Not now", "Do not show again");
         if (choice === "Install") {
-          this.logger.log("Started to install docutils...");
-          await this.installDocUtils();
+          this.logger.log("Started to install doc8...");
+          await this.installDoc8();
         } else if (choice === "Do not show again") {
-          this.logger.log("Disabled docutil engine.");
-          await Configuration.setDocUtilDisabled();
+          this.logger.log("Disabled linter.");
+          await Configuration.setLinterDisabled();
         }
       }
     } else {
-      const sphinx = Configuration.getSphinxPath(resource);
-      if (!Configuration.getSphinxDisabled() && !(await this.checkSphinxInstall() || (sphinx != null && await fileExists(sphinx)))) {
-        var choice = await vscode.window.showInformationMessage("Preview engine sphinx is not installed.", "Install", "Not now", "Do not show again");
-        if (choice === "Install") {
-          this.logger.log("Started to install sphinx...");
-          await this.installSphinx();
-        } else if (choice === "Do not show again") {
-          this.logger.log("Disabled sphinx engine.");
-          await Configuration.setSphinxDisabled();
-        }
-      }
+      this.logger.log("Cannot find Python.");
+      vscode.window.showErrorMessage("Please review Python installation on this machine before using this extension.");
     }
 
-    const doc8 = Configuration.getLinterPath(resource);
-    if (!Configuration.getLinterDisabled() && !(await this.checkDoc8Install() || (doc8 != null && await fileExists(doc8)))) {
-      var choice = await vscode.window.showInformationMessage("Linter doc8 is not installed.", "Install", "Not now", "Do not show again");
-      if (choice === "Install") {
-        this.logger.log("Started to install doc8...");
-        await this.installDoc8();
-      } else if (choice === "Do not show again") {
-        this.logger.log("Disabled linter.");
-        await Configuration.setLinterDisabled();
-      }
-    }
     this.ready = true;
   }
 
@@ -148,7 +155,7 @@ export class Python {
   public exec(...args: string[]): Promise<string> {
     const cmd = [this.pythonPath, ...args];
     return new Promise<string>((resolve, reject) => {
-      this.logger.log(`Running cmd: ${this.pythonPath} ${args.join(" ")}`);
+      this.logger.log(`Running cmd: ${this.pythonPath} ${args.join(" ")}`);      
       exec(
         cmd.join(" "),
         (error: ExecException | null, stdout: string, stderr: string) => {

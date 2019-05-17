@@ -56,7 +56,7 @@ export class RSTEngine {
       let build = Configuration.getSphinxPath(uri);
       if (build == null) {
         const python = Configuration.getPythonPath(uri);
-        if (python != null) {
+        if (python) {
           build = python + ' -m sphinx';
         }
       }

@@ -24,7 +24,7 @@ export default class RstLintingProvider implements Linter {
 		var build = Configuration.getLinterPath(resource);
 		if (build == null) {
 			var python = Configuration.getPythonPath(resource);
-			if (python != null) {
+			if (python) {
 				build = python;
 				module = module.concat(["-m", "doc8.main"]);
 			}
