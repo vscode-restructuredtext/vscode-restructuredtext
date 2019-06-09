@@ -40,9 +40,12 @@ export class Configuration {
         const primary = Configuration.loadSetting('pythonPath', null, resource, 'python');
         // assume pythonPath is relative to workspace root.
         if (primary) {
-            const optional = path.join(Configuration.GetRootPath(resource), primary);
-            if (fs.existsSync(optional)) {
-                return optional;
+            const workspaceRoot = Configuration.GetRootPath(resource);
+            if (workspaceRoot) {
+                const optional = path.join(workspaceRoot, primary);
+                if (fs.existsSync(optional)) {
+                    return optional;
+                }
             }
         }
         return primary;
@@ -176,7 +179,7 @@ export class Configuration {
 
         if (expanded.indexOf('${') > -1) {
             const path = this.GetRootPath(resource);
-            if (path != null) {
+            if (path) {
                 return expanded
                     .replace('${workspaceRoot}', path)
                     .replace('${workspaceFolder}', path);
@@ -187,22 +190,20 @@ export class Configuration {
     }
 
     public static GetRootPath(resource: Uri): string {
-        let path: string;
         if (!workspace.workspaceFolders) {
-            path = workspace.rootPath;
-        } else {
-            let root: WorkspaceFolder;
-            if (workspace.workspaceFolders.length === 1) {
-                root = workspace.workspaceFolders[0];
-            } else {
-                root = workspace.getWorkspaceFolder(resource);
-            }
-
-            if (root != null) {
-                path = root.uri.fsPath;
-            }
+            return workspace.rootPath;
         }
 
-        return path;
+        let root: WorkspaceFolder;
+        if (workspace.workspaceFolders.length === 1) {
+            root = workspace.workspaceFolders[0];
+        } else {
+            root = workspace.getWorkspaceFolder(resource);
+        }
+
+        if (root) {
+            return root.uri.fsPath;
+        }
+        return undefined;
     }
 }
