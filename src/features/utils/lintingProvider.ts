@@ -8,7 +8,6 @@ import { ThrottledDelayer } from './async';
 import { LineDecoder } from './lineDecoder';
 import { Logger } from '../../logger';
 import { Configuration } from './configuration';
-import { TextDocument } from 'vscode-languageclient';
 
 enum RunTrigger {
 	onSave,
@@ -84,9 +83,6 @@ export class LintingProvider {
 			this.diagnosticCollection.delete(textDocument.uri);
 			delete this.delayers[textDocument.uri.toString()];
 		}, null, subscriptions);
-
-		// Lint all open documents documents
-		// vscode.workspace.textDocuments.forEach(this.triggerLint, this);
 	}
 
 	public dispose(): void {
@@ -148,16 +144,16 @@ export class LintingProvider {
 			let executable = this.linterConfiguration.executable;
 			let decoder = new LineDecoder();
 			let diagnostics: vscode.Diagnostic[] = [];
-			
+			const file = '"' + textDocument.fileName + '"';
 			const rootPath = Configuration.GetRootPath(textDocument.uri);
 			let options = rootPath ? { rootPath, shell: true } : undefined;
 			let args: string[] = [];
 			args = args.concat(this.linterConfiguration.module);
 			if (RunTrigger.from(this.linterConfiguration.runTrigger) === RunTrigger.onSave) {
 				args = args.concat(this.linterConfiguration.fileArgs.slice(0));
-				args.push(textDocument.fileName);
+				args.push(file);
 			} else {
-				args.push(textDocument.fileName);
+				args.push(file);
 			}
 			args = args.concat(this.linterConfiguration.extraArgs);
 			
