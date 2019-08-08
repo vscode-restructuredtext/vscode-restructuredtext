@@ -109,7 +109,8 @@ export class Configuration {
     private static async saveAnySetting<T>(
         configSection: string, value: T, resource: Uri, header: string = 'restructuredtext',
     ): Promise<T> {
-        await workspace.getConfiguration(header, resource).update(configSection, value);
+        if (workspace.workspaceFolders)
+            await workspace.getConfiguration(header, resource).update(configSection, value);
         return value;
     }
 
