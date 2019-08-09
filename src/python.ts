@@ -157,6 +157,11 @@ export class Python {
     }
   }
 
+  public spawn(...args: string[]) {
+    this.logger.log(`Spawning child: ${this.pythonPath} with arguments ${args.join(", ")}`);
+    return spawn(this.pythonPath, args)
+  }
+
   public exec(...args: string[]): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       const cmd = [this.pythonPath, ...args].map(s => `"${s}"`).join(" ");
