@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { exec, ExecException } from "child_process";
+import { exec, ExecException, spawn } from "child_process";
 import { Logger } from "./logger";
 import { Configuration } from './features/utils/configuration';
 import { fileExists } from './common';
@@ -20,48 +20,49 @@ export class Python {
 
   private async _setup(resource: Uri): Promise<void> {
     const path = Configuration.getPythonPath(resource);
-    if (path) {
-      this.pythonPath = `"${path}"`;
-      await this.getVersion();
-      if (Configuration.getConfPath(resource) === '') {
-        if (!Configuration.getDocUtilDisabled() && !(await this.checkDocutilsInstall())) {
-          var choice = await vscode.window.showInformationMessage("Preview engine docutil is not installed.", "Install", "No now", "Do not show again");
-          if (choice === "Install") {
-            this.logger.log("Started to install docutils...");
-            await this.installDocUtils();
-          } else if (choice === "Do not show again") {
-            this.logger.log("Disabled docutil engine.");
-            await Configuration.setDocUtilDisabled();
-          }
-        }
-      } else {
-        const sphinx = Configuration.getSphinxPath(resource);
-        if (!Configuration.getSphinxDisabled() && !(await this.checkSphinxInstall() || (sphinx != null && await fileExists(sphinx)))) {
-          var choice = await vscode.window.showInformationMessage("Preview engine sphinx is not installed.", "Install", "Not now", "Do not show again");
-          if (choice === "Install") {
-            this.logger.log("Started to install sphinx...");
-            await this.installSphinx();
-          } else if (choice === "Do not show again") {
-            this.logger.log("Disabled sphinx engine.");
-            await Configuration.setSphinxDisabled();
-          }
-        }
-      }
+    if (!path) {
+      this.logger.log("Cannot find Python.");
+      vscode.window.showErrorMessage("Please review Python installation on this machine before using this extension.");
+      return
+    }
 
-      const doc8 = Configuration.getLinterPath(resource);
-      if (!Configuration.getLinterDisabled() && !(await this.checkDoc8Install() || (doc8 != null && await fileExists(doc8)))) {
-        var choice = await vscode.window.showInformationMessage("Linter doc8 is not installed.", "Install", "Not now", "Do not show again");
+    this.pythonPath = path;
+    await this.getVersion();
+    if (Configuration.getConfPath(resource) === '') {
+      if (!Configuration.getDocUtilDisabled() && !(await this.checkDocutilsInstall())) {
+        var choice = await vscode.window.showInformationMessage("Preview engine docutil is not installed.", "Install", "No now", "Do not show again");
         if (choice === "Install") {
-          this.logger.log("Started to install doc8...");
-          await this.installDoc8();
+          this.logger.log("Started to install docutils...");
+          await this.installDocUtils();
         } else if (choice === "Do not show again") {
-          this.logger.log("Disabled linter.");
-          await Configuration.setLinterDisabled();
+          this.logger.log("Disabled docutil engine.");
+          await Configuration.setDocUtilDisabled();
         }
       }
     } else {
-      this.logger.log("Cannot find Python.");
-      vscode.window.showErrorMessage("Please review Python installation on this machine before using this extension.");
+      const sphinx = Configuration.getSphinxPath(resource);
+      if (!Configuration.getSphinxDisabled() && !(await this.checkSphinxInstall() || (sphinx != null && await fileExists(sphinx)))) {
+        var choice = await vscode.window.showInformationMessage("Preview engine sphinx is not installed.", "Install", "Not now", "Do not show again");
+        if (choice === "Install") {
+          this.logger.log("Started to install sphinx...");
+          await this.installSphinx();
+        } else if (choice === "Do not show again") {
+          this.logger.log("Disabled sphinx engine.");
+          await Configuration.setSphinxDisabled();
+        }
+      }
+    }
+
+    const doc8 = Configuration.getLinterPath(resource);
+    if (!Configuration.getLinterDisabled() && !(await this.checkDoc8Install() || (doc8 != null && await fileExists(doc8)))) {
+      var choice = await vscode.window.showInformationMessage("Linter doc8 is not installed.", "Install", "Not now", "Do not show again");
+      if (choice === "Install") {
+        this.logger.log("Started to install doc8...");
+        await this.installDoc8();
+      } else if (choice === "Do not show again") {
+        this.logger.log("Disabled linter.");
+        await Configuration.setLinterDisabled();
+      }
     }
 
     this.ready = true;
@@ -78,14 +79,14 @@ export class Python {
       this.logger.log("Failed to install docutils");
       vscode.window.showErrorMessage(
         "Could not install docutils. Please run `pip install docutils` to use this " +
-          "extension, or check your python path."
+        "extension, or check your python path."
       );
     }
   }
 
   private async checkDocutilsInstall(): Promise<boolean> {
     try {
-      await this.exec("-c", '"import docutils;"');
+      await this.exec("-c", "import docutils;");
       return true;
     } catch (e) {
       return false;
@@ -100,14 +101,14 @@ export class Python {
       this.logger.log("Failed to install doc8");
       vscode.window.showErrorMessage(
         "Could not install doc8. Please run `pip install doc8` to use this " +
-          "extension, or check your python path."
+        "extension, or check your python path."
       );
     }
   }
 
   private async checkDoc8Install(): Promise<boolean> {
     try {
-      await this.exec("-c", '"import doc8.main;"');
+      await this.exec("-c", "import doc8.main;");
       return true;
     } catch (e) {
       return false;
@@ -122,14 +123,14 @@ export class Python {
       this.logger.log("Failed to install sphinx");
       vscode.window.showErrorMessage(
         "Could not install sphinx. Please run `pip install sphinx sphinx-autobuild` to use this " +
-          "extension, or check your python path."
+        "extension, or check your python path."
       );
     }
   }
 
   private async checkSphinxInstall(): Promise<boolean> {
     try {
-      await this.exec("-c", '"import sphinx;"');
+      await this.exec("-c", "import sphinx;");
       return true;
     } catch (e) {
       return false;
@@ -142,7 +143,7 @@ export class Python {
     }
     const version = await this.exec(
       "-c",
-      '"import sys; print(sys.version_info[0])"'
+      "import sys; print(sys.version_info[0])"
     );
     switch (Number.parseInt(version)) {
       case 2:
@@ -157,11 +158,11 @@ export class Python {
   }
 
   public exec(...args: string[]): Promise<string> {
-    const cmd = [this.pythonPath, ...args];
     return new Promise<string>((resolve, reject) => {
-      this.logger.log(`Running cmd: ${this.pythonPath} ${args.join(" ")}`);      
+      const cmd = [this.pythonPath, ...args].map(s => `"${s}"`).join(" ");
+      this.logger.log(`Running cmd: ${cmd}`);
       exec(
-        cmd.join(" "),
+        cmd,
         (error: ExecException | null, stdout: string, stderr: string) => {
           if (error) {
             let errorMessage: string = [
