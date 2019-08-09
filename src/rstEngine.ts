@@ -18,7 +18,8 @@ export class RSTEngine {
     return `<html><body>${error}</body></html>`;
   }
 
-  public async compile(fileName: string, uri: Uri, confPyDirectory: string, fixLinks: boolean): Promise<string> {
+  public async compile(document: TextDocument, confPyDirectory: string, fixLinks: boolean): Promise<string> {
+    const { fileName, uri } = document
     await this.python.setup(uri)
     this.logger.log(`Compiling file: ${fileName}`);
     if (confPyDirectory === '') {
@@ -213,11 +214,11 @@ export class RSTEngine {
   public async preview(doc: TextDocument): Promise<string> {
     try {
       if (this.status == null) {
-        return this.compile(doc.fileName, doc.uri, '', true);
+        return this.compile(doc, '', true);
       } else if (this.status.config == null) {
         await this.status.refreshConfig(doc.uri);
       }
-      return this.compile(doc.fileName, doc.uri, this.status.config.confPyDirectory, true);
+      return this.compile(doc, this.status.config.confPyDirectory, true);
     } catch (e) {
       return this.errorSnippet(e.toString());
     }
