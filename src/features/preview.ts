@@ -16,6 +16,7 @@ import { RSTPreviewConfigurationManager } from './previewConfig';
 import { isRSTFile } from '../util/file';
 import { getExtensionPath } from '../extension';
 import { Configuration } from './utils/configuration';
+import debounce = require('lodash.debounce')
 
 const localize = nls.loadMessageBundle();
 
@@ -27,12 +28,10 @@ export class RSTPreview {
 	private _locked: boolean;
 
 	private readonly editor: vscode.WebviewPanel;
-	private throttleTimer: any;
 	private line: number | undefined = undefined;
 	private readonly disposables: vscode.Disposable[] = [];
-	private firstUpdate = true;
+	private _update = debounce(this.doUpdate.bind(this) as RSTPreview["doUpdate"], Configuration.getUpdateDelay());
 	private currentVersion?: { resource: vscode.Uri, version: number };
-	private forceUpdate = false;
 	private isScrolling = false;
 	private _disposed: boolean = false;
 
@@ -62,7 +61,7 @@ export class RSTPreview {
 		if (!isNaN(line)) {
 			preview.line = line;
 		}
-		await preview.doUpdate();
+		await preview.refresh();
 		return preview;
 	}
 
@@ -135,10 +134,15 @@ export class RSTPreview {
 			}
 		}, null, this.disposables);
 
+		vscode.workspace.onDidSaveTextDocument(event => {
+			if (this.isPreviewOf(event.uri)) this._update()
+		})
 		vscode.workspace.onDidChangeTextDocument(event => {
+			const editor = vscode.window.activeTextEditor;
 			if (this.isPreviewOf(event.document.uri)) {
-				this.refresh();
-			}
+				this.line = getVisibleLine(editor);
+				this._update()
+			}			
 		}, null, this.disposables);
 
 		topmostLineMonitor.onDidChangeTopmostLine(event => {
@@ -162,6 +166,8 @@ export class RSTPreview {
 				this.update(editor.document.uri);
 			}
 		}, null, this.disposables);
+
+		this.refresh()
 	}
 
 	private readonly _onDisposeEmitter = new vscode.EventEmitter<void>();
@@ -198,36 +204,13 @@ export class RSTPreview {
 	}
 
 	public update(resource: vscode.Uri) {
-		const editor = vscode.window.activeTextEditor;
-		if (editor && editor.document.uri.fsPath === resource.fsPath) {
-			this.line = getVisibleLine(editor);
-		}
-
-		// If we have changed resources, cancel any pending updates
-		const isResourceChange = resource.fsPath !== this._resource.fsPath;
-		if (isResourceChange) {
-			clearTimeout(this.throttleTimer);
-			this.throttleTimer = undefined;
-		}
-
 		this._resource = resource;
-
-		// Schedule update if none is pending
-		if (!this.throttleTimer) {
-			if (isResourceChange || this.firstUpdate) {
-				this.doUpdate();
-			} else {
-			    const timeout = Configuration.getUpdateDelay();
-				this.throttleTimer = setTimeout(() => this.doUpdate(), timeout);
-			}
-		}
-
-		this.firstUpdate = false;
+		this.refresh()
 	}
 
 	public refresh() {
-		this.forceUpdate = true;
-		this.update(this._resource);
+		this._update.cancel()
+		return this.doUpdate()
 	}
 
 	public updateConfiguration() {
@@ -314,20 +297,18 @@ export class RSTPreview {
 		}
 	}
 
-	private async doUpdate(): Promise<void> {
+	private async doUpdate(forced?: boolean): Promise<void> {
+		console.log("doing update")
 		const resource = this._resource;
 
-		clearTimeout(this.throttleTimer);
-		this.throttleTimer = undefined;
 
 		const document = await vscode.workspace.openTextDocument(resource);
-		if (!this.forceUpdate && this.currentVersion && this.currentVersion.resource.fsPath === resource.fsPath && this.currentVersion.version === document.version) {
+		if (!forced && this.currentVersion && this.currentVersion.resource.fsPath === resource.fsPath && this.currentVersion.version === document.version) {
 			if (this.line) {
 				this.updateForView(resource, this.line);
 			}
 			return;
 		}
-		this.forceUpdate = false;
 
 		this.currentVersion = { resource, version: document.version };
 		const content: string = await this._contentProvider.provideTextDocumentContent(document, this._previewConfigurations, this.line, this.state);
