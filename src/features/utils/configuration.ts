@@ -43,9 +43,11 @@ export class Configuration {
             const workspaceRoot = Configuration.GetRootPath(resource);
             if (workspaceRoot) {
                 const optional = path.join(workspaceRoot, primary);
-                if (fs.existsSync(optional)) {
+                try {
+                    if (fs.statSync(optional).isDirectory()) {
                     return optional;
                 }
+                } catch {}
             }
         }
         return primary;
