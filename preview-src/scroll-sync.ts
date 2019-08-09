@@ -16,23 +16,24 @@ function clampLine(line: number) {
 
 
 export interface CodeLineElement {
-	element: HTMLElement;
+	element: Element;
 	line: number;
 }
 
 const getCodeLineElements = (() => {
 	let elements: CodeLineElement[];
 	return () => {
-		if (!elements) {
-			elements = Array.prototype.map.call(
-				document.getElementsByClassName('code-line'),
-				(element: any) => {
-					const line = +element.getAttribute('data-line');
-					return { element, line };
-				})
-				.filter((x: any) => !isNaN(x.line));
+		if (elements) return elements
+		elements = []
+		for (const element of document.getElementsByClassName('code-line')) {
+			const attr = element.getAttribute('data-line');
+			if (typeof attr === "string") {
+				const line = parseInt(attr)
+				if (!isNaN(line))
+				  elements.push({ element, line })
+			}
 		}
-		return elements;
+		return elements
 	};
 })();
 
