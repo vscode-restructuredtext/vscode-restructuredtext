@@ -5,22 +5,21 @@ import { Configuration } from './features/utils/configuration';
 import { fileExists } from './common';
 import { Uri } from 'vscode';
 
+
 export class Python {
   private version: 2 | 3 | null = null;
   private pythonPath: string;
   private ready: boolean = false;
-  private setupDone: () => void
-  public whenSetup: Promise<void>
+  public setupPromise: Promise<void>
   
   public constructor(private readonly logger: Logger) {
-    this.whenSetup = new Promise(resolve => this.setupDone = resolve)
   }
 
   public isReady(): boolean {
     return this.ready;
   }
 
-  public async setup(resource: Uri): Promise<void> {
+  private async _setup(resource: Uri) {
     const path = Configuration.getPythonPath(resource);
     if (path) {
       this.pythonPath = path;
@@ -49,7 +48,7 @@ export class Python {
           }
         }
       }
-
+    
       const doc8 = Configuration.getLinterPath(resource);
       if (!Configuration.getLinterDisabled() && !(await this.checkDoc8Install() || (doc8 != null && await fileExists(doc8)))) {
         var choice = await vscode.window.showInformationMessage("Linter doc8 is not installed.", "Install", "Not now", "Do not show again");
@@ -65,9 +64,10 @@ export class Python {
       this.logger.log("Cannot find Python.");
       vscode.window.showErrorMessage("Please review Python installation on this machine before using this extension.");
     }
-
-    this.ready = true;
-    this.setupDone()
+    this.ready = true
+  }
+  public setup(resource: Uri) {
+    return this.setupPromise || (this.setupPromise = this._setup(resource))
   }
 
   private async installDocUtils(): Promise<void> {
