@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { exec, ExecException } from "child_process";
+import { exec, ExecException, spawn } from "child_process";
 import { Logger } from "./logger";
 import { Configuration } from './features/utils/configuration';
 import { fileExists } from './common';
@@ -9,8 +9,11 @@ export class Python {
   private version: 2 | 3 | null = null;
   private pythonPath: string;
   private ready: boolean = false;
-
+  private setupDone: () => void
+  public whenSetup: Promise<void>
+  
   public constructor(private readonly logger: Logger) {
+    this.whenSetup = new Promise(resolve => this.setupDone = resolve)
   }
 
   public isReady(): boolean {
@@ -20,7 +23,7 @@ export class Python {
   public async setup(resource: Uri): Promise<void> {
     const path = Configuration.getPythonPath(resource);
     if (path) {
-      this.pythonPath = `"${path}"`;
+      this.pythonPath = path;
       await this.getVersion();
       if (Configuration.getConfPath(resource) === '') {
         if (!Configuration.getDocUtilDisabled() && !(await this.checkDocutilsInstall())) {
@@ -64,6 +67,7 @@ export class Python {
     }
 
     this.ready = true;
+    this.setupDone()
   }
 
   private async installDocUtils(): Promise<void> {
@@ -152,12 +156,16 @@ export class Python {
     }
   }
 
+  public spawn(...args: string[]) {
+    this.logger.log(`Spawning child: ${this.pythonPath} ${args.join(" ")}`); 
+    return spawn(this.pythonPath, args)
+  }
+
   public exec(...args: string[]): Promise<string> {
-    const cmd = [this.pythonPath, ...args];
     return new Promise<string>((resolve, reject) => {
       this.logger.log(`Running cmd: ${this.pythonPath} ${args.join(" ")}`);      
       exec(
-        cmd.join(" "),
+        `${this.pythonPath} ${args.join(" ")}`,
         (error: ExecException | null, stdout: string, stderr: string) => {
           if (error) {
             let errorMessage: string = [

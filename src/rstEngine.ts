@@ -18,14 +18,24 @@ export class RSTEngine {
     return `<html><body>${error}</body></html>`;
   }
 
-  public async compile(fileName: string, uri: Uri, confPyDirectory: string, fixLinks: boolean): Promise<string> {
+  public async compile(document: TextDocument, confPyDirectory: string, fixLinks: boolean): Promise<string> {
+    await this.python.whenSetup
+    const { fileName, uri } = document
     this.logger.log(`Compiling file: ${fileName}`);
     if (confPyDirectory === '') {
       // docutil
-      return this.python.exec(
-        '"' + path.join(__dirname, "..", "python", "preview.py") + '"',
-        '"' + fileName + '"'
-      );
+      const child = this.python.spawn(path.join(__dirname, "..", "python", "preview.py"));
+      const chunks = []
+      child.stdout.on("data", Array.prototype.push.bind(chunks))
+      child.stdin.end(document.getText())
+      return new Promise((resolve, reject) => {
+        child.on("exit", () => {
+          resolve(chunks.join(""))
+        })
+        child.on("error", e => {
+          reject(e)
+        })
+      })
     } else {
       // sphinx
       let input = confPyDirectory;
@@ -212,11 +222,11 @@ export class RSTEngine {
   public async preview(doc: TextDocument): Promise<string> {
     try {
       if (this.status == null) {
-        return this.compile(doc.fileName, doc.uri, '', true);
+        return this.compile(doc, '', true);
       } else if (this.status.config == null) {
         await this.status.refreshConfig(doc.uri);
       }
-      return this.compile(doc.fileName, doc.uri, this.status.config.confPyDirectory, true);
+      return this.compile(doc, this.status.config.confPyDirectory, true);
     } catch (e) {
       return this.errorSnippet(e.toString());
     }

@@ -203,24 +203,12 @@ export class RSTPreview {
 			this.line = getVisibleLine(editor);
 		}
 
-		// If we have changed resources, cancel any pending updates
-		const isResourceChange = resource.fsPath !== this._resource.fsPath;
-		if (isResourceChange) {
-			clearTimeout(this.throttleTimer);
-			this.throttleTimer = undefined;
-		}
+		clearTimeout(this.throttleTimer);
 
 		this._resource = resource;
-
-		// Schedule update if none is pending
-		if (!this.throttleTimer) {
-			if (isResourceChange || this.firstUpdate) {
-				this.doUpdate();
-			} else {
-			    const timeout = Configuration.getUpdateDelay();
-				this.throttleTimer = setTimeout(() => this.doUpdate(), timeout);
-			}
-		}
+		
+		if (resource.fsPath !== this._resource.fsPath || this.firstUpdate) this.doUpdate();
+		else this.throttleTimer = setTimeout(() => this.doUpdate(), Configuration.getUpdateDelay());
 
 		this.firstUpdate = false;
 	}
