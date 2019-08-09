@@ -8,9 +8,11 @@
     "vscode": "^1.26.0"
   },
   "dependencies": {
+    "@types/lodash.debounce": "^4.0.6",
     "getos": "^3.1.1",
     "http-proxy-agent": "^2.1.0",
     "https-proxy-agent": "^2.2.1",
+    "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
     "meaw": "^4.1.0",
     "mkdirp": "^0.5.1",
@@ -21,6 +23,7 @@
   },
   "devDependencies": {
     "@studio/changes": "^1.7.0",
+    "@types/lodash.debounce": "^4.0.6",
     "@types/lodash.throttle": "^4.1.4",
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.11.3",
