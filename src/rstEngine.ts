@@ -24,10 +24,16 @@ export class RSTEngine {
     this.logger.log(`Compiling file: ${fileName}`);
     if (confPyDirectory === '') {
       // docutil
-      return this.python.exec(
-        '"' + path.join(__dirname, "..", "python", "preview.py") + '"',
-        '"' + fileName + '"'
-      );
+      const child = this.python.spawn(path.join(__dirname, "..", "python", "preview.py"));
+      const chunks = []
+      child.stdout.on("data", Array.prototype.push.bind(chunks))
+      child.stdin.end(document.getText())
+      return new Promise<string>((resolve, reject) => {
+        child.on("exit", () => {
+          resolve(chunks.join(""))
+        })
+        child.on("error", reject)
+      })
     } else {
       // sphinx
       let input = confPyDirectory;
