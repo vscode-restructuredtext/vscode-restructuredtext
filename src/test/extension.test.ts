@@ -24,10 +24,14 @@ import { Logger } from "../logger";
 // Defines a Mocha test suite to group tests of similar kind together
 let engine: RSTEngine;
 let python: Python;
-let logger: Logger = {
+let logger = {
   log: () => void 0,
-  updateConfiguration: () => void 0
-} as any;
+  updateConfiguration: () => void 0,
+  append: () => void 0,
+  appendLine: () => void 0,
+  show: () => void 0,
+  readTrace: () => void 0
+} as any as Logger;
 
 suite("Extension Tests", function() {
   suiteSetup(async function() {
@@ -99,6 +103,7 @@ suite("Extension Tests", function() {
     this.timeout(30000);
     const editor = await openFile(path.join(samplePath, "sphinx", "index.rst"));
     const val = await engine.compile(editor.document, path.join(samplePath, 'sphinx'), false);
+    console.log(JSON.stringify(val))
     return new Promise((res, rej) => {
       fs.readFile(
         path.join(samplePath, "index.html"),
