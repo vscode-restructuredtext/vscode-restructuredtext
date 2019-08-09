@@ -9,6 +9,7 @@ export class Python {
   private version: 2 | 3 | null = null;
   private pythonPath: string;
   private ready: boolean = false;
+  private whenSetup: Promise<void>
 
   public constructor(private readonly logger: Logger) {
   }
@@ -17,7 +18,7 @@ export class Python {
     return this.ready;
   }
 
-  public async setup(resource: Uri): Promise<void> {
+  private async _setup(resource: Uri): Promise<void> {
     const path = Configuration.getPythonPath(resource);
     if (path) {
       this.pythonPath = `"${path}"`;
@@ -64,6 +65,9 @@ export class Python {
     }
 
     this.ready = true;
+  }
+  public setup(resource: Uri) {
+    return this.whenSetup || (this.whenSetup = this._setup(resource))
   }
 
   private async installDocUtils(): Promise<void> {

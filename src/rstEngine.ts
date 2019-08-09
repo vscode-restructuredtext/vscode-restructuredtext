@@ -19,6 +19,7 @@ export class RSTEngine {
   }
 
   public async compile(fileName: string, uri: Uri, confPyDirectory: string, fixLinks: boolean): Promise<string> {
+    await this.python.setup(uri)
     this.logger.log(`Compiling file: ${fileName}`);
     if (confPyDirectory === '') {
       // docutil
