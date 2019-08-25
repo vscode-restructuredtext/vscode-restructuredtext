@@ -164,16 +164,13 @@ export class RSTEngine {
           if (p2.startsWith('#') || lower.startsWith('http://') || lower.startsWith('https://')) {
               return subString;
           }
-            const newUrl = [
-                p1,
-                process.platform === 'win32' ? 'vscode-resource:\\' : 'vscode-resource:',
-                path.join(
-                    path.dirname(documentPath),
-                    p2,
-                ),
-                p3,
-            ].join('');
-            return newUrl;
+          let newPath = Uri.file(path.join(path.dirname(documentPath), p2));
+          const newUrl = [
+              p1,
+              newPath.with({ scheme: 'vscode-resource' }).toString(true),
+              p3,
+          ].join('');
+          return newUrl;
         },
     );
   }
