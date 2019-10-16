@@ -298,9 +298,7 @@ export class RSTPreview {
 	}
 
 	private async doUpdate(forced?: boolean): Promise<void> {
-		console.log("doing update")
 		const resource = this._resource;
-
 
 		const document = await vscode.workspace.openTextDocument(resource);
 		if (!forced && this.currentVersion && this.currentVersion.resource.fsPath === resource.fsPath && this.currentVersion.version === document.version) {
