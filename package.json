@@ -412,7 +412,7 @@
         },
         "restructuredtext.updateDelay": {
           "type": "number",
-          "default": "300",
+          "default": "3000",
           "description": "Flag to control after how long a changed event triggers preview update.",
           "scope": "resource"
         },

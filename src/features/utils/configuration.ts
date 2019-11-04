@@ -72,7 +72,7 @@ export class Configuration {
     }
 
     public static getUpdateDelay(resource: Uri = null): number {
-        return Configuration.loadAnySetting<number>("updateDelay", 300, resource);
+        return Configuration.loadAnySetting<number>("updateDelay", 3000, resource);
     }
 
     public static async setConfPath(value: string, resource: Uri = null, insertMacro: boolean): Promise<string> {
