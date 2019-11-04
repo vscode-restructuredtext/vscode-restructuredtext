@@ -10,7 +10,7 @@
   "dependencies": {
     "getos": "^3.1.1",
     "http-proxy-agent": "^2.1.0",
-    "https-proxy-agent": "^2.2.1",
+    "https-proxy-agent": "^2.2.4",
     "lodash.throttle": "^4.1.1",
     "meaw": "^4.1.0",
     "mkdirp": "^0.5.1",
