@@ -118,6 +118,10 @@ export class LintingProvider {
 	}
 
 	private triggerLint(textDocument: vscode.TextDocument): void {
+		if (Configuration.getLinterDisabled()) {
+			return;
+		}
+
 		const currentFolder = Configuration.GetRootPath(textDocument.uri);
 		if (this.linterConfiguration === null || (currentFolder && this.linterConfiguration.rootPath !== currentFolder)) {
 			this.loadConfiguration(textDocument.uri);
@@ -126,7 +130,7 @@ export class LintingProvider {
 		if (textDocument.languageId !== this.linter.languageId || 
 			textDocument.uri.scheme !== "file" ||
 			this.executableNotFound ||
-			RunTrigger.from(this.linterConfiguration.runTrigger) === RunTrigger.off){
+			RunTrigger.from(this.linterConfiguration.runTrigger) === RunTrigger.off) {
 			return;
 		}
 
