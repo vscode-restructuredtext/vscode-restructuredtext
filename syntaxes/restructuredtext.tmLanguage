@@ -61,13 +61,21 @@
 							<key>name</key>
 							<string>punctuation.definition.substitution.restructuredtext</string>
 						</dict>
+						<key>2</key>
+						<dict>
+							<key>name</key>
+							<string>markup.underline.substitution.restructuredtext</string>
+						</dict>
+						<key>3</key>
+						<dict>
+							<key>name</key>
+							<string>punctuation.definition.substitution.restructuredtext</string>
+						</dict>
 					</dict>
 					<key>comment</key>
 					<string>substitution</string>
 					<key>match</key>
-					<string>(\|)[^| ]+[^|]*[^| ]*(\|_{0,2})</string>
-					<key>name</key>
-					<string>markup.underline.substitution.restructuredtext</string>
+					<string>(\|)([^| ]+[^|]*[^| ]*)(\|_{0,2})</string>
 				</dict>
 				<dict>
 					<key>begin</key>
@@ -348,65 +356,8 @@
 			<key>patterns</key>
 			<array>
 				<dict>
-					<key>begin</key>
-					<string>^([ \t]*)((\.\.)\sraw(::)) html</string>
-					<key>captures</key>
-					<dict>
-						<key>2</key>
-						<dict>
-							<key>name</key>
-							<string>meta.directive.restructuredtext</string>
-						</dict>
-						<key>3</key>
-						<dict>
-							<key>name</key>
-							<string>punctuation.definition.directive.restructuredtext</string>
-						</dict>
-						<key>4</key>
-						<dict>
-							<key>name</key>
-							<string>punctuation.separator.key-value.restructuredtext</string>
-						</dict>
-					</dict>
-					<key>comment</key>
-					<string>directives.html</string>
-					<key>end</key>
-					<string>^(?!\1[ \t])</string>
-					<key>patterns</key>
-					<array>
-						<dict>
-							<key>include</key>
-							<string>text.html.basic</string>
-						</dict>
-					</array>
-				</dict>
-				<dict>
-					<key>captures</key>
-					<dict>
-						<key>1</key>
-						<dict>
-							<key>name</key>
-							<string>punctuation.definition.directive.restructuredtext</string>
-						</dict>
-						<key>2</key>
-						<dict>
-							<key>name</key>
-							<string>support.directive.restructuredtext</string>
-						</dict>
-						<key>3</key>
-						<dict>
-							<key>name</key>
-							<string>punctuation.separator.key-value.restructuredtext</string>
-						</dict>
-					</dict>
-					<key>comment</key>
-					<string>directives</string>
 					<key>match</key>
-					<string>(\.\.)\s([A-z][-A-z0-9_]+)(::)\s*$</string>
-					<key>name</key>
-					<string>meta.other.directive.restructuredtext</string>
-				</dict>
-				<dict>
+					<string>^[ \t]*(\.\.)\s((\|)(.*)(\|)\s)?([A-z][-A-z0-9_]+)(::)((\s[Uu](\+)\d{4,5})?(\s[-A-z0-9_]+([(])[-A-z0-9_]*([)]))?(\s(\.\.)\s)?.*)?</string>
 					<key>captures</key>
 					<dict>
 						<key>1</key>
@@ -414,28 +365,57 @@
 							<key>name</key>
 							<string>punctuation.definition.directive.restructuredtext</string>
 						</dict>
-						<key>2</key>
+						<key>3</key>
+						<dict>
+							<key>name</key>
+							<string>punctuation.definition.substitution.restructuredtext</string>
+						</dict>
+						<key>4</key>
+						<dict>
+							<key>name</key>
+							<string>markup.underline.substitution.restructuredtext</string>
+						</dict>
+						<key>5</key>
+						<dict>
+							<key>name</key>
+							<string>punctuation.definition.substitution.restructuredtext</string>
+						</dict>
+						<key>6</key>
 						<dict>
 							<key>name</key>
 							<string>support.directive.restructuredtext</string>
 						</dict>
-						<key>3</key>
+						<key>7</key>
 						<dict>
 							<key>name</key>
 							<string>punctuation.separator.key-value.restructuredtext</string>
 						</dict>
-						<key>4</key>
+						<key>8</key>
 						<dict>
 							<key>name</key>
 							<string>entity.name.directive.restructuredtext</string>
 						</dict>
+						<key>10</key>
+						<dict>
+							<key>name</key>
+							<string>punctuation.definition.directive.restructuredtext</string>
+						</dict>
+						<key>12</key>
+						<dict>
+							<key>name</key>
+							<string>punctuation.definition.directive.restructuredtext</string>
+						</dict>
+						<key>13</key>
+						<dict>
+							<key>name</key>
+							<string>punctuation.definition.directive.restructuredtext</string>
+						</dict>
+						<key>15</key>
+						<dict>
+							<key>name</key>
+							<string>punctuation.definition.directive.restructuredtext</string>
+						</dict>
 					</dict>
-					<key>comment</key>
-					<string>directives with arguments</string>
-					<key>match</key>
-					<string>(\.\.)\s([A-z][-A-z0-9_]+)(::)\s+(.+?)\s*$</string>
-					<key>name</key>
-					<string>meta.other.directive.restructuredtext</string>
 				</dict>
 			</array>
 		</dict>
