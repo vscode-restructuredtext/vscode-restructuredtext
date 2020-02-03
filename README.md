@@ -10,6 +10,7 @@ This extension provides rich reStructuredText language support for Visual Studio
 Now you write reStructuredText scripts using the excellent IDE-like interface
 that VS Code provides.
 
+
 ![reStructuredText in Visual Studio Code](images/main.gif)
 
 ## Features
@@ -19,6 +20,7 @@ that VS Code provides.
 - Live Preview
 - Section Builder
 - Linter
+- Outline View
 - IntelliSense (**Experimental**)
 
 Frequent Asked Questions can be found [here](https://github.com/vscode-restructuredtext/vscode-restructuredtext/issues?q=is%3Aissue+label%3A%22faq+candidate%22+).

@@ -2,7 +2,7 @@
   "name": "restructuredtext",
   "displayName": "%displayName%",
   "description": "%description%",
-  "version": "117.0.0",
+  "version": "118.0.0",
   "publisher": "lextudio",
   "engines": {
     "vscode": "^1.26.0"
@@ -509,5 +509,6 @@
     "preversion": "npm run compile",
     "version": "./node_modules/.bin/changes",
     "postversion": "git push --follow-tags"
-  }
+  },
+  "__npminstall_done": false
 }
