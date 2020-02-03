@@ -1,0 +1,13 @@
+bin/
+out/
+.vscode-test/
+node_modules/
+vscode-restructuredtext.zip
+vscps-preview.zip
+*.vsix
+/.rst
+
+install\.Lock
+
+test-resources/sphinx/_build/html/
+test-resources/**/settings.json

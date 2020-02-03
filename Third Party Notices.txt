@@ -1,0 +1,39 @@
+This file is based on or incorporates material from the projects listed below
+(Third Party IP). The original copyright notice and the license under which
+Lex Li received such Third Party IP, are set forth below. Such licenses and
+notices are provided for informational purposes only. Lex Li licenses the
+Third Party IP to you under the licensing terms for the product. Lex Li
+reserves all other rights not expressly granted under this agreement, whether
+by implication, estoppel or otherwise.
+
+---
+
+restructuredtext.tmbundle
+
+The license terms can be found at
+
+https://github.com/textmate/restructuredtext.tmbundle
+
+ReStructured Text Previewer
+
+The license terms can be found at
+
+https://github.com/tht13/RST-vscode/blob/master/LICENSE
+
+ruby-linter
+
+The license terms can be found at
+
+https://github.com/hoovercj/vscode-ruby-linter/blob/master/LICENSE.txt
+
+C# for Visual Studio Code (powered by OmniSharp)
+
+The license terms can be found at
+
+https://github.com/OmniSharp/omnisharp-vscode/blob/master/LICENSE.txt
+
+Visual Studio Code
+
+The license terms can be found at
+
+https://github.com/Microsoft/vscode/blob/master/LICENSE.txt
