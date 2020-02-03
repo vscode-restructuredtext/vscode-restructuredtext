@@ -617,11 +617,7 @@
 						</dict>
 					</dict>
 					<key>match</key>
-<<<<<<< HEAD
-					<string>/^\s*(=|-|~|`|#|"|\^|\+|\*|:|\.|'|_|\+)\1{3,}$/</string>
-=======
 					<string>^\s*(=|-|~|`|#|"|\^|\+|\*|:|\.|'|_|\+)\1{3,}$</string>
->>>>>>> ce97e37d8dd54b7530c4f6fcd446e52b794ff0ce
 					<key>name</key>
 					<string>markup.heading.restructuredtext</string>
 				</dict>
