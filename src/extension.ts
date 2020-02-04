@@ -21,6 +21,7 @@ import { Configuration } from './features/utils/configuration';
 import RstTransformerStatus from './features/utils/statusBar';
 import * as RstLanguageServer from './rstLsp/extension';
 import { openSync } from 'fs';
+import { rstDocumentSymbolProvider } from './features/rstDocumentSymbolProvider';
 
 let extensionPath = "";
 
@@ -108,7 +109,15 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(() => {
 		logger.updateConfiguration();
 		previewManager.updateConfiguration();
-	}));
+    }));
+    
+    // DocumentSymbolProvider Demo, for Outline View Test
+    let disposableRstDSP = vscode.languages.registerDocumentSymbolProvider(
+        { scheme: 'file', language: 'restructuredtext' }, new rstDocumentSymbolProvider()
+    );
+    context.subscriptions.push(disposableRstDSP);
+
+
 
 	return {
 		initializationFinished: Promise.all([rstLspPromise])
