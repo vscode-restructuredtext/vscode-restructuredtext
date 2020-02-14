@@ -12,20 +12,20 @@ export class ActiveLineMarker {
 		this._update(previous && previous.element);
 	}
 
-	_update(before: HTMLElement | undefined) {
+	_update(before: Element | undefined) {
 		this._unmarkActiveElement(this._current);
 		this._markActiveElement(before);
 		this._current = before;
 	}
 
-	_unmarkActiveElement(element: HTMLElement | undefined) {
+	_unmarkActiveElement(element: Element | undefined) {
 		if (!element) {
 			return;
 		}
 		element.className = element.className.replace(/\bcode-active-line\b/g, '');
 	}
 
-	_markActiveElement(element: HTMLElement | undefined) {
+	_markActiveElement(element: Element | undefined) {
 		if (!element) {
 			return;
 		}

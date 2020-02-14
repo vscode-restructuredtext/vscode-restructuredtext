@@ -19,15 +19,20 @@ import {
   wait
 } from "./initialize";
 import { Python } from "../python";
-import { Logger } from "../logger";
+import { Logger, Trace } from "../logger";
 
 // Defines a Mocha test suite to group tests of similar kind together
 let engine: RSTEngine;
 let python: Python;
-let logger: Logger = {
-  log: () => void 0,
-  updateConfiguration: () => void 0
-} as any;
+let logger = {
+  append() {},
+  appendLine() {},
+  show() {},
+  hide() {},
+  log() {},
+  updateConfiguration() {},
+  readTrace() { return Trace.Off }
+} as { [P in keyof Logger]: Logger[P] } as Logger
 
 suite("Extension Tests", function() {
   suiteSetup(async function() {

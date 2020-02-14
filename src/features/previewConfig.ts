@@ -14,6 +14,7 @@ export class RSTPreviewConfiguration {
 	public readonly scrollBeyondLastLine: boolean;
 	public readonly wordWrap: boolean;
 	public readonly doubleClickToSwitchToEditor: boolean;
+	public readonly lineBreaks: boolean;
 	public readonly scrollEditorWithPreview: boolean;
 	public readonly scrollPreviewWithEditor: boolean;
 	public readonly rstEditorSelection: boolean;
