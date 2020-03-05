@@ -22,9 +22,11 @@ export class RSTEngine {
     this.logger.log(`Compiling file: ${fileName}`);
     if (confPyDirectory === '') {
       // docutil
+      const writer = Configuration.getDocutilsWriter(uri);
       return this.python.exec(
         '"' + path.join(__dirname, "..", "python", "preview.py") + '"',
-        '"' + fileName + '"'
+        '"' + fileName + '"',
+        '"' + writer + '"'
       );
     } else {
       // sphinx

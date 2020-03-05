@@ -422,6 +422,12 @@
           "description": "The full path of the sphinx-build executable. This is an absolute path, and you can use ${workspaceFolder} to represent the workspace root folder.",
           "scope": "resource"
         },
+        "restructuredtext.docutilsWriter": {
+          "type": "string",
+          "default": "html",
+          "description": "The docutils writer that will generate the output.",
+          "scope": "resource"
+        },
         "restructuredtext.linter.disabled": {
           "type": "boolean",
           "default": false,
