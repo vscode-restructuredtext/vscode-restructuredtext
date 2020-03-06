@@ -16,6 +16,10 @@ export class Configuration {
         return Configuration.loadSetting('docutilsWriter', 'html', resource);
     }
 
+    public static getDocutilsWriterPart(resource: Uri = null): string {
+        return Configuration.loadSetting('docutilsWriterPart', 'html_body', resource);
+    }
+
     public static getSphinxPath(resource: Uri = null): string {
         return Configuration.loadSetting('sphinxBuildPath', null, resource);
     }

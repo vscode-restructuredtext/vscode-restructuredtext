@@ -23,10 +23,12 @@ export class RSTEngine {
     if (confPyDirectory === '') {
       // docutil
       const writer = Configuration.getDocutilsWriter(uri);
+      const writerPart = Configuration.getDocutilsWriterPart(uri);
       return this.python.exec(
         '"' + path.join(__dirname, "..", "python", "preview.py") + '"',
         '"' + fileName + '"',
-        '"' + writer + '"'
+        '"' + writer + '"',
+        '"' + writerPart + '"'
       );
     } else {
       // sphinx
