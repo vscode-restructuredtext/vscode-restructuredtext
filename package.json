@@ -434,10 +434,18 @@
           "description": "Flag to disable linter if critical issues happen.",
           "scope": "resource"
         },
+        "restructuredtext.linter.name": {
+          "type": "string",
+          "enum": [
+            "doc8",
+            "rstcheck"
+          ],
+          "default": "rstcheck"
+        },
         "restructuredtext.linter.executablePath": {
           "type": "string",
           "default": null,
-          "description": "Points to the doc8 executable.",
+          "description": "Points to the doc8 or rstcheck executable.",
           "scope": "resource"
         },
         "restructuredtext.linter.run": {
@@ -454,7 +462,7 @@
         "restructuredtext.linter.extraArgs": {
           "type": "array",
           "default": [],
-          "description": "Extra arguments to doc8.",
+          "description": "Extra arguments to doc8 or rst check.",
           "scope": "resource"
         },
         "restructuredtext.languageServer.disabled": {

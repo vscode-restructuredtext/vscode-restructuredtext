@@ -22,16 +22,21 @@ export default class RstLintingProvider implements Linter {
 		var module: string[] = [];
 
 		var build = Configuration.getLinterPath(resource);
+		var name = Configuration.getLinterName(resource);
 		if (build == null) {
 			var python = Configuration.getPythonPath(resource);
 			if (python) {
 				build = python;
-				module = module.concat(["-m", "doc8.main"]);
+				if (name === "doc8") {
+					module = module.concat(["-m", "doc8.main"]);
+				} else if (name === "rstcheck") {
+					module = module.concat(["-m", "rstcheck"]);
+				}
 			}
 		}
 
 		if (build == null) {
-			build = "doc8";
+			build = name;
 		}
 
 		return {

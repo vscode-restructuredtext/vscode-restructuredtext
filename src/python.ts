@@ -47,15 +47,30 @@ export class Python {
         }
       }
 
-      const doc8 = Configuration.getLinterPath(resource);
-      if (!Configuration.getLinterDisabled() && !(await this.checkDoc8Install() || (doc8 != null && await fileExists(doc8)))) {
-        var choice = await vscode.window.showInformationMessage("Linter doc8 is not installed.", "Install", "Not now", "Do not show again");
-        if (choice === "Install") {
-          this.logger.log("Started to install doc8...");
-          await this.installDoc8();
-        } else if (choice === "Do not show again") {
-          this.logger.log("Disabled linter.");
-          await Configuration.setLinterDisabled();
+      if (Configuration.getLinterName(resource) === "doc8")
+      {
+        const doc8 = Configuration.getLinterPath(resource);
+        if (!Configuration.getLinterDisabled() && !(await this.checkDoc8Install() || (doc8 != null && await fileExists(doc8)))) {
+          var choice = await vscode.window.showInformationMessage("Linter doc8 is not installed.", "Install", "Not now", "Do not show again");
+          if (choice === "Install") {
+            this.logger.log("Started to install doc8...");
+            await this.installDoc8();
+          } else if (choice === "Do not show again") {
+            this.logger.log("Disabled linter.");
+            await Configuration.setLinterDisabled();
+          }
+        }
+      } else if (Configuration.getLinterName(resource) === "rstcheck") {
+        const rstcheck = Configuration.getLinterPath(resource);
+        if (!Configuration.getLinterDisabled() && !(await this.checkRstCheckInstall() || (rstcheck != null && await fileExists(rstcheck)))) {
+          var choice = await vscode.window.showInformationMessage("Linter rstcheck is not installed.", "Install", "Not now", "Do not show again");
+          if (choice === "Install") {
+            this.logger.log("Started to install rstcheck...");
+            await this.installRstCheck();
+          } else if (choice === "Do not show again") {
+            this.logger.log("Disabled linter.");
+            await Configuration.setLinterDisabled();
+          }
         }
       }
     } else {
@@ -104,6 +119,28 @@ export class Python {
   private async checkDoc8Install(): Promise<boolean> {
     try {
       await this.exec("-c", '"import doc8.main;"');
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  private async installRstCheck(): Promise<void> {
+    try {
+      await this.exec("-m", "pip", "install", "rstcheck");
+      this.logger.log("Finished installing rstcheck");
+    } catch (e) {
+      this.logger.log("Failed to install rstcheck");
+      vscode.window.showErrorMessage(
+        "Could not install rstcheck. Please run `pip install rstcheck` to use this " +
+          "extension, or check your python path."
+      );
+    }
+  }
+
+  private async checkRstCheckInstall(): Promise<boolean> {
+    try {
+      await this.exec("-c", '"import rstcheck;"');
       return true;
     } catch (e) {
       return false;

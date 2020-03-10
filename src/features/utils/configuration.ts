@@ -28,10 +28,14 @@ export class Configuration {
         return Configuration.loadSetting('builtDocumentationPath', null, resource);
     }
 
+    public static getLinterName(resource: Uri = null): string {
+        return Configuration.loadSetting("linter.name", "rstcheck", resource);
+    }
+
     public static getLinterPath(resource: Uri = null): string {
         return Configuration.loadSetting('linter.executablePath', null, resource);
     }
-
+    
     public static getExtraArgs(resource: Uri = null): string[] {
         return Configuration.loadAnySetting<string[]>('linter.extraArgs', null, resource);
     }
