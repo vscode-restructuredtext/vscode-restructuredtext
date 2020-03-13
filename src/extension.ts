@@ -20,7 +20,6 @@ import { underline } from './features/underline';
 import { Configuration } from './features/utils/configuration';
 import RstTransformerStatus from './features/utils/statusBar';
 import * as RstLanguageServer from './rstLsp/extension';
-import { openSync } from 'fs';
 import { rstDocumentSymbolProvider } from './features/rstDocumentSymbolProvider';
 
 let extensionPath = "";
@@ -96,9 +95,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
 	const commandManager = new CommandManager();
 	context.subscriptions.push(commandManager);
-	commandManager.register(new commands.ShowPreviewCommand(previewManager));
-	commandManager.register(new commands.ShowPreviewToSideCommand(previewManager));
-	commandManager.register(new commands.ShowLockedPreviewToSideCommand(previewManager));
+	commandManager.register(new commands.ShowPreviewCommand(previewManager, python));
+	commandManager.register(new commands.ShowPreviewToSideCommand(previewManager, python));
+	commandManager.register(new commands.ShowLockedPreviewToSideCommand(previewManager, python));
 	commandManager.register(new commands.ShowSourceCommand(previewManager));
 	commandManager.register(new commands.RefreshPreviewCommand(previewManager));
 	commandManager.register(new commands.MoveCursorToPositionCommand());

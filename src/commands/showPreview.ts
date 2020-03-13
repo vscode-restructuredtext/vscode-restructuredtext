@@ -8,6 +8,7 @@ import * as vscode from 'vscode';
 import { Command } from '../commandManager';
 import { RSTPreviewManager } from '../features/previewManager';
 import { PreviewSettings } from '../features/preview';
+import { Python } from '../python';
 
 interface ShowPreviewSettings {
 	readonly sideBySide?: boolean;
@@ -16,6 +17,7 @@ interface ShowPreviewSettings {
 
 async function showPreview(
 	webviewManager: RSTPreviewManager,
+	python: Python,
 	uri: vscode.Uri | undefined,
 	previewSettings: ShowPreviewSettings,
 ): Promise<any> {
@@ -36,13 +38,17 @@ async function showPreview(
 		return;
 	}
 
+	if (!await python.checkPreviewEngine(resource)) {
+		// no engine to use.
+		return;
+	}
+
 	const resourceColumn = (vscode.window.activeTextEditor && vscode.window.activeTextEditor.viewColumn) || vscode.ViewColumn.One;
 	webviewManager.preview(resource, {
 		resourceColumn: resourceColumn,
 		previewColumn: previewSettings.sideBySide ? resourceColumn + 1 : resourceColumn,
 		locked: !!previewSettings.locked
 	});
-
 }
 
 export class ShowPreviewCommand implements Command {
@@ -50,11 +56,12 @@ export class ShowPreviewCommand implements Command {
 
 	public constructor(
 		private readonly webviewManager: RSTPreviewManager,
+		private readonly python: Python
 	) { }
 
 	public execute(mainUri?: vscode.Uri, allUris?: vscode.Uri[], previewSettings?: PreviewSettings) {
 		for (const uri of Array.isArray(allUris) ? allUris : [mainUri]) {
-			showPreview(this.webviewManager, uri, {
+			showPreview(this.webviewManager, this.python, uri, {
 				sideBySide: false,
 				locked: previewSettings && previewSettings.locked
 			});
@@ -67,10 +74,11 @@ export class ShowPreviewToSideCommand implements Command {
 
 	public constructor(
 		private readonly webviewManager: RSTPreviewManager,
+		private readonly python: Python
 	) { }
 
 	public execute(uri?: vscode.Uri, previewSettings?: PreviewSettings) {
-		showPreview(this.webviewManager, uri, {
+		showPreview(this.webviewManager, this.python, uri, {
 			sideBySide: true,
 			locked: previewSettings && previewSettings.locked
 		});
@@ -82,11 +90,12 @@ export class ShowLockedPreviewToSideCommand implements Command {
 	public readonly id = 'restructuredtext.showLockedPreviewToSide';
 
 	public constructor(
-		private readonly webviewManager: RSTPreviewManager
+		private readonly webviewManager: RSTPreviewManager,
+		private readonly python: Python
 	) { }
 
 	public execute(uri?: vscode.Uri) {
-		showPreview(this.webviewManager, uri, {
+		showPreview(this.webviewManager, this.python, uri, {
 			sideBySide: true,
 			locked: true
 		});
