@@ -4,16 +4,20 @@ import { Disposable, Diagnostic, DiagnosticSeverity, Range, Uri } from 'vscode';
 import { LintingProvider, LinterConfiguration, Linter } from './utils/lintingProvider';
 import { Configuration } from './utils/configuration';
 import { Logger } from '../logger';
+import { Python } from '../python';
 
 export default class RstLintingProvider implements Linter {
 
 	public languageId = 'restructuredtext';
 
-	public constructor(private readonly logger: Logger) {
+	public constructor(
+		private readonly logger: Logger,
+		private readonly python: Python)
+    {
 	}
 
 	public activate(subscriptions: Disposable[]) {
-		let provider = new LintingProvider(this, this.logger);
+		let provider = new LintingProvider(this, this.logger, this.python);
 		provider.activate(subscriptions)
 	}
 

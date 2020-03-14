@@ -23,6 +23,8 @@ export class Python {
     if (path) {
       this.pythonPath = `"${path}"`;
       await this.getVersion();
+      await this.checkPreviewEngine(resource, false);
+      await this.checkLinter(resource, true, false);
     } else {
       this.logger.log("Cannot find Python.");
       var choice = await vscode.window.showErrorMessage("Please review Python installation on this machine before using this extension.", "Learn more...");
@@ -34,10 +36,12 @@ export class Python {
     this.ready = true;
   }
 
-  public async checkPreviewEngine(resource: vscode.Uri): Promise<boolean> {
+  public async checkPreviewEngine(resource: vscode.Uri, showWarning: boolean = true): Promise<boolean> {
     if (Configuration.getConfPath(resource) === '') {
       if (Configuration.getDocUtilDisabled()) {
-        await vscode.window.showWarningMessage("No preview. Preview engine docutil is disabled.");
+        if (showWarning) {
+          await vscode.window.showWarningMessage("No preview. Preview engine docutil is disabled.");
+        }
         return false;
       }
       if (!(await this.checkDocutilsInstall())) {
@@ -48,17 +52,23 @@ export class Python {
         } else if (choice === "Do not show again") {
           this.logger.log("Disabled docutil engine.");
           await Configuration.setDocUtilDisabled();
-          await vscode.window.showWarningMessage("No preview. Preview engine docutil is now disabled.");
+          if (showWarning) {
+            await vscode.window.showWarningMessage("No preview. Preview engine docutil is now disabled.");
+          }
           return false;
         } else {
-          await vscode.window.showWarningMessage("No preview. Preview engine docutil is not installed.");
+          if (showWarning) {
+            await vscode.window.showWarningMessage("No preview. Preview engine docutil is not installed.");
+          }
           return false;
         }
       }
     } else {
       const sphinx = Configuration.getSphinxPath(resource);
       if (Configuration.getSphinxDisabled()) {
-        await vscode.window.showWarningMessage("No preview. Preview engine sphinx is disabled.");
+        if (showWarning) {
+          await vscode.window.showWarningMessage("No preview. Preview engine sphinx is disabled.");
+        }
         return false;
       }
       if (!(await this.checkSphinxInstall() || (sphinx != null && await fileExists(sphinx)))) {
@@ -69,10 +79,14 @@ export class Python {
         } else if (choice === "Do not show again") {
           this.logger.log("Disabled sphinx engine.");
           await Configuration.setSphinxDisabled();
-          await vscode.window.showWarningMessage("No preview. Preview engine sphinx is now disabled.");
+          if (showWarning) {
+            await vscode.window.showWarningMessage("No preview. Preview engine sphinx is now disabled.");
+          }
           return false;
         } else {
-          await vscode.window.showWarningMessage("No preview. Preview engine sphinx is not installed.");
+          if (showWarning) {
+            await vscode.window.showWarningMessage("No preview. Preview engine sphinx is not installed.");
+          }
           return false;
         }
       }
@@ -80,31 +94,52 @@ export class Python {
     return true;
   }
 
-  public async checkLinter(resource: vscode.Uri): Promise<boolean> {
+  public async checkLinter(resource: vscode.Uri, showInformation: boolean = true, showWarning: boolean = true): Promise<boolean> {
+    if (Configuration.getLinterDisabled()) {
+      if (showWarning) {
+        vscode.window.showWarningMessage("No linting. Linter is disabled.");
+      }
+      return false;
+    }
     if (Configuration.getLinterName(resource) === "doc8") {
       const doc8 = Configuration.getLinterPath(resource);
-      if (!Configuration.getLinterDisabled() && !(await this.checkDoc8Install() || (doc8 != null && await fileExists(doc8)))) {
-        var choice = await vscode.window.showInformationMessage("Linter doc8 is not installed.", "Install", "Not now", "Do not show again");
-        if (choice === "Install") {
-          this.logger.log("Started to install doc8...");
-          await this.installDoc8();
-        }
-        else if (choice === "Do not show again") {
-          this.logger.log("Disabled linter.");
-          await Configuration.setLinterDisabled();
+      if (!(await this.checkDoc8Install() || (doc8 != null && await fileExists(doc8)))) {
+        if (showInformation) {
+          var choice = await vscode.window.showInformationMessage("Linter doc8 is not installed.", "Install", "Not now", "Do not show again");
+          if (choice === "Install") {
+            this.logger.log("Started to install doc8...");
+            await this.installDoc8();
+          } else if (choice === "Do not show again") {
+            this.logger.log("Disabled linter.");
+            await Configuration.setLinterDisabled();
+            vscode.window.showWarningMessage("No linting. Linter is now disabled.");
+            return false;
+          } else {
+            vscode.window.showWarningMessage("No linting. Linter doc8 is not installed.");
+            return false;
+          }
+        } else {
           return false;
         }
       }
     } else if (Configuration.getLinterName(resource) === "rstcheck") {
       const rstcheck = Configuration.getLinterPath(resource);
-      if (!Configuration.getLinterDisabled() && !(await this.checkRstCheckInstall() || (rstcheck != null && await fileExists(rstcheck)))) {
-        var choice = await vscode.window.showInformationMessage("Linter rstcheck is not installed.", "Install", "Not now", "Do not show again");
-        if (choice === "Install") {
-          this.logger.log("Started to install rstcheck...");
-          await this.installRstCheck();
-        } else if (choice === "Do not show again") {
-          this.logger.log("Disabled linter.");
-          await Configuration.setLinterDisabled();
+      if (!(await this.checkRstCheckInstall() || (rstcheck != null && await fileExists(rstcheck)))) {
+        if (showInformation) {
+          var choice = await vscode.window.showInformationMessage("Linter rstcheck is not installed.", "Install", "Not now", "Do not show again");
+          if (choice === "Install") {
+            this.logger.log("Started to install rstcheck...");
+            await this.installRstCheck();
+          } else if (choice === "Do not show again") {
+            this.logger.log("Disabled linter.");
+            await Configuration.setLinterDisabled();
+            vscode.window.showWarningMessage("No linting. Linter is now disabled.");
+            return false;
+          } else {
+            vscode.window.showWarningMessage("No linting. Linter rstcheck is not installed.");
+            return false;
+          }
+        } else {
           return false;
         }
       }

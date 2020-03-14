@@ -8,6 +8,7 @@ import { ThrottledDelayer } from './async';
 import { LineDecoder } from './lineDecoder';
 import { Logger } from '../../logger';
 import { Configuration } from './configuration';
+import { Python } from '../../python';
 
 enum RunTrigger {
 	onSave,
@@ -59,11 +60,11 @@ export class LintingProvider {
 	private delayers: { [key: string]: ThrottledDelayer<void> };
 	
 	
-	private linter:Linter;
-	private logger: Logger;
-	constructor(linter:Linter, logger: Logger) {
-		this.linter = linter;
-		this.logger = logger;
+	constructor(
+		private readonly linter: Linter, 
+		private readonly logger: Logger,
+		private readonly python: Python)
+	{
 		this.executableNotFound = false;
 	}
 
@@ -117,8 +118,12 @@ export class LintingProvider {
 		// Configuration has changed. Reevaluate all documents.
 	}
 
-	private triggerLint(textDocument: vscode.TextDocument): void {
+	private async triggerLint(textDocument: vscode.TextDocument): Promise<void> {
 		if (Configuration.getLinterDisabled()) {
+			return;
+		}
+
+		if (!(await this.python.checkLinter(textDocument.uri, false, false))) {
 			return;
 		}
 
