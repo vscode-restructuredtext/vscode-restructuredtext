@@ -53,14 +53,15 @@ export class RSTEngine {
       }
 
       this.logger.appendLine('Sphinx html directory: ' + output);
-      const quotedOutput = '"' + output + '"';
 
       let build = Configuration.getSphinxPath(uri);
       if (build == null) {
         const python = Configuration.getPythonPath(uri);
         if (python) {
-          build = python + ' -m sphinx';
+          build = '"' + python + '" -m sphinx';
         }
+      } else {
+        build = '"' + build + '"';
       }
 
       if (build == null) {
@@ -73,7 +74,7 @@ export class RSTEngine {
         build,
         '-b html',
         '.',
-        quotedOutput,
+        '"' + output + '"',
       ].join(' ');
 
       // Calculate full path to built html file.

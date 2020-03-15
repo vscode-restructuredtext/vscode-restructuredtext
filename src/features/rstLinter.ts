@@ -30,13 +30,15 @@ export default class RstLintingProvider implements Linter {
 		if (build == null) {
 			var python = Configuration.getPythonPath(resource);
 			if (python) {
-				build = python;
+				build = '"' + python + '"';
 				if (name === "doc8") {
 					module = module.concat(["-m", "doc8.main"]);
 				} else if (name === "rstcheck") {
 					module = module.concat(["-m", "rstcheck"]);
 				}
 			}
+		} else {
+			build = '"' + build + '"';
 		}
 
 		if (build == null) {
