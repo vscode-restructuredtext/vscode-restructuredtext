@@ -19,21 +19,30 @@ export class Python {
   }
 
   public async setup(resource: Uri): Promise<void> {
+    if (await this.checkPython(resource)) {
+      await this.checkPreviewEngine(resource, false);
+      await this.checkLinter(resource, true, false);
+      this.ready = true;
+    }
+  }
+
+  public async checkPython(resource: vscode.Uri, showInformation: boolean = true): Promise<boolean> {
     const path = Configuration.getPythonPath(resource);
     if (path) {
       this.pythonPath = `"${path}"`;
-      await this.getVersion();
-      await this.checkPreviewEngine(resource, false);
-      await this.checkLinter(resource, true, false);
-    } else {
-      this.logger.log("Cannot find Python.");
+      if (await this.getVersion()) {
+        return true;
+      }
+    }
+
+    this.logger.log("Cannot find Python.");
+    if (showInformation) {
       var choice = await vscode.window.showErrorMessage("Please review Python installation on this machine before using this extension.", "Learn more...");
       if (choice === "Learn more...") {
         vscode.commands.executeCommand('vscode.open', vscode.Uri.parse('https://docs.restructuredtext.net/articles/prerequisites.html#install-python-for-most-features'));
       }
     }
-
-    this.ready = true;
+    return false;
   }
 
   public async checkPreviewEngine(resource: vscode.Uri, showWarning: boolean = true): Promise<boolean> {
@@ -235,24 +244,26 @@ export class Python {
     }
   }
 
-  private async getVersion(): Promise<void> {
+  private async getVersion(): Promise<boolean> {
     if (this.version !== null) {
-      return;
+      return true;
     }
-    const version = await this.exec(
-      "-c",
-      '"import sys; print(sys.version_info[0])"'
-    );
-    switch (Number.parseInt(version)) {
-      case 2:
-        this.version = 2;
-        return;
-      case 3:
-        this.version = 3;
-        return;
-      default:
-        throw new Error("Could not get Python version");
-    }
+
+    try {
+      const version = await this.exec(
+        "-c",
+        '"import sys; print(sys.version_info[0])"'
+      );
+      switch (Number.parseInt(version)) {
+        case 2:
+          this.version = 2;
+          return true;
+        case 3:
+          this.version = 3;
+          return true;
+      }
+    } catch (e) { }
+    return false;
   }
 
   public exec(...args: string[]): Promise<string> {

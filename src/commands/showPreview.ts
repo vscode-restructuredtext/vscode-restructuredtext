@@ -38,7 +38,7 @@ async function showPreview(
 		return;
 	}
 
-	if (!await python.checkPreviewEngine(resource)) {
+	if (!await python.checkPython(resource) || !await python.checkPreviewEngine(resource)) {
 		// no engine to use.
 		return;
 	}

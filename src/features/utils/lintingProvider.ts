@@ -123,7 +123,7 @@ export class LintingProvider {
 			return;
 		}
 
-		if (!(await this.python.checkLinter(textDocument.uri, false, false))) {
+		if (!(await this.python.checkPython(textDocument.uri, false)) || !(await this.python.checkLinter(textDocument.uri, false, false))) {
 			return;
 		}
 
