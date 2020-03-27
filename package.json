@@ -2,7 +2,7 @@
   "name": "restructuredtext",
   "displayName": "%displayName%",
   "description": "%description%",
-  "version": "118.0.0",
+  "version": "122.0.0",
   "publisher": "lextudio",
   "engines": {
     "vscode": "^1.26.0"
@@ -422,16 +422,30 @@
           "description": "The full path of the sphinx-build executable. This is an absolute path, and you can use ${workspaceFolder} to represent the workspace root folder.",
           "scope": "resource"
         },
+        "restructuredtext.docutilsWriter": {
+          "type": "string",
+          "default": "html",
+          "description": "The docutils writer that will generate the output.",
+          "scope": "resource"
+        },
         "restructuredtext.linter.disabled": {
           "type": "boolean",
           "default": false,
           "description": "Flag to disable linter if critical issues happen.",
           "scope": "resource"
         },
+        "restructuredtext.linter.name": {
+          "type": "string",
+          "enum": [
+            "doc8",
+            "rstcheck"
+          ],
+          "default": "rstcheck"
+        },
         "restructuredtext.linter.executablePath": {
           "type": "string",
           "default": null,
-          "description": "Points to the doc8 executable.",
+          "description": "Points to the doc8 or rstcheck executable.",
           "scope": "resource"
         },
         "restructuredtext.linter.run": {
@@ -448,7 +462,7 @@
         "restructuredtext.linter.extraArgs": {
           "type": "array",
           "default": [],
-          "description": "Extra arguments to doc8.",
+          "description": "Extra arguments to doc8 or rst check.",
           "scope": "resource"
         },
         "restructuredtext.languageServer.disabled": {

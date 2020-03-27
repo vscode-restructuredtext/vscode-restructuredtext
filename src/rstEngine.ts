@@ -22,9 +22,11 @@ export class RSTEngine {
     this.logger.log(`Compiling file: ${fileName}`);
     if (confPyDirectory === '') {
       // docutil
+      const writer = Configuration.getDocutilsWriter(uri);
       return this.python.exec(
         '"' + path.join(__dirname, "..", "python", "preview.py") + '"',
-        '"' + fileName + '"'
+        '"' + fileName + '"',
+        '"' + writer + '"'
       );
     } else {
       // sphinx
@@ -51,14 +53,15 @@ export class RSTEngine {
       }
 
       this.logger.appendLine('Sphinx html directory: ' + output);
-      const quotedOutput = '"' + output + '"';
 
       let build = Configuration.getSphinxPath(uri);
       if (build == null) {
         const python = Configuration.getPythonPath(uri);
         if (python) {
-          build = python + ' -m sphinx';
+          build = '"' + python + '" -m sphinx';
         }
+      } else {
+        build = '"' + build + '"';
       }
 
       if (build == null) {
@@ -71,7 +74,7 @@ export class RSTEngine {
         build,
         '-b html',
         '.',
-        quotedOutput,
+        '"' + output + '"',
       ].join(' ');
 
       // Calculate full path to built html file.
