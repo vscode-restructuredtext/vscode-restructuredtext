@@ -20,7 +20,10 @@ import { underline } from './features/underline';
 import { Configuration } from './features/utils/configuration';
 import RstTransformerStatus from './features/utils/statusBar';
 import * as RstLanguageServer from './rstLsp/extension';
+<<<<<<< HEAD
 import { openSync } from 'fs';
+=======
+>>>>>>> 25996cdc5c28a2cf2271d492f1e65f8e33f226a6
 import { rstDocumentSymbolProvider } from './features/rstDocumentSymbolProvider';
 
 let extensionPath = "";
@@ -81,7 +84,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 	);
 
 	// Linter support
-	const linter = new RstLintingProvider(logger);
+	const linter = new RstLintingProvider(logger, python);
 	linter.activate(context.subscriptions);
 
 	const cspArbiter = new ExtensionContentSecurityPolicyArbiter(context.globalState, context.workspaceState);
@@ -96,9 +99,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
 	const commandManager = new CommandManager();
 	context.subscriptions.push(commandManager);
-	commandManager.register(new commands.ShowPreviewCommand(previewManager));
-	commandManager.register(new commands.ShowPreviewToSideCommand(previewManager));
-	commandManager.register(new commands.ShowLockedPreviewToSideCommand(previewManager));
+	commandManager.register(new commands.ShowPreviewCommand(previewManager, python));
+	commandManager.register(new commands.ShowPreviewToSideCommand(previewManager, python));
+	commandManager.register(new commands.ShowLockedPreviewToSideCommand(previewManager, python));
 	commandManager.register(new commands.ShowSourceCommand(previewManager));
 	commandManager.register(new commands.RefreshPreviewCommand(previewManager));
 	commandManager.register(new commands.MoveCursorToPositionCommand());
