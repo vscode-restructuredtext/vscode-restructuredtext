@@ -4,7 +4,6 @@ import { Logger } from "./logger";
 import { Configuration } from './features/utils/configuration';
 import { fileExists } from './common';
 import { Uri } from 'vscode';
-import { appendFileSync } from 'fs';
 
 export class Python {
   private version: 2 | 3 | null = null;

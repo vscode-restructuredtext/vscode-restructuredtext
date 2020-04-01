@@ -119,13 +119,6 @@ export class LintingProvider {
 	}
 
 	private async triggerLint(textDocument: vscode.TextDocument): Promise<void> {
-		if (Configuration.getLinterDisabled()) {
-			return;
-		}
-
-		if (!(await this.python.checkPython(textDocument.uri, false)) || !(await this.python.checkLinter(textDocument.uri, false, false))) {
-			return;
-		}
 
 		const currentFolder = Configuration.GetRootPath(textDocument.uri);
 		if (this.linterConfiguration === null || (currentFolder && this.linterConfiguration.rootPath !== currentFolder)) {
@@ -148,7 +141,15 @@ export class LintingProvider {
 		delayer.trigger(() => this.doLint(textDocument) );
 	}
 
-	private doLint(textDocument: vscode.TextDocument): Promise<void> {
+	private async doLint(textDocument: vscode.TextDocument): Promise<void> {
+		if (Configuration.getLinterDisabled()) {
+			return;
+		}
+
+		if (!(await this.python.checkPython(textDocument.uri, false)) || !(await this.python.checkLinter(textDocument.uri, false, false))) {
+			return;
+		}
+
 		return new Promise<void>((resolve, reject) => {
 			let executable = this.linterConfiguration.executable;
 			let decoder = new LineDecoder();
