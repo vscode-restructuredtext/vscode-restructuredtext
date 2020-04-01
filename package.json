@@ -2,7 +2,7 @@
   "name": "restructuredtext",
   "displayName": "%displayName%",
   "description": "%description%",
-  "version": "122.0.0",
+  "version": "123.0.0",
   "publisher": "lextudio",
   "engines": {
     "vscode": "^1.26.0"
@@ -13,7 +13,7 @@
     "https-proxy-agent": "^2.2.4",
     "lodash.throttle": "^4.1.1",
     "meaw": "^4.1.0",
-    "mkdirp": "^0.5.1",
+    "mkdirp": "^1.0.3",
     "tmp": "0.0.33",
     "vscode-languageclient": "^3.5.0",
     "vscode-nls": "^4.0.0",
@@ -26,7 +26,7 @@
     "@types/node": "^10.11.3",
     "mocha": "^5.2.0",
     "ts-loader": "^5.2.1",
-    "ts-node": "^3.3.0",
+    "ts-node": "^8.8.1",
     "tslib": "^1.9.3",
     "typescript": "^3.1.1",
     "vscode": "^1.1.33",
