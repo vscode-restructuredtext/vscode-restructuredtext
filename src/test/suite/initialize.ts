@@ -3,7 +3,7 @@ import * as vscode from "vscode";
 import * as assert from "assert";
 import * as fs from "fs";
 
-export const samplePath = path.join(__dirname, "..", "..", "test-resources");
+export const samplePath = path.join(__dirname, "..", "..", "..", "test-resources");
 
 async function checkValidFile(file: string): Promise<boolean> {
   return new Promise<boolean>((resolve, reject) => {

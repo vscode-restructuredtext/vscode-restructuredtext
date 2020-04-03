@@ -5,10 +5,7 @@
 
 // The module 'assert' provides assertion methods from node
 import * as assert from "assert";
-
-// You can import and use all API from the 'vscode' module
-// as well as import your extension to test it
-import { RSTEngine } from "../rstEngine";
+import { RSTEngine } from "../../rstEngine";
 import * as path from "path";
 import * as fs from "fs";
 import {
@@ -18,18 +15,19 @@ import {
   samplePath,
   wait
 } from "./initialize";
-import { Python } from "../python";
-import { Logger } from "../logger";
+import { Python } from "../../python";
+import { Logger } from "../../logger";
 
 // Defines a Mocha test suite to group tests of similar kind together
 let engine: RSTEngine;
 let python: Python;
 let logger: Logger = {
   log: () => void 0,
+  appendLine: () => void 0,
   updateConfiguration: () => void 0
 } as any;
 
-suite("Extension Tests", function() {
+suite("Preview Tests", function() {
   suiteSetup(async function() {
     this.timeout(30000);
     try {
