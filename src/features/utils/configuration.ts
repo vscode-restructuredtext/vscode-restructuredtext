@@ -45,7 +45,7 @@ export class Configuration {
     }
 
     public static getPythonPath(resource: Uri = null): string {
-        const primary = Configuration.loadSetting('pythonPath', null, resource, 'python');
+        const primary = Configuration.loadSetting('pythonPath', null, resource, 'python3');
         // assume pythonPath is relative to workspace root.
         if (primary) {
             const workspaceRoot = Configuration.GetRootPath(resource);
