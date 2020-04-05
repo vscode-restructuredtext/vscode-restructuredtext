@@ -323,6 +323,14 @@
           "description": "%restructuredtext.styles.dec%",
           "scope": "resource"
         },
+        "restructuredtext.preview.name": {
+          "type": "string",
+          "enum": [
+            "sphinx",
+            "docutil"
+          ],
+          "default": "sphinx"
+        },
         "restructuredtext.preview.sphinx.disabled": {
           "type": "boolean",
           "default": false,

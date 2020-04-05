@@ -1,4 +1,4 @@
-import { TextDocument, OutputChannel, Uri } from "vscode";
+import { TextDocument, Uri } from "vscode";
 import * as path from "path";
 import * as fs from 'fs';
 import { Python } from "./python";
@@ -20,7 +20,11 @@ export class RSTEngine {
 
   public async compile(fileName: string, uri: Uri, confPyDirectory: string, fixLinks: boolean): Promise<string> {
     this.logger.log(`Compiling file: ${fileName}`);
-    if (confPyDirectory === '') {
+    if (confPyDirectory === '' || Configuration.getPreviewName() === 'docutil') {
+      if (Configuration.getPreviewName() === 'docutil') {
+        this.logger.appendLine('Forced to use docutil due to setting "preview.name".')
+      }
+
       // docutil
       const writer = Configuration.getDocutilsWriter(uri);
       return this.python.exec(
