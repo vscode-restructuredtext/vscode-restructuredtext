@@ -437,6 +437,12 @@
           "description": "The docutils writer that will generate the output.",
           "scope": "resource"
         },
+        "restructuredtext.docutilsWriterPart": {
+          "type": "string",
+          "default": "html_body",
+          "description": "The output part of the docutils writer.",
+          "scope": "resource"
+        },
         "restructuredtext.linter.disabled": {
           "type": "boolean",
           "default": false,

@@ -38,7 +38,8 @@ def main(argv=None):
         settings_overrides=overrides,
     )
 
-    html_document = parts['html_body']
+    part_name = argv[3] if argv is not None else sys.argv[3]
+    html_document = parts[part_name]
     html_document = html_document.replace('\ufeff', '')
 
     # the REAL print function in python 2, now... see top of file
