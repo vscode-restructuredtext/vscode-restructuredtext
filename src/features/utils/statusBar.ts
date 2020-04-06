@@ -56,7 +56,7 @@ export default class RstTransformerStatus {
             let resource = editor.document.uri;
             const newValue = await Configuration.setConfPath(undefined, resource, false);
             if (newValue !== undefined) {
-                this._logger.appendLine("reset failed.");
+                this._logger.log("[preview] reset failed.");
             }
             this.refreshConfig(resource);
             this.setLabel();

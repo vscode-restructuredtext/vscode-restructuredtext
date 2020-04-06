@@ -283,7 +283,7 @@ export class Python {
             this.logger.log(errorMessage);
             reject(errorMessage);
           } else {
-            this.logger.log("Successful exec", stdout.toString());
+            this.logger.log("Successful exec");
             resolve(stdout.toString());
           }
         }

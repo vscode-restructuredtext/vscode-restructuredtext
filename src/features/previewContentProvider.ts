@@ -62,8 +62,6 @@ export class RSTContentProvider {
 			disableSecurityWarnings: this.cspArbiter.shouldDisableSecurityWarnings()
 		};
 
-		this.logger.log('provideTextDocumentContent', initialData);
-
 		const body = await this.engine.preview(rstDocument);
 		const useSphinx = body.search('</head>') > -1;
 		// Content Security Policy
@@ -107,9 +105,9 @@ export class RSTContentProvider {
 			    <div class="code-line" data-line="${rstDocument.lineCount}"></div>
 			</body>
 			`);
-        	this.logger.log("Document line count: " + rstDocument.lineCount + "; element count: " + elementCount);
+        	this.logger.log("[preview] Document line count: " + rstDocument.lineCount + "; element count: " + elementCount);
 			if (rstDocument.lineCount < elementCount) {
-				this.logger.log("WARN: documentl line count is less than element count.");
+				this.logger.log("[preview] WARN: documentl line count is less than element count.");
 			}
 			return newAll;
 		} else {		

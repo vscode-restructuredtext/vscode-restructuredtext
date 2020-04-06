@@ -19,10 +19,10 @@ export class RSTEngine {
   }
 
   public async compile(fileName: string, uri: Uri, confPyDirectory: string, fixLinks: boolean): Promise<string> {
-    this.logger.log(`Compiling file: ${fileName}`);
+    this.logger.log(`[preview] Compiling file: ${fileName}`);
     if (confPyDirectory === '' || Configuration.getPreviewName() === 'docutil') {
       if (Configuration.getPreviewName() === 'docutil') {
-        this.logger.appendLine('Forced to use docutil due to setting "preview.name".')
+        this.logger.log('[preview] Forced to use docutil due to setting "preview.name".')
       }
 
       // docutil
@@ -37,15 +37,15 @@ export class RSTEngine {
     } else {
       // sphinx
       let input = confPyDirectory;
-      this.logger.appendLine('Sphinx conf.py directory: ' + input);
+      this.logger.log('[preview] Sphinx conf.py directory: ' + input);
 
       // Make sure the conf.py file exists
       let confFile = path.join(input, 'conf.py');
       if (!fs.existsSync(confFile)) {
         await this.status.reset();
-        this.logger.appendLine('conf.py not found. Refresh the settings.');
+        this.logger.log('[preview] conf.py not found. Refresh the settings.');
         input = confPyDirectory;
-        this.logger.appendLine('Sphinx conf.py directory: ' + input);
+        this.logger.log('[preview] Sphinx conf.py directory: ' + input);
         confFile = path.join(input, 'conf.py');
       }
 
@@ -58,7 +58,7 @@ export class RSTEngine {
         output = out;
       }
 
-      this.logger.appendLine('Sphinx html directory: ' + output);
+      this.logger.log('[preview] Sphinx html directory: ' + output);
 
       let build = Configuration.getSphinxPath(uri);
       if (build == null) {
@@ -93,9 +93,9 @@ export class RSTEngine {
   }
 
   private previewPage(htmlPath: string, cmd: string, input: string, options: any, fixLinks: boolean): Promise<string> {
-    this.logger.appendLine('Compiler: ' + cmd);
-    this.logger.appendLine('Working directory: ' + input);
-    this.logger.appendLine('HTML file: ' + htmlPath);
+    this.logger.log('[preview] Compiler: ' + cmd);
+    this.logger.log('[preview] Working directory: ' + input);
+    this.logger.log('[preview] HTML file: ' + htmlPath);
 
     // Build and display file.
     return new Promise<string>((resolve, reject) => {
@@ -118,7 +118,7 @@ export class RSTEngine {
             '',
             stderr.toString(),
           ].join('\n');
-          resolve(this.showError(description, errorMessage));
+          resolve(this.showHelp(description, errorMessage));
         }
 
         if (process.platform === 'win32' && stderr) {
@@ -134,7 +134,7 @@ export class RSTEngine {
                       <li>A wrong "conf.py" file is selected.</li>\
                       <li>DocUtils is not installed properly (if preview uses docutils).</li>\
                       </ul>';
-            resolve(this.showError(description, errText));
+            resolve(this.showHelp(description, errText));
           }
         }
 
@@ -158,7 +158,7 @@ export class RSTEngine {
               err.message,
               err.stack,
             ].join('\n');
-            resolve(this.showError(description, errorMessage));
+            resolve(this.showHelp(description, errorMessage));
           }
         });
       });
@@ -203,12 +203,6 @@ export class RSTEngine {
     </section>\
   </body>';
     return help;
-  }
-
-  private showError(description: string, errorMessage: string): string {
-    this.logger.appendLine('Description: ' + description);
-    this.logger.appendLine('Error: ' + errorMessage);
-    return this.showHelp(description, errorMessage);
   }
 
   private relativeDocumentationPath(whole: string, input: string): string {

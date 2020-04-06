@@ -298,7 +298,6 @@ export class RSTPreview {
 		}
 
 		if (typeof topLine === 'number') {
-			this._logger.log('updateForView', { rstFile: resource });
 			this.line = topLine;
 			this.postMessage({
 				type: 'updateView',

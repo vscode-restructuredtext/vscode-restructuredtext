@@ -168,7 +168,7 @@ export class LintingProvider {
 			args = args.concat(this.linterConfiguration.extraArgs);
 			
 			let childProcess = cp.spawn(executable, args, options);
-			this.logger.log(`Execute linting: ${executable} ${args.join(' ')} in ${rootPath}.`)
+			this.logger.log(`[linter] Execute: ${executable} ${args.join(' ')} in ${rootPath}.`)
 			childProcess.on('error', (error: Error) => {
 				if (this.executableNotFound) {
 					resolve();
@@ -180,7 +180,7 @@ export class LintingProvider {
 				} else {
 					message = error.message ? error.message : `Failed to run executable using path: ${executable}. Reason is unknown.`;
 				}
-				this.logger.log(message);
+				this.logger.log(`[linter] ${message}`);
 				vscode.window.showInformationMessage(message);
 				this.executableNotFound = true;
 				resolve();
