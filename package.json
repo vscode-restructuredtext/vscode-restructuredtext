@@ -2,7 +2,7 @@
   "name": "restructuredtext",
   "displayName": "%displayName%",
   "description": "%description%",
-  "version": "119.0.0",
+  "version": "123.0.0",
   "publisher": "lextudio",
   "engines": {
     "vscode": "^1.26.0"
@@ -13,7 +13,7 @@
     "https-proxy-agent": "^2.2.4",
     "lodash.throttle": "^4.1.1",
     "meaw": "^4.1.0",
-    "mkdirp": "^0.5.1",
+    "mkdirp": "^1.0.3",
     "tmp": "0.0.33",
     "vscode-languageclient": "^3.5.0",
     "vscode-nls": "^4.0.0",
@@ -24,12 +24,13 @@
     "@types/lodash.throttle": "^4.1.4",
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.11.3",
+    "@types/vscode": "^1.26.0",
     "mocha": "^5.2.0",
     "ts-loader": "^5.2.1",
-    "ts-node": "^3.3.0",
+    "ts-node": "^8.8.1",
     "tslib": "^1.9.3",
     "typescript": "^3.1.1",
-    "vscode": "^1.1.33",
+    "vscode-test": "^1.1.33",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.1.2"
   },
@@ -322,6 +323,14 @@
           "description": "%restructuredtext.styles.dec%",
           "scope": "resource"
         },
+        "restructuredtext.preview.name": {
+          "type": "string",
+          "enum": [
+            "sphinx",
+            "docutil"
+          ],
+          "default": "sphinx"
+        },
         "restructuredtext.preview.sphinx.disabled": {
           "type": "boolean",
           "default": false,
@@ -440,10 +449,18 @@
           "description": "Flag to disable linter if critical issues happen.",
           "scope": "resource"
         },
+        "restructuredtext.linter.name": {
+          "type": "string",
+          "enum": [
+            "doc8",
+            "rstcheck"
+          ],
+          "default": "rstcheck"
+        },
         "restructuredtext.linter.executablePath": {
           "type": "string",
           "default": null,
-          "description": "Points to the doc8 executable.",
+          "description": "Points to the doc8 or rstcheck executable.",
           "scope": "resource"
         },
         "restructuredtext.linter.run": {
@@ -460,7 +477,7 @@
         "restructuredtext.linter.extraArgs": {
           "type": "array",
           "default": [],
-          "description": "Extra arguments to doc8.",
+          "description": "Extra arguments to doc8 or rst check.",
           "scope": "resource"
         },
         "restructuredtext.languageServer.disabled": {
@@ -516,10 +533,7 @@
     "build-ext": "npx tsc -p ./tsconfig.json",
     "build-preview": "./node_modules/.bin/webpack-cli",
     "watch": "npx tsc -watch -p ./tsconfig.json",
-    "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "npm run compile && node ./node_modules/vscode/bin/test",
-    "preversion": "npm run compile",
-    "version": "./node_modules/.bin/changes",
-    "postversion": "git push --follow-tags"
+    "pretest": "npm run compile",
+    "test": "node ./out/test/runTest.js"
   }
 }

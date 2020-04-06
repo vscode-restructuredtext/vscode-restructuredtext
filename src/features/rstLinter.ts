@@ -4,16 +4,20 @@ import { Disposable, Diagnostic, DiagnosticSeverity, Range, Uri } from 'vscode';
 import { LintingProvider, LinterConfiguration, Linter } from './utils/lintingProvider';
 import { Configuration } from './utils/configuration';
 import { Logger } from '../logger';
+import { Python } from '../python';
 
 export default class RstLintingProvider implements Linter {
 
 	public languageId = 'restructuredtext';
 
-	public constructor(private readonly logger: Logger) {
+	public constructor(
+		private readonly logger: Logger,
+		private readonly python: Python)
+    {
 	}
 
 	public activate(subscriptions: Disposable[]) {
-		let provider = new LintingProvider(this, this.logger);
+		let provider = new LintingProvider(this, this.logger, this.python);
 		provider.activate(subscriptions)
 	}
 
@@ -22,16 +26,23 @@ export default class RstLintingProvider implements Linter {
 		var module: string[] = [];
 
 		var build = Configuration.getLinterPath(resource);
+		var name = Configuration.getLinterName(resource);
 		if (build == null) {
 			var python = Configuration.getPythonPath(resource);
 			if (python) {
-				build = python;
-				module = module.concat(["-m", "doc8.main"]);
+				build = '"' + python + '"';
+				if (name === "doc8") {
+					module = module.concat(["-m", "doc8.main"]);
+				} else if (name === "rstcheck") {
+					module = module.concat(["-m", "rstcheck"]);
+				}
 			}
+		} else {
+			build = '"' + build + '"';
 		}
 
 		if (build == null) {
-			build = "doc8";
+			build = name;
 		}
 
 		return {

@@ -1,4 +1,4 @@
-import { TextDocument, OutputChannel, Uri } from "vscode";
+import { TextDocument, Uri } from "vscode";
 import * as path from "path";
 import * as fs from 'fs';
 import { Python } from "./python";
@@ -20,12 +20,16 @@ export class RSTEngine {
 
   public async compile(fileName: string, uri: Uri, confPyDirectory: string, fixLinks: boolean): Promise<string> {
     this.logger.log(`Compiling file: ${fileName}`);
-    if (confPyDirectory === '') {
+    if (confPyDirectory === '' || Configuration.getPreviewName() === 'docutil') {
+      if (Configuration.getPreviewName() === 'docutil') {
+        this.logger.appendLine('Forced to use docutil due to setting "preview.name".')
+      }
+
       // docutil
       const writer = Configuration.getDocutilsWriter(uri);
       const writerPart = Configuration.getDocutilsWriterPart(uri);
       return this.python.exec(
-        '"' + path.join(__dirname, "..", "python", "preview.py") + '"',
+        '"' + path.join(__dirname, "..", "python-scripts", "preview.py") + '"',
         '"' + fileName + '"',
         '"' + writer + '"',
         '"' + writerPart + '"'
@@ -55,14 +59,15 @@ export class RSTEngine {
       }
 
       this.logger.appendLine('Sphinx html directory: ' + output);
-      const quotedOutput = '"' + output + '"';
 
       let build = Configuration.getSphinxPath(uri);
       if (build == null) {
         const python = Configuration.getPythonPath(uri);
         if (python) {
-          build = python + ' -m sphinx';
+          build = '"' + python + '" -m sphinx';
         }
+      } else {
+        build = '"' + build + '"';
       }
 
       if (build == null) {
@@ -75,7 +80,7 @@ export class RSTEngine {
         build,
         '-b html',
         '.',
-        quotedOutput,
+        '"' + output + '"',
       ].join(' ');
 
       // Calculate full path to built html file.

@@ -32,10 +32,18 @@ export class Configuration {
         return Configuration.loadSetting('builtDocumentationPath', null, resource);
     }
 
+    public static getPreviewName(resource: Uri = null): string {
+        return Configuration.loadSetting("preview.name", "sphinx", resource);
+    }
+
+    public static getLinterName(resource: Uri = null): string {
+        return Configuration.loadSetting("linter.name", "rstcheck", resource);
+    }
+
     public static getLinterPath(resource: Uri = null): string {
         return Configuration.loadSetting('linter.executablePath', null, resource);
     }
-
+    
     public static getExtraArgs(resource: Uri = null): string[] {
         return Configuration.loadAnySetting<string[]>('linter.extraArgs', null, resource);
     }
@@ -45,7 +53,8 @@ export class Configuration {
     }
 
     public static getPythonPath(resource: Uri = null): string {
-        const primary = Configuration.loadSetting('pythonPath', null, resource, 'python');
+        // IMPORTANT: python3 does not work, so the default comes from Python extension.
+        const primary = Configuration.loadSetting('pythonPath', 'python3', resource, 'python');
         // assume pythonPath is relative to workspace root.
         if (primary) {
             const workspaceRoot = Configuration.GetRootPath(resource);

@@ -1,10 +1,8 @@
 import * as assert from "assert";
-
+import * as underline from "../../features/underline";
 import * as vscode from "vscode";
-import * as underline from "../src/features/underline";
 
-
-suite("reStructuredText tests", () => {
+suite("Underline Tests", () => {
     test("editor underlines title", done => {
         let textEditor: vscode.TextEditor;
         let textDocument: vscode.TextDocument;
