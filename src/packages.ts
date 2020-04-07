@@ -292,13 +292,9 @@ function installPackage(pkg: Package, logger: Logger, status?: Status): Promise<
 
                 if (entry.fileName.endsWith('/')) {
                     // Directory - create it
-                    mkdirp(absoluteEntryPath, { mode: 0o775 }, err => {
-                        if (err) {
-                            return reject(new PackageError('Error creating directory for zip directory entry:' + err.code || '', pkg, err));
-                        }
-
-                        zipFile.readEntry();
-                    });
+                    mkdirp(absoluteEntryPath, { mode: 0o775 })
+                        .catch(err => reject(new PackageError('Error creating directory for zip directory entry:' + err.code || '', pkg, err)))
+                        .then(() => zipFile.readEntry());
                 }
                 else {
                     // File - extract it
@@ -307,19 +303,18 @@ function installPackage(pkg: Package, logger: Logger, status?: Status): Promise<
                             return reject(new PackageError('Error reading zip stream', pkg, err));
                         }
 
-                        mkdirp(path.dirname(absoluteEntryPath), { mode: 0o775 }, err => {
-                            if (err) {
-                                return reject(new PackageError('Error creating directory for zip file entry', pkg, err));
-                            }
+                        mkdirp(path.dirname(absoluteEntryPath), { mode: 0o775 })
+                            .catch(err => reject(new PackageError('Error creating directory for zip file entry', pkg, err)))
+                            .then(() => {
 
-                            // Make sure executable files have correct permissions when extracted
-                            let fileMode = pkg.binaries && pkg.binaries.indexOf(absoluteEntryPath) !== -1
-                                ? 0o755
-                                : 0o664;
+                                // Make sure executable files have correct permissions when extracted
+                                let fileMode = pkg.binaries && pkg.binaries.indexOf(absoluteEntryPath) !== -1
+                                    ? 0o755
+                                    : 0o664;
 
-                            readStream.pipe(fs.createWriteStream(absoluteEntryPath, { mode: fileMode }));
-                            readStream.on('end', () => zipFile.readEntry());
-                        });
+                                readStream.pipe(fs.createWriteStream(absoluteEntryPath, { mode: fileMode }));
+                                readStream.on('end', () => zipFile.readEntry());
+                            });
                     });
                 }
             });
