@@ -1,7 +1,7 @@
-import { NodeStringDecoder, StringDecoder } from 'string_decoder';
+import { StringDecoder } from 'string_decoder';
 
 export class LineDecoder {
-	private stringDecoder: NodeStringDecoder;
+	private stringDecoder: StringDecoder;
 	private remaining: string;
 	private lines: string[]
 
