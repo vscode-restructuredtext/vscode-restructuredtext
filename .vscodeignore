@@ -18,3 +18,4 @@ install.Lock
 appveyor.yml
 build.bat
 .travis.yml
+*.ps1
