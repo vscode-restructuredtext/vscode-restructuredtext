@@ -2,7 +2,7 @@
   "name": "restructuredtext",
   "displayName": "%displayName%",
   "description": "%description%",
-  "version": "125.0.0",
+  "version": "126.0.0",
   "publisher": "lextudio",
   "engines": {
     "vscode": "^1.26.0"
@@ -37,8 +37,8 @@
   "runtimeDependencies": [
     {
       "description": "reStructuredText Language Server for Windows (x86)",
-      "url": "https://github.com/lextm/restructuredtext-antlr/releases/download/v0.9/win32_x86.zip",
-      "fallbackUrl": "https://github.com/lextm/restructuredtext-antlr/releases/download/v0.9/win32_x86.zip",
+      "url": "https://github.com/lextm/restructuredtext-antlr/releases/download/v1.0/win32_x86.zip",
+      "fallbackUrl": "https://github.com/lextm/restructuredtext-antlr/releases/download/v1.0/win32_x86.zip",
       "installPath": ".rst",
       "platforms": [
         "win32"
@@ -50,8 +50,8 @@
     },
     {
       "description": "reStructuredText Language Server for Windows (x64)",
-      "url": "https://github.com/lextm/restructuredtext-antlr/releases/download/v0.9/win32_x64.zip",
-      "fallbackUrl": "https://github.com/lextm/restructuredtext-antlr/releases/download/v0.9/win32_x64.zip",
+      "url": "https://github.com/lextm/restructuredtext-antlr/releases/download/v1.0/win32_x64.zip",
+      "fallbackUrl": "https://github.com/lextm/restructuredtext-antlr/releases/download/v1.0/win32_x64.zip",
       "installPath": ".rst",
       "platforms": [
         "win32"
@@ -63,8 +63,8 @@
     },
     {
       "description": "reStructuredText Language Server for macOS (x64)",
-      "url": "https://github.com/lextm/restructuredtext-antlr/releases/download/v0.9/darwin_x64.zip",
-      "fallbackUrl": "https://github.com/lextm/restructuredtext-antlr/releases/download/v0.9/darwin_x64.zip",
+      "url": "https://github.com/lextm/restructuredtext-antlr/releases/download/v1.0/darwin_x64.zip",
+      "fallbackUrl": "https://github.com/lextm/restructuredtext-antlr/releases/download/v1.0/darwin_x64.zip",
       "installPath": ".rst",
       "platforms": [
         "darwin"
@@ -76,8 +76,8 @@
     },
     {
       "description": "reStructuredText Language Server for Linux (x64)",
-      "url": "https://github.com/lextm/restructuredtext-antlr/releases/download/v0.9/linux_x64.zip",
-      "fallbackUrl": "https://github.com/lextm/restructuredtext-antlr/releases/download/v0.9/linux_x64.zip",
+      "url": "https://github.com/lextm/restructuredtext-antlr/releases/download/v1.0/linux_x64.zip",
+      "fallbackUrl": "https://github.com/lextm/restructuredtext-antlr/releases/download/v1.0/linux_x64.zip",
       "installPath": ".rst",
       "platforms": [
         "linux"
