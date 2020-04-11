@@ -395,12 +395,6 @@
           "description": "%restructuredtext.trace.desc%",
           "scope": "window"
         },
-        "restructuredtext.workspaceRoot": {
-          "type": "string",
-          "default": "${workspaceRoot}",
-          "description": "Write-only. Don't modify the value. This is a reserved setting for IntelliSense.",
-          "scope": "resource"
-        },
         "restructuredtext.builtDocumentationPath": {
           "type": "string",
           "default": null,

@@ -108,13 +108,6 @@ export class Configuration {
         await Configuration.saveAnySetting('preview.docutil.disabled', true, resource);
     }
 
-    public static async setRoot(resource: Uri = null) {
-        const old = this.loadSetting('workspaceRoot', null, resource, false);
-        if (old.indexOf('${workspaceRoot}') > -1) {
-            await this.saveSetting('workspaceRoot', this.expandMacro(old, resource), resource, false);
-        }
-    }
-
     private static loadAnySetting<T>(
         configSection: string, defaultValue: T, resource: Uri, header: string = 'restructuredtext',
     ): T {

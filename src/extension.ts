@@ -51,7 +51,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 	const disableLsp = !platformIsSupported(logger) || Configuration.getLanguageServerDisabled();
 	// *
 	if (!disableLsp) {
-		await Configuration.setRoot();
 		await ensureRuntimeDependencies(extension, logger);
 	}
 	// */
