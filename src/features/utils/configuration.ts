@@ -54,7 +54,7 @@ export class Configuration {
 
     public static getPythonPath(resource: Uri = null): string {
         // IMPORTANT: python3 does not work, so the default comes from Python extension.
-        const primary = Configuration.loadSetting('pythonPath', 'python3', resource, 'python');
+        const primary = Configuration.loadSetting('pythonPath', 'python3', resource, true, 'python');
         // assume pythonPath is relative to workspace root.
         if (primary) {
             const workspaceRoot = Configuration.GetRootPath(resource);
@@ -109,9 +109,9 @@ export class Configuration {
     }
 
     public static async setRoot(resource: Uri = null) {
-        const old = this.loadSetting('workspaceRoot', null, resource);
+        const old = this.loadSetting('workspaceRoot', null, resource, false);
         if (old.indexOf('${workspaceRoot}') > -1) {
-            await this.saveSetting('workspaceRoot', this.expandMacro(old, resource), resource);
+            await this.saveSetting('workspaceRoot', this.expandMacro(old, resource), resource, false);
         }
     }
 
@@ -132,8 +132,8 @@ export class Configuration {
         configSection: string,
         defaultValue: string,
         resource: Uri,
-        header: string = 'restructuredtext',
         expand: boolean = true,
+        header: string = 'restructuredtext'
     ): string {
         const result = this.loadAnySetting<string>(configSection, defaultValue, resource, header);
         if (expand && result != null) {
@@ -179,7 +179,7 @@ export class Configuration {
     }
 
     public static expandMacro(input: string, resource: Uri): string {
-        if (resource == null || input.indexOf('${') === -1) {
+        if (input.indexOf('${') === -1) {
             return input;
         }
 
@@ -215,6 +215,9 @@ export class Configuration {
         if (workspace.workspaceFolders.length === 1) {
             root = workspace.workspaceFolders[0];
         } else {
+            if (resource == null) {
+                return undefined;
+            }
             root = workspace.getWorkspaceFolder(resource);
         }
 
