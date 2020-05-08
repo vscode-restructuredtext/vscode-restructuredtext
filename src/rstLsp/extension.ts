@@ -15,9 +15,9 @@ export function activate(context: vscode.ExtensionContext, logger: Logger, disab
 
     // Defines the search path of your language server DLL. (.NET Core)
     const languageServerPaths = [
+        "../restructuredtext-antlr/Server/bin/Debug/netcoreapp3.1/Server.dll",
         ".rst/Server.exe",
-        ".rst/Server",
-        "../restructuredtext-antlr/Server/bin/Debug/netcoreapp2.0/Server.dll"
+        ".rst/Server"
     ]
 
     var fs = require('fs');
