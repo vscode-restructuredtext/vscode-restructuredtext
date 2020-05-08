@@ -87,7 +87,9 @@ export class RSTEngine {
       let whole = uri.fsPath;
       const ext = whole.lastIndexOf('.');
       whole = whole.substring(0, ext) + '.html';
-      let htmlPath = path.join(output, this.relativeDocumentationPath(whole, input));
+      const source = path.dirname(whole);
+      const relative = path.relative(source, output);
+      let htmlPath = path.join(source, relative, path.basename(whole));
       return this.previewPage(htmlPath, cmd, input, options, fixLinks);
     }
   }
@@ -203,10 +205,6 @@ export class RSTEngine {
     </section>\
   </body>';
     return help;
-  }
-
-  private relativeDocumentationPath(whole: string, input: string): string {
-    return whole.substring(input.length);
   }
 
   public async preview(doc: TextDocument): Promise<string> {
