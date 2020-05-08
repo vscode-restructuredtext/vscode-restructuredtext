@@ -88,8 +88,9 @@ export class RSTEngine {
       const ext = whole.lastIndexOf('.');
       whole = whole.substring(0, ext) + '.html';
       const source = path.dirname(whole);
-      const relative = path.relative(source, output);
-      let htmlPath = path.join(source, relative, path.basename(whole));
+      const sourceRelative = path.relative(confPyDirectory, source);
+      const outputRelative = path.relative(confPyDirectory, output);
+      let htmlPath = path.join(confPyDirectory, outputRelative, sourceRelative, path.basename(whole));
       return this.previewPage(htmlPath, cmd, input, options, fixLinks);
     }
   }
