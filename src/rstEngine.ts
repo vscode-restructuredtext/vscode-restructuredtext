@@ -1,4 +1,4 @@
-import { TextDocument, Uri } from "vscode";
+import { TextDocument, Uri, Webview } from "vscode";
 import * as path from "path";
 import * as fs from 'fs';
 import { Python } from "./python";
@@ -18,7 +18,7 @@ export class RSTEngine {
     return `<html><body>${error}</body></html>`;
   }
 
-  public async compile(fileName: string, uri: Uri, confPyDirectory: string, fixLinks: boolean): Promise<string> {
+  public async compile(fileName: string, uri: Uri, confPyDirectory: string, fixLinks: boolean, webview: Webview): Promise<string> {
     this.logger.log(`[preview] Compiling file: ${fileName}`);
     if (confPyDirectory === '' || Configuration.getPreviewName() === 'docutil') {
       if (Configuration.getPreviewName() === 'docutil') {
@@ -91,11 +91,11 @@ export class RSTEngine {
       const sourceRelative = path.relative(confPyDirectory, source);
       const outputRelative = path.relative(confPyDirectory, output);
       let htmlPath = path.join(confPyDirectory, outputRelative, sourceRelative, path.basename(whole));
-      return this.previewPage(htmlPath, cmd, input, options, fixLinks);
+      return this.previewPage(htmlPath, cmd, input, options, fixLinks, webview);
     }
   }
 
-  private previewPage(htmlPath: string, cmd: string, input: string, options: any, fixLinks: boolean): Promise<string> {
+  private previewPage(htmlPath: string, cmd: string, input: string, options: any, fixLinks: boolean, webView: Webview): Promise<string> {
     this.logger.log('[preview] Compiler: ' + cmd);
     this.logger.log('[preview] Working directory: ' + input);
     this.logger.log('[preview] HTML file: ' + htmlPath);
@@ -144,7 +144,7 @@ export class RSTEngine {
         fs.readFile(htmlPath, 'utf8', (err, data) => {
           if (err === null) {
             if (fixLinks) {
-              resolve(this.fixLinks(data, htmlPath));
+              resolve(this.fixLinks(data, htmlPath, webView));
             } else {
               resolve(data);
             }
@@ -168,7 +168,7 @@ export class RSTEngine {
     });
   }
 
-  private fixLinks(document: string, documentPath: string): string {
+  private fixLinks(document: string, documentPath: string, webView: Webview): string {
     return document.replace(
         new RegExp('((?:src|href)=[\'\"])(.*?)([\'\"])', 'gmi'),
         (subString: string, p1: string, p2: string, p3: string): string => {
@@ -179,7 +179,7 @@ export class RSTEngine {
           let newPath = Uri.file(path.join(path.dirname(documentPath), p2));
           const newUrl = [
               p1,
-              newPath.with({ scheme: 'vscode-resource' }).toString(true),
+              webView.asWebviewUri(newPath),
               p3,
           ].join('');
           return newUrl;
@@ -208,14 +208,14 @@ export class RSTEngine {
     return help;
   }
 
-  public async preview(doc: TextDocument): Promise<string> {
+  public async preview(doc: TextDocument, webview: Webview): Promise<string> {
     try {
       if (this.status == null) {
-        return this.compile(doc.fileName, doc.uri, '', true);
+        return this.compile(doc.fileName, doc.uri, '', true, webview);
       } else if (this.status.config == null) {
         await this.status.refreshConfig(doc.uri);
       }
-      return this.compile(doc.fileName, doc.uri, this.status.config.confPyDirectory, true);
+      return this.compile(doc.fileName, doc.uri, this.status.config.confPyDirectory, true, webview);
     } catch (e) {
       return this.errorSnippet(e.toString());
     }

@@ -50,7 +50,7 @@ suite("Preview Tests", function() {
   test("Example 1 full preview", async function() {
     this.timeout(30000);
     const editor = await openFile(path.join(samplePath, "docutils", "example1.rst"));
-    const val = await engine.preview(editor.document);
+    const val = await engine.preview(editor.document, null);
     return new Promise((res, rej) => {
       fs.readFile(
         path.join(samplePath, "docutils", "example1Full.html"),
@@ -73,7 +73,7 @@ suite("Preview Tests", function() {
   test("Example 1 to HTML", async function() {
     this.timeout(30000);
     const editor = await openFile(path.join(samplePath, "docutils", "example1.rst"));
-    const val = await engine.compile(path.join(samplePath, "docutils", "example1.rst"), editor.document.uri, '', true);
+    const val = await engine.compile(path.join(samplePath, "docutils", "example1.rst"), editor.document.uri, '', true, null);
     return new Promise((res, rej) => {
       fs.readFile(
         path.join(samplePath, "docutils", "example1.html"),
@@ -96,7 +96,7 @@ suite("Preview Tests", function() {
   test("Sphinx to HTML", async function() {
     this.timeout(30000);
     const editor = await openFile(path.join(samplePath, "sphinx", "index.rst"));
-    const val = await engine.compile(path.join(samplePath, "sphinx", "index.rst"), editor.document.uri, path.join(samplePath, 'sphinx'), false);
+    const val = await engine.compile(path.join(samplePath, "sphinx", "index.rst"), editor.document.uri, path.join(samplePath, 'sphinx'), false, null);
     return new Promise((res, rej) => {
       fs.readFile(
         path.join(samplePath, "index.html"),

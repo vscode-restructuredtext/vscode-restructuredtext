@@ -19,7 +19,7 @@ second paragraph
 Images
 ------
 
-.. image:: icon.png
+.. image:: _static/icon.png
 
 Lists
 -----

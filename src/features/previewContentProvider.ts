@@ -47,6 +47,7 @@ export class RSTContentProvider {
 	public async provideTextDocumentContent(
 		rstDocument: vscode.TextDocument,
 		previewConfigurations: RSTPreviewConfigurationManager,
+		webview: vscode.Webview,
 		initialLine: number | undefined = undefined,
 		state?: any
 	): Promise<string> {
@@ -62,11 +63,11 @@ export class RSTContentProvider {
 			disableSecurityWarnings: this.cspArbiter.shouldDisableSecurityWarnings()
 		};
 
-		const body = await this.engine.preview(rstDocument);
+		const body = await this.engine.preview(rstDocument, webview);
 		const useSphinx = body.search('</head>') > -1;
 		// Content Security Policy
 		const nonce = new Date().getTime() + '' + new Date().getMilliseconds();
-		const csp = this.getCspForResource(sourceUri, nonce, useSphinx);
+		const csp = this.getCspForResource(sourceUri, nonce, useSphinx, webview);
 		
 		if (useSphinx) {
 			// sphinx based preview.
@@ -94,9 +95,9 @@ export class RSTContentProvider {
 			data-settings="${JSON.stringify(initialData).replace(/"/g, '&quot;')}"
 			data-strings="${JSON.stringify(previewStrings).replace(/"/g, '&quot;')}"
 			data-state="${JSON.stringify(state || {}).replace(/"/g, '&quot;')}">
-		<script src="${this.extensionResourcePath('pre.js')}" nonce="${nonce}"></script>
-		<script src="${this.extensionResourcePath('index.js')}" nonce="${nonce}"></script>
-		<base href="${rstDocument.uri.with({ scheme: 'vscode-resource' }).toString(true)}">
+		<script src="${this.extensionResourcePath('pre.js', webview)}" nonce="${nonce}"></script>
+		<script src="${this.extensionResourcePath('index.js', webview)}" nonce="${nonce}"></script>
+		<base href="${webview.asWebviewUri(rstDocument.uri)}">
 		</head>
 			`);
 			const newBody = newHead.replace('<body class="', 
@@ -128,10 +129,10 @@ export class RSTContentProvider {
 						data-settings="${JSON.stringify(initialData).replace(/"/g, '&quot;')}"
 						data-strings="${JSON.stringify(previewStrings).replace(/"/g, '&quot;')}"
 						data-state="${JSON.stringify(state || {}).replace(/"/g, '&quot;')}">
-					<script src="${this.extensionResourcePath('pre.js')}" nonce="${nonce}"></script>
-					<script src="${this.extensionResourcePath('index.js')}" nonce="${nonce}"></script>
-					${this.getStyles(sourceUri, nonce, config)}
-					<base href="${rstDocument.uri.with({ scheme: 'vscode-resource' }).toString(true)}">
+					<script src="${this.extensionResourcePath('pre.js', webview)}" nonce="${nonce}"></script>
+					<script src="${this.extensionResourcePath('index.js', webview)}" nonce="${nonce}"></script>
+					${this.getStyles(sourceUri, nonce, config, webview)}
+					<base href="${webview.asWebviewUri(rstDocument.uri)}">
 				</head>
 				<body class="vscode-body ${config.scrollBeyondLastLine ? 'scrollBeyondLastLine' : ''} ${config.wordWrap ? 'wordWrap' : ''} ${config.rstEditorSelection ? 'showEditorSelection' : ''}">
 					${parsedDoc}
@@ -141,13 +142,12 @@ export class RSTContentProvider {
 		}
 	}
 
-	private extensionResourcePath(mediaFile: string): string {
-		return vscode.Uri.file(this.context.asAbsolutePath(path.join('media', mediaFile)))
-			.with({ scheme: 'vscode-resource' })
+	private extensionResourcePath(mediaFile: string, webview: vscode.Webview): string {
+		return webview.asWebviewUri(vscode.Uri.file(this.context.asAbsolutePath(path.join('media', mediaFile))))
 			.toString();
 	}
 
-	private fixHref(resource: vscode.Uri, href: string): string {
+	private fixHref(resource: vscode.Uri, href: string, webview: vscode.Webview): string {
 		if (!href) {
 			return href;
 		}
@@ -160,29 +160,26 @@ export class RSTContentProvider {
 
 		// Use href as file URI if it is absolute
 		if (path.isAbsolute(href) || hrefUri.scheme === 'file') {
-			return vscode.Uri.file(href)
-				.with({ scheme: 'vscode-resource' })
+			return webview.asWebviewUri(vscode.Uri.file(href))
 				.toString();
 		}
 
 		// Use a workspace relative path if there is a workspace
 		let root = vscode.workspace.getWorkspaceFolder(resource);
 		if (root) {
-			return vscode.Uri.file(path.join(root.uri.fsPath, href))
-				.with({ scheme: 'vscode-resource' })
+			return webview.asWebviewUri(vscode.Uri.file(path.join(root.uri.fsPath, href)))
 				.toString();
 		}
 
 		// Otherwise look relative to the html file
-		return vscode.Uri.file(path.join(path.dirname(resource.fsPath), href))
-			.with({ scheme: 'vscode-resource' })
+		return webview.asWebviewUri(vscode.Uri.file(path.join(path.dirname(resource.fsPath), href)))
 			.toString();
 	}
 
-	private computeCustomStyleSheetIncludes(resource: vscode.Uri, config: RSTPreviewConfiguration): string {
+	private computeCustomStyleSheetIncludes(resource: vscode.Uri, config: RSTPreviewConfiguration, webview: vscode.Webview): string {
 		if (Array.isArray(config.styles)) {
 			return config.styles.map(style => {
-				return `<link rel="stylesheet" class="code-user-style" data-source="${style.replace(/"/g, '&quot;')}" href="${this.fixHref(resource, style)}" type="text/css" media="screen">`;
+				return `<link rel="stylesheet" class="code-user-style" data-source="${style.replace(/"/g, '&quot;')}" href="${this.fixHref(resource, style, webview)}" type="text/css" media="screen">`;
 			}).join('\n');
 		}
 		return '';
@@ -198,10 +195,9 @@ export class RSTContentProvider {
 		</style>`;
 	}
 
-	private getStyles(resource: vscode.Uri, nonce: string, config: RSTPreviewConfiguration): string {
+	private getStyles(resource: vscode.Uri, nonce: string, config: RSTPreviewConfiguration, webview: vscode.Webview): string {
 		const fix = (href: string) =>
-		  vscode.Uri.file(href)
-			.with({ scheme: "vscode-resource" })
+		  webview.asWebviewUri(vscode.Uri.file(href))
 			.toString();
 		const baseStyles = config.baseStyles
 		  .map(
@@ -211,27 +207,27 @@ export class RSTContentProvider {
 
 		return `${baseStyles}
 			${this.getSettingsOverrideStyles(nonce, config)}
-			${this.computeCustomStyleSheetIncludes(resource, config)}`;
+			${this.computeCustomStyleSheetIncludes(resource, config, webview)}`;
 	}
 
-	private getCspForResource(resource: vscode.Uri, nonce: string, useSphinx: boolean): string {
+	private getCspForResource(resource: vscode.Uri, nonce: string, useSphinx: boolean, webview: vscode.Webview): string {
 		let securityLevel = this.cspArbiter.getSecurityLevelForResource(resource);
 		if (useSphinx) {
 			securityLevel = RSTPreviewSecurityLevel.AllowScriptsAndAllContent;
 		}
 		switch (securityLevel) {
 			case RSTPreviewSecurityLevel.AllowInsecureContent:
-				return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: http: https: data:; media-src vscode-resource: http: https: data:; script-src 'nonce-${nonce}'; style-src vscode-resource: 'unsafe-inline' http: https: data:; font-src vscode-resource: http: https: data:;">`;
+				return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} http: https: data:; media-src ${webview.cspSource} http: https: data:; script-src 'nonce-${nonce}'; style-src ${webview.cspSource} 'unsafe-inline' http: https: data:; font-src ${webview.cspSource} http: https: data:;">`;
 
 			case RSTPreviewSecurityLevel.AllowInsecureLocalContent:
-				return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: https: data: http://localhost:* http://127.0.0.1:*; media-src vscode-resource: https: data: http://localhost:* http://127.0.0.1:*; script-src 'nonce-${nonce}'; style-src vscode-resource: 'unsafe-inline' https: data: http://localhost:* http://127.0.0.1:*; font-src vscode-resource: https: data: http://localhost:* http://127.0.0.1:*;">`;
+				return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} https: data: http://localhost:* http://127.0.0.1:*; media-src ${webview.cspSource} https: data: http://localhost:* http://127.0.0.1:*; script-src 'nonce-${nonce}'; style-src ${webview.cspSource} 'unsafe-inline' https: data: http://localhost:* http://127.0.0.1:*; font-src ${webview.cspSource} https: data: http://localhost:* http://127.0.0.1:*;">`;
 
 			case RSTPreviewSecurityLevel.AllowScriptsAndAllContent:
 				return '';
 
 			case RSTPreviewSecurityLevel.Strict:
 			default:
-				return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: https: data:; media-src vscode-resource: https: data:; script-src 'nonce-${nonce}'; style-src vscode-resource: 'unsafe-inline' https: data:; font-src vscode-resource: https: data:;">`;
+				return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} https: data:; media-src ${webview.cspSource} https: data:; script-src 'nonce-${nonce}'; style-src ${webview.cspSource} 'unsafe-inline' https: data:; font-src ${webview.cspSource} https: data:;">`;
 		}
 	}
 }
