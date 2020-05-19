@@ -27,7 +27,7 @@ Frequent Asked Questions can be found [here](https://github.com/vscode-restructu
 
 This extension is hosted at [Visual Studio Marketplace](https://marketplace.visualstudio.com/items/lextudio.restructuredtext)
 
-1. Upgrade to Visual Studio Code 1.15.0 or above.
+1. Upgrade to Visual Studio Code 1.43.0 or above.
 1. Switch to the Extensions view by clicking the fifth icon in the left most bar.
 1. Type "restructuredtext" in the search box and hit Enter key.
 1. Click "Install" button to install "reStructuredText" extension.
