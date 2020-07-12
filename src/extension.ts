@@ -73,7 +73,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
         linter.activate(context.subscriptions);
     }
 
-    if (!Configuration.getDocUtilDisabled() || !Configuration.getSphinxDisabled) {
+    if (!Configuration.getDocUtilDisabled() || !Configuration.getSphinxDisabled()) {
         // Status bar to show the active rst->html transformer configuration
         const status = new RstTransformerStatus(python, logger);
 
