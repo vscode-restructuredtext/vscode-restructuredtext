@@ -58,64 +58,65 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 	// activate language services
 	const rstLspPromise = RstLanguageServer.activate(context, logger, disableLsp);
 
-	const python: Python = new Python(logger);
-	// Status bar to show the active rst->html transformer configuration
-	const status = new RstTransformerStatus(python, logger);
-
-	// Hook up the status bar to document change events
-	context.subscriptions.push(
-		vscode.commands.registerCommand('restructuredtext.resetStatus',
-			status.reset, status),
-	);
-
-	vscode.window.onDidChangeActiveTextEditor(status.update, status, context.subscriptions);
-	status.update();
-	
-	// Section creation support.
+    // Section creation support.
 	context.subscriptions.push(
 		vscode.commands.registerTextEditorCommand('restructuredtext.features.underline.underline', underline),
 		vscode.commands.registerTextEditorCommand('restructuredtext.features.underline.underlineReverse',
 			(textEditor, edit) => underline(textEditor, edit, true)),
 	);
 
+    const python: Python = new Python(logger);
+
 	// Linter support
 	const linter = new RstLintingProvider(logger, python);
 	linter.activate(context.subscriptions);
 
-	const cspArbiter = new ExtensionContentSecurityPolicyArbiter(context.globalState, context.workspaceState);
+    if (!Configuration.getDocUtilDisabled() || !Configuration.getSphinxDisabled) {
+        // Status bar to show the active rst->html transformer configuration
+        const status = new RstTransformerStatus(python, logger);
 
-	const engine: RSTEngine = new RSTEngine(python, logger, status);
+        // Hook up the status bar to document change events
+        context.subscriptions.push(
+            vscode.commands.registerCommand('restructuredtext.resetStatus',
+                status.reset, status),
+        );
 
-	const contentProvider = new RSTContentProvider(context, cspArbiter, engine, logger);
-	const previewManager = new RSTPreviewManager(contentProvider, logger);
-	context.subscriptions.push(previewManager);
+        vscode.window.onDidChangeActiveTextEditor(status.update, status, context.subscriptions);
+        status.update();
+	
+        const cspArbiter = new ExtensionContentSecurityPolicyArbiter(context.globalState, context.workspaceState);
 
-	const previewSecuritySelector = new PreviewSecuritySelector(cspArbiter, previewManager);
+        const engine: RSTEngine = new RSTEngine(python, logger, status);
 
-	const commandManager = new CommandManager();
-	context.subscriptions.push(commandManager);
-	commandManager.register(new commands.ShowPreviewCommand(previewManager, python));
-	commandManager.register(new commands.ShowPreviewToSideCommand(previewManager, python));
-	commandManager.register(new commands.ShowLockedPreviewToSideCommand(previewManager, python));
-	commandManager.register(new commands.ShowSourceCommand(previewManager));
-	commandManager.register(new commands.RefreshPreviewCommand(previewManager));
-	commandManager.register(new commands.MoveCursorToPositionCommand());
-	commandManager.register(new commands.ShowPreviewSecuritySelectorCommand(previewSecuritySelector, previewManager));
-	commandManager.register(new commands.OpenDocumentLinkCommand());
-	commandManager.register(new commands.ToggleLockCommand(previewManager));
+        const contentProvider = new RSTContentProvider(context, cspArbiter, engine, logger);
+        const previewManager = new RSTPreviewManager(contentProvider, logger);
+        context.subscriptions.push(previewManager);
 
-	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(() => {
-		logger.updateConfiguration();
-		previewManager.updateConfiguration();
-    }));
+        const previewSecuritySelector = new PreviewSecuritySelector(cspArbiter, previewManager);
+
+        const commandManager = new CommandManager();
+        context.subscriptions.push(commandManager);
+        commandManager.register(new commands.ShowPreviewCommand(previewManager, python));
+        commandManager.register(new commands.ShowPreviewToSideCommand(previewManager, python));
+        commandManager.register(new commands.ShowLockedPreviewToSideCommand(previewManager, python));
+        commandManager.register(new commands.ShowSourceCommand(previewManager));
+        commandManager.register(new commands.RefreshPreviewCommand(previewManager));
+        commandManager.register(new commands.MoveCursorToPositionCommand());
+        commandManager.register(new commands.ShowPreviewSecuritySelectorCommand(previewSecuritySelector, previewManager));
+        commandManager.register(new commands.OpenDocumentLinkCommand());
+        commandManager.register(new commands.ToggleLockCommand(previewManager));
+
+        context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(() => {
+            logger.updateConfiguration();
+            previewManager.updateConfiguration();
+        }));
+    }
     
     // DocumentSymbolProvider Demo, for Outline View Test
     let disposableRstDSP = vscode.languages.registerDocumentSymbolProvider(
         { scheme: 'file', language: 'restructuredtext' }, new rstDocumentSymbolProvider()
     );
     context.subscriptions.push(disposableRstDSP);
-
-
 
 	return {
 		initializationFinished: Promise.all([rstLspPromise])
