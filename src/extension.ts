@@ -68,8 +68,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     const python: Python = new Python(logger);
 
 	// Linter support
-	const linter = new RstLintingProvider(logger, python);
-	linter.activate(context.subscriptions);
+    if (!Configuration.getLinterDisabled()) {
+        const linter = new RstLintingProvider(logger, python);
+        linter.activate(context.subscriptions);
+    }
 
     if (!Configuration.getDocUtilDisabled() || !Configuration.getSphinxDisabled) {
         // Status bar to show the active rst->html transformer configuration
