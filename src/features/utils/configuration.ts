@@ -54,8 +54,9 @@ export class Configuration {
 
     public static getPythonPath(resource: Uri = null): string {
         // IMPORTANT: python3 does not work, so the default comes from Python extension.
-        const primary = Configuration.loadSetting('pythonPath', 'python3', resource, true, 'python');
-        // assume pythonPath is relative to workspace root.
+        const primary = Configuration.loadSetting('defaultInterpreterPath', 'python3', resource, true, 'python');
+        // the user setting python.defaultInterpreterPath must be used to invoke the interpreter from the
+        // VSCode internal storage
         if (primary) {
             const workspaceRoot = Configuration.GetRootPath(resource);
             if (workspaceRoot) {
