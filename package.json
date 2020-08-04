@@ -91,6 +91,9 @@
       "installTestPath": "./.rst/Server"
     }
   ],
+  "featureFlags": {
+    "usingNewInterpreterStorage": true
+  },
   "license": "SEE LICENSE IN LICENSE.txt",
   "homepage": "https://www.restructuredtext.net",
   "categories": [

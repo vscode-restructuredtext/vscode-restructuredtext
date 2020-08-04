@@ -26,7 +26,7 @@ export class Python {
   }
 
   public async checkPython(resource: vscode.Uri, showInformation: boolean = true): Promise<boolean> {
-    const path = Configuration.getPythonPath(resource);
+    const path = await Configuration.getPythonPath(resource);
     if (path) {
       this.pythonPath = `"${path}"`;
       if (await this.getVersion()) {
