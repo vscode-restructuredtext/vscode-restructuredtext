@@ -1,10 +1,11 @@
 'use strict';
 
 import {
-    Uri, workspace, WorkspaceFolder,
+    Uri, workspace, WorkspaceFolder, extensions, WorkspaceConfiguration
 } from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import { Constants } from "./constants";
 
 export class Configuration {
 
@@ -52,10 +53,40 @@ export class Configuration {
         return Configuration.loadAnySetting<string>('linter.run', 'onType', resource);
     }
 
-    public static getPythonPath(resource: Uri = null): string {
+    public static async getPythonPath(resource: Uri = null): Promise<string> {
+        try {
+            const extension = extensions.getExtension("ms-python.python");
+            if (!extension) {
+                return Constants.python;
+            }
+            const usingNewInterpreterStorage = extension.packageJSON?.featureFlags?.usingNewInterpreterStorage;
+            if (usingNewInterpreterStorage) {
+                if (!extension.isActive) {
+                    await extension.activate();
+                }
+                const pythonPath = extension.exports.settings.getExecutionDetails(resource).execCommand[0];
+                return pythonPath;
+            } else {
+                return this.getConfiguration("python", resource).get<string>("pythonPath");
+            }
+        } catch (error) {
+            return Constants.python;
+        }
+    }
+
+    public static getConfiguration(section?: string, resource: Uri = null ): WorkspaceConfiguration {
+        if (resource) {
+            return workspace.getConfiguration(section, resource);
+        } else {
+            return workspace.getConfiguration(section);
+        }
+    }
+
+    public static getPythonPath2(resource: Uri = null): string {
         // IMPORTANT: python3 does not work, so the default comes from Python extension.
         const primary = Configuration.loadSetting('pythonPath', 'python3', resource, true, 'python');
-        // assume pythonPath is relative to workspace root.
+        // the user setting python.defaultInterpreterPath must be used to invoke the interpreter from the
+        // VSCode internal storage
         if (primary) {
             const workspaceRoot = Configuration.GetRootPath(resource);
             if (workspaceRoot) {
