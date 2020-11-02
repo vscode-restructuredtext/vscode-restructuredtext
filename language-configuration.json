@@ -46,5 +46,9 @@
     ],
     "folding": {
         "offSide": true
+    },
+    "indentationRules": {
+        "increaseIndentPattern": "^\\.{2}\\s\\w+:{2}(\\s\\w+)?$",
+        "decreaseIndentPattern": "^\\n$"
     }
 }
