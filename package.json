@@ -13,7 +13,9 @@
     "linux-os-info": "^2.0.0",
     "lodash.throttle": "^4.1.1",
     "meaw": "^4.1.0",
+    "mime": "^2.4.6",
     "mkdirp": "^1.0.3",
+    "open": "^7.3.0",
     "tmp": "0.0.33",
     "vscode-languageclient": "^6.1.3",
     "vscode-nls": "^4.0.0",
@@ -63,16 +65,12 @@
     },
     {
       "description": "reStructuredText Language Server for macOS (x64)",
-      "url": "https://github.com/lextm/restructuredtext-antlr/releases/download/v1.0.1/darwin_x64.zip",
-      "fallbackUrl": "https://github.com/lextm/restructuredtext-antlr/releases/download/v1.0.1/darwin_x64.zip",
-      "installPath": ".rst",
+      "url": "https://github.com/mongodb/snooty-parser/releases/download/v0.8.2/snooty-v0.8.2-darwin_x86_64.zip",
+      "installPath": ".snooty",
       "platforms": [
         "darwin"
       ],
-      "binaries": [
-        "./Server"
-      ],
-      "installTestPath": "./.rst/Server"
+      "installTestPath": ".snooty/snooty/snooty"
     },
     {
       "description": "reStructuredText Language Server for Linux (x64)",
@@ -312,6 +310,17 @@
       "type": "object",
       "title": "reStructuredText",
       "properties": {
+        "snooty.trace.server": {
+          "scope": "window",
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "verbose",
+          "description": "Traces the communication between VS Code and the language server."
+        },
         "restructuredtext.conflictingExtensions": {
           "type": "array",
           "default": [
@@ -479,7 +488,7 @@
         },
         "restructuredtext.languageServer.disabled": {
           "type": "boolean",
-          "default": true,
+          "default": false,
           "description": "Flag to disable language server based IntelliSense if critical issues happen.",
           "scope": "resource"
         },

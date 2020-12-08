@@ -12,6 +12,7 @@ bin/EditorServices.log
 bin/DebugAdapter.log
 bin/*.vshost.*
 .rst/**
+.snooty/**
 install.Lock
 *.vsix
 .editorconfig
