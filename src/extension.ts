@@ -48,7 +48,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 		}
 	});
 
-	const disableLsp = !platformIsSupported(logger) || Configuration.getLanguageServerDisabled();
+	const disableLsp = !await platformIsSupported(logger) || Configuration.getLanguageServerDisabled();
 	// *
 	if (!disableLsp) {
 		await ensureRuntimeDependencies(extension, logger);
@@ -142,39 +142,31 @@ function ensureRuntimeDependencies(extension: vscode.Extension<any>, logger: Log
         });
 }
 
-function platformIsSupported(logger: Logger): boolean {
-	var getos = require('getos')
- 
-	let dist: string;
-	let platform: string;
-	getos(function(e,os) {
-	  if(e) {
-		  logger.log("Failed to learn the OS.");
-		  logger.log(e);
-		  return;
-	  }
-	  logger.log("Your OS is:" +JSON.stringify(os));
-	  dist = os.dist;
-	  platform = os.os;
-	});
-
+async function platformIsSupported(logger: Logger): Promise<boolean> {
+	var os = require('os')
+    let platform = os.platform();
+    logger.log(`OS is ${platform}`);
 	if (platform === 'darwin' || platform === 'win32') {
 		return true;
 	}
 
-	if (!dist) {
+    const osInfo = require('linux-os-info');
+    try {
+        const result = await osInfo();
+        const dist = result.id;
+        logger.log(`dist: ${dist}`);
+        const supportedPlatforms = Configuration.getSupportedPlatforms();
+        supportedPlatforms.forEach(item => {
+            if (dist.toLowerCase().indexOf(item) > -1 ) {
+                logger.log("Supported distribution.");
+                return true;
+            }
+        });
+    
+        logger.log("Not-supported distribution.")
+        return false;
+    } catch {
 		logger.log("Unknown distribution.");
 		return false;
-	}
-
-	const supportedPlatforms = Configuration.getSupportedPlatforms();
-    supportedPlatforms.forEach(item => {
-		if (dist.toLowerCase().indexOf(item) > -1 ) {
-			logger.log("Supported distribution.");
-			return true;
-		}
-	});
-
-	logger.log("Not-supported distribution.")
-	return false;
+    }
 }
