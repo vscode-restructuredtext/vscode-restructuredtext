@@ -44,6 +44,10 @@ export class Configuration {
     public static getLinterPath(resource: Uri = null): string {
         return Configuration.loadSetting('linter.executablePath', null, resource);
     }
+
+    public static getSnootyPath(resource: Uri = null): string {
+        return Configuration.loadSetting('languageServer.executablePath', null, resource);
+    }
     
     public static getExtraArgs(resource: Uri = null): string[] {
         return Configuration.loadAnySetting<string[]>('linter.extraArgs', null, resource);
@@ -115,6 +119,10 @@ export class Configuration {
         return Configuration.loadAnySetting('languageServer.disabled', true, null);
     }
 
+    public static getSnooty(resource: Uri = null): boolean {
+        return Configuration.loadAnySetting('languageServer.useSnooty', true, null);
+    }
+
     public static getSupportedPlatforms(resource: Uri = null): string[] {
         return Configuration.loadAnySetting<string[]>("languageServer.supportedPlatforms", [], null);
     }
@@ -125,6 +133,10 @@ export class Configuration {
 
     public static async setConfPath(value: string, resource: Uri = null, insertMacro: boolean): Promise<string> {
         return await Configuration.saveSetting('confPath', value, resource, insertMacro);
+    }
+
+    public static async setLanguageServerDisabled(resource: Uri = null) {
+        await Configuration.saveAnySetting('languageServer.disabled', true, resource);
     }
 
     public static async setLinterDisabled(resource: Uri = null) {

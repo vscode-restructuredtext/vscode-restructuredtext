@@ -12,9 +12,8 @@ import { Logger } from './logger';
 import { ExtensionContentSecurityPolicyArbiter, PreviewSecuritySelector } from './security';
 import { Python } from './python';
 import { RSTEngine } from './rstEngine';
-
 import * as util from './common';
-import { ExtensionDownloader } from './ExtensionDownloader';
+
 import RstLintingProvider from './features/rstLinter';
 import { underline } from './features/underline';
 import { Configuration } from './features/utils/configuration';
@@ -30,9 +29,6 @@ export function getExtensionPath(): string {
 
 export async function activate(context: vscode.ExtensionContext): Promise<{ initializationFinished: Promise<void> }> {
 	extensionPath = context.extensionPath;
-
-	const extensionId = 'lextudio.restructuredtext';
-	const extension = vscode.extensions.getExtension(extensionId);
 	util.setExtensionPath(context.extensionPath);
 
 	const logger = new Logger();
@@ -48,15 +44,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 		}
 	});
 
-	const disableLsp = !await platformIsSupported(logger) || Configuration.getLanguageServerDisabled();
-	// *
-	if (!disableLsp) {
-		await ensureRuntimeDependencies(extension, logger);
-	}
-	// */
+	const disableLsp = !platformIsSupported(logger) || Configuration.getLanguageServerDisabled();
+
+    const python: Python = new Python(logger);
 
 	// activate language services
-	const rstLspPromise = RstLanguageServer.activate(context, logger, disableLsp);
+	const rstLspPromise = RstLanguageServer.activate(context, logger, disableLsp, python);
 
     // Section creation support.
 	context.subscriptions.push(
@@ -64,8 +57,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 		vscode.commands.registerTextEditorCommand('restructuredtext.features.underline.underlineReverse',
 			(textEditor, edit) => underline(textEditor, edit, true)),
 	);
-
-    const python: Python = new Python(logger);
 
 	// Linter support
     if (!Configuration.getLinterDisabled()) {
@@ -128,18 +119,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 				// to other extensions then we will design that return type and implement it here.
 			}),
 	};
-}
-
-function ensureRuntimeDependencies(extension: vscode.Extension<any>, logger: Logger): Promise<boolean> {
-    return util.installFileExists(util.InstallFileType.Lock)
-        .then((exists) => {
-            if (!exists) {
-                const downloader = new ExtensionDownloader(logger, extension.packageJSON);
-                return downloader.installRuntimeDependencies();
-            } else {
-                return true;
-            }
-        });
 }
 
 async function platformIsSupported(logger: Logger): Promise<boolean> {

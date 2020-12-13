@@ -492,6 +492,18 @@
           "description": "Flag to disable language server based IntelliSense if critical issues happen.",
           "scope": "resource"
         },
+        "restructuredtext.languageServer.useSnooty": {
+          "type":"boolean",
+          "default": true,
+          "description": "Uses MongoDB Snooty language server.",
+          "scope": "application"
+        },
+        "restructuredtext.languageServer.executablePath": {
+          "type":"string",
+          "default": null,
+          "description": "Points to MongoDB Snooty executable.",
+          "scope": "application"
+        },
         "restructuredtext.languageServer.supportedPlatforms": {
           "type": "array",
           "default": [

@@ -21,6 +21,7 @@ export class Python {
     if (await this.checkPython(resource)) {
       await this.checkPreviewEngine(resource, false);
       await this.checkLinter(resource, true, false);
+      await this.checkSnooty(resource, true, false);
       this.ready = true;
     }
   }
@@ -155,6 +156,38 @@ export class Python {
     return true;
   }
 
+  public async checkSnooty(resource: vscode.Uri, showInformation: boolean = true, showWarning: boolean = true): Promise<boolean> {
+    if (Configuration.getLanguageServerDisabled()) {
+      if (showWarning) {
+        vscode.window.showWarningMessage("No IntelliSense. Language server is disabled.");
+      }
+      return false;
+    }
+    if (Configuration.getSnooty(resource)) {
+      const snooty = Configuration.getSnootyPath(resource);
+      if (!(await this.checkSnootyInstall() || (snooty != null && await fileExists(snooty)))) {
+        if (showInformation) {
+          var choice = await vscode.window.showInformationMessage("Language server snooty is not installed.", "Install", "Not now", "Do not show again");
+          if (choice === "Install") {
+            this.logger.log("Started to install snooty...");
+            await this.installSnooty();
+          } else if (choice === "Do not show again") {
+            this.logger.log("Disabled language server.");
+            await Configuration.setLanguageServerDisabled();
+            vscode.window.showWarningMessage("No IntelliSense. Language server is now disabled.");
+            return false;
+          } else {
+            vscode.window.showWarningMessage("No IntelliSense. Language server snooty is not installed.");
+            return false;
+          }
+        } else {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   private async installDocUtils(): Promise<void> {
     try {
       await this.exec("-m", "pip", "install", "docutils");
@@ -237,6 +270,28 @@ export class Python {
   private async checkSphinxInstall(): Promise<boolean> {
     try {
       await this.exec("-c", '"import sphinx;"');
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  private async installSnooty(): Promise<void> {
+    try {
+      await this.exec("-m", "pip", "install", "snooty");
+      this.logger.log("Finished installing snooty");
+    } catch (e) {
+      this.logger.log("Failed to install snooty");
+      vscode.window.showErrorMessage(
+        "Could not install snooty. Please run `pip install snooty` to use this " +
+          "extension, or check your Python path."
+      );
+    }
+  }
+
+  private async checkSnootyInstall(): Promise<boolean> {
+    try {
+      await this.exec("-c", '"import snooty;"');
       return true;
     } catch (e) {
       return false;

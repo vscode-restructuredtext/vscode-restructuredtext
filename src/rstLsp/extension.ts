@@ -1,3 +1,5 @@
+import { Python } from './../python';
+import { Configuration } from './../features/utils/configuration';
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -10,47 +12,102 @@ import { Logger } from '../logger';
 import { DocumentLinkProvider } from './docLinkProvider';
 import open = require('open');
 import mime = require('mime');
+import { ExtensionDownloader } from '../ExtensionDownloader';
+import * as util from '../common';
 
-export function activate(context: vscode.ExtensionContext, logger: Logger, disabled: boolean) {
+export async function activate(context: vscode.ExtensionContext, logger: Logger, disabled: boolean, python: Python): Promise<void> {
     if (disabled) {
         return;
     }
 
-    // Defines the search path of your language server DLL. (.NET Core)
-    const languageServerPaths = [
-        ".snooty/snooty/snooty",
-        "../restructuredtext-antlr/Server/bin/Debug/netcoreapp3.1/Server.dll",
-        ".rst/Server.exe",
-        ".rst/Server"
-    ]
-
     var fs = require('fs');
     let serverModule: string = null;
-    for (let p of languageServerPaths) {
-        p = context.asAbsolutePath(p);
-        // console.log(p);
-        if (fs.existsSync(p)) {
-            serverModule = p;
-            break;
+    let args: string[] = [];
+    if (!Configuration.getSnooty()) {
+        logger.log('Use legacy language server.');
+
+        const extensionId = 'lextudio.restructuredtext';
+        const extension = vscode.extensions.getExtension(extensionId);
+		await ensureRuntimeDependencies(extension, logger);
+
+        // Defines the search path of your language server DLL. (.NET Core)
+        const languageServerPaths = [
+            "../restructuredtext-antlr/Server/bin/Debug/netcoreapp3.1/Server.dll",
+            ".rst/Server.exe",
+            ".rst/Server"
+        ];
+        for (let p of languageServerPaths) {
+            p = context.asAbsolutePath(p);
+            // console.log(p);
+            if (fs.existsSync(p)) {
+                serverModule = p;
+                break;
+            }
         }
+
+        if (serverModule != null) {
+            let workPath = path.dirname(serverModule);
+
+            // If the extension is launched in debug mode then the debug server options are used
+            // Otherwise the run options are used
+            let serverOptions: ServerOptions = {
+                run: { command: serverModule, args: [], options: { cwd: workPath } },
+                debug: { command: serverModule, args: ["--debug"], options: { cwd: workPath } }
+            }
+
+            if (serverModule.indexOf(".dll") > -1)
+            {
+                serverOptions = {
+                    run: { command: "dotnet", args: [serverModule], options: { cwd: workPath } },
+                    debug: { command: "dotnet", args: [serverModule, "--debug"], options: { cwd: workPath } }
+                }
+            }
+
+            // Options to control the language client
+            let clientOptions: LanguageClientOptions = {
+                // Register the server for plain text documents
+                documentSelector: [
+                    { language: 'restructuredtext', scheme: 'file' },
+                    { language: 'restructuredtext', scheme: 'untitled' }
+                ],
+                synchronize: {
+                    // Synchronize the setting section 'lspSample' to the server
+                    configurationSection: 'restructuredtext',
+                    // Notify the server about file changes to '.clientrc' files contain in the workspace
+                    fileEvents: [
+                        vscode.workspace.createFileSystemWatcher('**/conf.py'),
+                        vscode.workspace.createFileSystemWatcher("**/.rst"),
+                        vscode.workspace.createFileSystemWatcher("**/.rest")
+                    ]
+                }
+            }
+
+            // Create the language client and start the client.
+            let disposable = new LanguageClient('restructuredtext', 'reStructuredText Language Server', serverOptions, clientOptions).start();
+
+            // Push the disposable to the context's subscriptions so that the
+            // client can be deactivated on extension deactivation
+            context.subscriptions.push(disposable);  
+        }
+        return;
+    } 
+
+    logger.log('Use Snooty language server');
+    if (!(await python.checkPython(null, false)) || !(await python.checkSnooty(null, true, true))) {
+        return;
     }
 
+    logger.log('Load Snooty language server');
+    serverModule = await Configuration.getPythonPath();
+    args.push('-m', 'snooty', 'language-server');
+
     if (serverModule != null) {
-        let workPath = path.dirname(serverModule);
 
         // If the extension is launched in debug mode then the debug server options are used
         // Otherwise the run options are used
         let serverOptions: ServerOptions = {
-            run: { command: serverModule, args: ["language-server"], options: { cwd: workPath } },
-            debug: { command: serverModule, args: ["language-server"], options: { cwd: workPath } }
-        }
-
-        if (serverModule.indexOf(".dll") > -1)
-        {
-            serverOptions = {
-                run: { command: "dotnet", args: [serverModule], options: { cwd: workPath } },
-                debug: { command: "dotnet", args: [serverModule, "--debug"], options: { cwd: workPath } }
-            }
+            run: { command: serverModule, args: args },
+            debug: { command: serverModule, args: args }
         }
 
         const documentSelector = [
@@ -152,4 +209,16 @@ export function activate(context: vscode.ExtensionContext, logger: Logger, disab
             new DocumentLinkProvider(client)
         );
     }
+}
+
+function ensureRuntimeDependencies(extension: vscode.Extension<any>, logger: Logger): Promise<boolean> {
+    return util.installFileExists(util.InstallFileType.Lock)
+        .then((exists) => {
+            if (!exists) {
+                const downloader = new ExtensionDownloader(logger, extension.packageJSON);
+                return downloader.installRuntimeDependencies();
+            } else {
+                return true;
+            }
+        });
 }
