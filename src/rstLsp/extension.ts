@@ -90,24 +90,38 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
             context.subscriptions.push(disposable);  
         }
         return;
-    } 
-
-    logger.log('Use Snooty language server');
-    if (!(await python.checkPython(null, false)) || !(await python.checkSnooty(null, true, true))) {
-        return;
     }
 
-    logger.log('Load Snooty language server');
+    logger.log('Use Snooty language server');
     serverModule = await Configuration.getPythonPath();
-    args.push('-m', 'snooty', 'language-server');
+
+    let options: any = {};
+    const sourceFolder = Configuration.getSnootySourceFolder();
+    if (sourceFolder) {
+        // launch language server from source folder.
+        options.cwd = sourceFolder;
+        if (await python.checkPython(null, false) && await python.checkSnooty(null, false, false)) {
+            vscode.window.showErrorMessage('Run `pip uninstall snooty` and then restart VSCode to start debugging.');
+            return;
+        }
+        if (!(await python.checkPython(null, false)) || !(await python.checkDebugPy(null, true))) {
+            return;
+        }
+        args.push('-m', 'debugpy', '--listen', '5678', '--wait-for-client', '-m', 'snooty', 'language-server');
+    } else {
+        if (!(await python.checkPython(null, false)) || !(await python.checkSnooty(null, true, true))) {
+            return;
+        }
+        args.push('-m', 'snooty', 'language-server');
+    }
 
     if (serverModule != null) {
 
         // If the extension is launched in debug mode then the debug server options are used
         // Otherwise the run options are used
         let serverOptions: ServerOptions = {
-            run: { command: serverModule, args: args },
-            debug: { command: serverModule, args: args }
+            run: { command: serverModule, args: args, options: options },
+            debug: { command: serverModule, args: args, options: options }
         }
 
         const documentSelector = [

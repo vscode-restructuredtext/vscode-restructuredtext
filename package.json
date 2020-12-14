@@ -321,6 +321,12 @@
           "default": "verbose",
           "description": "Traces the communication between VS Code and the language server."
         },
+        "snooty.sourceFolder": {
+          "scope": "resource",
+          "type": "string",
+          "default": null,
+          "description": "Local source folder of snooty. Used for debugging local language server."
+        },
         "restructuredtext.conflictingExtensions": {
           "type": "array",
           "default": [

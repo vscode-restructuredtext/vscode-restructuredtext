@@ -20,8 +20,8 @@ export class Python {
   public async setup(resource: Uri): Promise<void> {
     if (await this.checkPython(resource)) {
       await this.checkPreviewEngine(resource, false);
-      await this.checkLinter(resource, true, false);
-      await this.checkSnooty(resource, true, false);
+      await this.checkLinter(resource, true, false); // inform users to install linter.
+      await this.checkSnooty(resource, false, false);
       this.ready = true;
     }
   }
@@ -188,6 +188,24 @@ export class Python {
     return true;
   }
 
+  public async checkDebugPy(resource: vscode.Uri, showInformation: boolean = true): Promise<boolean> {
+    if (!(await this.checkDebugPyInstall())) {
+      if (showInformation) {
+        var choice = await vscode.window.showInformationMessage("Python package debugpy is not installed.", "Install", "Not now");
+        if (choice === "Install") {
+          this.logger.log("Started to install debugpy...");
+          await this.installDebugPy();
+        } else {
+          vscode.window.showWarningMessage("Cannot debug. Python package debugpy is not installed.");
+          return false;
+        }
+      } else {
+        return false;
+      }
+    }
+    return true;
+  }
+
   private async installDocUtils(): Promise<void> {
     try {
       await this.exec("-m", "pip", "install", "docutils");
@@ -292,6 +310,28 @@ export class Python {
   private async checkSnootyInstall(): Promise<boolean> {
     try {
       await this.exec("-c", '"import snooty;"');
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  private async installDebugPy(): Promise<void> {
+    try {
+      await this.exec("-m", "pip", "install", "debugpy");
+      this.logger.log("Finished installing debugpy");
+    } catch (e) {
+      this.logger.log("Failed to install debugpy");
+      vscode.window.showErrorMessage(
+        "Could not install debugpy. Please run `pip install debugpy` to debug this " +
+          "extension, or check your Python path."
+      );
+    }
+  }
+
+  private async checkDebugPyInstall(): Promise<boolean> {
+    try {
+      await this.exec("-c", '"import debugpy;"');
       return true;
     } catch (e) {
       return false;

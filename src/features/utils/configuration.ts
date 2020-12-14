@@ -5,7 +5,7 @@ import {
 } from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { Constants } from "./constants";
+import { Constants } from './constants';
 
 export class Configuration {
 
@@ -34,11 +34,11 @@ export class Configuration {
     }
 
     public static getPreviewName(resource: Uri = null): string {
-        return Configuration.loadSetting("preview.name", "sphinx", resource);
+        return Configuration.loadSetting('preview.name', 'sphinx', resource);
     }
 
     public static getLinterName(resource: Uri = null): string {
-        return Configuration.loadSetting("linter.name", "rstcheck", resource);
+        return Configuration.loadSetting('linter.name', 'rstcheck', resource);
     }
 
     public static getLinterPath(resource: Uri = null): string {
@@ -47,6 +47,10 @@ export class Configuration {
 
     public static getSnootyPath(resource: Uri = null): string {
         return Configuration.loadSetting('languageServer.executablePath', null, resource);
+    }
+
+    public static getSnootySourceFolder(resource: Uri = null): string {
+        return this.getConfiguration('snooty', resource).get<string>('sourceFolder');
     }
     
     public static getExtraArgs(resource: Uri = null): string[] {
@@ -59,7 +63,7 @@ export class Configuration {
 
     public static async getPythonPath(resource: Uri = null): Promise<string> {
         try {
-            const extension = extensions.getExtension("ms-python.python");
+            const extension = extensions.getExtension('ms-python.python');
             if (!extension) {
                 return Constants.python;
             }
@@ -71,7 +75,7 @@ export class Configuration {
                 const pythonPath = extension.exports.settings.getExecutionDetails(resource).execCommand[0];
                 return pythonPath;
             } else {
-                return this.getConfiguration("python", resource).get<string>("pythonPath");
+                return this.getConfiguration('python', resource).get<string>('pythonPath');
             }
         } catch (error) {
             return Constants.python;
@@ -124,11 +128,11 @@ export class Configuration {
     }
 
     public static getSupportedPlatforms(resource: Uri = null): string[] {
-        return Configuration.loadAnySetting<string[]>("languageServer.supportedPlatforms", [], null);
+        return Configuration.loadAnySetting<string[]>('languageServer.supportedPlatforms', [], null);
     }
 
     public static getUpdateDelay(resource: Uri = null): number {
-        return Configuration.loadAnySetting<number>("updateDelay", 3000, resource);
+        return Configuration.loadAnySetting<number>('updateDelay', 3000, resource);
     }
 
     public static async setConfPath(value: string, resource: Uri = null, insertMacro: boolean): Promise<string> {

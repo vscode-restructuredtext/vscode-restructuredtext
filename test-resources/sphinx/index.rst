@@ -20,10 +20,11 @@ Images
 ------
 
 .. image:: _static/icon.png
+   :alt: test
 
 Lists
 -----
- - indented list  
+ - indented list   
  - second indented
 
 
@@ -47,3 +48,5 @@ table  here
 =====  ===
 
 .. This is a comment
+
+:doc:`/test`
