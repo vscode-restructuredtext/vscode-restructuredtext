@@ -2,7 +2,7 @@
   "name": "restructuredtext",
   "displayName": "%displayName%",
   "description": "%description%",
-  "version": "130.0.0",
+  "version": "131.0.0",
   "publisher": "lextudio",
   "engines": {
     "vscode": "^1.43.0"
@@ -493,13 +493,13 @@
           "scope": "resource"
         },
         "restructuredtext.languageServer.useSnooty": {
-          "type":"boolean",
+          "type": "boolean",
           "default": true,
           "description": "Uses MongoDB Snooty language server.",
           "scope": "application"
         },
         "restructuredtext.languageServer.executablePath": {
-          "type":"string",
+          "type": "string",
           "default": null,
           "description": "Points to MongoDB Snooty executable.",
           "scope": "application"
