@@ -52,13 +52,17 @@ export class Configuration {
     public static getSnootyDebugLaunch(resource: Uri = null): boolean {
         return this.getConfiguration('snooty', resource).get<boolean>('debugLaunch', false);
     }
+
+    public static getTelemetryDisabled(resource: Uri = null): boolean {
+        return Configuration.loadAnySetting('telemetry.disabled', false, resource);
+    }
     
     public static getExtraArgs(resource: Uri = null): string[] {
         return Configuration.loadAnySetting<string[]>('linter.extraArgs', null, resource);
     }
 
     public static getRunType(resource: Uri = null): string {
-        return Configuration.loadAnySetting<string>('linter.run', 'onType', resource);
+        return Configuration.loadAnySetting('linter.run', 'onType', resource);
     }
 
     public static async getPythonPath(resource: Uri = null): Promise<string> {

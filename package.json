@@ -8,6 +8,7 @@
     "vscode": "^1.43.0"
   },
   "dependencies": {
+    "applicationinsights": "^1.8.8",
     "http-proxy-agent": "^2.1.0",
     "https-proxy-agent": "^2.2.4",
     "linux-os-info": "^2.0.0",

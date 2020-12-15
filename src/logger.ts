@@ -1,3 +1,4 @@
+import { Configuration } from './features/utils/configuration';
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -5,6 +6,7 @@
 
 import * as vscode from 'vscode';
 import { lazy } from './util/lazy';
+import { TelemetryClient } from 'applicationinsights';
 
 export enum Trace {
 	Off,
@@ -31,12 +33,28 @@ function isString(value: any): value is string {
 }
 
 export class Logger {
-	private trace?: Trace;
+    private trace?: Trace;
+    private client: TelemetryClient;
 
 	private readonly outputChannel = lazy(() => vscode.window.createOutputChannel('reStructuredText'));
 
 	constructor() {
-		this.updateConfiguration();
+        this.updateConfiguration();
+        const appInsights = require('applicationinsights');
+        if (!Configuration.getTelemetryDisabled()) {
+            appInsights.setup('21de4b5e-cb53-4161-b5c7-11cbeb7b3e2a')
+                .setAutoDependencyCorrelation(true)
+                .setAutoCollectRequests(false)
+                .setAutoCollectPerformance(true, true)
+                .setAutoCollectExceptions(true)
+                .setAutoCollectDependencies(true)
+                .setAutoCollectConsole(true)
+                .setUseDiskRetryCaching(true)
+                .setSendLiveMetrics(false)
+                .setDistributedTracingMode(appInsights.DistributedTracingModes.AI)
+                .start();
+            this.client = appInsights.defaultClient;
+        }
 	}
 
 	public log(message: string, data?: any): void {
@@ -46,7 +64,11 @@ export class Logger {
 				this.appendLine(Logger.data2String(data));
 			}
 		}
-	}
+    }
+    
+    public telemetry(message: string): void {
+        this.client?.trackTrace({message});
+    }
 
 	public updateConfiguration() {
 		this.trace = this.readTrace();
