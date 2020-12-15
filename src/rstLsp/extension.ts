@@ -102,12 +102,12 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
                 let statusStyle = config.get('misc.status', 'short');
                 if (statusStyle == 'short' || statusStyle == 'detailed') {
                     let statusIcon = window.createStatusBarItem(StatusBarAlignment.Right);
-                    statusIcon.text = 'snooty: loading';
+                    statusIcon.text = 'rst-antlr: loading';
                     statusIcon.tooltip =
-                        'cquery is loading project metadata (ie, compile_commands.json)';
+                        'rst-antlr is loading project metadata (ie, compile_commands.json)';
                     statusIcon.show();
                     languageClient.onReady().then(() => {
-                        statusIcon.text = 'snooty: idle';
+                        statusIcon.text = 'rst-antlr: idle';
                         // TODO:
                         // languageClient.onNotification('$snooty/progress', (args) => {
 
@@ -128,7 +128,7 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
         // launch language server from source folder.
         options.cwd = sourceFolder;
         if (await python.checkPython(null, false) && await python.checkSnooty(null, false, false)) {
-            vscode.window.showErrorMessage('Run `pip uninstall snooty` and then restart VSCode to start debugging.');
+            vscode.window.showErrorMessage('Run `pip uninstall snooty-lextudio` and then restart VSCode to start debugging.');
             return;
         }
         if (!(await python.checkPython(null, false)) || !(await python.checkDebugPy(null, true))) {
@@ -191,7 +191,7 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
                 let statusIcon = window.createStatusBarItem(StatusBarAlignment.Right);
                 statusIcon.text = 'snooty: loading';
                 statusIcon.tooltip =
-                    'cquery is loading project metadata (ie, compile_commands.json)';
+                    'snooty is loading project metadata';
                 statusIcon.show();
                 client.onReady().then(() => {
                     statusIcon.text = 'snooty: idle';

@@ -45,10 +45,6 @@ export class Configuration {
         return Configuration.loadSetting('linter.executablePath', null, resource);
     }
 
-    public static getSnootyPath(resource: Uri = null): string {
-        return Configuration.loadSetting('languageServer.executablePath', null, resource);
-    }
-
     public static getSnootySourceFolder(resource: Uri = null): string {
         return this.getConfiguration('snooty', resource).get<string>('sourceFolder');
     }

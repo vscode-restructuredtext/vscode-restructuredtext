@@ -65,12 +65,16 @@
     },
     {
       "description": "reStructuredText Language Server for macOS (x64)",
-      "url": "https://github.com/mongodb/snooty-parser/releases/download/v0.8.2/snooty-v0.8.2-darwin_x86_64.zip",
-      "installPath": ".snooty",
+      "url": "https://github.com/lextm/restructuredtext-antlr/releases/download/v1.0.1/darwin_x64.zip",
+      "fallbackUrl": "https://github.com/lextm/restructuredtext-antlr/releases/download/v1.0.1/darwin_x64.zip",
+      "installPath": ".rst",
       "platforms": [
         "darwin"
       ],
-      "installTestPath": ".snooty/snooty/snooty"
+      "binaries": [
+        "./Server"
+      ],
+      "installTestPath": "./.rst/Server"
     },
     {
       "description": "reStructuredText Language Server for Linux (x64)",
@@ -508,12 +512,6 @@
           "type": "boolean",
           "default": true,
           "description": "Uses MongoDB Snooty language server.",
-          "scope": "application"
-        },
-        "restructuredtext.languageServer.executablePath": {
-          "type": "string",
-          "default": null,
-          "description": "Points to MongoDB Snooty executable.",
           "scope": "application"
         },
         "restructuredtext.languageServer.supportedPlatforms": {

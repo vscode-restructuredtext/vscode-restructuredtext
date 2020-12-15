@@ -164,12 +164,11 @@ export class Python {
       return false;
     }
     if (Configuration.getSnooty(resource)) {
-      const snooty = Configuration.getSnootyPath(resource);
-      if (!(await this.checkSnootyInstall() || (snooty != null && await fileExists(snooty)))) {
+      if (!(await this.checkSnootyInstall())) {
         if (showInformation) {
-          var choice = await vscode.window.showInformationMessage("Language server snooty is not installed.", "Install", "Not now", "Do not show again");
+          var choice = await vscode.window.showInformationMessage("Snooty language server is not installed.", "Install", "Not now", "Do not show again");
           if (choice === "Install") {
-            this.logger.log("Started to install snooty...");
+            this.logger.log("Started to install Snooty...");
             await this.installSnooty();
           } else if (choice === "Do not show again") {
             this.logger.log("Disabled language server.");
@@ -177,7 +176,7 @@ export class Python {
             vscode.window.showWarningMessage("No IntelliSense. Language server is now disabled.");
             return false;
           } else {
-            vscode.window.showWarningMessage("No IntelliSense. Language server snooty is not installed.");
+            vscode.window.showWarningMessage("No IntelliSense. Snooty language server is not installed.");
             return false;
           }
         } else {
@@ -296,12 +295,12 @@ export class Python {
 
   private async installSnooty(): Promise<void> {
     try {
-      await this.exec("-m", "pip", "install", "snooty");
-      this.logger.log("Finished installing snooty");
+      await this.exec("-m", "pip", "install", "snooty-lextudio");
+      this.logger.log("Finished installing snooty-lextudio");
     } catch (e) {
-      this.logger.log("Failed to install snooty");
+      this.logger.log("Failed to install snooty-lextudio");
       vscode.window.showErrorMessage(
-        "Could not install snooty. Please run `pip install snooty` to use this " +
+        "Could not install snooty-lextudio. Please run `pip install snooty-lextudio` to use this " +
           "extension, or check your Python path."
       );
     }
