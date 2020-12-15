@@ -327,6 +327,12 @@
           "default": null,
           "description": "Local source folder of snooty. Used for debugging local language server."
         },
+        "snooty.debugLaunch": {
+          "scope": "resource",
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to debug from launch."
+        },
         "restructuredtext.conflictingExtensions": {
           "type": "array",
           "default": [

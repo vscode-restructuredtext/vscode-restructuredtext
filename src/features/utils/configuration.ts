@@ -52,6 +52,10 @@ export class Configuration {
     public static getSnootySourceFolder(resource: Uri = null): string {
         return this.getConfiguration('snooty', resource).get<string>('sourceFolder');
     }
+
+    public static getSnootyDebugLaunch(resource: Uri = null): boolean {
+        return this.getConfiguration('snooty', resource).get<boolean>('debugLaunch', false);
+    }
     
     public static getExtraArgs(resource: Uri = null): string[] {
         return Configuration.loadAnySetting<string[]>('linter.extraArgs', null, resource);

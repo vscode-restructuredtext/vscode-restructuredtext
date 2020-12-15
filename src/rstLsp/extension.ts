@@ -14,11 +14,18 @@ import open = require('open');
 import mime = require('mime');
 import { ExtensionDownloader } from '../ExtensionDownloader';
 import * as util from '../common';
+import { StatusBarAlignment, window, workspace } from 'vscode';
 
 export async function activate(context: vscode.ExtensionContext, logger: Logger, disabled: boolean, python: Python): Promise<void> {
     if (disabled) {
         return;
     }
+
+    // Notify the user that if they change a snooty setting they need to restart
+    // vscode.
+    context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(() => {
+        // TODO:
+    }));
 
     var fs = require('fs');
     let serverModule: string = null;
@@ -28,7 +35,7 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
 
         const extensionId = 'lextudio.restructuredtext';
         const extension = vscode.extensions.getExtension(extensionId);
-		await ensureRuntimeDependencies(extension, logger);
+        await ensureRuntimeDependencies(extension, logger);
 
         // Defines the search path of your language server DLL. (.NET Core)
         const languageServerPaths = [
@@ -83,11 +90,31 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
             }
 
             // Create the language client and start the client.
-            let disposable = new LanguageClient('restructuredtext', 'reStructuredText Language Server', serverOptions, clientOptions).start();
+            let languageClient = new LanguageClient('restructuredtext', 'reStructuredText Language Server', serverOptions, clientOptions);
 
             // Push the disposable to the context's subscriptions so that the
             // client can be deactivated on extension deactivation
-            context.subscriptions.push(disposable);  
+            context.subscriptions.push(languageClient.start());
+            
+            // Progress
+            (() => {
+                let config = workspace.getConfiguration('snooty');
+                let statusStyle = config.get('misc.status', 'short');
+                if (statusStyle == 'short' || statusStyle == 'detailed') {
+                    let statusIcon = window.createStatusBarItem(StatusBarAlignment.Right);
+                    statusIcon.text = 'snooty: loading';
+                    statusIcon.tooltip =
+                        'cquery is loading project metadata (ie, compile_commands.json)';
+                    statusIcon.show();
+                    languageClient.onReady().then(() => {
+                        statusIcon.text = 'snooty: idle';
+                        // TODO:
+                        // languageClient.onNotification('$snooty/progress', (args) => {
+
+                        // });
+                    });
+                }
+            })();
         }
         return;
     }
@@ -107,14 +134,18 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
         if (!(await python.checkPython(null, false)) || !(await python.checkDebugPy(null, true))) {
             return;
         }
-        args.push('-m', 'debugpy', '--listen', '5678', '--wait-for-client', '-m', 'snooty', 'language-server');
+        args.push('-m', 'debugpy', '--listen', '5678');
+        if (Configuration.getSnootyDebugLaunch()) {
+            args.push('--wait-for-client');
+        }
+        vscode.window.showInformationMessage('debugpy is at port 5678. Connect and debug.');
     } else {
         if (!(await python.checkPython(null, false)) || !(await python.checkSnooty(null, true, true))) {
             return;
         }
-        args.push('-m', 'snooty', 'language-server');
     }
 
+    args.push('-m', 'snooty', 'language-server');
     if (serverModule != null) {
 
         // If the extension is launched in debug mode then the debug server options are used
@@ -152,12 +183,31 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
             await client.stop();
             return client.start();
         });
-    
+
+        (() => {
+            let config = workspace.getConfiguration('snooty');
+            let statusStyle = config.get('misc.status', 'short');
+            if (statusStyle == 'short' || statusStyle == 'detailed') {
+                let statusIcon = window.createStatusBarItem(StatusBarAlignment.Right);
+                statusIcon.text = 'snooty: loading';
+                statusIcon.tooltip =
+                    'cquery is loading project metadata (ie, compile_commands.json)';
+                statusIcon.show();
+                client.onReady().then(() => {
+                    statusIcon.text = 'snooty: idle';
+                    // TODO:
+                    // languageClient.onNotification('$snooty/progress', (args) => {
+
+                    // });
+                });
+            }
+        })();
+
         // Push the disposable to the context's subscriptions so that the
         // client can be deactivated on extension deactivation
         context.subscriptions.push(client.start());
         context.subscriptions.push(restartServer);
-    
+
         // Register custom command to allow includes, literalincludes, and figures to be clickable
         let hoverFile: string;
         const clickInclude: vscode.Disposable = vscode.commands.registerCommand('snooty.clickInclude', async () => {
