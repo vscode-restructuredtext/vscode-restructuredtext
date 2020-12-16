@@ -295,7 +295,9 @@ export class Python {
 
   private async installSnooty(): Promise<void> {
     try {
-      await this.exec("-m", "pip", "install", "snooty-lextudio");
+      // TODO: temp cleanup. Should remove in a future release.
+      await this.exec("-m", "pip", "uninstall", "snooty", "-y");
+      await this.exec("-m", "pip", "install", "snooty-lextudio", "--upgrade");
       this.logger.log("Finished installing snooty-lextudio");
     } catch (e) {
       this.logger.log("Failed to install snooty-lextudio");
@@ -308,8 +310,8 @@ export class Python {
 
   private async checkSnootyInstall(): Promise<boolean> {
     try {
-      await this.exec("-c", '"import snooty;"');
-      return true;
+      const version = await this.exec("-c", '"import snooty; from distutils.version import LooseVersion; print(LooseVersion(snooty.__version__) < LooseVersion(\'1.8.3\'))"');
+      return version.trim() === 'False';
     } catch (e) {
       return false;
     }
