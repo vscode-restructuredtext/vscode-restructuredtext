@@ -163,25 +163,34 @@ export class Python {
       }
       return false;
     }
-    if (Configuration.getSnooty(resource)) {
-      if (!(await this.checkSnootyInstall())) {
-        if (showInformation) {
-          var choice = await vscode.window.showInformationMessage("Snooty language server is not installed.", "Install", "Not now", "Do not show again");
-          if (choice === "Install") {
-            this.logger.log("Started to install Snooty...");
-            await this.installSnooty();
-          } else if (choice === "Do not show again") {
-            this.logger.log("Disabled language server.");
-            await Configuration.setLanguageServerDisabled();
-            vscode.window.showWarningMessage("No IntelliSense. Language server is now disabled.");
-            return false;
+    if (!(await this.checkSnootyInstall())) {
+      if (showInformation) {
+        const canContinue = await this.checkPipInstall();
+        if (!canContinue) {
+          var upgradePip = await vscode.window.showInformationMessage("Python package pip is too old.", "Upgrade", "Not now");
+          if (upgradePip === "Upgrade") {
+            this.logger.log("Start to upgrade pip...");
+            await this.installPip();
           } else {
-            vscode.window.showWarningMessage("No IntelliSense. Snooty language server is not installed.");
+            vscode.window.showWarningMessage("Python package pip is too old. Snooty language server is not installed.");
             return false;
           }
+        }
+        var choice = await vscode.window.showInformationMessage("Snooty language server is not installed.", "Install", "Not now", "Do not show again");
+        if (choice === "Install") {
+          this.logger.log("Started to install Snooty...");
+          await this.installSnooty();
+        } else if (choice === "Do not show again") {
+          this.logger.log("Disabled language server.");
+          await Configuration.setLanguageServerDisabled();
+          vscode.window.showWarningMessage("No IntelliSense. Language server is now disabled.");
+          return false;
         } else {
+          vscode.window.showWarningMessage("No IntelliSense. Snooty language server is not installed.");
           return false;
         }
+      } else {
+        return false;
       }
     }
     return true;
@@ -293,6 +302,28 @@ export class Python {
     }
   }
 
+  private async installPip(): Promise<void> {
+    try {
+      await this.exec("-m", "pip", "install", "pip", "--upgrade");
+      this.logger.log("Finished installing pip");
+    } catch (e) {
+      this.logger.log("Failed to install pip");
+      vscode.window.showErrorMessage(
+        "Could not install pip. Please run `pip install pip --upgrade` to use this " +
+          "extension, or check your Python path."
+      );
+    }
+  }
+
+  private async checkPipInstall(): Promise<boolean> {
+    try {
+      const versionTooOld = await this.exec("-c", '"import pip; from distutils.version import LooseVersion; print(LooseVersion(pip.__version__) < LooseVersion(\'20.1.2\'))"');
+      return versionTooOld.trim() === 'False';
+    } catch (e) {
+      return false;
+    }
+  }
+
   private async installSnooty(): Promise<void> {
     try {
       // TODO: temp cleanup. Should remove in a future release.
@@ -310,8 +341,8 @@ export class Python {
 
   private async checkSnootyInstall(): Promise<boolean> {
     try {
-      const version = await this.exec("-c", '"import snooty; from distutils.version import LooseVersion; print(LooseVersion(snooty.__version__) < LooseVersion(\'1.8.3\'))"');
-      return version.trim() === 'False';
+      const versionTooOld = await this.exec("-c", '"import snooty; from distutils.version import LooseVersion; print(LooseVersion(snooty.__version__) < LooseVersion(\'1.8.3\'))"');
+      return versionTooOld.trim() === 'False';
     } catch (e) {
       return false;
     }

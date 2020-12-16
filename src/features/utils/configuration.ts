@@ -127,7 +127,7 @@ export class Configuration {
         return Configuration.loadAnySetting('languageServer.disabled', true, null);
     }
 
-    public static getSnooty(resource: Uri = null): boolean {
+    public static getSnootyPreferred(resource: Uri = null): boolean {
         return Configuration.loadAnySetting('languageServer.useSnooty', true, null);
     }
 

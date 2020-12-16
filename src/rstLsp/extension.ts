@@ -30,7 +30,7 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
     var fs = require('fs');
     let serverModule: string = null;
     let args: string[] = [];
-    if (!Configuration.getSnooty()) {
+    if (!Configuration.getSnootyPreferred()) {
         logger.log('Use legacy language server.');
         logger.telemetry('legacy language server');
 
