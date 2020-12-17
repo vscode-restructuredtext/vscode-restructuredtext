@@ -35,7 +35,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 	logger.log('Please visit https://docs.restructuredtext.net to learn how to configure the extension.');
 
 	const conflicting = Configuration.getConflictingExtensions();
-	conflicting.forEach(element => {
+	for (const element of conflicting) {
 		const found = vscode.extensions.getExtension(element);
 		if (found) {
 			const message = `Found conflicting extension ${element}. Please uninstall it.`;
@@ -43,7 +43,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
             logger.telemetry(message);
 			vscode.window.showErrorMessage(message);
 		}
-	});
+	}
 
 	const disableLsp = !platformIsSupported(logger) || Configuration.getLanguageServerDisabled();
 
@@ -136,12 +136,12 @@ async function platformIsSupported(logger: Logger): Promise<boolean> {
         const dist = result.id;
         logger.log(`dist: ${dist}`);
         const supportedPlatforms = Configuration.getSupportedPlatforms();
-        supportedPlatforms.forEach(item => {
+        for (const item of supportedPlatforms) {
             if (dist.toLowerCase().indexOf(item) > -1 ) {
                 logger.log("Supported distribution.");
                 return true;
             }
-        });
+        }
     
         logger.log("Not-supported distribution.")
         return false;
