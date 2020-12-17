@@ -4,25 +4,25 @@ import * as cp from 'child_process';
 
 import * as vscode from 'vscode';
 
-import { ThrottledDelayer } from './async';
-import { LineDecoder } from './lineDecoder';
 import { Logger } from '../../logger';
-import { Configuration } from './configuration';
 import { Python } from '../../python';
+import { ThrottledDelayer } from './async';
+import { Configuration } from './configuration';
+import { LineDecoder } from './lineDecoder';
 
 enum RunTrigger {
 	onSave,
 	onType,
-	off
+	off,
 }
 
 namespace RunTrigger {
 	export let strings = {
-		onSave: 'onSave',
+		off: 'off',
+        onSave: 'onSave',
 		onType: 'onType',
-		off: 'off'
-	}
-	export let from = function(value: string): RunTrigger {
+	};
+	export let from = (value: string): RunTrigger => {
 		if (value === 'onType') {
 			return RunTrigger.onType;
 		} else if (value === 'onSave') {
@@ -30,57 +30,55 @@ namespace RunTrigger {
 		} else {
 			return RunTrigger.off;
 		}
-	}
+	};
 }
 
-export interface LinterConfiguration {
-	executable:string,
-	module:string[],
-	fileArgs:string[],
-	bufferArgs:string[],
-	extraArgs:string[],
-	runTrigger:string,
-	rootPath: string
+export interface ILinterConfiguration {
+	executable: string;
+	module: string[];
+	fileArgs: string[];
+	bufferArgs: string[];
+	extraArgs: string[];
+	runTrigger: string;
+	rootPath: string;
 }
 
-export interface Linter {
-	languageId:string,
-	loadConfiguration:(resource: vscode.Uri)=>LinterConfiguration,
-	process:(output:string[])=>vscode.Diagnostic[]	
+export interface ILinter {
+	languageId: string;
+	loadConfiguration: (resource: vscode.Uri) => Promise<ILinterConfiguration>;
+	process: (output: string[]) => vscode.Diagnostic[];
 }
 
 export class LintingProvider {
-	
-	public linterConfiguration: LinterConfiguration;
+
+	public linterConfiguration: ILinterConfiguration;
 
 	private executableNotFound: boolean;
-	
+
 	private documentListener: vscode.Disposable;
 	private diagnosticCollection: vscode.DiagnosticCollection;
 	private delayers: { [key: string]: ThrottledDelayer<void> };
-	
-	
+
 	constructor(
-		private readonly linter: Linter, 
+		private readonly linter: ILinter,
 		private readonly logger: Logger,
-		private readonly python: Python)
-	{
+		private readonly python: Python) {
 		this.executableNotFound = false;
 	}
 
 	public activate(subscriptions: vscode.Disposable[]) {
 		this.diagnosticCollection = vscode.languages.createDiagnosticCollection();
-		subscriptions.push(this);		
+		subscriptions.push(this);
 		vscode.workspace.onDidChangeConfiguration(this.resetConfiguration, this, subscriptions);
 		vscode.workspace.onDidSaveTextDocument((textDocument) => {
-			if (textDocument.fileName.endsWith("settings.json")) {
+			if (textDocument.fileName.endsWith('settings.json')) {
 				this.resetConfiguration();
 			}
 		}, null, subscriptions);
 		this.resetConfiguration();
-		
+
 		vscode.workspace.onDidOpenTextDocument(this.triggerLint, this, subscriptions);
-		vscode.workspace.onDidCloseTextDocument((textDocument)=> {
+		vscode.workspace.onDidCloseTextDocument((textDocument) => {
 			this.diagnosticCollection.delete(textDocument.uri);
 			delete this.delayers[textDocument.uri.toString()];
 		}, null, subscriptions);
@@ -96,10 +94,10 @@ export class LintingProvider {
 		vscode.workspace.textDocuments.forEach(this.triggerLint, this);
 	}
 
-	private loadConfiguration(resource: vscode.Uri): void {
-		let oldExecutable = this.linterConfiguration && this.linterConfiguration.executable;
-		this.linterConfiguration = this.linter.loadConfiguration(resource);
-		
+	private async loadConfiguration(resource: vscode.Uri): Promise<void> {
+		const oldExecutable = this.linterConfiguration && this.linterConfiguration.executable;
+		this.linterConfiguration = await this.linter.loadConfiguration(resource);
+
 		this.delayers = Object.create(null);
 		if (this.executableNotFound) {
 			this.executableNotFound = oldExecutable === this.linterConfiguration.executable;
@@ -113,7 +111,7 @@ export class LintingProvider {
 			});
 		} else {
 			this.documentListener = vscode.workspace.onDidSaveTextDocument(this.triggerLint, this);
-		}		
+		}
 		this.documentListener = vscode.workspace.onDidSaveTextDocument(this.triggerLint, this);
 		// Configuration has changed. Reevaluate all documents.
 	}
@@ -122,20 +120,21 @@ export class LintingProvider {
 
 		const currentFolder = Configuration.GetRootPath(textDocument.uri);
 		if (this.linterConfiguration === null || (currentFolder && this.linterConfiguration.rootPath !== currentFolder)) {
-			this.loadConfiguration(textDocument.uri);
+			await this.loadConfiguration(textDocument.uri);
 		}
 
-		if (textDocument.languageId !== this.linter.languageId || 
-			textDocument.uri.scheme !== "file" ||
+		if (textDocument.languageId !== this.linter.languageId ||
+			textDocument.uri.scheme !== 'file' ||
 			this.executableNotFound ||
 			RunTrigger.from(this.linterConfiguration.runTrigger) === RunTrigger.off) {
 			return;
 		}
 
-		let key = textDocument.uri.toString();
+		const key = textDocument.uri.toString();
 		let delayer = this.delayers[key];
 		if (!delayer) {
-			delayer = new ThrottledDelayer<void>(RunTrigger.from(this.linterConfiguration.runTrigger) === RunTrigger.onType ? 250 : 0);
+			delayer = new ThrottledDelayer<void>(RunTrigger.from(this.linterConfiguration.runTrigger)
+                === RunTrigger.onType ? 250 : 0);
 			this.delayers[key] = delayer;
 		}
 		delayer.trigger(() => this.doLint(textDocument) );
@@ -151,12 +150,12 @@ export class LintingProvider {
 		}
 
 		return new Promise<void>((resolve, reject) => {
-			let executable = this.linterConfiguration.executable;
-			let decoder = new LineDecoder();
+			const executable = this.linterConfiguration.executable;
+			const decoder = new LineDecoder();
 			let diagnostics: vscode.Diagnostic[] = [];
 			const file = '"' + textDocument.fileName + '"';
 			const rootPath = Configuration.GetRootPath(textDocument.uri);
-			let options = rootPath ? { rootPath, shell: true } : undefined;
+			const options = rootPath ? { rootPath, shell: true } : undefined;
 			let args: string[] = [];
 			args = args.concat(this.linterConfiguration.module);
 			if (RunTrigger.from(this.linterConfiguration.runTrigger) === RunTrigger.onSave) {
@@ -166,16 +165,16 @@ export class LintingProvider {
 				args.push(file);
 			}
 			args = args.concat(this.linterConfiguration.extraArgs);
-			
-			let childProcess = cp.spawn(executable, args, options);
-			this.logger.log(`[linter] Execute: ${executable} ${args.join(' ')} in ${rootPath}.`)
+
+			const childProcess = cp.spawn(executable, args, options);
+			this.logger.log(`[linter] Execute: ${executable} ${args.join(' ')} in ${rootPath}.`);
 			childProcess.on('error', (error: Error) => {
 				if (this.executableNotFound) {
 					resolve();
 					return;
 				}
 				let message: string = null;
-				if ((<any>error).code === 'ENOENT') {
+				if ((error as any).code === 'ENOENT') {
 					message = `Cannot lint ${textDocument.fileName}. The executable '${executable}' was not found. Use the '${this.linter.languageId}.linter.executablePath' setting to configure the location of the executable`;
 				} else {
 					message = error.message ? error.message : `Failed to run executable using path: ${executable}. Reason is unknown.`;
@@ -185,18 +184,18 @@ export class LintingProvider {
 				this.executableNotFound = true;
 				resolve();
 			});
-			
-			let onDataEvent = (data:Buffer) => { decoder.write(data) };
-			let onEndEvent = () => {
+
+			const onDataEvent = (data: Buffer) => { decoder.write(data); };
+			const onEndEvent = () => {
 				decoder.end();
-				let lines = decoder.getLines();
+				const lines = decoder.getLines();
 				if (lines && lines.length > 0) {
 					diagnostics = this.linter.process(lines);
 				}
 				this.diagnosticCollection.set(textDocument.uri, diagnostics);
 				resolve();
-			}
-			
+			};
+
 			if (childProcess.pid) {
 				if (RunTrigger.from(this.linterConfiguration.runTrigger) === RunTrigger.onType) {
 					childProcess.stdin.write(textDocument.getText());
