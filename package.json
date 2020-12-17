@@ -2,7 +2,7 @@
   "name": "restructuredtext",
   "displayName": "%displayName%",
   "description": "%description%",
-  "version": "134.0.0",
+  "version": "135.0.0",
   "publisher": "lextudio",
   "engines": {
     "vscode": "^1.43.0"
@@ -564,6 +564,7 @@
     "watch": "npx tsc -watch -p ./tsconfig.json",
     "pretest": "npm run compile",
     "test": "node ./out/test/runTest.js",
-    "reinstall": "npm install && npm audit fix"
+    "reinstall": "npm install && npm audit fix",
+    "package": "npm run reinstall && vsce package"
   }
 }
