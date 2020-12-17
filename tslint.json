@@ -1,2 +1,9 @@
 {
+    "extends": "tslint:recommended",
+    "rules": {
+        "indent": false,
+        "max-line-length": false,
+        "quotemark": [true, "single"],
+        "no-namespace": false
+    }
 }
