@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { LanguageClient, CancellationToken } from "vscode-languageclient";
+import { CancellationToken, LanguageClient } from "vscode-languageclient";
 
 export class DocumentLinkProvider implements vscode.DocumentLinkProvider {
   /**
@@ -19,7 +19,7 @@ export class DocumentLinkProvider implements vscode.DocumentLinkProvider {
     document: vscode.TextDocument,
     token: CancellationToken
   ): vscode.ProviderResult<vscode.DocumentLink[]> {
-    return this._findDocLinks(document);
+    return this._findDocLinks(document, token);
   }
 
   // Adds the target uri to the document link
@@ -38,7 +38,7 @@ export class DocumentLinkProvider implements vscode.DocumentLinkProvider {
   }
 
   // Returns document links found within the current text document
-  private _findDocLinks(document: vscode.TextDocument): vscode.DocumentLink[] {
+  private _findDocLinks(document: vscode.TextDocument, token: CancellationToken): vscode.DocumentLink[] {
     const docText = document.getText();
     const docRoles = docText.match(/:doc:`.+?`/gs);
 
@@ -49,6 +49,9 @@ export class DocumentLinkProvider implements vscode.DocumentLinkProvider {
 
     // For every doc role found, find their respective target
     for (const docRole of docRoles) {
+      if (token.isCancellationRequested) {
+        return [];
+      }
       docRoleOffsetStart = docText.indexOf(docRole, docRoleOffsetStart + 1);
 
       // Find target in doc role
