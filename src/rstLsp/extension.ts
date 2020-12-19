@@ -183,8 +183,7 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
 
         const client = new LanguageClient('Snooty Language Client', serverOptions, clientOptions);
         const restartServer = vscode.commands.registerCommand('snooty.restart', async () => {
-            await client.stop();
-            return client.start();
+            vscode.commands.executeCommand('workbench.action.reloadWindow');
         });
 
         (() => {
@@ -192,9 +191,10 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
             let statusStyle = config.get('misc.status', 'short');
             if (statusStyle == 'short' || statusStyle == 'detailed') {
                 let statusIcon = window.createStatusBarItem(StatusBarAlignment.Right);
+                statusIcon.command = 'snooty.restart';
                 statusIcon.text = 'snooty: loading';
                 statusIcon.tooltip =
-                    'snooty is loading project metadata';
+                    'Click to reload window and restart Snooty language server';
                 statusIcon.show();
                 client.onReady().then(() => {
                     statusIcon.text = 'snooty: idle';
