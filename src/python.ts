@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
+import * as fs from 'fs';
 import { exec, ExecException } from "child_process";
 import { Logger } from "./logger";
 import { Configuration } from './features/utils/configuration';
-import { fileExists } from './common';
 import { Uri } from 'vscode';
 
 export class Python {
@@ -80,7 +80,7 @@ export class Python {
         }
         return false;
       }
-      if (!(await this.checkSphinxInstall() || (sphinx != null && await fileExists(sphinx)))) {
+      if (!(await this.checkSphinxInstall() || (sphinx != null && await fs.existsSync(sphinx)))) {
         var choice = await vscode.window.showInformationMessage("Preview engine sphinx is not installed.", "Install", "Not now", "Do not show again");
         if (choice === "Install") {
           this.logger.log("Started to install sphinx...");
@@ -112,7 +112,7 @@ export class Python {
     }
     if (Configuration.getLinterName(resource) === "doc8") {
       const doc8 = Configuration.getLinterPath(resource);
-      if (!(await this.checkDoc8Install() || (doc8 != null && await fileExists(doc8)))) {
+      if (!(await this.checkDoc8Install() || (doc8 != null && await fs.existsSync(doc8)))) {
         if (showInformation) {
           var choice = await vscode.window.showInformationMessage("Linter doc8 is not installed.", "Install", "Not now", "Do not show again");
           if (choice === "Install") {
@@ -133,7 +133,7 @@ export class Python {
       }
     } else if (Configuration.getLinterName(resource) === "rstcheck") {
       const rstcheck = Configuration.getLinterPath(resource);
-      if (!(await this.checkRstCheckInstall() || (rstcheck != null && await fileExists(rstcheck)))) {
+      if (!(await this.checkRstCheckInstall() || (rstcheck != null && await fs.existsSync(rstcheck)))) {
         if (showInformation) {
           var choice = await vscode.window.showInformationMessage("Linter rstcheck is not installed.", "Install", "Not now", "Do not show again");
           if (choice === "Install") {

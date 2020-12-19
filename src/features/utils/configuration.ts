@@ -127,14 +127,6 @@ export class Configuration {
         return Configuration.loadAnySetting('languageServer.disabled', true, null);
     }
 
-    public static getSnootyPreferred(resource: Uri = null): boolean {
-        return Configuration.loadAnySetting('languageServer.useSnooty', true, null);
-    }
-
-    public static getSupportedPlatforms(resource: Uri = null): string[] {
-        return Configuration.loadAnySetting<string[]>('languageServer.supportedPlatforms', [], null);
-    }
-
     public static getUpdateDelay(resource: Uri = null): number {
         return Configuration.loadAnySetting<number>('updateDelay', 3000, resource);
     }

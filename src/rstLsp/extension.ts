@@ -7,13 +7,10 @@ import { Configuration } from './../features/utils/configuration';
 
 import * as vscode from 'vscode';
 import { LanguageClient, ServerOptions, LanguageClientOptions } from 'vscode-languageclient';
-import * as path from "path";
 import { Logger } from '../logger';
 import { DocumentLinkProvider } from './docLinkProvider';
 import open = require('open');
 import mime = require('mime');
-import { ExtensionDownloader } from '../ExtensionDownloader';
-import * as util from '../common';
 import { StatusBarAlignment, window, workspace } from 'vscode';
 
 export async function activate(context: vscode.ExtensionContext, logger: Logger, disabled: boolean, python: Python): Promise<void> {
@@ -27,101 +24,8 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
         // TODO:
     }));
 
-    var fs = require('fs');
-    let serverModule: string = null;
+    let serverModule: string = await Configuration.getPythonPath();
     let args: string[] = [];
-    if (!Configuration.getSnootyPreferred()) {
-        logger.log('Use legacy language server.');
-        logger.telemetry('legacy language server');
-
-        const extensionId = 'lextudio.restructuredtext';
-        const extension = vscode.extensions.getExtension(extensionId);
-        await ensureRuntimeDependencies(extension, logger);
-
-        // Defines the search path of your language server DLL. (.NET Core)
-        const languageServerPaths = [
-            "../restructuredtext-antlr/Server/bin/Debug/netcoreapp3.1/Server.dll",
-            ".rst/Server.exe",
-            ".rst/Server"
-        ];
-        for (let p of languageServerPaths) {
-            p = context.asAbsolutePath(p);
-            // console.log(p);
-            if (fs.existsSync(p)) {
-                serverModule = p;
-                break;
-            }
-        }
-
-        if (serverModule != null) {
-            let workPath = path.dirname(serverModule);
-
-            // If the extension is launched in debug mode then the debug server options are used
-            // Otherwise the run options are used
-            let serverOptions: ServerOptions = {
-                run: { command: serverModule, args: [], options: { cwd: workPath } },
-                debug: { command: serverModule, args: ["--debug"], options: { cwd: workPath } }
-            }
-
-            if (serverModule.indexOf(".dll") > -1)
-            {
-                serverOptions = {
-                    run: { command: "dotnet", args: [serverModule], options: { cwd: workPath } },
-                    debug: { command: "dotnet", args: [serverModule, "--debug"], options: { cwd: workPath } }
-                }
-            }
-
-            // Options to control the language client
-            let clientOptions: LanguageClientOptions = {
-                // Register the server for plain text documents
-                documentSelector: [
-                    { language: 'restructuredtext', scheme: 'file' },
-                    { language: 'restructuredtext', scheme: 'untitled' }
-                ],
-                synchronize: {
-                    // Synchronize the setting section 'lspSample' to the server
-                    configurationSection: 'restructuredtext',
-                    // Notify the server about file changes to '.clientrc' files contain in the workspace
-                    fileEvents: [
-                        vscode.workspace.createFileSystemWatcher('**/conf.py'),
-                        vscode.workspace.createFileSystemWatcher("**/.rst"),
-                        vscode.workspace.createFileSystemWatcher("**/.rest")
-                    ]
-                }
-            }
-
-            // Create the language client and start the client.
-            let languageClient = new LanguageClient('restructuredtext', 'reStructuredText Language Server', serverOptions, clientOptions);
-
-            // Push the disposable to the context's subscriptions so that the
-            // client can be deactivated on extension deactivation
-            context.subscriptions.push(languageClient.start());
-            
-            // Progress
-            (() => {
-                let config = workspace.getConfiguration('snooty');
-                let statusStyle = config.get('misc.status', 'short');
-                if (statusStyle == 'short' || statusStyle == 'detailed') {
-                    let statusIcon = window.createStatusBarItem(StatusBarAlignment.Right);
-                    statusIcon.text = 'rst-antlr: loading';
-                    statusIcon.tooltip =
-                        'rst-antlr is loading project metadata (ie, compile_commands.json)';
-                    statusIcon.show();
-                    languageClient.onReady().then(() => {
-                        statusIcon.text = 'rst-antlr: idle';
-                        // TODO:
-                        // languageClient.onNotification('$snooty/progress', (args) => {
-
-                        // });
-                    });
-                }
-            })();
-        }
-        return;
-    }
-
-    serverModule = await Configuration.getPythonPath();
-
     let options: any = {};
     const sourceFolder = Configuration.getSnootySourceFolder();
     if (sourceFolder) {
@@ -276,16 +180,4 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
             new DocumentLinkProvider(client)
         );
     }
-}
-
-function ensureRuntimeDependencies(extension: vscode.Extension<any>, logger: Logger): Promise<boolean> {
-    return util.installFileExists(util.InstallFileType.Lock)
-        .then((exists) => {
-            if (!exists) {
-                const downloader = new ExtensionDownloader(logger, extension.packageJSON);
-                return downloader.installRuntimeDependencies();
-            } else {
-                return true;
-            }
-        });
 }

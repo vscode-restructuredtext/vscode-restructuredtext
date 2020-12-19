@@ -12,7 +12,6 @@ import { Logger } from './logger';
 import { ExtensionContentSecurityPolicyArbiter, PreviewSecuritySelector } from './security';
 import { Python } from './python';
 import { RSTEngine } from './rstEngine';
-import * as util from './common';
 
 import RstLintingProvider from './features/rstLinter';
 import { underline } from './features/underline';
@@ -29,7 +28,6 @@ export function getExtensionPath(): string {
 
 export async function activate(context: vscode.ExtensionContext): Promise<{ initializationFinished: Promise<void> }> {
 	extensionPath = context.extensionPath;
-	util.setExtensionPath(context.extensionPath);
 
 	const logger = new Logger();
 	logger.log('Please visit https://docs.restructuredtext.net to learn how to configure the extension.');
@@ -45,7 +43,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 		}
 	}
 
-	const disableLsp = !platformIsSupported(logger) || Configuration.getLanguageServerDisabled();
+    await logPlatform(logger);
+	const disableLsp = Configuration.getLanguageServerDisabled();
 
     const python: Python = new Python(logger);
 
@@ -122,31 +121,16 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 	};
 }
 
-async function platformIsSupported(logger: Logger): Promise<boolean> {
-	var os = require('os')
+async function logPlatform(logger: Logger): Promise<void> {
+	const os = require('os');
     let platform = os.platform();
     logger.log(`OS is ${platform}`);
 	if (platform === 'darwin' || platform === 'win32') {
-		return true;
+		return;
 	}
 
     const osInfo = require('linux-os-info');
-    try {
-        const result = await osInfo();
-        const dist = result.id;
-        logger.log(`dist: ${dist}`);
-        const supportedPlatforms = Configuration.getSupportedPlatforms();
-        for (const item of supportedPlatforms) {
-            if (dist.toLowerCase().indexOf(item) > -1 ) {
-                logger.log("Supported distribution.");
-                return true;
-            }
-        }
-    
-        logger.log("Not-supported distribution.")
-        return false;
-    } catch {
-		logger.log("Unknown distribution.");
-		return false;
-    }
+    const result = await osInfo();
+    const dist = result.id;
+    logger.log(`dist: ${dist}`);
 }
