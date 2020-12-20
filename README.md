@@ -58,4 +58,4 @@ The linter support is based on [Cody Hoover's ruby-linter](https://marketplace.v
 The initial idea was brought from [Thomas Haakon Townsend's ReStructured Text Previewer](https://marketplace.visualstudio.com/items?itemName=tht13.rst-vscode), but soon after moving fully to Sphinx, this extension becomes its own beast.
 
 ### IntelliSense
-The IntelliSense support is provided by the reStructuredText Language Server.
+The IntelliSense support is provided by [Snooty Language Server](https://github.com/vscode-restructuredtext/snooty-parser).
