@@ -19,7 +19,12 @@ export class DocumentLinkProvider implements vscode.DocumentLinkProvider {
     document: vscode.TextDocument,
     token: CancellationToken
   ): vscode.ProviderResult<vscode.DocumentLink[]> {
-    return this._findDocLinks(document, token).concat(this._findImageLinks(document, token));
+    let result = this._findDocLinks(document, token);
+    const directives = ['image', 'literalinclude'];
+    for (const directive of directives) {
+      result = result.concat(this._findDirectiveLinks(document, directive, token));
+    }
+    return result;
   }
 
   // Adds the target uri to the document link
@@ -82,9 +87,11 @@ export class DocumentLinkProvider implements vscode.DocumentLinkProvider {
     return doclinks;
   }
 
-  private _findImageLinks(document: vscode.TextDocument, token: CancellationToken): vscode.DocumentLink[] {
+  private _findDirectiveLinks(document: vscode.TextDocument, directive: string, token: CancellationToken): vscode.DocumentLink[] {
+    const header = `.. ${directive}::`;
     const docText = document.getText();
-    const docRoles = docText.match(/.. image::\s+([^\n]+)(\r)?\n/gs);
+    const expression = new RegExp(`${header}\\s+([^\\n]+)(\\r)?\\n`, 'gs');
+    const docRoles = docText.match(expression);
 
     if (docRoles === null) return [];
 
@@ -100,7 +107,7 @@ export class DocumentLinkProvider implements vscode.DocumentLinkProvider {
 
       // Find target in doc role
       // If target not found, target should exist in the form :doc:`target-name`
-      const target = docRole.substring(11).trim();
+      const target = docRole.substring(header.length).trim();
       const targetIndex = docRole.indexOf(target);
 
       // Get range of the target within the scope of the whole text document
