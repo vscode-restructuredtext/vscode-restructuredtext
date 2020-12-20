@@ -33,8 +33,8 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
         // launch language server from source folder.
         options.cwd = sourceFolder;
         if (await python.checkPython(null, false) && await python.checkSnooty(null, false, false)) {
-            vscode.window.showErrorMessage('Run `pip uninstall snooty-lextudio` and then restart VSCode to start debugging.');
-            return;
+            await python.uninstallSnooty();
+            vscode.window.showInformationMessage('Uninstalled snooty-lextudio.');
         }
         if (!(await python.checkPython(null, false)) || !(await python.checkDebugPy(null, true))) {
             return;

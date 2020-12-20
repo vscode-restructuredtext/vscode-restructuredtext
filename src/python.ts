@@ -339,6 +339,20 @@ export class Python {
     }
   }
 
+  public async uninstallSnooty(): Promise<void> {
+    try {
+      await this.exec("-m", "pip", "uninstall", "snooty", "-y");
+      await this.exec("-m", "pip", "uninstall", "snooty-lextudio", "-y");
+      this.logger.log("Finished uninstalling snooty-lextudio");
+    } catch (e) {
+      this.logger.log("Failed to uninstall snooty-lextudio");
+      vscode.window.showErrorMessage(
+        "Could not uninstall snooty-lextudio. Please run `pip uninstall snooty-lextudio` to debug this " +
+          "extension."
+      );
+    }
+  }
+
   private async checkSnootyInstall(): Promise<boolean> {
     try {
       const versionTooOld = await this.exec("-c", '"import snooty; from distutils.version import LooseVersion; print(LooseVersion(snooty.__version__) < LooseVersion(\'1.8.6\'))"');

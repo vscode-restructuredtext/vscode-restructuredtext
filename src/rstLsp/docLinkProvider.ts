@@ -8,14 +8,14 @@ export class DocumentLinkProvider implements vscode.DocumentLinkProvider {
    * corresponding file.
    */
 
-  private _client: LanguageClient;
+  private client: LanguageClient;
 
   constructor(client: LanguageClient) {
-    this._client = client;
+    this.client = client;
   }
 
   // Provides the text document with the ranges for document links
-  provideDocumentLinks(
+  public provideDocumentLinks(
     document: vscode.TextDocument,
     token: CancellationToken
   ): vscode.ProviderResult<vscode.DocumentLink[]> {
@@ -28,7 +28,7 @@ export class DocumentLinkProvider implements vscode.DocumentLinkProvider {
   }
 
   // Adds the target uri to the document link
-  async resolveDocumentLink(
+  public async resolveDocumentLink(
     link: vscode.DocumentLink,
     token: CancellationToken
   ): Promise<vscode.DocumentLink | undefined> {
@@ -47,9 +47,10 @@ export class DocumentLinkProvider implements vscode.DocumentLinkProvider {
     const docText = document.getText();
     const docRoles = docText.match(/:doc:`.+?`/gs);
 
-    if (docRoles === null) return [];
-
-    let doclinks: vscode.DocumentLink[] = [];
+    if (docRoles === null) {
+      return [];
+    }
+    const doclinks: vscode.DocumentLink[] = [];
     let docRoleOffsetStart = -1; // Initiated to -1 to accommodate 0th index
 
     // For every doc role found, find their respective target
@@ -93,9 +94,10 @@ export class DocumentLinkProvider implements vscode.DocumentLinkProvider {
     const expression = new RegExp(`${header}\\s+<?([^\\n]+)>?(\\r)?\\n`, 'gs');
     const docRoles = docText.match(expression);
 
-    if (docRoles === null) return [];
-
-    let doclinks: vscode.DocumentLink[] = [];
+    if (docRoles === null) {
+      return [];
+    }
+    const doclinks: vscode.DocumentLink[] = [];
     let docRoleOffsetStart = -1; // Initiated to -1 to accommodate 0th index
 
     // For every doc role found, find their respective target
@@ -131,12 +133,12 @@ export class DocumentLinkProvider implements vscode.DocumentLinkProvider {
     document: vscode.TextDocument,
     target: string
   ): Promise<vscode.Uri> {
-    const file: string = await this._client
-      .sendRequest("textDocument/resolve", {
-        fileName: target,
+    const file: string = await this.client
+      .sendRequest('textDocument/resolve', {
         docPath: document.uri.path,
-        resolveType: "doc"
-      })
+        fileName: target,
+        resolveType: 'doc'
+      });
 
     return vscode.Uri.file(file);
   }
