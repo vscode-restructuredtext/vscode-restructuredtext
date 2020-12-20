@@ -4,6 +4,8 @@
         "indent": false,
         "max-line-length": false,
         "quotemark": [true, "single"],
-        "no-namespace": false
+        "no-namespace": false,
+        "trailing-comma": false,
+        "member-ordering": false
     }
 }
