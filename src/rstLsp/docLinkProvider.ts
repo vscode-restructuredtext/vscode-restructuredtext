@@ -19,7 +19,7 @@ export class DocumentLinkProvider implements vscode.DocumentLinkProvider {
     document: vscode.TextDocument,
     token: CancellationToken
   ): vscode.ProviderResult<vscode.DocumentLink[]> {
-    return this._findDocLinks(document, token);
+    return this._findDocLinks(document, token).concat(this._findImageLinks(document, token));
   }
 
   // Adds the target uri to the document link
@@ -65,6 +65,42 @@ export class DocumentLinkProvider implements vscode.DocumentLinkProvider {
         continue;
       }
       const target = targetMatches[0];
+      const targetIndex = docRole.indexOf(target);
+
+      // Get range of the target within the scope of the whole text document
+      const targetOffsetStart = docRoleOffsetStart + targetIndex;
+      const targetOffsetEnd = targetOffsetStart + target.length;
+
+      doclinks.push({
+        range: new vscode.Range(
+          document.positionAt(targetOffsetStart),
+          document.positionAt(targetOffsetEnd)
+        )
+      });
+    }
+
+    return doclinks;
+  }
+
+  private _findImageLinks(document: vscode.TextDocument, token: CancellationToken): vscode.DocumentLink[] {
+    const docText = document.getText();
+    const docRoles = docText.match(/.. image::\s+([^\n]+)(\r)?\n/gs);
+
+    if (docRoles === null) return [];
+
+    let doclinks: vscode.DocumentLink[] = [];
+    let docRoleOffsetStart = -1; // Initiated to -1 to accommodate 0th index
+
+    // For every doc role found, find their respective target
+    for (const docRole of docRoles) {
+      if (token.isCancellationRequested) {
+        return [];
+      }
+      docRoleOffsetStart = docText.indexOf(docRole, docRoleOffsetStart + 1);
+
+      // Find target in doc role
+      // If target not found, target should exist in the form :doc:`target-name`
+      const target = docRole.substring(11).trim();
       const targetIndex = docRole.indexOf(target);
 
       // Get range of the target within the scope of the whole text document
