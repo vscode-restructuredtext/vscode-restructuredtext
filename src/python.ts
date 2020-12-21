@@ -353,6 +353,18 @@ export class Python {
     }
   }
 
+  public async checkPythonForSnooty(): Promise<boolean> {
+    if (this.version !== 3) {
+      return false;
+    }
+    try {
+      const versionTooOld = await this.exec("-c", '"import platform; from distutils.version import LooseVersion; print(LooseVersion(platform.python_version()) < LooseVersion(\'3.7.0\'))"');
+      return versionTooOld.trim() === 'False';
+    } catch (e) {
+      return false;
+    }
+  }
+
   private async checkSnootyInstall(): Promise<boolean> {
     try {
       const versionTooOld = await this.exec("-c", '"import snooty; from distutils.version import LooseVersion; print(LooseVersion(snooty.__version__) < LooseVersion(\'1.8.6\'))"');

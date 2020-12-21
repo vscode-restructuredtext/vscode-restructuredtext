@@ -18,6 +18,11 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
         return;
     }
 
+    if (!(await python.checkPythonForSnooty())) {
+        vscode.window.showErrorMessage('Python version is too old to run Snooty language server. Must use 3.7 and above.');
+        return;
+    }
+
     // Notify the user that if they change a snooty setting they need to restart
     // vscode.
     context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(() => {
