@@ -1,13 +1,13 @@
-import { Python } from './../python';
-import { Configuration } from './../features/utils/configuration';
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { LanguageClient, ServerOptions, LanguageClientOptions } from 'vscode-languageclient';
+import { LanguageClient, LanguageClientOptions, ServerOptions } from 'vscode-languageclient';
 import { Logger } from '../logger';
+import { Configuration } from './../features/utils/configuration';
+import { Python } from './../python';
 import { DocumentLinkProvider } from './docLinkProvider';
 import open = require('open');
 import mime = require('mime');
@@ -15,6 +15,11 @@ import { StatusBarAlignment, window, workspace } from 'vscode';
 
 export async function activate(context: vscode.ExtensionContext, logger: Logger, disabled: boolean, python: Python): Promise<void> {
     if (disabled) {
+        return;
+    }
+
+    if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 1) {
+        vscode.window.showWarningMessage('IntelliSense is not available, as Snooty language server does not support multi-root workspaces right now.');
         return;
     }
 
