@@ -73,7 +73,6 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
         }
 
         const documentSelector = [
-            { language: 'plaintext', scheme: 'file' },
             { language: 'yaml', scheme: 'file' },
             { language: 'restructuredtext', scheme: 'file' },
             { language: 'toml', scheme: 'file' },
@@ -88,7 +87,6 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
                 // Notify the server about file changes to '.clientrc' files contain in the workspace
                 fileEvents: [
                     vscode.workspace.createFileSystemWatcher('**/*.rst'),
-                    vscode.workspace.createFileSystemWatcher('**/*.txt'),
                     vscode.workspace.createFileSystemWatcher('**/*.yaml'),
                     vscode.workspace.createFileSystemWatcher('snooty.toml')
                 ]
@@ -103,7 +101,7 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
         (() => {
             let config = workspace.getConfiguration('snooty');
             let statusStyle = config.get('misc.status', 'short');
-            if (statusStyle == 'short' || statusStyle == 'detailed') {
+            if (statusStyle === 'short' || statusStyle === 'detailed') {
                 let statusIcon = window.createStatusBarItem(StatusBarAlignment.Right);
                 statusIcon.command = 'snooty.restart';
                 statusIcon.text = 'snooty: loading';
