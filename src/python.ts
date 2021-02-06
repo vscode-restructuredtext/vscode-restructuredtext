@@ -367,7 +367,7 @@ export class Python {
 
   private async checkSnootyInstall(): Promise<boolean> {
     try {
-      const versionTooOld = await this.exec("-c", '"import snooty; from distutils.version import LooseVersion; print(LooseVersion(snooty.__version__) < LooseVersion(\'1.8.6\'))"');
+      const versionTooOld = await this.exec("-c", '"import snooty; from distutils.version import LooseVersion; print(LooseVersion(snooty.__version__) < LooseVersion(\'1.8.7\'))"');
       return versionTooOld.trim() === 'False';
     } catch (e) {
       return false;
