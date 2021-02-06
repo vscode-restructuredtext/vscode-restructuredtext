@@ -6,7 +6,6 @@ import { Configuration } from './features/utils/configuration';
 
 import * as vscode from 'vscode';
 import { lazy } from './util/lazy';
-import { TelemetryClient } from 'applicationinsights';
 
 export enum Trace {
 	Off,
@@ -27,35 +26,18 @@ export namespace Trace {
 	}
 }
 
-
 function isString(value: any): value is string {
 	return Object.prototype.toString.call(value) === '[object String]';
 }
 
 export class Logger {
     private trace?: Trace;
-    private client: TelemetryClient;
 
 	private readonly outputChannel = lazy(() => vscode.window.createOutputChannel('reStructuredText'));
 
 	constructor() {
         this.updateConfiguration();
-        const appInsights = require('applicationinsights');
-        if (!Configuration.getTelemetryDisabled()) {
-            appInsights.setup('21de4b5e-cb53-4161-b5c7-11cbeb7b3e2a')
-                .setAutoDependencyCorrelation(true)
-                .setAutoCollectRequests(false)
-                .setAutoCollectPerformance(true, true)
-                .setAutoCollectExceptions(true)
-                .setAutoCollectDependencies(true)
-                .setAutoCollectConsole(true)
-                .setUseDiskRetryCaching(true)
-                .setSendLiveMetrics(false)
-                .setDistributedTracingMode(appInsights.DistributedTracingModes.AI)
-                .start();
-            this.client = appInsights.defaultClient;
-        }
-	}
+ 	}
 
 	public log(message: string, data?: any): void {
 		if (this.trace === Trace.Verbose) {
@@ -64,10 +46,6 @@ export class Logger {
 				this.appendLine(Logger.data2String(data));
 			}
 		}
-    }
-    
-    public telemetry(message: string): void {
-        this.client?.trackTrace({message});
     }
 
 	public updateConfiguration() {

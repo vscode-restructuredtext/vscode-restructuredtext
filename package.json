@@ -8,7 +8,6 @@
     "vscode": "^1.43.0"
   },
   "dependencies": {
-    "applicationinsights": "^1.8.8",
     "linux-os-info": "^2.0.0",
     "lodash.throttle": "^4.1.1",
     "meaw": "^4.1.0",
@@ -123,6 +122,71 @@
         "key": "ctrl+k ctrl+-",
         "mac": "cmd+k cmd+-",
         "when": "editorLangId == restructuredtext"
+      },
+      {
+        "command": "restructuredtext.extension.onEnterKey",
+        "key": "enter",
+        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible && vim.mode != 'Normal' && vim.mode != 'Visual' && vim.mode != 'VisualBlock' && vim.mode != 'VisualLine' && vim.mode != 'SearchInProgressMode' && vim.mode != 'CommandlineInProgress' && vim.mode != 'Replace' && vim.mode != 'EasyMotionMode' && vim.mode != 'EasyMotionInputMode' && vim.mode != 'SurroundInputMode'"
+      },
+      {
+        "command": "restructuredtext.extension.onCtrlEnterKey",
+        "key": "ctrl+enter",
+        "mac": "cmd+enter",
+        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
+      },
+      {
+        "command": "restructuredtext.extension.onShiftEnterKey",
+        "key": "shift+enter",
+        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
+      },
+      {
+        "command": "restructuredtext.extension.onTabKey",
+        "key": "tab",
+        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible && !editorTabMovesFocus && !inSnippetMode && !hasSnippetCompletions && !hasOtherSuggestions"
+      },
+      {
+        "command": "restructuredtext.extension.onShiftTabKey",
+        "key": "shift+tab",
+        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible && !editorTabMovesFocus && !inSnippetMode && !hasSnippetCompletions && !hasOtherSuggestions"
+      },
+      {
+        "command": "restructuredtext.extension.onBackspaceKey",
+        "key": "backspace",
+        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible && vim.mode != 'Normal' && vim.mode != 'Visual' && vim.mode != 'VisualBlock' && vim.mode != 'VisualLine' && vim.mode != 'SearchInProgressMode' && vim.mode != 'CommandlineInProgress' && vim.mode != 'Replace' && vim.mode != 'EasyMotionMode' && vim.mode != 'EasyMotionInputMode' && vim.mode != 'SurroundInputMode'"
+      },
+      {
+        "command": "restructuredtext.extension.onMoveLineUp",
+        "key": "alt+up",
+        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
+      },
+      {
+        "command": "restructuredtext.extension.onMoveLineDown",
+        "key": "alt+down",
+        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
+      },
+      {
+        "command": "restructuredtext.extension.onCopyLineUp",
+        "win": "shift+alt+up",
+        "mac": "shift+alt+up",
+        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
+      },
+      {
+        "command": "restructuredtext.extension.onCopyLineDown",
+        "win": "shift+alt+down",
+        "mac": "shift+alt+down",
+        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
+      },
+      {
+        "command": "restructuredtext.extension.onIndentLines",
+        "key": "ctrl+]",
+        "mac": "cmd+]",
+        "when": "editorTextFocus && editorLangId == restructuredtext && !suggestWidgetVisible"
+      },
+      {
+        "command": "restructuredtext.extension.onOutdentLines",
+        "key": "ctrl+[",
+        "mac": "cmd+[",
+        "when": "editorTextFocus && editorLangId == restructuredtext && !suggestWidgetVisible"
       }
     ],
     "commands": [

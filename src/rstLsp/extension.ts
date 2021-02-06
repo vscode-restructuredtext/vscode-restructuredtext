@@ -39,7 +39,6 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
     let options: any = {};
     const sourceFolder = Configuration.getSnootySourceFolder();
     if (sourceFolder) {
-        logger.telemetry('Snooty from source');
         // launch language server from source folder.
         options.cwd = sourceFolder;
         if (await python.checkPython(null, false) && await python.checkSnooty(null, false, false)) {
@@ -61,7 +60,6 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
     }
 
     logger.log('Use Snooty language server');
-    logger.telemetry('Snooty language server');
     args.push('-m', 'snooty', 'language-server');
     if (serverModule != null) {
 

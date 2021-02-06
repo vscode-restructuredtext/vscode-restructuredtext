@@ -13,6 +13,7 @@ import { ExtensionContentSecurityPolicyArbiter, PreviewSecuritySelector } from '
 import { Python } from './python';
 import { RSTEngine } from './rstEngine';
 
+import * as listEditing from './features/listEditing';
 import RstLintingProvider from './features/rstLinter';
 import { underline } from './features/underline';
 import { Configuration } from './features/utils/configuration';
@@ -38,7 +39,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 		if (found) {
 			const message = `Found conflicting extension ${element}. Please uninstall it.`;
             logger.log(message);
-            logger.telemetry(message);
 			vscode.window.showErrorMessage(message);
 		}
 	}
@@ -110,6 +110,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
         { scheme: 'file', language: 'restructuredtext' }, new rstDocumentSymbolProvider()
     );
     context.subscriptions.push(disposableRstDSP);
+
+    listEditing.activate(context);
 
 	return {
 		initializationFinished: Promise.all([rstLspPromise])
