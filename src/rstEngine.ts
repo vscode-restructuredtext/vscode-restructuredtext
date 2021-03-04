@@ -29,7 +29,7 @@ export class RSTEngine {
       const writer = Configuration.getDocutilsWriter(uri);
       const writerPart = Configuration.getDocutilsWriterPart(uri);
       return this.python.exec(
-        '"' + path.join(__dirname, "..", "python-scripts", "preview.py") + '"',
+        '"' + path.join(__dirname, '..', 'python-scripts', 'preview.py') + '"',
         '"' + fileName + '"',
         '"' + writer + '"',
         '"' + writerPart + '"'
@@ -75,8 +75,8 @@ export class RSTEngine {
       }
 
       // Configure the sphinx-build command
-      let options = { cwd: input };
-      let cmd = [
+      const options = { cwd: input };
+      const cmd = [
         build,
         '-b html',
         '.',
@@ -90,7 +90,7 @@ export class RSTEngine {
       const source = path.dirname(whole);
       const sourceRelative = path.relative(confPyDirectory, source);
       const outputRelative = path.relative(confPyDirectory, output);
-      let htmlPath = path.join(confPyDirectory, outputRelative, sourceRelative, path.basename(whole));
+      const htmlPath = path.join(confPyDirectory, outputRelative, sourceRelative, path.basename(whole));
       return this.previewPage(htmlPath, cmd, input, options, fixLinks, webview);
     }
   }
@@ -176,7 +176,11 @@ export class RSTEngine {
           if (p2.startsWith('#') || lower.startsWith('http://') || lower.startsWith('https://')) {
               return subString;
           }
-          let newPath = Uri.file(path.join(path.dirname(documentPath), p2));
+          const index = p2.indexOf('?');
+          if (index > - 1) {
+            p2 = p2.substr(0, index);
+          }
+          const newPath = Uri.file(path.join(path.dirname(documentPath), p2));
           const newUrl = [
               p1,
               webView.asWebviewUri(newPath),
