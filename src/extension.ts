@@ -9,56 +9,64 @@ import * as commands from './commands/index';
 import { RSTContentProvider } from './features/previewContentProvider';
 import { RSTPreviewManager } from './features/previewManager';
 import { Logger } from './logger';
-import { ExtensionContentSecurityPolicyArbiter, PreviewSecuritySelector } from './security';
 import { Python } from './python';
 import { RSTEngine } from './rstEngine';
+import { ExtensionContentSecurityPolicyArbiter, PreviewSecuritySelector } from './security';
 
 import * as listEditing from './features/listEditing';
+import { rstDocumentSymbolProvider } from './features/rstDocumentSymbolProvider';
 import RstLintingProvider from './features/rstLinter';
 import { underline } from './features/underline';
 import { Configuration } from './features/utils/configuration';
 import RstTransformerStatus from './features/utils/statusBar';
 import * as RstLanguageServer from './rstLsp/extension';
-import { rstDocumentSymbolProvider } from './features/rstDocumentSymbolProvider';
+import { setGlobalState, setWorkspaceState } from './stateUtils';
+import { initConfig } from './config';
 
-let extensionPath = "";
+let extensionPath = '';
 
 export function getExtensionPath(): string {
-	return extensionPath;
+    return extensionPath;
 }
 
 export async function activate(context: vscode.ExtensionContext): Promise<{ initializationFinished: Promise<void> }> {
-	extensionPath = context.extensionPath;
 
-	const logger = new Logger();
-	logger.log('Please visit https://docs.restructuredtext.net to learn how to configure the extension.');
+    setGlobalState(context.globalState);
+    setWorkspaceState(context.workspaceState);
 
-	const conflicting = Configuration.getConflictingExtensions();
-	for (const element of conflicting) {
-		const found = vscode.extensions.getExtension(element);
-		if (found) {
-			const message = `Found conflicting extension ${element}. Please uninstall it.`;
+    await initConfig(context);
+
+    extensionPath = context.extensionPath;
+
+    const logger = new Logger();
+    logger.log('Please visit https://docs.restructuredtext.net to learn how to configure the extension.');
+
+    const conflicting = Configuration.getConflictingExtensions();
+    for (const element of conflicting) {
+        const found = vscode.extensions.getExtension(element);
+        if (found) {
+            const message = `Found conflicting extension ${element}. Please uninstall it.`;
             logger.log(message);
-			vscode.window.showErrorMessage(message);
-		}
-	}
+            vscode.window.showErrorMessage(message);
+        }
+    }
 
     await logPlatform(logger);
-	const disableLsp = Configuration.getLanguageServerDisabled();
+    const disableLsp = Configuration.getLanguageServerDisabled();
 
     const python: Python = new Python(logger);
 
-	// activate language services
-	const rstLspPromise = RstLanguageServer.activate(context, logger, disableLsp, python);
+    // activate language services
+    const rstLspPromise = RstLanguageServer.activate(context, logger, disableLsp, python);
 
     // Section creation support.
-	context.subscriptions.push(
-		vscode.commands.registerTextEditorCommand('restructuredtext.features.underline.underline', underline),
-		vscode.commands.registerTextEditorCommand('restructuredtext.features.underline.underlineReverse',
-			(textEditor, edit) => underline(textEditor, edit, true)),
-	);
+    context.subscriptions.push(
+        vscode.commands.registerTextEditorCommand('restructuredtext.features.underline.underline', underline),
+        vscode.commands.registerTextEditorCommand('restructuredtext.features.underline.underlineReverse',
+            (textEditor, edit) => underline(textEditor, edit, true)),
+    );
 
-	// Linter support
+    // Linter support
     if (!Configuration.getLinterDisabled()) {
         const linter = new RstLintingProvider(logger, python);
         linter.activate(context.subscriptions);
@@ -76,7 +84,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
         vscode.window.onDidChangeActiveTextEditor(status.update, status, context.subscriptions);
         status.update();
-	
+
         const cspArbiter = new ExtensionContentSecurityPolicyArbiter(context.globalState, context.workspaceState);
 
         const engine: RSTEngine = new RSTEngine(python, logger, status);
@@ -104,7 +112,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
             previewManager.updateConfiguration();
         }));
     }
-    
+
     // DocumentSymbolProvider Demo, for Outline View Test
     let disposableRstDSP = vscode.languages.registerDocumentSymbolProvider(
         { scheme: 'file', language: 'restructuredtext' }, new rstDocumentSymbolProvider()
@@ -113,23 +121,23 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
 
     listEditing.activate(context);
 
-	return {
-		initializationFinished: Promise.all([rstLspPromise])
-			.then((promiseResult) => {
-				// This promise resolver simply swallows the result of Promise.all.
-				// When we decide we want to expose this level of detail
-				// to other extensions then we will design that return type and implement it here.
-			}),
-	};
+    return {
+        initializationFinished: Promise.all([rstLspPromise])
+            .then((promiseResult) => {
+                // This promise resolver simply swallows the result of Promise.all.
+                // When we decide we want to expose this level of detail
+                // to other extensions then we will design that return type and implement it here.
+            }),
+    };
 }
 
 async function logPlatform(logger: Logger): Promise<void> {
-	const os = require('os');
+    const os = require('os');
     let platform = os.platform();
     logger.log(`OS is ${platform}`);
-	if (platform === 'darwin' || platform === 'win32') {
-		return;
-	}
+    if (platform === 'darwin' || platform === 'win32') {
+        return;
+    }
 
     const osInfo = require('linux-os-info');
     const result = await osInfo();

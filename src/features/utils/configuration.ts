@@ -1,10 +1,11 @@
 'use strict';
 
-import {
-    Uri, workspace, WorkspaceFolder, extensions, WorkspaceConfiguration
-} from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
+import {
+    extensions, Uri, workspace, WorkspaceConfiguration, WorkspaceFolder
+} from 'vscode';
+import { getConfig } from '../../config';
 import { Constants } from './constants';
 
 export class Configuration {
@@ -154,13 +155,14 @@ export class Configuration {
     private static loadAnySetting<T>(
         configSection: string, defaultValue: T, resource: Uri, header: string = 'restructuredtext',
     ): T {
-        return workspace.getConfiguration(header, resource).get(configSection, defaultValue);
+        // return workspace.getConfiguration(header, resource).get(configSection, defaultValue);
+        return getConfig(header, resource).get(configSection, defaultValue);
     }
 
     private static async saveAnySetting<T>(
         configSection: string, value: T, resource: Uri, header: string = 'restructuredtext',
     ): Promise<T> {
-        await workspace.getConfiguration(header, resource).update(configSection, value);
+        await getConfig(header, resource).update(configSection, value);
         return value;
     }
 
