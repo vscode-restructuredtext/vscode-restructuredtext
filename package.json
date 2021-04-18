@@ -533,6 +533,12 @@
           "description": "Traces the communication between VSCode and the server.",
           "scope": "resource"
         },
+        "restructuredtext.editor.listEditing.disabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Flag to disable list editing feature.",
+          "scope": "resource"
+        },
         "restructuredtext.experimental": {
           "type": "boolean",
           "default": false,
