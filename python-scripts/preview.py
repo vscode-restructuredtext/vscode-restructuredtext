@@ -10,8 +10,8 @@ from docutils import core
 if sys.version_info >= (3,):
     sys.stdout = sys.stdout.detach()
 
-# Make STDOUT utf-8
-sys.stdout = codecs.getwriter('utf8')(sys.stdout)
+# Make STDOUT system encoding
+sys.stdout = codecs.getwriter(sys.getdefaultencoding())(sys.stdout)
 
 def main(argv=None):
     # Some sanity checks on if the path exists.
@@ -22,8 +22,8 @@ def main(argv=None):
 
     writer_name = argv[2] if argv is not None else sys.argv[2]
 
-    # open in binary, decode utf-8, and live in unicode
-    with codecs.open(filepath, 'r', 'utf8') as f:
+    # open in binary, decode system encoding, and live in unicode
+    with codecs.open(filepath, 'r', sys.getdefaultencoding()) as f:
         page_string = f.read()
 
     overrides = {
