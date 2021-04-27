@@ -61,7 +61,11 @@ export class RstTransformerSelector {
         const paths2: string[] = findConfPyFilesInParentDirs(rstPath);
         addPaths(paths1);
         addPaths(paths2);
+<<<<<<< HEAD
         logger.appendLine('Found conf.py paths: ' + JSON.stringify(pathStrings));
+=======
+        logger.log('[preview] Found conf.py paths: ' + JSON.stringify(pathStrings));
+>>>>>>> upstream/master
 
         // The user can choose to use docutils instead of Sphinx
         configurations.push(docutils);

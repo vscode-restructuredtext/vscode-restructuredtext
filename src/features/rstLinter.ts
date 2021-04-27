@@ -1,12 +1,20 @@
 'use strict';
 import { Disposable, Diagnostic, DiagnosticSeverity, Range, Uri } from 'vscode';
 
+<<<<<<< HEAD
 import { LintingProvider, LinterConfiguration, Linter } from './utils/lintingProvider';
+=======
+import { LintingProvider, ILinterConfiguration, ILinter } from './utils/lintingProvider';
+>>>>>>> upstream/master
 import { Configuration } from './utils/configuration';
 import { Logger } from '../logger';
 import { Python } from '../python';
 
+<<<<<<< HEAD
 export default class RstLintingProvider implements Linter {
+=======
+export default class RstLintingProvider implements ILinter {
+>>>>>>> upstream/master
 
 	public languageId = 'restructuredtext';
 
@@ -21,14 +29,22 @@ export default class RstLintingProvider implements Linter {
 		provider.activate(subscriptions)
 	}
 
+<<<<<<< HEAD
 	public loadConfiguration(resource: Uri): LinterConfiguration {
+=======
+	public async loadConfiguration(resource: Uri): Promise<ILinterConfiguration> {
+>>>>>>> upstream/master
 
 		var module: string[] = [];
 
 		var build = Configuration.getLinterPath(resource);
 		var name = Configuration.getLinterName(resource);
 		if (build == null) {
+<<<<<<< HEAD
 			var python = Configuration.getPythonPath(resource);
+=======
+			var python = await Configuration.getPythonPath(resource);
+>>>>>>> upstream/master
 			if (python) {
 				build = '"' + python + '"';
 				if (name === "doc8") {

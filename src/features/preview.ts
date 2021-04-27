@@ -298,7 +298,10 @@ export class RSTPreview {
 		}
 
 		if (typeof topLine === 'number') {
+<<<<<<< HEAD
 			this._logger.log('updateForView', { rstFile: resource });
+=======
+>>>>>>> upstream/master
 			this.line = topLine;
 			this.postMessage({
 				type: 'updateView',
@@ -330,7 +333,11 @@ export class RSTPreview {
 		this.forceUpdate = false;
 
 		this.currentVersion = { resource, version: document.version };
+<<<<<<< HEAD
 		const content: string = await this._contentProvider.provideTextDocumentContent(document, this._previewConfigurations, this.line, this.state);
+=======
+		const content: string = await this._contentProvider.provideTextDocumentContent(document, this._previewConfigurations, this.editor.webview, this.line, this.state);
+>>>>>>> upstream/master
 		if (this._resource === resource) {
 			this.editor.title = RSTPreview.getPreviewTitle(this._resource, this._locked);
 			this.editor.iconPath = this.iconPath;

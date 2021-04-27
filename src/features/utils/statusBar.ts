@@ -54,11 +54,20 @@ export default class RstTransformerStatus {
         const editor = window.activeTextEditor;
         if (editor != null && editor.document.languageId === 'restructuredtext') {
             let resource = editor.document.uri;
+<<<<<<< HEAD
             const newValue = await Configuration.setConfPath(undefined, resource, false);
             if (newValue !== undefined) {
                 this._logger.appendLine("reset failed.");
             }
             this.refreshConfig(resource);
+=======
+            this._logger.log("[preview] reset config.");
+            const newValue = await Configuration.setConfPath(undefined, resource, false);
+            if (newValue !== undefined) {
+                this._logger.log("[preview] reset failed.");
+            }
+            await this.refreshConfig(resource);
+>>>>>>> upstream/master
             this.setLabel();
         }
     }
@@ -70,6 +79,10 @@ export default class RstTransformerStatus {
         }
 
         this.config = rstTransformerConf;
+<<<<<<< HEAD
+=======
+        this._logger.log("[preview] set config to " + rstTransformerConf.confPyDirectory);
+>>>>>>> upstream/master
         await Configuration.setConfPath(rstTransformerConf.confPyDirectory, resource, true);
         return rstTransformerConf;
     }

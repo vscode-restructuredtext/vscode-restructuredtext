@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+import { Configuration } from './features/utils/configuration';
+>>>>>>> upstream/master
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -25,19 +29,31 @@ export namespace Trace {
 	}
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> upstream/master
 function isString(value: any): value is string {
 	return Object.prototype.toString.call(value) === '[object String]';
 }
 
 export class Logger {
+<<<<<<< HEAD
 	private trace?: Trace;
+=======
+    private trace?: Trace;
+>>>>>>> upstream/master
 
 	private readonly outputChannel = lazy(() => vscode.window.createOutputChannel('reStructuredText'));
 
 	constructor() {
+<<<<<<< HEAD
 		this.updateConfiguration();
 	}
+=======
+        this.updateConfiguration();
+ 	}
+>>>>>>> upstream/master
 
 	public log(message: string, data?: any): void {
 		if (this.trace === Trace.Verbose) {
@@ -46,7 +62,11 @@ export class Logger {
 				this.appendLine(Logger.data2String(data));
 			}
 		}
+<<<<<<< HEAD
 	}
+=======
+    }
+>>>>>>> upstream/master
 
 	public updateConfiguration() {
 		this.trace = this.readTrace();

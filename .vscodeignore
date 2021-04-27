@@ -11,10 +11,17 @@ build/**
 bin/EditorServices.log
 bin/DebugAdapter.log
 bin/*.vshost.*
+<<<<<<< HEAD
 .rst/**
 install.Lock
+=======
+>>>>>>> upstream/master
 *.vsix
 .editorconfig
 appveyor.yml
 build.bat
 .travis.yml
+<<<<<<< HEAD
+=======
+*.ps1
+>>>>>>> upstream/master

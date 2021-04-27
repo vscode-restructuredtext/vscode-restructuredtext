@@ -27,7 +27,11 @@ Frequent Asked Questions can be found [here](https://github.com/vscode-restructu
 
 This extension is hosted at [Visual Studio Marketplace](https://marketplace.visualstudio.com/items/lextudio.restructuredtext)
 
+<<<<<<< HEAD
 1. Upgrade to Visual Studio Code 1.15.0 or above.
+=======
+1. Upgrade to Visual Studio Code 1.43.0 or above.
+>>>>>>> upstream/master
 1. Switch to the Extensions view by clicking the fifth icon in the left most bar.
 1. Type "restructuredtext" in the search box and hit Enter key.
 1. Click "Install" button to install "reStructuredText" extension.
@@ -58,4 +62,8 @@ The linter support is based on [Cody Hoover's ruby-linter](https://marketplace.v
 The initial idea was brought from [Thomas Haakon Townsend's ReStructured Text Previewer](https://marketplace.visualstudio.com/items?itemName=tht13.rst-vscode), but soon after moving fully to Sphinx, this extension becomes its own beast.
 
 ### IntelliSense
+<<<<<<< HEAD
 The IntelliSense support is provided by the reStructuredText Language Server.
+=======
+The IntelliSense support is provided by [Snooty Language Server](https://github.com/vscode-restructuredtext/snooty-parser).
+>>>>>>> upstream/master

@@ -24,7 +24,11 @@ jobs:
 - job: macOS
 
   pool:
+<<<<<<< HEAD
     vmImage: 'macOS-10.13'
+=======
+    vmImage: 'macOS-10.14'
+>>>>>>> upstream/master
 
   steps:
   - task: NodeTool@0

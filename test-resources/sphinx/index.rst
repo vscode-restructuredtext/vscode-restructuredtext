@@ -19,11 +19,20 @@ second paragraph
 Images
 ------
 
+<<<<<<< HEAD
 .. image:: icon.png
 
 Lists
 -----
  - indented list  
+=======
+.. image:: _static/icon.png
+   :alt: test
+
+Lists
+-----
+ - indented list   
+>>>>>>> upstream/master
  - second indented
 
 
@@ -47,3 +56,8 @@ table  here
 =====  ===
 
 .. This is a comment
+<<<<<<< HEAD
+=======
+
+:doc:`/test`
+>>>>>>> upstream/master

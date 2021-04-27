@@ -1,7 +1,14 @@
+<<<<<<< HEAD
 import { NodeStringDecoder, StringDecoder } from 'string_decoder';
 
 export class LineDecoder {
 	private stringDecoder: NodeStringDecoder;
+=======
+import { StringDecoder } from 'string_decoder';
+
+export class LineDecoder {
+	private stringDecoder: StringDecoder;
+>>>>>>> upstream/master
 	private remaining: string;
 	private lines: string[]
 

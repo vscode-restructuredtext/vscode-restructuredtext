@@ -2,6 +2,7 @@
   "name": "restructuredtext",
   "displayName": "%displayName%",
   "description": "%description%",
+<<<<<<< HEAD
   "version": "122.0.0",
   "publisher": "lextudio",
   "engines": {
@@ -18,10 +19,26 @@
     "vscode-languageclient": "^3.5.0",
     "vscode-nls": "^4.0.0",
     "yauzl": "^2.10.0"
+=======
+  "version": "149.0.0",
+  "publisher": "lextudio",
+  "engines": {
+    "vscode": "^1.43.0"
+  },
+  "dependencies": {
+    "linux-os-info": "^2.0.0",
+    "lodash.throttle": "^4.1.1",
+    "meaw": "^4.1.0",
+    "mime": "^2.4.6",
+    "open": "^7.3.0",
+    "vscode-languageclient": "^6.1.3",
+    "vscode-nls": "^4.0.0"
+>>>>>>> upstream/master
   },
   "devDependencies": {
     "@studio/changes": "^1.7.0",
     "@types/lodash.throttle": "^4.1.4",
+<<<<<<< HEAD
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.11.3",
     "mocha": "^5.2.0",
@@ -90,6 +107,23 @@
       "installTestPath": "./.rst/Server"
     }
   ],
+=======
+    "@types/mocha": "^7.0.2",
+    "@types/node": "^13.9.2",
+    "@types/vscode": "^1.43.0",
+    "mocha": "^7.1.1",
+    "ts-loader": "^5.2.1",
+    "ts-node": "^8.8.1",
+    "tslib": "^1.9.3",
+    "typescript": "^3.8.3",
+    "vscode-test": "^1.1.33",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.11"
+  },
+  "featureFlags": {
+    "usingNewInterpreterStorage": true
+  },
+>>>>>>> upstream/master
   "license": "SEE LICENSE IN LICENSE.txt",
   "homepage": "https://www.restructuredtext.net",
   "categories": [
@@ -178,6 +212,74 @@
         "key": "ctrl+k ctrl+-",
         "mac": "cmd+k cmd+-",
         "when": "editorLangId == restructuredtext"
+<<<<<<< HEAD
+=======
+      },
+      {
+        "command": "restructuredtext.extension.onEnterKey",
+        "key": "enter",
+        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible && vim.mode != 'Normal' && vim.mode != 'Visual' && vim.mode != 'VisualBlock' && vim.mode != 'VisualLine' && vim.mode != 'SearchInProgressMode' && vim.mode != 'CommandlineInProgress' && vim.mode != 'Replace' && vim.mode != 'EasyMotionMode' && vim.mode != 'EasyMotionInputMode' && vim.mode != 'SurroundInputMode'"
+      },
+      {
+        "command": "restructuredtext.extension.onCtrlEnterKey",
+        "key": "ctrl+enter",
+        "mac": "cmd+enter",
+        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
+      },
+      {
+        "command": "restructuredtext.extension.onShiftEnterKey",
+        "key": "shift+enter",
+        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
+      },
+      {
+        "command": "restructuredtext.extension.onTabKey",
+        "key": "tab",
+        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible && !editorTabMovesFocus && !inSnippetMode && !hasSnippetCompletions && !hasOtherSuggestions"
+      },
+      {
+        "command": "restructuredtext.extension.onShiftTabKey",
+        "key": "shift+tab",
+        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible && !editorTabMovesFocus && !inSnippetMode && !hasSnippetCompletions && !hasOtherSuggestions"
+      },
+      {
+        "command": "restructuredtext.extension.onBackspaceKey",
+        "key": "backspace",
+        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible && vim.mode != 'Normal' && vim.mode != 'Visual' && vim.mode != 'VisualBlock' && vim.mode != 'VisualLine' && vim.mode != 'SearchInProgressMode' && vim.mode != 'CommandlineInProgress' && vim.mode != 'Replace' && vim.mode != 'EasyMotionMode' && vim.mode != 'EasyMotionInputMode' && vim.mode != 'SurroundInputMode'"
+      },
+      {
+        "command": "restructuredtext.extension.onMoveLineUp",
+        "key": "alt+up",
+        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
+      },
+      {
+        "command": "restructuredtext.extension.onMoveLineDown",
+        "key": "alt+down",
+        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
+      },
+      {
+        "command": "restructuredtext.extension.onCopyLineUp",
+        "win": "shift+alt+up",
+        "mac": "shift+alt+up",
+        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
+      },
+      {
+        "command": "restructuredtext.extension.onCopyLineDown",
+        "win": "shift+alt+down",
+        "mac": "shift+alt+down",
+        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
+      },
+      {
+        "command": "restructuredtext.extension.onIndentLines",
+        "key": "ctrl+]",
+        "mac": "cmd+]",
+        "when": "editorTextFocus && editorLangId == restructuredtext && !suggestWidgetVisible"
+      },
+      {
+        "command": "restructuredtext.extension.onOutdentLines",
+        "key": "ctrl+[",
+        "mac": "cmd+[",
+        "when": "editorTextFocus && editorLangId == restructuredtext && !suggestWidgetVisible"
+>>>>>>> upstream/master
       }
     ],
     "commands": [
@@ -231,6 +333,14 @@
         "command": "restructuredtext.preview.toggleLock",
         "title": "%restructuredtext.preview.toggleLock.title%",
         "category": "reStructuredText"
+<<<<<<< HEAD
+=======
+      },
+      {
+        "command": "restructuredtext.workspace.isTrusted.toggle",
+        "title": "reStructuredText: Toggle Workspace Trust Flag",
+        "description": "Toggle the workspace trust flag. Workspace settings that determine tool locations are disabled by default in untrusted workspaces."
+>>>>>>> upstream/master
       }
     ],
     "menus": {
@@ -308,6 +418,32 @@
       "type": "object",
       "title": "reStructuredText",
       "properties": {
+<<<<<<< HEAD
+=======
+        "snooty.trace.server": {
+          "scope": "window",
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "verbose",
+          "description": "Traces the communication between VS Code and the language server."
+        },
+        "snooty.sourceFolder": {
+          "scope": "resource",
+          "type": "string",
+          "default": null,
+          "description": "Local source folder of snooty. Used for debugging local language server."
+        },
+        "snooty.debugLaunch": {
+          "scope": "resource",
+          "type": "boolean",
+          "default": false,
+          "description": "Whether to debug from launch."
+        },
+>>>>>>> upstream/master
         "restructuredtext.conflictingExtensions": {
           "type": "array",
           "default": [
@@ -322,6 +458,17 @@
           "description": "%restructuredtext.styles.dec%",
           "scope": "resource"
         },
+<<<<<<< HEAD
+=======
+        "restructuredtext.preview.name": {
+          "type": "string",
+          "enum": [
+            "sphinx",
+            "docutil"
+          ],
+          "default": "sphinx"
+        },
+>>>>>>> upstream/master
         "restructuredtext.preview.sphinx.disabled": {
           "type": "boolean",
           "default": false,
@@ -386,12 +533,15 @@
           "description": "%restructuredtext.trace.desc%",
           "scope": "window"
         },
+<<<<<<< HEAD
         "restructuredtext.workspaceRoot": {
           "type": "string",
           "default": "${workspaceFolder}",
           "description": "Write-only. Don't modify the value. This is a reserved setting for IntelliSense.",
           "scope": "resource"
         },
+=======
+>>>>>>> upstream/master
         "restructuredtext.builtDocumentationPath": {
           "type": "string",
           "default": null,
@@ -428,6 +578,15 @@
           "description": "The docutils writer that will generate the output.",
           "scope": "resource"
         },
+<<<<<<< HEAD
+=======
+        "restructuredtext.docutilsWriterPart": {
+          "type": "string",
+          "default": "html_body",
+          "description": "The output part of the docutils writer.",
+          "scope": "resource"
+        },
+>>>>>>> upstream/master
         "restructuredtext.linter.disabled": {
           "type": "boolean",
           "default": false,
@@ -467,6 +626,7 @@
         },
         "restructuredtext.languageServer.disabled": {
           "type": "boolean",
+<<<<<<< HEAD
           "default": true,
           "description": "Flag to disable language server based IntelliSense if critical issues happen.",
           "scope": "resource"
@@ -486,6 +646,12 @@
           "description": "Supported platforms of IntelliSense.",
           "scope": "resource"
         },
+=======
+          "default": false,
+          "description": "Flag to disable language server based IntelliSense if critical issues happen.",
+          "scope": "resource"
+        },
+>>>>>>> upstream/master
         "restructuredtext.languageServer.maxNumberOfProblems": {
           "type": "number",
           "default": 100,
@@ -503,6 +669,15 @@
           "description": "Traces the communication between VSCode and the server.",
           "scope": "resource"
         },
+<<<<<<< HEAD
+=======
+        "restructuredtext.editor.listEditing.disabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Flag to disable list editing feature.",
+          "scope": "resource"
+        },
+>>>>>>> upstream/master
         "restructuredtext.experimental": {
           "type": "boolean",
           "default": false,
@@ -518,10 +693,17 @@
     "build-ext": "npx tsc -p ./tsconfig.json",
     "build-preview": "./node_modules/.bin/webpack-cli",
     "watch": "npx tsc -watch -p ./tsconfig.json",
+<<<<<<< HEAD
     "postinstall": "node ./node_modules/vscode/bin/install",
     "test": "npm run compile && node ./node_modules/vscode/bin/test",
     "preversion": "npm run compile",
     "version": "./node_modules/.bin/changes",
     "postversion": "git push --follow-tags"
+=======
+    "pretest": "npm run compile",
+    "test": "node ./out/test/runTest.js",
+    "reinstall": "npm install && npm audit fix",
+    "package": "npm run reinstall && vsce package"
+>>>>>>> upstream/master
   }
 }
