@@ -29,8 +29,9 @@ export default class RstLintingProvider implements ILinter {
         if (build == null) {
             const python = await Configuration.getPythonPath(resource);
             if (python) {
-                // build = '"' + python + '"';
-                build = python;
+                build = process.platform === 'win32'
+                    ? '"' + python + '"'
+                    : python;
                 if (name === 'doc8') {
                     module = module.concat(['-m', 'doc8.main']);
                 } else if (name === 'rstcheck') {
@@ -38,7 +39,9 @@ export default class RstLintingProvider implements ILinter {
                 }
             }
         } else {
-            // build = '"' + build + '"';
+            if (process.platform === 'win32') {
+                build = '"' + build + '"';
+            }
         }
 
         if (build == null) {
@@ -59,7 +62,7 @@ export default class RstLintingProvider implements ILinter {
     public process(lines: string[]): Diagnostic[] {
         const diagnostics: Diagnostic[] = [];
         for (const line of lines) {
-            if (line.includes('No module named')) {
+            if (line.includes('No module named') || line.includes('Errno')) {
                 diagnostics.push({
                     range: new Range(0, 0, 0, Number.MAX_VALUE),
                     severity: DiagnosticSeverity.Warning,
@@ -67,18 +70,18 @@ export default class RstLintingProvider implements ILinter {
                     code: null,
                     source: 'restructuredtext'
                 });
-                return;
+                continue;
             }
 
             const regex = /(.+?):([0-9]+):\s(.+)/;
             const matches = regex.exec(line);
             if (matches === null) {
-                return;
+                continue;
             }
 
             if (matches[1].endsWith('.py')) {
                 // doc8 internal issues.
-                return;
+                continue;
             }
 
             const lineNumber = parseInt(matches[2], 10) - 1;
