@@ -2,7 +2,7 @@
   "name": "restructuredtext",
   "displayName": "%displayName%",
   "description": "%description%",
-  "version": "149.0.0",
+  "version": "150.0.0",
   "publisher": "lextudio",
   "engines": {
     "vscode": "^1.43.0"
@@ -536,12 +536,12 @@
         "restructuredtext.editor.listEditing.list.indentationSize": {
           "type": "string",
           "enum": [
-              "adaptive",
-              "inherit"
+            "adaptive",
+            "inherit"
           ],
           "markdownEnumDescriptions": [
-              "%config.list.indentationSize.enumDescriptions.adaptive%",
-              "%config.list.indentationSize.enumDescriptions.inherit%"
+            "%config.list.indentationSize.enumDescriptions.adaptive%",
+            "%config.list.indentationSize.enumDescriptions.inherit%"
           ],
           "default": "adaptive",
           "markdownDescription": "%config.list.indentationSize.description%",
@@ -553,17 +553,17 @@
           "description": "%config.orderedList.autoRenumber.description%"
         },
         "restructuredtext.editor.listEditing.orderedList.marker": {
-            "type": "string",
-            "default": "ordered",
-            "description": "%config.orderedList.marker.description%",
-            "enum": [
-                "one",
-                "ordered"
-            ],
-            "markdownEnumDescriptions": [
-                "%config.orderedList.marker.enumDescriptions.one%",
-                "%config.orderedList.marker.enumDescriptions.ordered%"
-            ]
+          "type": "string",
+          "default": "ordered",
+          "description": "%config.orderedList.marker.description%",
+          "enum": [
+            "one",
+            "ordered"
+          ],
+          "markdownEnumDescriptions": [
+            "%config.orderedList.marker.enumDescriptions.one%",
+            "%config.orderedList.marker.enumDescriptions.ordered%"
+          ]
         },
         "restructuredtext.experimental": {
           "type": "boolean",
