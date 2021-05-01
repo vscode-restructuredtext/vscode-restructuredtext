@@ -6,6 +6,7 @@
         "quotemark": [true, "single"],
         "no-namespace": false,
         "trailing-comma": false,
-        "member-ordering": false
+        "member-ordering": false,
+        "object-literal-sort-keys": false
     }
 }
