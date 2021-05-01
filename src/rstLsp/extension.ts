@@ -112,6 +112,11 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
                     // languageClient.onNotification('$snooty/progress', (args) => {
 
                     // });
+
+                    vscode.languages.registerDocumentLinkProvider(
+                        documentSelector,
+                        new DocumentLinkProvider(client)
+                    );
                 });
             }
         })();
@@ -180,10 +185,5 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
         //       }
         //     } ()
         // );
-    
-        vscode.languages.registerDocumentLinkProvider(
-            documentSelector,
-            new DocumentLinkProvider(client)
-        );
     }
 }
