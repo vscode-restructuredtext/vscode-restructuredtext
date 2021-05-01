@@ -132,10 +132,6 @@ export class Configuration {
         return Configuration.loadAnySetting<number>('updateDelay', 3000, resource);
     }
 
-    public static getListEditingDisabled(resource: Uri = null): boolean {
-        return Configuration.loadAnySetting('editor.listEditing.disabled', false, null);
-    }
-
     public static async setConfPath(value: string, resource: Uri = null, insertMacro: boolean): Promise<string> {
         return await Configuration.saveSetting('confPath', value, resource, insertMacro);
     }

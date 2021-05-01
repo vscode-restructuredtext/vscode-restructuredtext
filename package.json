@@ -124,66 +124,66 @@
         "when": "editorLangId == restructuredtext"
       },
       {
-        "command": "restructuredtext.extension.onEnterKey",
+        "command": "restructuredtext.editor.listEditing.onEnterKey",
         "key": "enter",
         "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible && vim.mode != 'Normal' && vim.mode != 'Visual' && vim.mode != 'VisualBlock' && vim.mode != 'VisualLine' && vim.mode != 'SearchInProgressMode' && vim.mode != 'CommandlineInProgress' && vim.mode != 'Replace' && vim.mode != 'EasyMotionMode' && vim.mode != 'EasyMotionInputMode' && vim.mode != 'SurroundInputMode'"
       },
       {
-        "command": "restructuredtext.extension.onCtrlEnterKey",
+        "command": "restructuredtext.editor.listEditing.onCtrlEnterKey",
         "key": "ctrl+enter",
         "mac": "cmd+enter",
         "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
       },
       {
-        "command": "restructuredtext.extension.onShiftEnterKey",
+        "command": "restructuredtext.editor.listEditing.onShiftEnterKey",
         "key": "shift+enter",
         "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
       },
       {
-        "command": "restructuredtext.extension.onTabKey",
+        "command": "restructuredtext.editor.listEditing.onTabKey",
         "key": "tab",
         "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible && !editorTabMovesFocus && !inSnippetMode && !hasSnippetCompletions && !hasOtherSuggestions"
       },
       {
-        "command": "restructuredtext.extension.onShiftTabKey",
+        "command": "restructuredtext.editor.listEditing.onShiftTabKey",
         "key": "shift+tab",
         "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible && !editorTabMovesFocus && !inSnippetMode && !hasSnippetCompletions && !hasOtherSuggestions"
       },
       {
-        "command": "restructuredtext.extension.onBackspaceKey",
+        "command": "restructuredtext.editor.listEditing.onBackspaceKey",
         "key": "backspace",
         "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible && vim.mode != 'Normal' && vim.mode != 'Visual' && vim.mode != 'VisualBlock' && vim.mode != 'VisualLine' && vim.mode != 'SearchInProgressMode' && vim.mode != 'CommandlineInProgress' && vim.mode != 'Replace' && vim.mode != 'EasyMotionMode' && vim.mode != 'EasyMotionInputMode' && vim.mode != 'SurroundInputMode'"
       },
       {
-        "command": "restructuredtext.extension.onMoveLineUp",
+        "command": "restructuredtext.editor.listEditing.onMoveLineUp",
         "key": "alt+up",
         "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
       },
       {
-        "command": "restructuredtext.extension.onMoveLineDown",
+        "command": "restructuredtext.editor.listEditing.onMoveLineDown",
         "key": "alt+down",
         "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
       },
       {
-        "command": "restructuredtext.extension.onCopyLineUp",
+        "command": "restructuredtext.editor.listEditing.onCopyLineUp",
         "win": "shift+alt+up",
         "mac": "shift+alt+up",
         "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
       },
       {
-        "command": "restructuredtext.extension.onCopyLineDown",
+        "command": "restructuredtext.editor.listEditing.onCopyLineDown",
         "win": "shift+alt+down",
         "mac": "shift+alt+down",
         "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
       },
       {
-        "command": "restructuredtext.extension.onIndentLines",
+        "command": "restructuredtext.editor.listEditing.onIndentLines",
         "key": "ctrl+]",
         "mac": "cmd+]",
         "when": "editorTextFocus && editorLangId == restructuredtext && !suggestWidgetVisible"
       },
       {
-        "command": "restructuredtext.extension.onOutdentLines",
+        "command": "restructuredtext.editor.listEditing.onOutdentLines",
         "key": "ctrl+[",
         "mac": "cmd+[",
         "when": "editorTextFocus && editorLangId == restructuredtext && !suggestWidgetVisible"
@@ -533,11 +533,37 @@
           "description": "Traces the communication between VSCode and the server.",
           "scope": "resource"
         },
-        "restructuredtext.editor.listEditing.disabled": {
-          "type": "boolean",
-          "default": false,
-          "description": "Flag to disable list editing feature.",
+        "restructuredtext.editor.listEditing.list.indentationSize": {
+          "type": "string",
+          "enum": [
+              "adaptive",
+              "inherit"
+          ],
+          "markdownEnumDescriptions": [
+              "%config.list.indentationSize.enumDescriptions.adaptive%",
+              "%config.list.indentationSize.enumDescriptions.inherit%"
+          ],
+          "default": "adaptive",
+          "markdownDescription": "%config.list.indentationSize.description%",
           "scope": "resource"
+        },
+        "restructuredtext.editor.listEditing.orderedList.autoRenumber": {
+          "type": "boolean",
+          "default": true,
+          "description": "%config.orderedList.autoRenumber.description%"
+        },
+        "restructuredtext.editor.listEditing.orderedList.marker": {
+            "type": "string",
+            "default": "ordered",
+            "description": "%config.orderedList.marker.description%",
+            "enum": [
+                "one",
+                "ordered"
+            ],
+            "markdownEnumDescriptions": [
+                "%config.orderedList.marker.enumDescriptions.one%",
+                "%config.orderedList.marker.enumDescriptions.ordered%"
+            ]
         },
         "restructuredtext.experimental": {
           "type": "boolean",

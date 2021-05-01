@@ -119,9 +119,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     );
     context.subscriptions.push(disposableRstDSP);
 
-    if (!Configuration.getListEditingDisabled(null)) {
-        listEditing.activate(context);
-    }
+    listEditing.activate(context);
 
     return {
         initializationFinished: Promise.all([rstLspPromise])

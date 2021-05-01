@@ -5,19 +5,19 @@ import { commands, ExtensionContext, Position, Range, Selection, TextEditor, win
 
 export function activate(context: ExtensionContext) {
     context.subscriptions.push(
-        commands.registerCommand('restructuredtext.extension.onEnterKey', onEnterKey),
-        commands.registerCommand('restructuredtext.extension.onCtrlEnterKey', () => { return onEnterKey('ctrl'); }),
-        commands.registerCommand('restructuredtext.extension.onShiftEnterKey', () => { return onEnterKey('shift'); }),
-        commands.registerCommand('restructuredtext.extension.onTabKey', onTabKey),
-        commands.registerCommand('restructuredtext.extension.onShiftTabKey', () => { return onTabKey('shift'); }),
-        commands.registerCommand('restructuredtext.extension.onBackspaceKey', onBackspaceKey),
-        commands.registerCommand('restructuredtext.extension.checkTaskList', checkTaskList),
-        commands.registerCommand('restructuredtext.extension.onMoveLineDown', onMoveLineDown),
-        commands.registerCommand('restructuredtext.extension.onMoveLineUp', onMoveLineUp),
-        commands.registerCommand('restructuredtext.extension.onCopyLineDown', onCopyLineDown),
-        commands.registerCommand('restructuredtext.extension.onCopyLineUp', onCopyLineUp),
-        commands.registerCommand('restructuredtext.extension.onIndentLines', onIndentLines),
-        commands.registerCommand('restructuredtext.extension.onOutdentLines', onOutdentLines)
+        commands.registerCommand('restructuredtext.editor.listEditing.onEnterKey', onEnterKey),
+        commands.registerCommand('restructuredtext.editor.listEditing.onCtrlEnterKey', () => { return onEnterKey('ctrl'); }),
+        commands.registerCommand('restructuredtext.editor.listEditing.onShiftEnterKey', () => { return onEnterKey('shift'); }),
+        commands.registerCommand('restructuredtext.editor.listEditing.onTabKey', onTabKey),
+        commands.registerCommand('restructuredtext.editor.listEditing.onShiftTabKey', () => { return onTabKey('shift'); }),
+        commands.registerCommand('restructuredtext.editor.listEditing.onBackspaceKey', onBackspaceKey),
+        commands.registerCommand('restructuredtext.editor.listEditing.checkTaskList', checkTaskList),
+        commands.registerCommand('restructuredtext.editor.listEditing.onMoveLineDown', onMoveLineDown),
+        commands.registerCommand('restructuredtext.editor.listEditing.onMoveLineUp', onMoveLineUp),
+        commands.registerCommand('restructuredtext.editor.listEditing.onCopyLineDown', onCopyLineDown),
+        commands.registerCommand('restructuredtext.editor.listEditing.onCopyLineUp', onCopyLineUp),
+        commands.registerCommand('restructuredtext.editor.listEditing.onIndentLines', onIndentLines),
+        commands.registerCommand('restructuredtext.editor.listEditing.onOutdentLines', onOutdentLines)
     );
 }
 
@@ -86,7 +86,7 @@ function onEnterKey(modifiers?: string) {
         }).then(() => { editor.revealRange(editor.selection) });
     } else if ((matches = /^(\s*)([0-9]+)([.)])( +)((\[[ x]\] +)?)/.exec(textBeforeCursor)) !== null) {
         // Ordered list
-        let config = workspace.getConfiguration('restructuredtext.extension.orderedList').get<string>('marker');
+        let config = workspace.getConfiguration('restructuredtext.editor.listEditing.orderedList').get<string>('marker');
         let marker = '1';
         let leadingSpace = matches[1];
         let previousMarker = matches[2];
@@ -211,7 +211,7 @@ function indent(editor?: TextEditor) {
         editor = window.activeTextEditor;
     }
 
-    if (workspace.getConfiguration("restructuredtext.extension.list", editor.document.uri).get<string>("indentationSize") === "adaptive") {
+    if (workspace.getConfiguration("restructuredtext.editor.listEditing.list", editor.document.uri).get<string>("indentationSize") === "adaptive") {
         try {
             const selection = editor.selection;
             const indentationSize = tryDetermineIndentationSize(editor, selection.start.line, editor.document.lineAt(selection.start.line).firstNonWhitespaceCharacterIndex);
@@ -239,7 +239,7 @@ function outdent(editor?: TextEditor) {
         editor = window.activeTextEditor;
     }
 
-    if (workspace.getConfiguration("restructuredtext.extension.list", editor.document.uri).get<string>("indentationSize") === "adaptive") {
+    if (workspace.getConfiguration("restructuredtext.editor.listEditing.list", editor.document.uri).get<string>("indentationSize") === "adaptive") {
         try {
             const selection = editor.selection;
             const indentationSize = tryDetermineIndentationSize(editor, selection.start.line, editor.document.lineAt(selection.start.line).firstNonWhitespaceCharacterIndex);
@@ -340,8 +340,8 @@ function lookUpwardForMarker(editor: TextEditor, line: number, currentIndentatio
  * Fix ordered list marker *iteratively* starting from current line
  */
 export function fixMarker(line?: number) {
-    if (!workspace.getConfiguration('restructuredtext.extension.orderedList').get<boolean>('autoRenumber')) return;
-    if (workspace.getConfiguration('restructuredtext.extension.orderedList').get<string>('marker') == 'one') return;
+    if (!workspace.getConfiguration('restructuredtext.editor.listEditing.orderedList').get<boolean>('autoRenumber')) return;
+    if (workspace.getConfiguration('restructuredtext.editor.listEditing.orderedList').get<string>('marker') == 'one') return;
 
     let editor = window.activeTextEditor;
     if (line === undefined) {
