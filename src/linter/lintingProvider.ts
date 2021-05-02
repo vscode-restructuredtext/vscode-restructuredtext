@@ -153,9 +153,7 @@ export class LintingProvider {
             const executable = this.linterConfiguration.executable;
             const decoder = new LineDecoder();
             let diagnostics: vscode.Diagnostic[] = [];
-            const file = process.platform === 'win32'
-                ? '"' + textDocument.fileName + '"'
-                : textDocument.fileName;
+            const file = '"' + textDocument.fileName + '"';
             const rootPath = Configuration.GetRootPath(textDocument.uri);
             const options = rootPath ? { rootPath, shell: true } : undefined;
             let args: string[] = [];

@@ -29,9 +29,7 @@ export default class RstLintingProvider implements ILinter {
         if (build == null) {
             const python = await Configuration.getPythonPath(resource);
             if (python) {
-                build = process.platform === 'win32'
-                    ? '"' + python + '"'
-                    : python;
+                build = '"' + python + '"';
                 if (name === 'doc8') {
                     module = module.concat(['-m', 'doc8.main']);
                 } else if (name === 'rstcheck') {
@@ -39,9 +37,7 @@ export default class RstLintingProvider implements ILinter {
                 }
             }
         } else {
-            if (process.platform === 'win32') {
-                build = '"' + build + '"';
-            }
+            build = '"' + build + '"';
         }
 
         if (build == null) {

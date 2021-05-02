@@ -246,7 +246,7 @@ export class Configuration {
 
     public static GetRootPath(resource: Uri): string {
         if (!workspace.workspaceFolders) {
-            return workspace.rootPath;
+            return workspace.rootPath ?? path.dirname(resource.fsPath);
         }
 
         let root: WorkspaceFolder;
