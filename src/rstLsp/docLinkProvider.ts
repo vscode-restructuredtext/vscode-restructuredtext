@@ -38,7 +38,8 @@ export class DocumentLinkProvider implements vscode.DocumentLinkProvider {
     }
     const document = activeTextEditor.document;
     const text = document.getText(link.range);
-    link.target = await this._findTargetUri(document, text);
+    const type = link.tooltip.indexOf('document') > -1 ? 'doc' : 'directive';
+    link.target = await this._findTargetUri(document, text, type, token);
     return link;
   }
 
@@ -81,7 +82,8 @@ export class DocumentLinkProvider implements vscode.DocumentLinkProvider {
         range: new vscode.Range(
           document.positionAt(targetOffsetStart),
           document.positionAt(targetOffsetEnd)
-        )
+        ),
+        tooltip: 'Click to open this document'
       });
     }
 
@@ -121,7 +123,8 @@ export class DocumentLinkProvider implements vscode.DocumentLinkProvider {
         range: new vscode.Range(
           document.positionAt(targetOffsetStart),
           document.positionAt(targetOffsetEnd)
-        )
+        ),
+        tooltip: 'Click to open this file'
       });
     }
 
@@ -131,14 +134,19 @@ export class DocumentLinkProvider implements vscode.DocumentLinkProvider {
   // Returns the full uri given a target's name
   private async _findTargetUri(
     document: vscode.TextDocument,
-    target: string
+    target: string,
+    type: string,
+    token: CancellationToken
   ): Promise<vscode.Uri> {
     const file: string = await this.client
-      .sendRequest('textDocument/resolve', {
-        docPath: document.uri.path,
-        fileName: target,
-        resolveType: 'doc'
-      });
+      .sendRequest(
+        'textDocument/resolve', {
+          docPath: document.uri.fsPath,
+          fileName: target,
+          resolveType: type
+        },
+        token
+      );
 
     return vscode.Uri.file(file);
   }
