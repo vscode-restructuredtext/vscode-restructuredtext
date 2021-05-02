@@ -5,7 +5,7 @@
 
 // The module 'assert' provides assertion methods from node
 import * as assert from "assert";
-import { RSTEngine } from "../../rstEngine";
+import { RSTEngine } from "../../preview/rstEngine";
 import * as path from "path";
 import * as fs from "fs";
 import {
@@ -15,8 +15,8 @@ import {
   samplePath,
   wait
 } from "./initialize";
-import { Python } from "../../python";
-import { Logger } from "../../logger";
+import { Python } from "../../util/python";
+import { Logger } from "../../util/logger";
 
 // Defines a Mocha test suite to group tests of similar kind together
 let engine: RSTEngine;

@@ -4,11 +4,11 @@ import * as cp from 'child_process';
 
 import * as vscode from 'vscode';
 
-import { Logger } from '../../logger';
-import { Python } from '../../python';
-import { ThrottledDelayer } from './async';
-import { Configuration } from './configuration';
-import { LineDecoder } from './lineDecoder';
+import { Logger } from '../util/logger';
+import { Python } from '../util/python';
+import { ThrottledDelayer } from '../util/async';
+import { Configuration } from '../util/configuration';
+import { LineDecoder } from '../util/lineDecoder';
 
 enum RunTrigger {
     onSave,

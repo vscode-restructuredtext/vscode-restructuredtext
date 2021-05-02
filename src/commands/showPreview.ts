@@ -5,10 +5,10 @@
 
 import * as vscode from 'vscode';
 
-import { Command } from '../commandManager';
-import { RSTPreviewManager } from '../features/previewManager';
-import { PreviewSettings } from '../features/preview';
-import { Python } from '../python';
+import { Command } from '../util/commandManager';
+import { RSTPreviewManager } from '../preview/previewManager';
+import { PreviewSettings } from '../preview/preview';
+import { Python } from '../util/python';
 
 interface ShowPreviewSettings {
 	readonly sideBySide?: boolean;

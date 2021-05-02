@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 
-import { Command } from '../commandManager';
+import { Command } from '../util/commandManager';
 import { isRSTFile } from '../util/file';
 
 

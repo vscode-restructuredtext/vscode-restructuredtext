@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 
-import { Logger } from '../logger';
+import { Logger } from '../util/logger';
 import { RSTContentProvider } from './previewContentProvider';
 import { disposeAll } from '../util/dispose';
 
@@ -15,7 +15,7 @@ import { getVisibleLine, RSTFileTopmostLineMonitor } from '../util/topmostLineMo
 import { RSTPreviewConfigurationManager } from './previewConfig';
 import { isRSTFile } from '../util/file';
 import { getExtensionPath } from '../extension';
-import { Configuration } from './utils/configuration';
+import { Configuration } from '../util/configuration';
 
 const localize = nls.loadMessageBundle();
 

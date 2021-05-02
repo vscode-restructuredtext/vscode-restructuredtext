@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 
-import { RSTPreviewManager } from './features/previewManager';
+import { RSTPreviewManager } from '../preview/previewManager';
 
 import * as nls from 'vscode-nls';
 

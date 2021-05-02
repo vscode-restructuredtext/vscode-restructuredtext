@@ -5,9 +5,9 @@
 
 import * as vscode from 'vscode';
 import { LanguageClient, LanguageClientOptions, ServerOptions } from 'vscode-languageclient';
-import { Logger } from '../logger';
-import { Configuration } from './../features/utils/configuration';
-import { Python } from './../python';
+import { Logger } from '../util/logger';
+import { Configuration } from '../util/configuration';
+import { Python } from '../util/python';
 import { DocumentLinkProvider } from './docLinkProvider';
 import open = require('open');
 import mime = require('mime');

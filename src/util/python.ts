@@ -2,7 +2,7 @@ import { exec, ExecException } from 'child_process';
 import * as fs from 'fs';
 import * as vscode from 'vscode';
 import { Uri } from 'vscode';
-import { Configuration } from './features/utils/configuration';
+import { Configuration } from './configuration';
 import { Logger } from './logger';
 
 export class Python {

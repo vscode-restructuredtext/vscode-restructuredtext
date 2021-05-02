@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Command } from '../commandManager';
-import { RSTPreviewManager } from '../features/previewManager';
+import { Command } from '../util/commandManager';
+import { RSTPreviewManager } from '../preview/previewManager';
 
 export class ToggleLockCommand implements Command {
 	public readonly id = 'restructuredtext.preview.toggleLock';

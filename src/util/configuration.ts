@@ -5,7 +5,7 @@ import * as path from 'path';
 import {
     extensions, Uri, workspace, WorkspaceConfiguration, WorkspaceFolder
 } from 'vscode';
-import { getConfig } from '../../config';
+import { getConfig } from './config';
 import { Constants } from './constants';
 
 export class Configuration {

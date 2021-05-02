@@ -1,5 +1,5 @@
 import * as assert from "assert";
-import * as underline from "../../features/underline";
+import * as underline from "../../editor/underline";
 import * as vscode from "vscode";
 
 suite("Underline Tests", () => {

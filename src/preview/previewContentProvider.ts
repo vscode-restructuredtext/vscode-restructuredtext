@@ -9,10 +9,10 @@ import * as path from 'path';
 import * as nls from 'vscode-nls';
 const localize = nls.loadMessageBundle();
 
-import { Logger } from '../logger';
-import { ContentSecurityPolicyArbiter, RSTPreviewSecurityLevel } from '../security';
+import { Logger } from '../util/logger';
+import { ContentSecurityPolicyArbiter, RSTPreviewSecurityLevel } from '../util/security';
 import { RSTPreviewConfigurationManager, RSTPreviewConfiguration } from './previewConfig';
-import { RSTEngine } from '../rstEngine';
+import { RSTEngine } from './rstEngine';
 
 /**
  * Strings used inside the html preview.

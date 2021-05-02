@@ -1,10 +1,10 @@
 'use strict';
 import { Diagnostic, DiagnosticSeverity, Disposable, Range, Uri } from 'vscode';
 
-import { Logger } from '../logger';
-import { Python } from '../python';
-import { Configuration } from './utils/configuration';
-import { ILinter, ILinterConfiguration, LintingProvider } from './utils/lintingProvider';
+import { Logger } from '../util/logger';
+import { Python } from '../util/python';
+import { Configuration } from '../util/configuration';
+import { ILinter, ILinterConfiguration, LintingProvider } from './lintingProvider';
 
 export default class RstLintingProvider implements ILinter {
 

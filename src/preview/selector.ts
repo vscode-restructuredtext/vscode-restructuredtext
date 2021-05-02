@@ -3,9 +3,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { Uri, window } from 'vscode';
-import { Configuration } from './configuration';
+import { Configuration } from '../util/configuration';
 import { findConfPyFiles, findConfPyFilesInParentDirs, RstTransformerConfig } from './confPyFinder';
-import { Logger } from '../../logger';
+import { Logger } from '../util/logger';
 /**
  *
  */

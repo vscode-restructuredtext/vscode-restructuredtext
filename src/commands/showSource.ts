@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { Command } from '../commandManager';
-import { RSTPreviewManager } from '../features/previewManager';
+import { Command } from '../util/commandManager';
+import { RSTPreviewManager } from '../preview/previewManager';
 
 export class ShowSourceCommand implements Command {
 	public readonly id = 'restructuredtext.showSource';

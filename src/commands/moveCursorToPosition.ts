@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 
-import { Command } from '../commandManager';
+import { Command } from '../util/commandManager';
 
 export class MoveCursorToPositionCommand implements Command {
 	public readonly id = '_rst.moveCursorToPosition';

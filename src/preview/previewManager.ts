@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { Logger } from '../logger';
+import { Logger } from '../util/logger';
 import { disposeAll } from '../util/dispose';
 import { RSTFileTopmostLineMonitor } from '../util/topmostLineMonitor';
 import { RSTPreview, PreviewSettings } from './preview';

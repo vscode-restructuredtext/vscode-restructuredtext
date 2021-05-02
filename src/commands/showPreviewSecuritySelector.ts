@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { Command } from '../commandManager';
-import { PreviewSecuritySelector } from '../security';
+import { Command } from '../util/commandManager';
+import { PreviewSecuritySelector } from '../util/security';
 import { isRSTFile } from '../util/file';
-import { RSTPreviewManager } from '../features/previewManager';
+import { RSTPreviewManager } from '../preview/previewManager';
 
 export class ShowPreviewSecuritySelectorCommand implements Command {
 	public readonly id = 'restructuredtext.showPreviewSecuritySelector';

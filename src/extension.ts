@@ -4,24 +4,24 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { CommandManager } from './commandManager';
+import { CommandManager } from './util/commandManager';
 import * as commands from './commands/index';
-import { RSTContentProvider } from './features/previewContentProvider';
-import { RSTPreviewManager } from './features/previewManager';
-import { Logger } from './logger';
-import { Python } from './python';
-import { RSTEngine } from './rstEngine';
-import { ExtensionContentSecurityPolicyArbiter, PreviewSecuritySelector } from './security';
+import { RSTContentProvider } from './preview/previewContentProvider';
+import { RSTPreviewManager } from './preview/previewManager';
+import { Logger } from './util/logger';
+import { Python } from './util/python';
+import { RSTEngine } from './preview/rstEngine';
+import { ExtensionContentSecurityPolicyArbiter, PreviewSecuritySelector } from './util/security';
 
-import * as listEditing from './features/listEditing';
-import { rstDocumentSymbolProvider } from './features/rstDocumentSymbolProvider';
-import RstLintingProvider from './features/rstLinter';
-import { underline } from './features/underline';
-import { Configuration } from './features/utils/configuration';
-import RstTransformerStatus from './features/utils/statusBar';
-import * as RstLanguageServer from './rstLsp/extension';
-import { setGlobalState, setWorkspaceState } from './stateUtils';
-import { initConfig } from './config';
+import * as listEditing from './editor/listEditing';
+import { rstDocumentSymbolProvider } from './preview/rstDocumentSymbolProvider';
+import RstLintingProvider from './linter/rstLinter';
+import { underline } from './editor/underline';
+import { Configuration } from './util/configuration';
+import RstTransformerStatus from './preview/statusBar';
+import * as RstLanguageServer from './language-server/extension';
+import { setGlobalState, setWorkspaceState } from './util/stateUtils';
+import { initConfig } from './util/config';
 
 let extensionPath = '';
 

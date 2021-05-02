@@ -1,10 +1,10 @@
 import { TextDocument, Uri, Webview } from "vscode";
 import * as path from "path";
 import * as fs from 'fs';
-import { Python } from "./python";
-import { Logger } from "./logger";
-import RstTransformerStatus from './features/utils/statusBar';
-import { Configuration } from './features/utils/configuration';
+import { Python } from "../util/python";
+import { Logger } from "../util/logger";
+import RstTransformerStatus from './statusBar';
+import { Configuration } from '../util/configuration';
 import { exec } from 'child_process';
 
 export class RSTEngine {

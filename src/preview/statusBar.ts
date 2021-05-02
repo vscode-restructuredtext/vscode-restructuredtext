@@ -1,11 +1,11 @@
 'use strict';
 
 import { StatusBarAlignment, StatusBarItem, window, Uri } from 'vscode';
-import { Configuration } from './configuration';
+import { Configuration } from '../util/configuration';
 import { RstTransformerSelector } from './selector';
 import { RstTransformerConfig } from './confPyFinder';
-import { Logger } from '../../logger';
-import { Python } from '../../python';
+import { Logger } from '../util/logger';
+import { Python } from '../util/python';
 
 /**
  * Status bar updates. Shows the selected RstTransformerConfig when a
