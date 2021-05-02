@@ -1,6 +1,6 @@
 # reStructuredText Language Support for Visual Studio Code
 
-[![Build Status](https://img.shields.io/azure-devops/build/lextudio/vscode-restructuredtext/2/master.svg)](https://dev.azure.com/lextudio/vscode-restructuredtext/_build/latest?definitionId=2&branchName=master)
+[![Build Status](https://img.shields.io/github/workflow/status/vscode-restructuredtext/vscode-restructuredtext/Node.js%20CI/master)](https://dev.azure.com/lextudio/vscode-restructuredtext/_build/latest?definitionId=2&branchName=master)
 [![Current Version](https://img.shields.io/visual-studio-marketplace/v/lextudio.restructuredtext.svg)](https://marketplace.visualstudio.com/items?itemName=lextudio.restructuredtext)
 [![Install Count](https://img.shields.io/visual-studio-marketplace/i/lextudio.restructuredtext.svg)](https://marketplace.visualstudio.com/items?itemName=lextudio.restructuredtext)
 [![Download Count](https://img.shields.io/visual-studio-marketplace/d/lextudio.restructuredtext.svg)](https://marketplace.visualstudio.com/items?itemName=lextudio.restructuredtext)
