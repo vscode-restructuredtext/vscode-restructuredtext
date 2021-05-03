@@ -176,7 +176,7 @@ export class Python {
             return false;
           }
         }
-        const choice = await vscode.window.showInformationMessage('Snooty language server is not installed.', 'Install', 'Not now', 'Do not show again');
+        const choice = await vscode.window.showInformationMessage('Snooty language server is not installed or out of date.', 'Install', 'Not now', 'Do not show again');
         if (choice === 'Install') {
           this.logger.log('Started to install Snooty...');
           await this.installSnooty();
