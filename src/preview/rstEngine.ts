@@ -29,7 +29,7 @@ export class RSTEngine {
       const writer = Configuration.getDocutilsWriter(uri);
       const writerPart = Configuration.getDocutilsWriterPart(uri);
       return this.python.exec(
-        '"' + path.join(__dirname, '..', 'python-scripts', 'preview.py') + '"',
+        '"' + path.join(__dirname, '..', '..', 'python-scripts', 'preview.py') + '"',
         '"' + fileName + '"',
         '"' + writer + '"',
         '"' + writerPart + '"'
