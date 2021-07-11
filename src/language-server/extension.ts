@@ -71,9 +71,7 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
         }
 
         const documentSelector = [
-            { language: 'yaml', scheme: 'file' },
             { language: 'restructuredtext', scheme: 'file' },
-            { language: 'toml', scheme: 'file' },
         ];
         // Options to control the language client
         let clientOptions: LanguageClientOptions = {
@@ -85,8 +83,6 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
                 // Notify the server about file changes to '.clientrc' files contain in the workspace
                 fileEvents: [
                     vscode.workspace.createFileSystemWatcher('**/*.rst'),
-                    vscode.workspace.createFileSystemWatcher('**/*.yaml'),
-                    vscode.workspace.createFileSystemWatcher('snooty.toml')
                 ]
             }
         }
