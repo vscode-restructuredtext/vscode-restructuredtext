@@ -88,8 +88,8 @@
     "grammars": [
       {
         "language": "restructuredtext",
-        "scopeName": "text.restructuredtext",
-        "path": "./syntaxes/restructuredtext.tmLanguage"
+        "scopeName": "source.rst",
+        "path": "./syntaxes/restructuredtext.tmLanguage.json"
       }
     ],
     "snippets": [

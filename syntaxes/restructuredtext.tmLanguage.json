@@ -1,0 +1,404 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"scopeName": "source.rst",
+	"patterns": [
+		{"include": "#title"},
+		{"include": "#inline-markup"},
+		{"include": "#blocks"},
+		{"include": "#anchor"},
+		{"include": "#table"},
+		{"include": "#simple-table"},
+		{"include": "#line-block"},
+		{"include": "#replace-include"},
+		{"include": "#footnote"},
+		{"include": "#block-comment"},
+		{"include": "#comment"}
+	],
+	"repository": {
+		"title": {
+			"match": "^(\\*{3,}|#{3,}|\\={3,}|~{3,}|\\+{3,}|-{3,}|`{3,})$",
+			"name": "markup.heading"
+		},
+		"inline-markup": {
+			"patterns": [
+				{"include": "#escaped"},
+				{"include": "#ignore"},
+				{"include": "#ref"},
+				{"include": "#literal"},
+				{"include": "#monospaced"},
+				{"include": "#citation"},
+				{"include": "#bold"},
+				{"include": "#italic"},
+				{"include": "#list"},
+				{"include": "#macro"},
+				{"include": "#reference"},
+				{"include": "#footnote-ref"}
+			]
+		},
+		"ignore": {
+			"patterns": [
+				{"match": "'[`*]+'"},
+				{"match": "<[`*]+>"},
+				{"match": "{[`*]+}"},
+				{"match": "\\([`*]+\\)"},
+				{"match": "\\[[`*]+\\]"},
+				{"match": "\"[`*]+\""}
+			]
+		},
+		"table": {
+			"begin": "^\\s*\\+[=+-]+\\+\\s*$",
+			"end": "^(?![+|])",
+			"beginCaptures": {
+				"0": {
+					"name": "keyword.control.table"
+				}
+			},
+			"patterns": [
+				{
+					"match": "[=+|-]",
+					"name": "keyword.control.table"
+				}
+			]
+		},
+		"simple-table": {
+			"match": "^[=\\s]+$",
+			"name": "keyword.control.table"
+		},
+		"ref": {
+			"begin": "(:ref:)`",
+			"end": "`|^\\s*$",
+			"name": "entity.name.tag",
+			"beginCaptures": {
+				"1": {
+					"name": "keyword.control"
+				}
+			},
+			"patterns": [
+				{
+					"match": "<.*?>",
+					"name": "markup.underline.link"
+				}
+			]
+		},
+		"reference": {
+			"match": "[\\w-]*[a-zA-Z\\d-]__?\\b",
+			"name": "entity.name.tag"
+		},
+		"macro": {
+			"match": "\\|[^\\|]+\\|",
+			"name": "entity.name.tag"
+		},
+		"literal": {
+			"match": "(:\\S+:)(`.*?`)",
+			"captures": {
+				"1": {
+					"name": "keyword.control"
+				},
+				"2": {
+					"name": "entity.name.tag"
+				}
+			}
+		},
+		"monospaced": {
+			"begin": "(?<=[\\s\"'(\\[{<]|^)``[^\\s`]",
+			"end": "``|^\\s*$",
+			"name": "markup.inline.raw.string.markdown"
+		},
+		"citation": {
+			"begin": "(?<=[\\s\"'(\\[{<]|^)`[^\\s`]",
+			"end": "`_{,2}|^\\s*$",
+			"name": "entity.name.tag",
+			"applyEndPatternLast": 0
+		},
+		"bold": {
+			"begin": "(?<=[\\s\"'(\\[{<]|^)\\*{2}[^\\s*]",
+			"end": "\\*{2}|^\\s*$",
+			"name": "markup.bold"
+		},
+		"italic": {
+			"begin": "(?<=[\\s\"'(\\[{<]|^)\\*[^\\s*]",
+			"end": "\\*|^\\s*$",
+			"name": "markup.italic"
+		},
+		"escaped": {
+			"match": "\\\\.",
+			"name": "constant.character.escape"
+		},
+		"list": {
+			"match": "^\\s*(\\d+\\.|\\* -|[a-zA-Z#]\\.|[iIvVxXmMcC]+\\.|\\(\\d+\\)|\\d+\\)|[*+-])\\s+",
+			"name": "keyword.control"
+		},
+		"line-block": {
+			"match": "^\\|\\s+",
+			"name": "keyword.control"
+		},
+		"comment": {
+			"match": "^\\.{2} .*",
+			"name": "comment.line"
+		},
+		"block-comment": {
+			"begin": "^\\.{2}$",
+			"while": "^[ \\t]+",
+			"name": "comment.block"
+		},
+		"raw-html": {
+			"begin": "^(\\s*)(\\.{2}\\s+raw\\s*::)\\s+(html)\\s*$",
+			"end": "^(?!\\1\\s|$)",
+			"beginCaptures": {
+				"2": {
+					"name": "keyword.control"
+				},
+				"3": {
+					"name": "variable.parameter.html"
+				}
+			},
+			"patterns": [
+				{"include": "#block-param"},
+				{"include": "text.html.derivative" }
+			]
+		},
+		"anchor": {
+			"match": "^\\.{2}\\s+(_[^:]+:)\\s*",
+			"name": "entity.name.tag.anchor"
+		},
+		"replace-include": {
+			"match": "^\\s*(\\.{2})\\s+(\\|[^\\|]+\\|)\\s+(replace::)",
+			"captures": {
+				"1": {
+					"name": "keyword.control"
+				},
+				"2": {
+					"name": "entity.name.tag"
+				},
+				"3": {
+					"name": "keyword.control"
+				}
+			}
+		},
+		"footnote": {
+			"match": "^\\s*(\\.{2})\\s+(\\[(?:[\\w\\.-]+|[#*])\\])\\s+",
+			"captures": {
+				"1": {
+					"name": "keyword.control"
+				},
+				"2": {
+					"name": "entity.name.tag"
+				}
+			}
+		},
+		"footnote-ref": {
+			"match": "\\[(?:[\\w\\.-]+|[#*])\\]_",
+			"name": "entity.name.tag"
+		},
+		"blocks": {
+			"patterns": [
+				{"include": "#code-block-cpp"},
+				{"include": "#code-block-py"},
+				{"include": "#code-block-console"},
+				{"include": "#code-block-javascript"},
+				{"include": "#code-block-yaml"},
+				{"include": "#code-block-cmake"},
+				{"include": "#code-block-kconfig"},
+				{"include": "#code-block-ruby"},
+				{"include": "#code-block-dts"},
+				{"include": "#code-block"},
+				{"include": "#raw-html"},
+				{"include": "#block"},
+				{"include": "#literal-block"}
+			]
+		},
+		"literal-block": {
+			"begin": "^::\\s*$",
+			"end": "^(?![ \\t]|$)"
+		},
+		"block": {
+			"begin": "^(\\s*)(\\.{2}\\s+[\\w-]+::)(.*)",
+			"end": "^(?!\\1[ \\t]|$)",
+			"beginCaptures": {
+				"2": {
+					"name": "keyword.control"
+				},
+				"3": {
+					"name": "variable"
+				}
+			},
+			"patterns": [
+				{"include": "#block-param"},
+				{"include": "#inline-markup"},
+				{"include": "#blocks"},
+				{"include": "#simple-table"}
+			]
+		},
+		"block-param": {
+			"begin": "^\\s*:\\S+:(\\s|$)",
+			"end": "$",
+			"beginCaptures": {
+				"0": {
+					"name": "markup.heading"
+				}
+			},
+			"patterns": [
+				{
+					"match": "\\b(0x[a-fA-F\\d]+|\\d+)\\b",
+					"name": "constant.numeric"
+				}
+			]
+		},
+		"code-block-cpp": {
+			"begin": "^(\\s*)(\\.{2}\\s+code-block::)\\s*(c|cpp|C|C++|CPP|Cpp)\\s*$",
+			"end": "^(?!\\1\\s|$)",
+			"beginCaptures": {
+				"2": {
+					"name": "keyword.control"
+				},
+				"3": {
+					"name": "variable.parametercodeblock.cpp"
+				}
+			},
+			"patterns": [
+				{"include": "#block-param"},
+				{"include": "source.cpp"}
+			]
+		},
+		"code-block-console": {
+			"begin": "^(\\s*)(\\.{2}\\s+code-block::)\\s*(console|shell|bash)\\s*$",
+			"end": "^(?!\\1\\s|$)",
+			"beginCaptures": {
+				"2": {
+					"name": "keyword.control"
+				},
+				"3": {
+					"name": "variable.parameter.codeblock.console"
+				}
+			},
+			"patterns": [
+				{"include": "#block-param"},
+				{"include": "source.shell"}
+			]
+		},
+		"code-block-py": {
+			"begin": "^(\\s*)(\\.{2}\\s+code-block::)\\s*(python)\\s*$",
+			"end": "^(?!\\1\\s|$)",
+			"beginCaptures": {
+				"2": {
+					"name": "keyword.control"
+				},
+				"3": {
+					"name": "variable.parameter.codeblock.py"
+				}
+			},
+			"patterns": [
+				{"include": "#block-param"},
+				{"include": "source.python"}
+			]
+		},
+		"code-block-javascript": {
+			"begin": "^(\\s*)(\\.{2}\\s+code-block::)\\s*(javascript)\\s*$",
+			"end": "^(?!\\1\\s|$)",
+			"beginCaptures": {
+				"2": {
+					"name": "keyword.control"
+				},
+				"3": {
+					"name": "variable.parameter.codeblock.js"
+				}
+			},
+			"patterns": [
+				{"include": "#block-param"},
+				{"include": "source.js"}
+			]
+		},
+		"code-block-yaml": {
+			"begin": "^(\\s*)(\\.{2}\\s+code-block::)\\s*(ya?ml)\\s*$",
+			"end": "^(?!\\1\\s+|$)",
+			"beginCaptures": {
+				"2": {
+					"name": "keyword.control"
+				},
+				"3": {
+					"name": "variable.parameter.codeblock.yaml"
+				}
+			},
+			"patterns": [
+				{"include": "#block-param"},
+				{"include": "source.yaml"}
+			]
+		},
+		"code-block-cmake": {
+			"begin": "^(\\s*)(\\.{2}\\s+code-block::)\\s*(cmake)\\s*$",
+			"end": "^(?!\\1\\s|$)",
+			"beginCaptures": {
+				"2": {
+					"name": "keyword.control"
+				},
+				"3": {
+					"name": "variable.parameter.codeblock.cmake"
+				}
+			},
+			"patterns": [
+				{"include": "#block-param"},
+				{"include": "source.cmake"}
+			]
+		},
+		"code-block-kconfig": {
+			"begin": "^(\\s*)(\\.{2}\\s+code-block::)\\s*([kK]config)\\s*$",
+			"end": "^(?!\\1\\s|$)",
+			"beginCaptures": {
+				"2": {
+					"name": "keyword.control"
+				},
+				"3": {
+					"name": "variable.parameter.codeblock.kconfig"
+				}
+			},
+			"patterns": [
+				{"include": "#block-param"},
+				{"include": "source.kconfig"}
+			]
+		},
+		"code-block-ruby": {
+			"begin": "^(\\s*)(\\.{2}\\s+code-block::)\\s*(ruby)\\s*$",
+			"end": "^(?!\\1\\s|$)",
+			"beginCaptures": {
+				"2": {
+					"name": "keyword.control"
+				},
+				"3": {
+					"name": "variable.parameter.codeblock.ruby"
+				}
+			},
+			"patterns": [
+				{"include": "#block-param"},
+				{"include": "source.ruby"}
+			]
+		},
+		"code-block-dts": {
+			"begin": "^(\\s*)(\\.{2}\\s+code-block::)\\s*(dts|DTS|devicetree)\\s*$",
+			"end": "^(?!\\1\\s|$)",
+			"beginCaptures": {
+				"2": {
+					"name": "keyword.control"
+				},
+				"3": {
+					"name": "variable.parameter.codeblock.dts"
+				}
+			},
+			"patterns": [
+				{"include": "#block-param"},
+				{"include": "source.dts"}
+			]
+		},
+		"code-block": {
+			"begin": "^(\\s*)(\\.{2}\\s+code-block::)",
+			"end": "^(?!\\1\\s|$)",
+			"beginCaptures": {
+				"2": {
+					"name": "keyword.control"
+				}
+			},
+			"patterns": [
+				{"include": "#block-param"}
+			]
+		}
+	}
+}
