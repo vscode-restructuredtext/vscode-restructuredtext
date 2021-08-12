@@ -28,7 +28,7 @@ export class RSTEngine {
       // docutil
       const writer = Configuration.getDocutilsWriter(uri);
       const writerPart = Configuration.getDocutilsWriterPart(uri);
-      return this.python.exec(
+      return await this.python.exec(
         '"' + path.join(__dirname, '..', '..', 'python-scripts', 'preview.py') + '"',
         '"' + fileName + '"',
         '"' + writer + '"',
