@@ -2,19 +2,24 @@
 	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
 	"scopeName": "source.rst",
 	"patterns": [
-		{"include": "#title"},
-		{"include": "#inline-markup"},
-		{"include": "#blocks"},
-		{"include": "#anchor"},
-		{"include": "#table"},
-		{"include": "#simple-table"},
-		{"include": "#line-block"},
-		{"include": "#replace-include"},
-		{"include": "#footnote"},
-		{"include": "#block-comment"},
-		{"include": "#comment"}
+		{"include": "#body"}
 	],
 	"repository": {
+		"body": {
+			"patterns": [
+				{"include": "#title"},
+				{"include": "#inline-markup"},
+				{"include": "#anchor"},
+				{"include": "#line-block"},
+				{"include": "#replace-include"},
+				{"include": "#footnote"},
+				{"include": "#substitution"},
+				{"include": "#blocks"},
+				{"include": "#table"},
+				{"include": "#simple-table"},
+				{"include": "#options-list"}
+			]
+		},
 		"title": {
 			"match": "^(\\*{3,}|#{3,}|\\={3,}|~{3,}|\\+{3,}|-{3,}|`{3,})$",
 			"name": "markup.heading"
@@ -89,7 +94,7 @@
 			"name": "entity.name.tag"
 		},
 		"literal": {
-			"match": "(:\\S+:)(`.*?`)",
+			"match": "(:\\S+:)(`.*?`\\\\?)",
 			"captures": {
 				"1": {
 					"name": "keyword.control"
@@ -132,15 +137,6 @@
 			"match": "^\\|\\s+",
 			"name": "keyword.control"
 		},
-		"comment": {
-			"match": "^\\.{2} .*",
-			"name": "comment.line"
-		},
-		"block-comment": {
-			"begin": "^\\.{2}$",
-			"while": "^[ \\t]+",
-			"name": "comment.block"
-		},
 		"raw-html": {
 			"begin": "^(\\s*)(\\.{2}\\s+raw\\s*::)\\s+(html)\\s*$",
 			"end": "^(?!\\1\\s|$)",
@@ -176,22 +172,25 @@
 			}
 		},
 		"footnote": {
-			"match": "^\\s*(\\.{2})\\s+(\\[(?:[\\w\\.-]+|[#*])\\])\\s+",
-			"captures": {
-				"1": {
-					"name": "keyword.control"
-				},
-				"2": {
-					"name": "entity.name.tag"
-				}
-			}
+			"match": "^\\s*\\.{2}\\s+\\[(?:[\\w\\.-]+|[#*]|#\\w+)\\]\\s+",
+			"name": "entity.name.tag"
 		},
 		"footnote-ref": {
 			"match": "\\[(?:[\\w\\.-]+|[#*])\\]_",
 			"name": "entity.name.tag"
 		},
+		"substitution": {
+			"match": "^\\.{2}\\s*\\|([^|]+)\\|",
+			"name": "entity.name.tag"
+		},
+		"options-list": {
+			"match": "^((?:-\\w|--[\\w-]+|/\\w+)(?:,? ?[\\w-]+)*)(?:  |\\t|$)",
+			"name": "variable.parameter"
+		},
 		"blocks": {
 			"patterns": [
+				{"include": "#domains"},
+				{"include": "#doctest"},
 				{"include": "#code-block-cpp"},
 				{"include": "#code-block-py"},
 				{"include": "#code-block-console"},
@@ -204,19 +203,33 @@
 				{"include": "#code-block"},
 				{"include": "#raw-html"},
 				{"include": "#block"},
-				{"include": "#literal-block"}
+				{"include": "#literal-block"},
+				{"include": "#block-comment"}
 			]
 		},
-		"literal-block": {
-			"begin": "^::\\s*$",
-			"end": "^(?![ \\t]|$)"
+		"block-comment": {
+			"begin": "^(\\s*)\\.{2}",
+			"end": "^(?!\\1[ \\t]|$)",
+			"name": "comment.block"
 		},
-		"block": {
-			"begin": "^(\\s*)(\\.{2}\\s+[\\w-]+::)(.*)",
+		"literal-block": {
+			"begin": "^(\\s*)(.*)(::)\\s*$",
 			"end": "^(?!\\1[ \\t]|$)",
 			"beginCaptures": {
 				"2": {
-					"name": "keyword.control"
+					"patterns": [{"include": "#inline-markup"}]
+				},
+				"3": {
+					"name": "entity.name.class"
+				}
+			}
+		},
+		"block": {
+			"begin": "^(\\s*)(\\.{2}\\s+\\S+::)(.*)",
+			"end": "^(?!\\1[ \\t]|$)",
+			"beginCaptures": {
+				"2": {
+					"name": "entity.name.class"
 				},
 				"3": {
 					"name": "variable"
@@ -224,32 +237,144 @@
 			},
 			"patterns": [
 				{"include": "#block-param"},
-				{"include": "#inline-markup"},
-				{"include": "#blocks"},
-				{"include": "#simple-table"}
+				{"include": "#body"}
 			]
 		},
 		"block-param": {
-			"begin": "^\\s*:\\S+:(\\s|$)",
-			"end": "$",
+			"patterns": [
+				{
+					"match": "^\\s*(:param\\s+(.+?):)(?:\\s|$)",
+					"captures": {
+						"1": {
+							"name": "markup.heading"
+						},
+						"2": {
+							"name": "variable.parameter"
+						}
+					}
+				},
+				{
+					"match": "^\\s*(:.+?:)(?:$|\\s(.*))",
+					"captures": {
+						"1": {
+							"name": "markup.heading"
+						},
+						"2": {
+							"patterns": [
+								{
+									"match": "(0x[a-fA-F\\d]+|\\d)",
+									"name": "constant.numeric"
+								},
+								{"include": "#inline-markup"}
+							]
+						}
+					}
+				}
+			]
+		},
+		"domains": {
+			"patterns": [
+				{"include": "#domain-cpp"},
+				{"include": "#domain-py"},
+				{"include": "#domain-auto"},
+				{"include": "#domain-js"}
+			]
+		},
+		"domain-cpp": {
+			"begin": "^(\\s*)(\\.{2}\\s+(?:cpp|c):(?:class|struct|function|member|var|type|enum|enum-struct|enum-class|enumerator|union|concept)::)\\s*(?:(@\\w+)|(.*))",
+			"end": "^(?!\\1[ \\t]|$)",
 			"beginCaptures": {
-				"0": {
-					"name": "markup.heading"
+				"2": {
+					"name": "entity.name.class"
+				},
+				"3": {
+					"name": "entity.name.tag"
+				},
+				"4": {
+					"patterns": [
+						{"include": "source.cpp"}
+					]
 				}
 			},
 			"patterns": [
-				{
-					"match": "\\b(0x[a-fA-F\\d]+|\\d+)\\b",
-					"name": "constant.numeric"
-				}
+				{"include": "#block-param"},
+				{"include": "#body"}
 			]
+		},
+		"domain-py": {
+			"begin": "^(\\s*)(\\.{2}\\s+py:(?:module|function|data|exception|class|attribute|property|method|staticmethod|classmethod|decorator|decoratormethod)::)\\s*(.*)",
+			"end": "^(?!\\1[ \\t]|$)",
+			"beginCaptures": {
+				"2": {
+					"name": "entity.name.class"
+				},
+				"3": {
+					"patterns": [
+						{"include": "source.python"}
+					]
+				}
+			},
+			"patterns": [
+				{"include": "#block-param"},
+				{"include": "#body"}
+			]
+		},
+		"domain-auto": {
+			"begin": "^(\\s*)(\\.{2}\\s+auto(?:class|module|exception|function|decorator|data|method|attribute|property)::)\\s*(.*)",
+			"end": "^(?!\\1[ \\t]|$)",
+			"beginCaptures": {
+				"2": {
+					"name": "entity.name.class.py"
+				},
+				"3": {
+					"patterns": [
+						{"include": "source.python"}
+					]
+				}
+			},
+			"patterns": [
+				{"include": "#block-param"},
+				{"include": "#body"}
+			]
+		},
+		"domain-js": {
+			"begin": "^(\\s*)(\\.{2}\\s+js:\\w+::)\\s*(.*)",
+			"end": "^(?!\\1[ \\t]|$)",
+			"beginCaptures": {
+				"2": {
+					"name": "entity.name.class"
+				},
+				"3": {
+					"patterns": [
+						{"include": "source.js"}
+					]
+				}
+			},
+			"patterns": [
+				{"include": "#block-param"},
+				{"include": "#body"}
+			]
+		},
+		"doctest": {
+			"begin": "^(>>>)\\s*(.*)",
+			"end": "^\\s*$",
+			"beginCaptures": {
+				"1": {
+					"name": "keyword.control"
+				},
+				"2": {
+					"patterns": [
+						{"include": "source.python"}
+					]
+				}
+			}
 		},
 		"code-block-cpp": {
 			"begin": "^(\\s*)(\\.{2}\\s+code-block::)\\s*(c|cpp|C|C++|CPP|Cpp)\\s*$",
 			"end": "^(?!\\1\\s|$)",
 			"beginCaptures": {
 				"2": {
-					"name": "keyword.control"
+					"name": "entity.name.class"
 				},
 				"3": {
 					"name": "variable.parametercodeblock.cpp"
@@ -265,7 +390,7 @@
 			"end": "^(?!\\1\\s|$)",
 			"beginCaptures": {
 				"2": {
-					"name": "keyword.control"
+					"name": "entity.name.class"
 				},
 				"3": {
 					"name": "variable.parameter.codeblock.console"
@@ -281,7 +406,7 @@
 			"end": "^(?!\\1\\s|$)",
 			"beginCaptures": {
 				"2": {
-					"name": "keyword.control"
+					"name": "entity.name.class"
 				},
 				"3": {
 					"name": "variable.parameter.codeblock.py"
@@ -297,7 +422,7 @@
 			"end": "^(?!\\1\\s|$)",
 			"beginCaptures": {
 				"2": {
-					"name": "keyword.control"
+					"name": "entity.name.class"
 				},
 				"3": {
 					"name": "variable.parameter.codeblock.js"
@@ -313,7 +438,7 @@
 			"end": "^(?!\\1\\s+|$)",
 			"beginCaptures": {
 				"2": {
-					"name": "keyword.control"
+					"name": "entity.name.class"
 				},
 				"3": {
 					"name": "variable.parameter.codeblock.yaml"
@@ -329,7 +454,7 @@
 			"end": "^(?!\\1\\s|$)",
 			"beginCaptures": {
 				"2": {
-					"name": "keyword.control"
+					"name": "entity.name.class"
 				},
 				"3": {
 					"name": "variable.parameter.codeblock.cmake"
@@ -345,7 +470,7 @@
 			"end": "^(?!\\1\\s|$)",
 			"beginCaptures": {
 				"2": {
-					"name": "keyword.control"
+					"name": "entity.name.class"
 				},
 				"3": {
 					"name": "variable.parameter.codeblock.kconfig"
@@ -361,7 +486,7 @@
 			"end": "^(?!\\1\\s|$)",
 			"beginCaptures": {
 				"2": {
-					"name": "keyword.control"
+					"name": "entity.name.class"
 				},
 				"3": {
 					"name": "variable.parameter.codeblock.ruby"
@@ -377,7 +502,7 @@
 			"end": "^(?!\\1\\s|$)",
 			"beginCaptures": {
 				"2": {
-					"name": "keyword.control"
+					"name": "entity.name.class"
 				},
 				"3": {
 					"name": "variable.parameter.codeblock.dts"
@@ -393,7 +518,7 @@
 			"end": "^(?!\\1\\s|$)",
 			"beginCaptures": {
 				"2": {
-					"name": "keyword.control"
+					"name": "entity.name.class"
 				}
 			},
 			"patterns": [
