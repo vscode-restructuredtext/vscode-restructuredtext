@@ -31,3 +31,9 @@ vscode-rst
 The license terms can be found at
 
 https://github.com/trond-snekvik/vscode-rst/blob/main/LICENSE.txt
+
+resttext
+
+The license terms can be found at
+
+https://github.com/TatsuyaNakamori/vscode-reStructuredText/blob/master/LICENSE

@@ -17,7 +17,7 @@ that VS Code provides.
 - Syntax Highlighting
 - Code Snippets
 - Live Preview
-- Section Builder
+- Editor Enhancement
 - Linter
 - IntelliSense (**Experimental**)
 
@@ -30,13 +30,13 @@ This extension is hosted at [Visual Studio Marketplace](https://marketplace.visu
 1. Upgrade to Visual Studio Code 1.43.0 or above.
 1. Switch to the Extensions view by clicking the fifth icon in the left most bar.
 1. Type "restructuredtext" in the search box and hit Enter key.
-1. Click "Install" button to install "reStructuredText" extension.
+1. Click "Install" button to install "reStructuredText" extension (by LeXtudio Inc.).
 
 After installing this extension, please visit [the homepage for this extension](https://docs.restructuredtext.net) to learn how to use it.
 
 ## Contributing to the code
 
-Check out the [development documentation](https://docs.restructuredtext.net/en/latest/articles/development.html) for more details
+Check out the [development documentation](https://docs.restructuredtext.net/articles/development.html) for more details
 on how to contribute to this extension!
 
 Check the [dashboard on work items](https://waffle.io/vscode-restructuredtext/vscode-restructuredtext).
@@ -44,7 +44,7 @@ Check the [dashboard on work items](https://waffle.io/vscode-restructuredtext/vs
 ## License
 
 This extension is [licensed under the MIT License](LICENSE.txt).  Please see the
-[third-party notices](https://docs.restructuredtext.net/en/latest/articles/thirdparties.html) file for details on the third-party
+[third-party notices](https://docs.restructuredtext.net/articles/thirdparties.html) file for details on the third-party
 files that we include with releases of this project.
 
 ## Acknowledgements
