@@ -39,8 +39,6 @@ After installing this extension, please visit [the homepage for this extension](
 Check out the [development documentation](https://docs.restructuredtext.net/articles/development.html) for more details
 on how to contribute to this extension!
 
-Check the [dashboard on work items](https://waffle.io/vscode-restructuredtext/vscode-restructuredtext).
-
 ## License
 
 This extension is [licensed under the MIT License](LICENSE.txt).  Please see the
