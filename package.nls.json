@@ -23,5 +23,12 @@
     "config.orderedList.autoRenumber.description": "Auto fix ordered list markers.",
     "config.orderedList.marker.description": "Ordered list marker.",
     "config.orderedList.marker.enumDescriptions.one": "Always use `1.` as ordered list marker.",
-    "config.orderedList.marker.enumDescriptions.ordered": "Use increasing numbers as ordered list marker."
+    "config.orderedList.marker.enumDescriptions.ordered": "Use increasing numbers as ordered list marker.",
+    "resttext.table.createGrid.title": "Create a grid of tables",
+    "resttext.table.dataToTable.title": "Convert data to a table",
+    "resttext.key.enter.title": "key.enter",
+    "resttext.key.shift.enter.title": "key.shift.enter",
+    "resttext.key.alt.enter.title": "key.alt.enter",
+    "resttext.key.tab.title": "key.tab",
+    "resttext.key.shift.tab.title": "key.shift.tab"
 }
