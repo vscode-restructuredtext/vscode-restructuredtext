@@ -88,15 +88,7 @@
         "extensions": [
           ".rst",
           ".rest"
-        ],
-        "configuration": "./language-configuration.json"
-      }
-    ],
-    "grammars": [
-      {
-        "language": "restructuredtext",
-        "scopeName": "source.rst",
-        "path": "./syntaxes/restructuredtext.tmLanguage.json"
+        ]
       }
     ],
     "snippets": [
