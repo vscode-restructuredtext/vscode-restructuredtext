@@ -132,6 +132,10 @@ export class Configuration {
         return Configuration.loadAnySetting<number>('updateDelay', 3000, resource);
     }
 
+    public static getSyntaxHighlightingDisabled(resource: Uri = null): boolean {
+        return Configuration.loadAnySetting('syntaxHighlighting.disabled', true, null);
+    }
+
     public static async setConfPath(value: string, resource: Uri = null, insertMacro: boolean): Promise<string> {
         return await Configuration.saveSetting('confPath', value, resource, insertMacro);
     }
@@ -150,6 +154,10 @@ export class Configuration {
 
     public static async setDocUtilDisabled(resource: Uri = null) {
         await Configuration.saveAnySetting('preview.docutil.disabled', true, resource);
+    }
+
+    public static async setSyntaxHighlightingDisabled(resource: Uri = null) {
+        await Configuration.saveAnySetting('syntaxHighlighting.disabled', true, resource);
     }
 
     private static loadAnySetting<T>(

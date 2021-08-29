@@ -54,6 +54,22 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
         }
     }
 
+    const simpleRst = vscode.extensions.getExtension('trond-snekvik.simple-rst');
+    if (!simpleRst && !Configuration.getSyntaxHighlightingDisabled()) {
+        const message = 'Syntax highlighting is now provided by Trond Snekvik\'s extension. Do you want to install it now?';
+        const choice = await vscode.window.showInformationMessage(message, 'Install', 'Not now', 'Do not show again');
+        if (choice === 'Install') {
+            logger.log('Started to install simple-rst...');
+            await vscode.commands.executeCommand('extension.open', 'trond-snekvik.simple-rst');
+        } else if (choice === 'Do not show again') {
+            logger.log('Disabled syntax highlighting.');
+            await Configuration.setSyntaxHighlightingDisabled();
+            vscode.window.showWarningMessage('Syntax highlighting is now disabled.');
+        } else {
+            vscode.window.showWarningMessage('No Syntax highlighting. Trond Snekvik\'s extension is not installed.');
+        }
+    }
+
     await logPlatform(logger);
     const disableLsp = Configuration.getLanguageServerDisabled();
 
@@ -87,7 +103,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
             if (!editor) { return }
             const table = new TableEditor(editor);
             table.createEmptyGrid();
-    }));
+        }));
 
     context.subscriptions.push(
         vscode.commands.registerCommand('resttext.table.dataToTable', () => {
@@ -95,32 +111,32 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
             if (!editor) { return }
             const table = new TableEditor(editor);
             table.dataToTable();
-    }));
+        }));
 
     context.subscriptions.push(
         vscode.commands.registerCommand('resttext.key.enter', () => {
             key_enter();
-    }));
+        }));
 
     context.subscriptions.push(
         vscode.commands.registerCommand('resttext.key.shift.enter', () => {
             key_shift_enter();
-    }));
+        }));
 
     context.subscriptions.push(
         vscode.commands.registerCommand('resttext.key.alt.enter', () => {
             key_alt_enter();
-    }));
+        }));
 
     context.subscriptions.push(
         vscode.commands.registerCommand('resttext.key.tab', () => {
             key_tab();
-    }));
+        }));
 
     context.subscriptions.push(
         vscode.commands.registerCommand('resttext.key.shift.tab', () => {
             key_shift_tab();
-    }));
+        }));
 
     // Linter support
     if (!Configuration.getLinterDisabled()) {

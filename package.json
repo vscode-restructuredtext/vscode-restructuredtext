@@ -465,6 +465,12 @@
           "description": "Extensions that might lead to conflicts.",
           "scope": "application"
         },
+        "restructuredtext.syntaxHighlighting.disabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Flag to disable syntax highlighting.",
+          "scope": "resource"
+        },
         "restructuredtext.styles": {
           "type": "array",
           "default": [],
