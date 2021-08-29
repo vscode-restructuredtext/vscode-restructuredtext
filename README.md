@@ -14,12 +14,13 @@ that VS Code provides.
 
 ## Features
 
-- Syntax Highlighting
 - Code Snippets
 - Live Preview
 - Editor Enhancement
 - Linter
 - IntelliSense (**Experimental**)
+
+> To get Syntax Highlighting, please also install [this extension](https://marketplace.visualstudio.com/items?itemName=trond-snekvik.simple-rst) by Trond Snekvik.
 
 Frequent Asked Questions can be found [here](https://github.com/vscode-restructuredtext/vscode-restructuredtext/issues?q=is%3Aissue+label%3A%22faq+candidate%22+).
 
