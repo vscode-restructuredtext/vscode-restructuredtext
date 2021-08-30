@@ -20,7 +20,7 @@ export async function setContext() {
     const listExistsOneLineAbove = util.listExistsOneLineAbove(editor);
 
     // Conditions under which the Enter(Shift+Enter) button is enabled
-    if (tableIsSelected || listIsSelected) {
+    if (tableIsSelected/* || listIsSelected*/) {
         vscode.commands.executeCommand('setContext', 'resttext.enter.enabled', true);
         vscode.commands.executeCommand('setContext', 'resttext.shift.enter.enabled', true);
     } else {
@@ -37,14 +37,14 @@ export async function setContext() {
     }
 
     // Conditions under which the Tab button is enabled
-    if (tableIsSelected || listIsSelected || listExistsOneLineAbove) {
+    if (tableIsSelected || /*listIsSelected ||*/ listExistsOneLineAbove) {
         vscode.commands.executeCommand('setContext', 'resttext.tab.enabled', true);
     } else {
         vscode.commands.executeCommand('setContext', 'resttext.tab.enabled', false);
     }
 
     // Conditions under which the [Shift+Tab] button is enabled
-    if (tableIsSelected || listIsSelected) {
+    if (tableIsSelected/* || listIsSelected*/) {
         vscode.commands.executeCommand('setContext', 'resttext.shift.tab.enabled', true);
     } else {
         vscode.commands.executeCommand('setContext', 'resttext.shift.tab.enabled', false);
