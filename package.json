@@ -465,6 +465,12 @@
           "description": "Extensions that might lead to conflicts.",
           "scope": "application"
         },
+        "restructuredtext.editor.tableEditor.disabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Flag to disable Table Editor feature.",
+          "scope": "resource"
+        },
         "restructuredtext.syntaxHighlighting.disabled": {
           "type": "boolean",
           "default": false,
@@ -483,7 +489,8 @@
             "sphinx",
             "docutils"
           ],
-          "default": "sphinx"
+          "default": "sphinx",
+          "scope": "resource"
         },
         "restructuredtext.preview.sphinx.disabled": {
           "type": "boolean",

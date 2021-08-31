@@ -136,6 +136,10 @@ export class Configuration {
         return Configuration.loadAnySetting('syntaxHighlighting.disabled', true, null);
     }
 
+    public static getTableEditorDisabled(resource: Uri = null): boolean {
+        return Configuration.loadAnySetting('editor.tableEditor.disabled', true, null);
+    }
+
     public static async setConfPath(value: string, resource: Uri = null, insertMacro: boolean): Promise<string> {
         return await Configuration.saveSetting('confPath', value, resource, insertMacro);
     }

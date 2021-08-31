@@ -3,10 +3,13 @@
 // See LICENSE in the project root for license information.
 // ============================================================
 import * as vscode from 'vscode';
+import { Configuration } from '../util/configuration';
 import * as util from './util';
 
 
 export async function setContext() {
+    if (Configuration.getTableEditorDisabled()) { return; }
+
     const editor = vscode.window.activeTextEditor;
     if (editor) {
         vscode.commands.executeCommand('setContext', 'resttext.editor.opening', true);
