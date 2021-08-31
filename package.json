@@ -279,7 +279,7 @@
         "category": "reStructuredText",
         "command": "resttext.table.createGrid",
         "title": "%resttext.table.createGrid.title%",
-        "when": "editorTextFocus && editorLangId==restructuredtext"
+        "when": "resttext.createGrid.enabled && editorTextFocus && !editorHasMultipleSelections && editorHasSelection && editorLangId==restructuredtext"
       },
       {
           "category": "reStructuredText",
@@ -323,7 +323,7 @@
         {
           "group": "1_modification",
           "command": "resttext.table.createGrid",
-          "when": "editorTextFocus && !editorHasMultipleSelections && editorHasSelection && editorLangId==restructuredtext"
+          "when": "resttext.createGrid.enabled && editorTextFocus && !editorHasMultipleSelections && editorHasSelection && editorLangId==restructuredtext"
         },
         {
           "group": "1_modification",

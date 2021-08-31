@@ -15,6 +15,13 @@ export async function setContext() {
         return
     }
 
+    const tableSizeIsSelected = util.tableSizeIsSelected(editor);
+    if (tableSizeIsSelected) {
+        vscode.commands.executeCommand('setContext', 'resttext.createGrid.enabled', true);
+    } else {
+        vscode.commands.executeCommand('setContext', 'resttext.createGrid.enabled', false);
+    }
+
     const tableIsSelected = util.tableIsSelected(editor);
     const listIsSelected = util.listIsSelected(editor);
     const listExistsOneLineAbove = util.listExistsOneLineAbove(editor);

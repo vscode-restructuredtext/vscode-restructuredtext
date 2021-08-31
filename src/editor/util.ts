@@ -63,6 +63,32 @@ export function countTextWidth(text:string):number {
     return count
 }
 
+export function tableSizeIsSelected(editor? : vscode.TextEditor) : [number, number] {
+    if (!editor) {
+        editor = vscode.window.activeTextEditor;
+        if (!editor) { return }
+    }
+
+    const selection = editor.selection;
+    if (selection.isEmpty) { return }
+    const startPos = new vscode.Position(selection.start.line, 0);
+    const endLine = selection.end.line;
+    const endLastChar = editor.document.lineAt(endLine).range.end.character;
+    const endPos = new vscode.Position(endLine, endLastChar);
+
+    const data = editor.document.getText(new vscode.Range(startPos, endPos));
+    const regRowColumn = /^(?<row>\d+)(?<x>x)(?<column>\d+)$/
+    const match = regRowColumn.exec(data);
+    if (!match?.groups) { return }
+
+    const rowText    = match.groups["row"];
+    const x      = match.groups["x"];
+    const columnText = match.groups["column"];
+    if (!(rowText && x && columnText)) { return }
+
+    return [Number(rowText), Number(columnText)];
+}
+
 export function tableIsSelected(editor?:vscode.TextEditor):(number[]|undefined) {
     if (!editor) {
         editor = vscode.window.activeTextEditor;

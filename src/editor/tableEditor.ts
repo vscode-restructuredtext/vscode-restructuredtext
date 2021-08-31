@@ -42,30 +42,11 @@ export class TableEditor {
 
     public async createEmptyGrid() {
 
-        const selection = this.editor.selection;
-        const startPos = new vscode.Position(selection.start.line, 0);
-        const endLine = selection.end.line;
-        const endLastChar = this.editor.document.lineAt(endLine).range.end.character;
-        const endPos = new vscode.Position(endLine, endLastChar);
-
-        const data = this.editor.document.getText(new vscode.Range(startPos, endPos));
-        const regRowColumn = /^(?<row>\d+)(?<x>x)(?<column>\d+)$/
-        const match = regRowColumn.exec(data);
-        if (!match?.groups) {
-            vscode.window.showWarningMessage("Selected text is invalid for table generation. Please use text such as 3x4 and try again.");
-            return
-        }
-    
-        const rowText    = match.groups["row"];
-        const x      = match.groups["x"];
-        const columnText = match.groups["column"];
-        if (!(rowText && x && columnText)) { return }
+        let [row, column] = util.tableSizeIsSelected(this.editor);
 
         const inputResult = await vscode.window.showQuickPick(["With Header", "Without Header"])
         if (!inputResult) { return }
-        const header = (inputResult == "With Header");
-        let row = Number(rowText);
-        const column = Number(columnText);
+        const header = (inputResult === "With Header");
 
         if (header) {
             row += 1;
