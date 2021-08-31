@@ -121,7 +121,7 @@ export class Configuration {
     }
 
     public static getDocUtilDisabled(resource: Uri = null): boolean {
-        return Configuration.loadAnySetting('preview.docutil.disabled', true, null);
+        return Configuration.loadAnySetting('preview.docutils.disabled', true, null);
     }
 
     public static getLanguageServerDisabled(resource: Uri = null): boolean {
@@ -153,7 +153,7 @@ export class Configuration {
     }
 
     public static async setDocUtilDisabled(resource: Uri = null) {
-        await Configuration.saveAnySetting('preview.docutil.disabled', true, resource);
+        await Configuration.saveAnySetting('preview.docutils.disabled', true, resource);
     }
 
     public static async setSyntaxHighlightingDisabled(resource: Uri = null) {

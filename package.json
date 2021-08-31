@@ -481,7 +481,7 @@
           "type": "string",
           "enum": [
             "sphinx",
-            "docutil"
+            "docutils"
           ],
           "default": "sphinx"
         },
@@ -491,10 +491,10 @@
           "description": "Flag to disable sphinx based preview if critical issues happen.",
           "scope": "resource"
         },
-        "restructuredtext.preview.docutil.disabled": {
+        "restructuredtext.preview.docutils.disabled": {
           "type": "boolean",
           "default": false,
-          "description": "Flag to disable docutil based preview if critical issues happen.",
+          "description": "Flag to disable docutils based preview if critical issues happen.",
           "scope": "resource"
         },
         "restructuredtext.preview.fontFamily": {

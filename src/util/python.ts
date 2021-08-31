@@ -49,25 +49,25 @@ export class Python {
     if (Configuration.getConfPath(resource) === '') {
       if (Configuration.getDocUtilDisabled()) {
         if (showWarning) {
-          await vscode.window.showWarningMessage('No preview. Preview engine docutil is disabled.');
+          await vscode.window.showWarningMessage('No preview. Preview engine docutils is disabled.');
         }
         return false;
       }
       if (!(await this.checkDocutilsInstall())) {
-        const choice = await vscode.window.showInformationMessage('Preview engine docutil is not installed.', 'Install', 'Not now', 'Do not show again');
+        const choice = await vscode.window.showInformationMessage('Preview engine docutils is not installed.', 'Install', 'Not now', 'Do not show again');
         if (choice === 'Install') {
           this.logger.log('Started to install docutils...');
           await this.installDocUtils();
         } else if (choice === 'Do not show again') {
-          this.logger.log('Disabled docutil engine.');
+          this.logger.log('Disabled docutils engine.');
           await Configuration.setDocUtilDisabled();
           if (showWarning) {
-            await vscode.window.showWarningMessage('No preview. Preview engine docutil is now disabled.');
+            await vscode.window.showWarningMessage('No preview. Preview engine docutils is now disabled.');
           }
           return false;
         } else {
           if (showWarning) {
-            await vscode.window.showWarningMessage('No preview. Preview engine docutil is not installed.');
+            await vscode.window.showWarningMessage('No preview. Preview engine docutils is not installed.');
           }
           return false;
         }

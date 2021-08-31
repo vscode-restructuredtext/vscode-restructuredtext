@@ -20,12 +20,12 @@ export class RSTEngine {
 
   public async compile(fileName: string, uri: Uri, confPyDirectory: string, fixLinks: boolean, webview: Webview): Promise<string> {
     this.logger.log(`[preview] Compiling file: ${fileName}`);
-    if (confPyDirectory === '' || Configuration.getPreviewName() === 'docutil') {
-      if (Configuration.getPreviewName() === 'docutil') {
-        this.logger.log('[preview] Forced to use docutil due to setting "preview.name".')
+    if (confPyDirectory === '' || Configuration.getPreviewName() === 'docutils') {
+      if (Configuration.getPreviewName() === 'docutils') {
+        this.logger.log('[preview] Forced to use docutils due to setting "preview.name".')
       }
 
-      // docutil
+      // docutils
       const writer = Configuration.getDocutilsWriter(uri);
       const writerPart = Configuration.getDocutilsWriterPart(uri);
       return await this.python.exec(
