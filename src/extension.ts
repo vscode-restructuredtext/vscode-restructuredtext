@@ -14,7 +14,6 @@ import { RSTEngine } from './preview/rstEngine';
 import { ExtensionContentSecurityPolicyArbiter, PreviewSecuritySelector } from './util/security';
 
 import * as listEditing from './editor/listEditing';
-import { rstDocumentSymbolProvider } from './preview/rstDocumentSymbolProvider';
 import RstLintingProvider from './linter/rstLinter';
 import { underline } from './editor/underline';
 import { Configuration } from './util/configuration';
@@ -185,12 +184,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
             previewManager.updateConfiguration();
         }));
     }
-
-    // DocumentSymbolProvider Demo, for Outline View Test
-    let disposableRstDSP = vscode.languages.registerDocumentSymbolProvider(
-        { scheme: 'file', language: 'restructuredtext' }, new rstDocumentSymbolProvider()
-    );
-    context.subscriptions.push(disposableRstDSP);
 
     listEditing.activate(context);
 
