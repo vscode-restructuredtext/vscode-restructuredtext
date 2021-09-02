@@ -113,19 +113,19 @@ export class Configuration {
     }
 
     public static getLinterDisabled(resource: Uri = null): boolean {
-        return Configuration.loadAnySetting('linter.disabled', true, null);
+        return Configuration.loadAnySetting('linter.disabled', true, resource);
     }
 
     public static getSphinxDisabled(resource: Uri = null): boolean {
-        return Configuration.loadAnySetting('preview.sphinx.disabled', true, null);
+        return Configuration.loadAnySetting('preview.sphinx.disabled', true, resource);
     }
 
     public static getDocUtilDisabled(resource: Uri = null): boolean {
-        return Configuration.loadAnySetting('preview.docutils.disabled', true, null);
+        return Configuration.loadAnySetting('preview.docutils.disabled', true, resource);
     }
 
     public static getLanguageServerDisabled(resource: Uri = null): boolean {
-        return Configuration.loadAnySetting('languageServer.disabled', true, null);
+        return Configuration.loadAnySetting('languageServer.disabled', true, resource);
     }
 
     public static getUpdateDelay(resource: Uri = null): number {
@@ -133,11 +133,18 @@ export class Configuration {
     }
 
     public static getSyntaxHighlightingDisabled(resource: Uri = null): boolean {
-        return Configuration.loadAnySetting('syntaxHighlighting.disabled', true, null);
+        return Configuration.loadAnySetting('syntaxHighlighting.disabled', true, resource);
     }
 
     public static getTableEditorDisabled(resource: Uri = null): boolean {
-        return Configuration.loadAnySetting('editor.tableEditor.disabled', true, null);
+        return Configuration.loadAnySetting('editor.tableEditor.disabled', true, resource);
+    }
+
+    // list of underline characters, from higher level to lower level
+    // Use the recommended items from http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#sections,
+    // The first six items are convention of Python documentation, https://devguide.python.org/documenting/#sections
+    public static getAdornments(resource: Uri = null): string {
+        return Configuration.loadAnySetting('editor.sectionEditor.adornments', "#*=-^\"'`:.~_+", resource);
     }
 
     public static async setConfPath(value: string, resource: Uri = null, insertMacro: boolean): Promise<string> {

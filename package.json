@@ -465,6 +465,12 @@
           "description": "Extensions that might lead to conflicts.",
           "scope": "application"
         },
+        "restructuredtext.editor.sectionEditor.adornments": {
+          "type": "string",
+          "default": "#*=-^\"'`:.~_+",
+          "description": "A ordered list of adornments.",
+          "scope": "resource"
+        },
         "restructuredtext.editor.tableEditor.disabled": {
           "type": "boolean",
           "default": false,
