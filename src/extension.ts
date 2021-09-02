@@ -61,6 +61,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
         if (choice === 'Install') {
             logger.log('Started to install simple-rst...');
             await vscode.commands.executeCommand('extension.open', 'trond-snekvik.simple-rst');
+            await vscode.commands.executeCommand('workbench.extensions.installExtension', 'trond-snekvik.simple-rst');
         } else if (choice === 'Do not show again') {
             logger.log('Disabled syntax highlighting.');
             await Configuration.setSyntaxHighlightingDisabled();
