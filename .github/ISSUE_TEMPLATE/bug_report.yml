@@ -1,0 +1,94 @@
+name: Bug Report
+description: Create a report to help us improve
+title: "[Bug]: "
+labels: [bug, triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before moving on you might follow [the troubleshooting guide](https://docs.restructuredtext.net/articles/troubleshooting.html) to rule out common issues.
+        
+        If troubleshooting does not reveal any useful information, please fill out the bug report below.
+        
+        To report an issue privately, please write to [us](mailto:support@lextudio.com).
+        
+        Thanks for taking the time!
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: Tell us what you expected to happen.
+      placeholder: Tell us what you expected to happen.
+      value: "I expected this,"
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Tell us what you see!
+      placeholder: Tell us what you see!
+      value: "But a bug happened like this,"
+    validations:
+      required: true      
+  - type: textarea
+    id: steps
+    attributes:
+      label: Detailed steps
+      description: Detailed steps to reproduce the problem.
+      placeholder: Detailed steps to reproduce the problem.
+      value: "The steps are,"
+    validations:
+      required: true   
+  - type: input
+    id: version
+    attributes:
+      label: Extension information
+      description: What version(s) of our extension are you using?
+      placeholder: xxx.0.0
+    validations:
+      required: true
+  - type: input
+    id: vscode
+    attributes:
+      label: Visual Studio Code information
+      description: What version(s) of Visual Studio Code are you using?
+      placeholder: xxx.0.0
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: Operating system information
+      description: What version(s) of operating system(s) are you using?
+      placeholder: Windows, macOS, and/or Linux? What version(s)?
+    validations:
+      required: true
+  - type: input
+    id: python
+    attributes:
+      label: Python information
+      description: What version(s) of Python are you using?
+      placeholder: xxx.0.0
+    validations:
+      required: true
+  - type: input
+    id: sphinx
+    attributes:
+      label: Sphinx information
+      description: What version(s) of Sphinx are you using?
+      placeholder: xxx.0.0
+    validations:
+      required: true
+  - type: textarea
+    id: conf
+    attributes:
+      label: Contents of conf.py
+      description: Please copy and paste the contents of conf.py if applicable. This will be automatically formatted into code, so no need for backticks.
+      render: python
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      render: shell
