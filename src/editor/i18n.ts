@@ -6,8 +6,7 @@ import * as vscode from 'vscode'
 
 
 const i18nFiles: {[key: string]: string;} = {
-    "en": "./../../package.nls.json",
-    "ja": "./../../package.nls.ja.json"
+    "en": "./../../package.nls.json"
 }
 const i18nData = getData();
 
