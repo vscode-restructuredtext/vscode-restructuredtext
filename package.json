@@ -2,7 +2,7 @@
   "name": "restructuredtext",
   "displayName": "%displayName%",
   "description": "%description%",
-  "version": "163.0.0",
+  "version": "164.0.0",
   "publisher": "lextudio",
   "engines": {
     "vscode": "^1.43.0"
@@ -193,29 +193,29 @@
         "when": "editorTextFocus && !editorHasMultipleSelections && editorHasSelection && editorLangId==restructuredtext"
       },
       {
-          "command": "resttext.key.enter",
-          "key": "enter",
-          "when": "resttext.enter.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext"
+        "command": "resttext.key.enter",
+        "key": "enter",
+        "when": "resttext.enter.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext"
       },
       {
-          "command": "resttext.key.shift.enter",
-          "key": "shift+enter",
-          "when": "resttext.shift.enter.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext"
+        "command": "resttext.key.shift.enter",
+        "key": "shift+enter",
+        "when": "resttext.shift.enter.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext"
       },
       {
-          "command": "resttext.key.alt.enter",
-          "key": "alt+enter",
-          "when": "resttext.alt.enter.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext"
+        "command": "resttext.key.alt.enter",
+        "key": "alt+enter",
+        "when": "resttext.alt.enter.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext"
       },
       {
-          "command": "resttext.key.tab",
-          "key": "tab",
-          "when": "resttext.tab.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext"
+        "command": "resttext.key.tab",
+        "key": "tab",
+        "when": "resttext.tab.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext"
       },
       {
-          "command": "resttext.key.shift.tab",
-          "key": "shift+tab",
-          "when": "resttext.shift.tab.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext"
+        "command": "resttext.key.shift.tab",
+        "key": "shift+tab",
+        "when": "resttext.shift.tab.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext"
       }
     ],
     "commands": [
@@ -282,40 +282,40 @@
         "when": "resttext.createGrid.enabled && editorTextFocus && !editorHasMultipleSelections && editorHasSelection && editorLangId==restructuredtext"
       },
       {
-          "category": "reStructuredText",
-          "command": "resttext.table.dataToTable",
-          "title": "%resttext.table.dataToTable.title%",
-          "when": "editorTextFocus && !editorHasMultipleSelections && editorHasSelection && editorLangId==restructuredtext"
+        "category": "reStructuredText",
+        "command": "resttext.table.dataToTable",
+        "title": "%resttext.table.dataToTable.title%",
+        "when": "editorTextFocus && !editorHasMultipleSelections && editorHasSelection && editorLangId==restructuredtext"
       },
       {
-          "category": "reStructuredText",
-          "command": "resttext.key.enter",
-          "title": "%resttext.key.enter.title%",
-          "when": "resttext.enter.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext"
+        "category": "reStructuredText",
+        "command": "resttext.key.enter",
+        "title": "%resttext.key.enter.title%",
+        "when": "resttext.enter.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext"
       },
       {
-          "category": "reStructuredText",
-          "command": "resttext.key.shift.enter",
-          "title": "%resttext.key.shift.enter.title%",
-          "when": "resttext.shift.enter.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext"
+        "category": "reStructuredText",
+        "command": "resttext.key.shift.enter",
+        "title": "%resttext.key.shift.enter.title%",
+        "when": "resttext.shift.enter.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext"
       },
       {
-          "category": "reStructuredText",
-          "command": "resttext.key.alt.enter",
-          "title": "%resttext.key.alt.enter.title%",
-          "when": "resttext.alt.enter.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext"
+        "category": "reStructuredText",
+        "command": "resttext.key.alt.enter",
+        "title": "%resttext.key.alt.enter.title%",
+        "when": "resttext.alt.enter.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext"
       },
       {
-          "category": "reStructuredText",
-          "command": "resttext.key.tab",
-          "title": "%resttext.key.tab.title%",
-          "when": "resttext.tab.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext"
+        "category": "reStructuredText",
+        "command": "resttext.key.tab",
+        "title": "%resttext.key.tab.title%",
+        "when": "resttext.tab.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext"
       },
       {
-          "category": "reStructuredText",
-          "command": "resttext.key.shift.tab",
-          "title": "%resttext.key.shift.tab.title%",
-          "when": "resttext.shift.tab.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext"
+        "category": "reStructuredText",
+        "command": "resttext.key.shift.tab",
+        "title": "%resttext.key.shift.tab.title%",
+        "when": "resttext.shift.tab.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext"
       }
     ],
     "menus": {
@@ -404,28 +404,28 @@
           "when": "never"
         },
         {
-            "command": "resttext.table.dataToTable",
-            "when": "!editorHasMultipleSelections && editorHasSelection && editorLangId==restructuredtext"
+          "command": "resttext.table.dataToTable",
+          "when": "!editorHasMultipleSelections && editorHasSelection && editorLangId==restructuredtext"
         },
         {
-            "command": "resttext.key.enter",
-            "when": "never"
+          "command": "resttext.key.enter",
+          "when": "never"
         },
         {
-            "command": "resttext.key.shift.enter",
-            "when": "never"
+          "command": "resttext.key.shift.enter",
+          "when": "never"
         },
         {
-            "command": "resttext.key.alt.enter",
-            "when": "never"
+          "command": "resttext.key.alt.enter",
+          "when": "never"
         },
         {
-            "command": "resttext.key.tab",
-            "when": "never"
+          "command": "resttext.key.tab",
+          "when": "never"
         },
         {
-            "command": "resttext.key.shift.tab",
-            "when": "never"
+          "command": "resttext.key.shift.tab",
+          "when": "never"
         }
       ]
     },
