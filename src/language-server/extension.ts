@@ -19,12 +19,12 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
     }
 
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 1) {
-        vscode.window.showWarningMessage('IntelliSense is not available, as Snooty language server does not support multi-root workspaces right now.');
+        vscode.window.showWarningMessage('IntelliSense is not available. Snooty language server does not support multi-root workspaces.');
         return;
     }
 
     if (!(await python.checkPython(null, false)) || !(await python.checkPythonForSnooty())) {
-        vscode.window.showErrorMessage('Python version is too old to run Snooty language server. Must use 3.7 and above.');
+        vscode.window.showErrorMessage('Python is not installed, or its version is too old. Snooty language server requires 3.7 and above.');
         return;
     }
 

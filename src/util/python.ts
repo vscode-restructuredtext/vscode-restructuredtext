@@ -110,6 +110,12 @@ export class Python {
       }
       return false;
     }
+
+    if (!(await this.checkPython(null, false))) {
+      vscode.window.showErrorMessage('No linting. Python is not installed.');
+      return false;
+    }
+
     if (Configuration.getLinterName(resource) === 'doc8') {
       const doc8 = Configuration.getLinterPath(resource);
       if (!(await this.checkDoc8Install() || (doc8 != null && await fs.existsSync(doc8)))) {

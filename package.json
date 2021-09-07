@@ -477,6 +477,12 @@
           "description": "Flag to disable Table Editor feature.",
           "scope": "resource"
         },
+        "restructuredtext.pythonRecommendation.disabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Flag to disable recommendation on Microsoft Python extension.",
+          "scope": "resource"
+        },
         "restructuredtext.syntaxHighlighting.disabled": {
           "type": "boolean",
           "default": false,

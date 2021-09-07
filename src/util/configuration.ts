@@ -117,7 +117,7 @@ export class Configuration {
     }
 
     public static getSphinxDisabled(resource: Uri = null): boolean {
-        return Configuration.loadAnySetting('preview.sphinx.disabled', true, resource);
+        return Configuration.loadAnySetting('preview.sphinx.disabled', false, resource);
     }
 
     public static getDocUtilDisabled(resource: Uri = null): boolean {
@@ -133,11 +133,11 @@ export class Configuration {
     }
 
     public static getSyntaxHighlightingDisabled(resource: Uri = null): boolean {
-        return Configuration.loadAnySetting('syntaxHighlighting.disabled', true, resource);
+        return Configuration.loadAnySetting('syntaxHighlighting.disabled', false, resource);
     }
 
     public static getTableEditorDisabled(resource: Uri = null): boolean {
-        return Configuration.loadAnySetting('editor.tableEditor.disabled', true, resource);
+        return Configuration.loadAnySetting('editor.tableEditor.disabled', false, resource);
     }
 
     // list of underline characters, from higher level to lower level
@@ -145,6 +145,14 @@ export class Configuration {
     // The first six items are convention of Python documentation, https://devguide.python.org/documenting/#sections
     public static getAdornments(resource: Uri = null): string {
         return Configuration.loadAnySetting('editor.sectionEditor.adornments', "#*=-^\"'`:.~_+", resource);
+    }
+
+    public static getPythonRecommendationDisabled(resource: Uri = null): boolean {
+        return Configuration.loadAnySetting('pythonRecommendation.disabled', false, resource);
+    }
+
+    public static async setPythonRecommendationDisabled(resource: Uri = null) {
+        await Configuration.saveAnySetting('pythonRecommendation.disabled', true, resource);
     }
 
     public static async setConfPath(value: string, resource: Uri = null, insertMacro: boolean): Promise<string> {

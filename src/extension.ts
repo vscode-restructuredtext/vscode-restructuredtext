@@ -53,14 +53,31 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
         }
     }
 
-    const simpleRst = vscode.extensions.getExtension('trond-snekvik.simple-rst');
+    const msPythonName = 'ms-python.python';
+    // guide the users to install Microsoft Python extension.
+    const msPython = vscode.extensions.getExtension(msPythonName);
+    if (!msPython && !Configuration.getPythonRecommendationDisabled()) {
+        const message = 'It is recommended to install Microsoft Python extension. Do you want to install it now?';
+        const choice = await vscode.window.showInformationMessage(message, 'Install', 'Not now', 'Do not show again');
+        if (choice === 'Install') {
+            logger.log('Started to install ms-python...');
+            await vscode.commands.executeCommand('extension.open', msPythonName);
+            await vscode.commands.executeCommand('workbench.extensions.installExtension', msPythonName);
+        } else if (choice === 'Do not show again') {
+            logger.log('Disabled ms-python prompt.');
+            await Configuration.setPythonRecommendationDisabled();
+        }
+    }
+
+    const simpleRstName = 'trond-snekvik.simple-rst';
+    const simpleRst = vscode.extensions.getExtension(simpleRstName);
     if (!simpleRst && !Configuration.getSyntaxHighlightingDisabled()) {
         const message = 'Syntax highlighting is now provided by Trond Snekvik\'s extension. Do you want to install it now?';
         const choice = await vscode.window.showInformationMessage(message, 'Install', 'Not now', 'Do not show again');
         if (choice === 'Install') {
             logger.log('Started to install simple-rst...');
-            await vscode.commands.executeCommand('extension.open', 'trond-snekvik.simple-rst');
-            await vscode.commands.executeCommand('workbench.extensions.installExtension', 'trond-snekvik.simple-rst');
+            await vscode.commands.executeCommand('extension.open', simpleRstName);
+            await vscode.commands.executeCommand('workbench.extensions.installExtension', simpleRstName);
         } else if (choice === 'Do not show again') {
             logger.log('Disabled syntax highlighting.');
             await Configuration.setSyntaxHighlightingDisabled();
