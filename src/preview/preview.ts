@@ -329,6 +329,7 @@ export class RSTPreview {
 		this.forceUpdate = false;
 
 		this.currentVersion = { resource, version: document.version };
+		this.editor.title = 'Preview is loading...';
 		const content: string = await this._contentProvider.provideTextDocumentContent(document, this._previewConfigurations, this.editor.webview, this.line, this.state);
 		if (this._resource === resource) {
 			this.editor.title = RSTPreview.getPreviewTitle(this._resource, this._locked);
