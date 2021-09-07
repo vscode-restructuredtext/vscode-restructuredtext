@@ -218,6 +218,7 @@ export class Python {
     try {
       await this.exec('-m', 'pip', 'install', 'docutils');
       this.logger.log('Finished installing docutils');
+      vscode.window.showInformationMessage('The preview engine docutils is installed.');
     } catch (e) {
       this.logger.log('Failed to install docutils');
       vscode.window.showErrorMessage(
@@ -240,6 +241,7 @@ export class Python {
     try {
       await this.exec('-m', 'pip', 'install', 'doc8');
       this.logger.log('Finished installing doc8');
+      vscode.window.showInformationMessage('The linter doc8 is installed.');
     } catch (e) {
       this.logger.log('Failed to install doc8');
       vscode.window.showErrorMessage(
@@ -262,6 +264,7 @@ export class Python {
     try {
       await this.exec('-m', 'pip', 'install', 'rstcheck');
       this.logger.log('Finished installing rstcheck');
+      vscode.window.showInformationMessage('The linter rstcheck is installed.');
     } catch (e) {
       this.logger.log('Failed to install rstcheck');
       vscode.window.showErrorMessage(
@@ -284,6 +287,7 @@ export class Python {
     try {
       await this.exec('-m', 'pip', 'install', 'sphinx', 'sphinx-autobuild');
       this.logger.log('Finished installing sphinx');
+      vscode.window.showInformationMessage('The preview engine sphinx is installed.');
     } catch (e) {
       this.logger.log('Failed to install sphinx');
       vscode.window.showErrorMessage(
@@ -330,6 +334,7 @@ export class Python {
       await this.exec('-m', 'pip', 'uninstall', 'snooty', '-y');
       await this.exec('-m', 'pip', 'install', 'snooty-lextudio', '--upgrade');
       this.logger.log('Finished installing snooty-lextudio');
+      vscode.window.showInformationMessage('The snooty language server is installed.');
     } catch (e) {
       this.logger.log('Failed to install snooty-lextudio');
       vscode.window.showErrorMessage(
@@ -378,6 +383,7 @@ export class Python {
     try {
       await this.exec('-m', 'pip', 'install', 'debugpy');
       this.logger.log('Finished installing debugpy');
+      vscode.window.showInformationMessage('The helper debugpy is installed.');
     } catch (e) {
       this.logger.log('Failed to install debugpy');
       vscode.window.showErrorMessage(
