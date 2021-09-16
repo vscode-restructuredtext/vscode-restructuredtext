@@ -16,6 +16,7 @@ import { RSTPreviewConfigurationManager } from './previewConfig';
 import { isRSTFile } from '../util/file';
 import { getExtensionPath } from '../extension';
 import { Configuration } from '../util/configuration';
+import { StatusBarAlignment, StatusBarItem, window } from 'vscode';
 
 const localize = nls.loadMessageBundle();
 
@@ -31,10 +32,11 @@ export class RSTPreview {
 	private line: number | undefined = undefined;
 	private readonly disposables: vscode.Disposable[] = [];
 	private firstUpdate = true;
-	private currentVersion?: { resource: vscode.Uri, version: number };
+	private currentVersion?: { resource: vscode.Uri; version: number; };
 	private forceUpdate = false;
 	private isScrolling = false;
 	private _disposed: boolean = false;
+	private _statusBarItem: StatusBarItem;
 
 	public static async revive(
 		webview: vscode.WebviewPanel,
@@ -42,7 +44,7 @@ export class RSTPreview {
 		contentProvider: RSTContentProvider,
 		previewConfigurations: RSTPreviewConfigurationManager,
 		logger: Logger,
-		topmostLineMonitor: RSTFileTopmostLineMonitor,
+		topmostLineMonitor: RSTFileTopmostLineMonitor
 	): Promise<RSTPreview> {
 		const resource = vscode.Uri.parse(state.resource);
 		const locked = state.locked;
@@ -54,8 +56,7 @@ export class RSTPreview {
 			locked,
 			contentProvider,
 			previewConfigurations,
-			logger,
-			topmostLineMonitor,);
+			topmostLineMonitor);
 
 		preview.editor.webview.options = RSTPreview.getWebviewOptions(resource);
 
@@ -73,15 +74,15 @@ export class RSTPreview {
 		contentProvider: RSTContentProvider,
 		previewConfigurations: RSTPreviewConfigurationManager,
 		logger: Logger,
-		topmostLineMonitor: RSTFileTopmostLineMonitor,
+		topmostLineMonitor: RSTFileTopmostLineMonitor
 	): RSTPreview {
 		const webview = vscode.window.createWebviewPanel(
 			RSTPreview.viewType,
 			RSTPreview.getPreviewTitle(resource, locked),
 			previewColumn, {
-				enableFindWidget: true,
-				...RSTPreview.getWebviewOptions(resource)
-			});
+			enableFindWidget: true,
+			...RSTPreview.getWebviewOptions(resource)
+		});
 
 		return new RSTPreview(
 			webview,
@@ -89,8 +90,7 @@ export class RSTPreview {
 			locked,
 			contentProvider,
 			previewConfigurations,
-			logger,
-			topmostLineMonitor,);
+			topmostLineMonitor);
 	}
 
 	private constructor(
@@ -99,9 +99,11 @@ export class RSTPreview {
 		locked: boolean,
 		private readonly _contentProvider: RSTContentProvider,
 		private readonly _previewConfigurations: RSTPreviewConfigurationManager,
-		private readonly _logger: Logger,
-		topmostLineMonitor: RSTFileTopmostLineMonitor,
+		topmostLineMonitor: RSTFileTopmostLineMonitor
 	) {
+		this._statusBarItem = window.createStatusBarItem(StatusBarAlignment.Right);
+		this._statusBarItem.text = '$(open-preview) Preview is loading...';
+
 		this._resource = resource;
 		this._locked = locked;
 		this.editor = webview;
@@ -217,7 +219,7 @@ export class RSTPreview {
 			if (isResourceChange || this.firstUpdate) {
 				this.doUpdate();
 			} else {
-			    const timeout = Configuration.getUpdateDelay();
+				const timeout = Configuration.getUpdateDelay();
 				this.throttleTimer = setTimeout(() => this.doUpdate(), timeout);
 			}
 		}
@@ -329,18 +331,19 @@ export class RSTPreview {
 		this.forceUpdate = false;
 
 		this.currentVersion = { resource, version: document.version };
-		this.editor.title = 'Preview is loading...';
+		this._statusBarItem.show();
 		const content: string = await this._contentProvider.provideTextDocumentContent(document, this._previewConfigurations, this.editor.webview, this.line, this.state);
 		if (this._resource === resource) {
 			this.editor.title = RSTPreview.getPreviewTitle(this._resource, this._locked);
 			this.editor.iconPath = this.iconPath;
 			this.editor.webview.options = RSTPreview.getWebviewOptions(resource);
 			this.editor.webview.html = content;
+			this._statusBarItem.hide();
 		}
 	}
 
 	private static getWebviewOptions(
-		resource: vscode.Uri,
+		resource: vscode.Uri
 	): vscode.WebviewOptions {
 		return {
 			enableScripts: true,
@@ -350,7 +353,7 @@ export class RSTPreview {
 	}
 
 	private static getLocalResourceRoots(
-		resource: vscode.Uri,
+		resource: vscode.Uri
 	): vscode.Uri[] {
 		const baseRoots: vscode.Uri[] = [vscode.Uri.file(getExtensionPath() + "/media")];
 
