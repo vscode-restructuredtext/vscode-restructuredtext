@@ -57,7 +57,9 @@ export class Python {
         const choice = await vscode.window.showInformationMessage('Preview engine docutils is not installed.', 'Install', 'Not now', 'Do not show again');
         if (choice === 'Install') {
           this.logger.log('Started to install docutils...');
-          await this.installDocUtils();
+          if (!(await this.installDocUtils())) {
+            return false;
+          }
         } else if (choice === 'Do not show again') {
           this.logger.log('Disabled docutils engine.');
           await Configuration.setDocUtilDisabled();
@@ -84,7 +86,9 @@ export class Python {
         const choice = await vscode.window.showInformationMessage('Preview engine sphinx is not installed.', 'Install', 'Not now', 'Do not show again');
         if (choice === 'Install') {
           this.logger.log('Started to install sphinx...');
-          await this.installSphinx();
+          if (!(await this.installSphinx())) {
+            return false;
+          }
         } else if (choice === 'Do not show again') {
           this.logger.log('Disabled sphinx engine.');
           await Configuration.setSphinxDisabled();
@@ -123,7 +127,9 @@ export class Python {
           const choice = await vscode.window.showInformationMessage('Linter doc8 is not installed.', 'Install', 'Not now', 'Do not show again');
           if (choice === 'Install') {
             this.logger.log('Started to install doc8...');
-            await this.installDoc8();
+            if (!(await this.installDoc8())) {
+              return false;
+            }
           } else if (choice === 'Do not show again') {
             this.logger.log('Disabled linter.');
             await Configuration.setLinterDisabled();
@@ -144,7 +150,9 @@ export class Python {
           const choice = await vscode.window.showInformationMessage('Linter rstcheck is not installed.', 'Install', 'Not now', 'Do not show again');
           if (choice === 'Install') {
             this.logger.log('Started to install rstcheck...');
-            await this.installRstCheck();
+            if (!(await this.installRstCheck())) {
+              return false;
+            }
           } else if (choice === 'Do not show again') {
             this.logger.log('Disabled linter.');
             await Configuration.setLinterDisabled();
@@ -176,7 +184,9 @@ export class Python {
           const upgradePip = await vscode.window.showInformationMessage('Python package pip is too old.', 'Upgrade', 'Not now');
           if (upgradePip === 'Upgrade') {
             this.logger.log('Start to upgrade pip...');
-            await this.installPip();
+            if (!(await this.installPip())) {
+              return false;
+            }
           } else {
             vscode.window.showWarningMessage('Python package pip is too old. Snooty language server is not installed.');
             return false;
@@ -185,7 +195,9 @@ export class Python {
         const choice = await vscode.window.showInformationMessage('Snooty language server is not installed or out of date.', 'Install', 'Not now', 'Do not show again');
         if (choice === 'Install') {
           this.logger.log('Started to install Snooty...');
-          await this.installSnooty();
+          if (!(await this.installSnooty())) {
+            return false;
+          }
         } else if (choice === 'Do not show again') {
           this.logger.log('Disabled language server.');
           await Configuration.setLanguageServerDisabled();
@@ -220,17 +232,19 @@ export class Python {
     return true;
   }
 
-  private async installDocUtils(): Promise<void> {
+  private async installDocUtils(): Promise<boolean> {
     try {
       await this.exec('-m', 'pip', 'install', 'docutils');
       this.logger.log('Finished installing docutils');
       vscode.window.showInformationMessage('The preview engine docutils is installed.');
+      return true;
     } catch (e) {
       this.logger.log('Failed to install docutils');
       vscode.window.showErrorMessage(
         'Could not install docutils. Please run `pip install docutils` to use this ' +
           'extension, or check your Python path.'
       );
+      return false;
     }
   }
 
@@ -243,17 +257,19 @@ export class Python {
     }
   }
 
-  private async installDoc8(): Promise<void> {
+  private async installDoc8(): Promise<boolean> {
     try {
       await this.exec('-m', 'pip', 'install', 'doc8');
       this.logger.log('Finished installing doc8');
       vscode.window.showInformationMessage('The linter doc8 is installed.');
+      return true;
     } catch (e) {
       this.logger.log('Failed to install doc8');
       vscode.window.showErrorMessage(
         'Could not install doc8. Please run `pip install doc8` to use this ' +
           'extension, or check your Python path.'
       );
+      return false;
     }
   }
 
@@ -266,17 +282,19 @@ export class Python {
     }
   }
 
-  private async installRstCheck(): Promise<void> {
+  private async installRstCheck(): Promise<boolean> {
     try {
       await this.exec('-m', 'pip', 'install', 'rstcheck');
       this.logger.log('Finished installing rstcheck');
       vscode.window.showInformationMessage('The linter rstcheck is installed.');
+      return true;
     } catch (e) {
       this.logger.log('Failed to install rstcheck');
       vscode.window.showErrorMessage(
         'Could not install rstcheck. Please run `pip install rstcheck` to use this ' +
           'extension, or check your Python path.'
       );
+      return false;
     }
   }
 
@@ -289,17 +307,19 @@ export class Python {
     }
   }
 
-  private async installSphinx(): Promise<void> {
+  private async installSphinx(): Promise<boolean> {
     try {
       await this.exec('-m', 'pip', 'install', 'sphinx', 'sphinx-autobuild');
       this.logger.log('Finished installing sphinx');
       vscode.window.showInformationMessage('The preview engine sphinx is installed.');
+      return true;
     } catch (e) {
       this.logger.log('Failed to install sphinx');
       vscode.window.showErrorMessage(
         'Could not install sphinx. Please run `pip install sphinx sphinx-autobuild` to use this ' +
           'extension, or check your Python path.'
       );
+      return false;
     }
   }
 
@@ -312,16 +332,18 @@ export class Python {
     }
   }
 
-  private async installPip(): Promise<void> {
+  private async installPip(): Promise<boolean> {
     try {
       await this.exec('-m', 'pip', 'install', 'pip', '--upgrade');
       this.logger.log('Finished installing pip');
+      return true;
     } catch (e) {
       this.logger.log('Failed to install pip');
       vscode.window.showErrorMessage(
         'Could not install pip. Please run `pip install pip --upgrade` to use this ' +
           'extension, or check your Python path.'
       );
+      return false;
     }
   }
 
@@ -334,33 +356,37 @@ export class Python {
     }
   }
 
-  private async installSnooty(): Promise<void> {
+  private async installSnooty(): Promise<boolean> {
     try {
       // TODO: temp cleanup. Should remove in a future release.
       await this.exec('-m', 'pip', 'uninstall', 'snooty', '-y');
       await this.exec('-m', 'pip', 'install', 'snooty-lextudio', '--upgrade');
       this.logger.log('Finished installing snooty-lextudio');
       vscode.window.showInformationMessage('The snooty language server is installed.');
+      return true;
     } catch (e) {
       this.logger.log('Failed to install snooty-lextudio');
       vscode.window.showErrorMessage(
         'Could not install snooty-lextudio. Please run `pip install snooty-lextudio` to use this ' +
           'extension, or check your Python path.'
       );
+      return false;
     }
   }
 
-  public async uninstallSnooty(): Promise<void> {
+  public async uninstallSnooty(): Promise<boolean> {
     try {
       await this.exec('-m', 'pip', 'uninstall', 'snooty', '-y');
       await this.exec('-m', 'pip', 'uninstall', 'snooty-lextudio', '-y');
       this.logger.log('Finished uninstalling snooty-lextudio');
+      return true;
     } catch (e) {
       this.logger.log('Failed to uninstall snooty-lextudio');
       vscode.window.showErrorMessage(
         'Could not uninstall snooty-lextudio. Please run `pip uninstall snooty-lextudio` to debug this ' +
           'extension.'
       );
+      return false;
     }
   }
 
@@ -385,17 +411,19 @@ export class Python {
     }
   }
 
-  private async installDebugPy(): Promise<void> {
+  private async installDebugPy(): Promise<boolean> {
     try {
       await this.exec('-m', 'pip', 'install', 'debugpy');
       this.logger.log('Finished installing debugpy');
       vscode.window.showInformationMessage('The helper debugpy is installed.');
+      return true;
     } catch (e) {
       this.logger.log('Failed to install debugpy');
       vscode.window.showErrorMessage(
         'Could not install debugpy. Please run `pip install debugpy` to debug this ' +
           'extension, or check your Python path.'
       );
+      return false;
     }
   }
 
