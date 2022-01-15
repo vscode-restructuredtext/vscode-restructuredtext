@@ -715,7 +715,7 @@
     "vscode:prepublish": "npm run compile",
     "compile": "npm run build-ext && npm run build-preview",
     "build-ext": "npx tsc -p ./tsconfig.json",
-    "build-preview": "./node_modules/.bin/webpack-cli",
+    "build-preview": "webpack",
     "watch": "npx tsc -watch -p ./tsconfig.json",
     "pretest": "npm run compile",
     "test": "node ./out/test/runTest.js",
