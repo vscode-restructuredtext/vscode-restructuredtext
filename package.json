@@ -456,6 +456,12 @@
           "default": false,
           "description": "Whether to debug from launch."
         },
+        "snooty.customSpec": {
+          "scope": "resource",
+          "type": "string",
+          "default": null,
+          "description": "Override the reStructuredText directive & role spec."
+        },
         "restructuredtext.conflictingExtensions": {
           "type": "array",
           "default": [

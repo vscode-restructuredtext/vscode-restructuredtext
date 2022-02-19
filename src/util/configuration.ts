@@ -54,6 +54,10 @@ export class Configuration {
         return this.getConfiguration('snooty', resource).get<boolean>('debugLaunch', false);
     }
 
+    public static getSnootyCustomSpec(resource: Uri = null): string {
+        return this.getConfiguration('snooty', resource).get<string>('customSpec');
+    }
+
     public static getTelemetryDisabled(resource: Uri = null): boolean {
         return Configuration.loadAnySetting('telemetry.disabled', false, resource);
     }

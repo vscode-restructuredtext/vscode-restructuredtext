@@ -61,6 +61,12 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
 
     logger.log('Use Snooty language server');
     args.push('-m', 'snooty', 'language-server');
+
+    const customSpec = Configuration.getSnootyCustomSpec();
+    if (customSpec) {
+        args.push(`--rstspc="${customSpec}"`);
+    }
+
     if (serverModule != null) {
 
         // If the extension is launched in debug mode then the debug server options are used
