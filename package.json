@@ -210,12 +210,12 @@
       {
         "command": "resttext.key.tab",
         "key": "tab",
-        "when": "resttext.tab.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext && !inlineSuggestionVisible"
+        "when": "resttext.tab.enabled && editorTextFocus && !inSnippetMode && !suggestWidgetVisible && editorLangId==restructuredtext && !inlineSuggestionVisible"
       },
       {
         "command": "resttext.key.shift.tab",
         "key": "shift+tab",
-        "when": "resttext.shift.tab.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext"
+        "when": "resttext.shift.tab.enabled && editorTextFocus && !inSnippetMode && !suggestWidgetVisible && editorLangId==restructuredtext"
       }
     ],
     "commands": [
@@ -309,13 +309,13 @@
         "category": "reStructuredText",
         "command": "resttext.key.tab",
         "title": "%resttext.key.tab.title%",
-        "when": "resttext.tab.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext"
+        "when": "resttext.tab.enabled && editorTextFocus && !inSnippetMode && !suggestWidgetVisible && editorLangId==restructuredtext"
       },
       {
         "category": "reStructuredText",
         "command": "resttext.key.shift.tab",
         "title": "%resttext.key.shift.tab.title%",
-        "when": "resttext.shift.tab.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext"
+        "when": "resttext.shift.tab.enabled && editorTextFocus && !inSnippetMode && !suggestWidgetVisible && editorLangId==restructuredtext"
       }
     ],
     "menus": {
