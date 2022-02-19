@@ -141,7 +141,7 @@
       {
         "command": "restructuredtext.editor.listEditing.onTabKey",
         "key": "tab",
-        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible && !editorTabMovesFocus && !inSnippetMode && !hasSnippetCompletions && !hasOtherSuggestions"
+        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible && !editorTabMovesFocus && !inSnippetMode && !hasSnippetCompletions && !hasOtherSuggestions && !inlineSuggestionVisible"
       },
       {
         "command": "restructuredtext.editor.listEditing.onShiftTabKey",
@@ -210,7 +210,7 @@
       {
         "command": "resttext.key.tab",
         "key": "tab",
-        "when": "resttext.tab.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext"
+        "when": "resttext.tab.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext && !inlineSuggestionVisible"
       },
       {
         "command": "resttext.key.shift.tab",
