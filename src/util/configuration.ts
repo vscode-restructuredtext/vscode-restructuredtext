@@ -144,6 +144,10 @@ export class Configuration {
         return Configuration.loadAnySetting('editor.tableEditor.disabled', false, resource);
     }
 
+    public static getTableEditorReformatDisabled(resource: Uri = null): boolean {
+        return Configuration.loadAnySetting('editor.tableEditor.reformat.disabled', false, resource);
+    }
+
     // list of underline characters, from higher level to lower level
     // Use the recommended items from http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#sections,
     // The first six items are convention of Python documentation, https://devguide.python.org/documenting/#sections

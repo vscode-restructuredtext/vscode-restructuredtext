@@ -483,6 +483,12 @@
           "description": "Flag to disable Table Editor feature.",
           "scope": "resource"
         },
+        "restructuredtext.editor.tableEditor.reformat.disabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Flag to disable reformat of Table Editor feature.",
+          "scope": "resource"
+        },
         "restructuredtext.pythonRecommendation.disabled": {
           "type": "boolean",
           "default": false,
@@ -718,14 +724,13 @@
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "npm run build-ext && npm run build-preview",
+    "vscode:prepublish": "yarn compile",
+    "compile": "yarn build-ext && yarn build-preview",
     "build-ext": "npx tsc -p ./tsconfig.json",
     "build-preview": "webpack",
     "watch": "npx tsc -watch -p ./tsconfig.json",
-    "pretest": "npm run compile",
+    "pretest": "yarn compile",
     "test": "node ./out/test/runTest.js",
-    "reinstall": "npm install && npm audit fix",
-    "package": "npm run reinstall && vsce package"
+    "package": "yarn install && vsce package"
   }
 }

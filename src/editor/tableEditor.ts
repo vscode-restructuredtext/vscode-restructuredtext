@@ -3,6 +3,7 @@
 // See LICENSE in the project root for license information.
 // ============================================================
 import * as vscode from 'vscode';
+import { Configuration } from '../util/configuration';
 import * as util from './util';
 
 interface CellPosition {
@@ -27,6 +28,9 @@ export class TableEditor {
     }
 
     public async reformat() {
+        if (Configuration.getTableEditorReformatDisabled()) {
+            return;
+        }
         this.tableLineNumbers = util.tableIsSelected(this.editor);
 
         const cellContents:string[][] = this._getCellContents();
