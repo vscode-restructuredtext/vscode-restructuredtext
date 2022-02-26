@@ -5,7 +5,6 @@ import { Python } from "../util/python";
 import { Logger } from "../util/logger";
 import RstTransformerStatus from './statusBar';
 import { Configuration } from '../util/configuration';
-import { exec } from 'child_process';
 
 export class RSTEngine {
   public constructor(
@@ -60,29 +59,6 @@ export class RSTEngine {
 
       this.logger.log('[preview] Sphinx html directory: ' + output);
 
-      let build = Configuration.getSphinxPath(uri);
-      if (build == null) {
-        const python = await Configuration.getPythonPath(uri);
-        if (python) {
-          build = '"' + python + '" -m sphinx';
-        }
-      } else {
-        build = '"' + build + '"';
-      }
-
-      if (build == null) {
-        build = 'sphinx-build';
-      }
-
-      // Configure the sphinx-build command
-      const options = { cwd: input };
-      const cmd = [
-        build,
-        '-b html',
-        '.',
-        '"' + output + '"',
-      ].join(' ');
-
       // Calculate full path to built html file.
       let whole = uri.fsPath;
       const ext = whole.lastIndexOf('.');
@@ -91,79 +67,40 @@ export class RSTEngine {
       const sourceRelative = path.relative(confPyDirectory, source);
       const outputRelative = path.relative(confPyDirectory, output);
       const htmlPath = path.join(confPyDirectory, outputRelative, sourceRelative, path.basename(whole));
-      return this.previewPage(htmlPath, cmd, input, options, fixLinks, webview);
+      return this.previewPage(htmlPath, input, fixLinks, webview);
     }
   }
 
-  private previewPage(htmlPath: string, cmd: string, input: string, options: any, fixLinks: boolean, webView: Webview): Promise<string> {
-    this.logger.log('[preview] Compiler: ' + cmd);
+  private previewPage(htmlPath: string, input: string, fixLinks: boolean, webView: Webview): Promise<string> {
     this.logger.log('[preview] Working directory: ' + input);
     this.logger.log('[preview] HTML file: ' + htmlPath);
 
     // Build and display file.
     return new Promise<string>((resolve, reject) => {
-      exec(cmd, options, (error, stdout, stderr) => {
-        if (error) {
+
+
+      fs.readFile(htmlPath, 'utf8', (err, data) => {
+        if (err === null) {
+          if (fixLinks) {
+            resolve(this.fixLinks(data, htmlPath, webView));
+          } else {
+            resolve(data);
+          }
+        } else {
           const description =
-            '<p>Cannot generate preview page.</p>\
-                  <p>Possible causes are,</p>\
-                  <ul>\
-                  <li>Python is not installed properly.</li>\
-                  <li>Sphinx is not installed properly (if preview uses "conf.py").</li>\
-                  <li>Wrong value is set on "restructuredtext.sphinxBuildPath".</li>\
-                  <li>A wrong "conf.py" file is selected.</li>\
-                  <li>DocUtils is not installed properly (if preview uses docutils).</li>\
-                  </ul>';
+            '<p>Cannot read preview page "' + htmlPath + '".</p>\
+                      <p>Possible causes are,</p>\
+                      <ul>\
+                      <li>A wrong "conf.py" file is selected.</li>\
+                      <li>Wrong value is set on "restructuredtext.builtDocumentationPath".</li>\
+                      </ul>';
           const errorMessage = [
-            error.name,
-            error.message,
-            error.stack,
-            '',
-            stderr.toString(),
+            err.name,
+            err.message,
+            err.stack,
           ].join('\n');
           resolve(this.showHelp(description, errorMessage));
         }
-
-        if (process.platform === 'win32' && stderr) {
-          const errText = stderr.toString();
-          if (errText.indexOf('Exception occurred:') > -1) {
-            const description =
-              '<p>Cannot generate preview page on Windows.</p>\
-                      <p>Possible causes are,</p>\
-                      <ul>\
-                      <li>Python is not installed properly.</li>\
-                      <li>Sphinx is not installed properly (if preview uses "conf.py").</li>\
-                      <li>Wrong value is set on "restructuredtext.sphinxBuildPath".</li>\
-                      <li>A wrong "conf.py" file is selected.</li>\
-                      <li>DocUtils is not installed properly (if preview uses docutils).</li>\
-                      </ul>';
-            resolve(this.showHelp(description, errText));
-          }
-        }
-
-        fs.readFile(htmlPath, 'utf8', (err, data) => {
-          if (err === null) {
-            if (fixLinks) {
-              resolve(this.fixLinks(data, htmlPath, webView));
-            } else {
-              resolve(data);
-            }
-          } else {
-            const description =
-              '<p>Cannot read preview page "' + htmlPath + '".</p>\
-                        <p>Possible causes are,</p>\
-                        <ul>\
-                        <li>A wrong "conf.py" file is selected.</li>\
-                        <li>Wrong value is set on "restructuredtext.builtDocumentationPath".</li>\
-                        </ul>';
-            const errorMessage = [
-              err.name,
-              err.message,
-              err.stack,
-            ].join('\n');
-            resolve(this.showHelp(description, errorMessage));
-          }
-        });
       });
     });
   }

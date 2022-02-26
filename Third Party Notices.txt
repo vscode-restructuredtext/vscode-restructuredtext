@@ -32,11 +32,11 @@ The license terms can be found at
 
 https://github.com/yzhang-gh/vscode-markdown/blob/master/LICENSE
 
-vscode-rst
+esbonio
 
 The license terms can be found at
 
-https://github.com/trond-snekvik/vscode-rst/blob/main/LICENSE.txt
+https://github.com/swyddfa/esbonio/blob/develop/code/LICENSE
 
 resttext
 

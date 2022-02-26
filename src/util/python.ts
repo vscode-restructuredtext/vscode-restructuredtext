@@ -21,7 +21,8 @@ export class Python {
     if (await this.checkPython(resource)) {
       await this.checkPreviewEngine(resource, false);
       await this.checkLinter(resource, true, false); // inform users to install linter.
-      await this.checkSnooty(resource, false, false);
+      // wait this.checkSnooty(resource, false, false);
+      await this.checkEsbonio(resource, false, false);
       this.ready = true;
     }
   }
@@ -202,6 +203,46 @@ export class Python {
     return true;
   }
 
+  public async checkEsbonio(resource: vscode.Uri, showInformation: boolean = true, showWarning: boolean = true): Promise<boolean> {
+    if (Configuration.getLanguageServerDisabled()) {
+      if (showWarning) {
+        vscode.window.showWarningMessage('No IntelliSense. Language server is disabled.');
+      }
+      return false;
+    }
+    if (!(await this.checkEsbonioInstall())) {
+      if (showInformation) {
+        const canContinue = await this.checkPipInstall();
+        if (!canContinue) {
+          const upgradePip = await vscode.window.showInformationMessage('Python package pip is too old.', 'Upgrade', 'Not now');
+          if (upgradePip === 'Upgrade') {
+            this.logger.log('Start to upgrade pip...');
+            await this.installPip();
+          } else {
+            vscode.window.showWarningMessage('Python package pip is too old. Esbonio language server is not installed.');
+            return false;
+          }
+        }
+        const choice = await vscode.window.showInformationMessage('Esbonio language server is not installed or out of date.', 'Install', 'Not now', 'Do not show again');
+        if (choice === 'Install') {
+          this.logger.log('Started to install Esbonio...');
+          await this.installSnooty();
+        } else if (choice === 'Do not show again') {
+          this.logger.log('Disabled language server.');
+          await Configuration.setLanguageServerDisabled();
+          vscode.window.showWarningMessage('No IntelliSense. Language server is now disabled.');
+          return false;
+        } else {
+          vscode.window.showWarningMessage('No IntelliSense. Esbonio language server is not installed.');
+          return false;
+        }
+      } else {
+        return false;
+      }
+    }
+    return true;
+  }
+
   public async checkDebugPy(resource: vscode.Uri, showInformation: boolean = true): Promise<boolean> {
     if (!(await this.checkDebugPyInstall())) {
       if (showInformation) {
@@ -350,6 +391,20 @@ export class Python {
     }
   }
 
+  private async installEsbonio(): Promise<void> {
+    try {
+      await this.exec('-m', 'pip', 'install', 'esbonio', '--upgrade');
+      this.logger.log('Finished installing snooty-lextudio');
+      vscode.window.showInformationMessage('The snooty language server is installed.');
+    } catch (e) {
+      this.logger.log('Failed to install snooty-lextudio');
+      vscode.window.showErrorMessage(
+        'Could not install snooty-lextudio. Please run `pip install snooty-lextudio` to use this ' +
+          'extension, or check your Python path.'
+      );
+    }
+  }
+
   public async uninstallSnooty(): Promise<void> {
     try {
       await this.exec('-m', 'pip', 'uninstall', 'snooty', '-y');
@@ -359,6 +414,19 @@ export class Python {
       this.logger.log('Failed to uninstall snooty-lextudio');
       vscode.window.showErrorMessage(
         'Could not uninstall snooty-lextudio. Please run `pip uninstall snooty-lextudio` to debug this ' +
+          'extension.'
+      );
+    }
+  }
+
+  public async uninstallEsbonio(): Promise<void> {
+    try {
+      await this.exec('-m', 'pip', 'uninstall', 'esbonio', '-y');
+      this.logger.log('Finished uninstalling esbonio');
+    } catch (e) {
+      this.logger.log('Failed to uninstall esbonio');
+      vscode.window.showErrorMessage(
+        'Could not uninstall esbonio. Please run `pip uninstall esbonio` to debug this ' +
           'extension.'
       );
     }
@@ -379,6 +447,15 @@ export class Python {
   private async checkSnootyInstall(): Promise<boolean> {
     try {
       const versionTooOld = await this.exec('-c', '"import snooty; from distutils.version import LooseVersion; print(LooseVersion(snooty.__version__) < LooseVersion(\'1.12.0\'))"');
+      return versionTooOld.trim() === 'False';
+    } catch (e) {
+      return false;
+    }
+  }
+
+  private async checkEsbonioInstall(): Promise<boolean> {
+    try {
+      const versionTooOld = await this.exec('-c', '"import esbonio.lsp; from distutils.version import LooseVersion; print(LooseVersion(esbonio.lsp.__version__) < LooseVersion(\'0.8.0\'))"');
       return versionTooOld.trim() === 'False';
     } catch (e) {
       return false;

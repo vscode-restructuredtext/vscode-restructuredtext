@@ -12,6 +12,122 @@ import { DocumentLinkProvider } from './docLinkProvider';
 import open = require('open');
 import mime = require('mime');
 import { StatusBarAlignment, window, workspace } from 'vscode';
+import path = require('path');
+
+/**
+ * Represents the current sphinx configuration / configuration options
+ * that should be passed to sphinx on creation.
+ */
+ export interface SphinxConfig {
+
+    /**
+     * Sphinx's version number.
+     */
+    version?: string
+  
+    /**
+     * The directory containing the project's 'conf.py' file.
+     */
+    confDir?: string
+  
+    /**
+     * The source dir containing the *.rst files for the project.
+     */
+    srcDir?: string
+  
+    /**
+     * The directory where Sphinx's build output should be stored.
+     */
+    buildDir?: string
+  
+    /**
+     * The name of the builder to use.
+     */
+    builderName?: string
+  
+  }
+  
+  /**
+   * Represents configuration options that should be passed to the server.
+   */
+  export interface ServerConfig {
+  
+    /**
+     * Used to set the logging level of the server.
+     */
+    logLevel: string
+  
+    /**
+     * A list of logger names to suppress output from.
+     */
+    logFilter?: string[]
+  
+    /**
+     * A flag to indicate if Sphinx build output should be omitted from the log.
+     */
+    hideSphinxOutput: boolean
+  }
+
+/**
+ * The initialization options we pass to the server on startup.
+ */
+ export interface InitOptions {
+
+    /**
+     * Language server specific options
+     */
+    server: ServerConfig
+  
+    /**
+     * Sphinx specific options
+     */
+    sphinx: SphinxConfig
+  }
+
+  /**
+   * Returns the LanguageClient options that are common to both modes of
+   * transport.
+   */
+   function getLanguageClientOptions(config: vscode.WorkspaceConfiguration): LanguageClientOptions {
+
+    // let cache = this.context.storageUri.path
+
+    let buildDir = Configuration.getOutputFolder();
+    if (!buildDir) {
+      buildDir = path.join(Configuration.getConfPath(), '_build');
+    }
+
+    let initOptions: InitOptions = {
+      sphinx: {
+        srcDir: Configuration.getConfPath(),
+        confDir: Configuration.getConfPath(),
+        buildDir: buildDir
+      },
+      server: {
+        logLevel: 'debug',
+        logFilter: [],
+        hideSphinxOutput: false
+      }
+    }
+
+    let documentSelector = [
+      { scheme: 'file', language: 'restructuredtext' },
+    ]
+
+    if (true) {
+      documentSelector.push(
+        { scheme: 'file', language: 'python' }
+      )
+    }
+
+    let clientOptions: LanguageClientOptions = {
+      documentSelector: documentSelector,
+      initializationOptions: initOptions,
+      //outputChannel: this.channel
+    }
+    //this.logger.debug(`LanguageClientOptions: ${JSON.stringify(clientOptions)}`)
+    return clientOptions
+  }
 
 export async function activate(context: vscode.ExtensionContext, logger: Logger, disabled: boolean, python: Python): Promise<void> {
     if (disabled) {
@@ -19,12 +135,12 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
     }
 
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 1) {
-        vscode.window.showWarningMessage('IntelliSense is not available. Snooty language server does not support multi-root workspaces.');
+        vscode.window.showWarningMessage('IntelliSense is not available. Esbonio language server does not support multi-root workspaces.');
         return;
     }
 
     if (!(await python.checkPython(null, false)) || !(await python.checkPythonForSnooty())) {
-        vscode.window.showErrorMessage('Python is not installed, or its version is too old. Snooty language server requires 3.7 and above.');
+        vscode.window.showErrorMessage('Python is not installed, or its version is too old. Esbonio language server requires 3.7 and above.');
         return;
     }
 
@@ -41,9 +157,9 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
     if (sourceFolder) {
         // launch language server from source folder.
         options.cwd = sourceFolder;
-        if (await python.checkPython(null, false) && await python.checkSnooty(null, false, false)) {
-            await python.uninstallSnooty();
-            vscode.window.showInformationMessage('Uninstalled snooty-lextudio.');
+        if (await python.checkPython(null, false) && await python.checkEsbonio(null, false, false)) {
+            await python.uninstallEsbonio();
+            vscode.window.showInformationMessage('Uninstalled esbonio.');
         }
         if (!(await python.checkPython(null, false)) || !(await python.checkDebugPy(null, true))) {
             return;
@@ -54,18 +170,13 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
         }
         vscode.window.showInformationMessage('debugpy is at port 5678. Connect and debug.');
     } else {
-        if (!(await python.checkPython(null, false)) || !(await python.checkSnooty(null, true, true))) {
+        if (!(await python.checkPython(null, false)) || !(await python.checkEsbonio(null, true, true))) {
             return;
         }
     }
 
-    logger.log('Use Snooty language server');
-    args.push('-m', 'snooty', 'language-server');
-
-    const customSpec = Configuration.getSnootyCustomSpec();
-    if (customSpec) {
-        args.push(`--rstspc="${customSpec}"`);
-    }
+    logger.log('Use Esbonio language server');
+    args.push('-m', 'esbonio');
 
     if (serverModule != null) {
 
@@ -79,21 +190,8 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
         const documentSelector = [
             { language: 'restructuredtext', scheme: 'file' },
         ];
-        // Options to control the language client
-        let clientOptions: LanguageClientOptions = {
-            // Register the server for plain text documents
-            documentSelector,
-            synchronize: {
-                // Synchronize the setting section 'lspSample' to the server
-                configurationSection: 'snooty',
-                // Notify the server about file changes to '.clientrc' files contain in the workspace
-                fileEvents: [
-                    vscode.workspace.createFileSystemWatcher('**/*.rst'),
-                ]
-            }
-        }
 
-        const client = new LanguageClient('Snooty Language Client', serverOptions, clientOptions);
+        const client = new LanguageClient('Esbonio Language Client', serverOptions, getLanguageClientOptions(null));
         const restartServer = vscode.commands.registerCommand('snooty.restart', async () => {
             vscode.commands.executeCommand('workbench.action.reloadWindow');
         });
@@ -104,12 +202,12 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
             if (statusStyle === 'short' || statusStyle === 'detailed') {
                 let statusIcon = window.createStatusBarItem(StatusBarAlignment.Right);
                 statusIcon.command = 'snooty.restart';
-                statusIcon.text = 'snooty: loading';
+                statusIcon.text = 'esbonio: loading';
                 statusIcon.tooltip =
-                    'Click to reload window and restart Snooty language server';
+                    'Click to reload window and restart Esbonio language server';
                 statusIcon.show();
                 client.onReady().then(() => {
-                    statusIcon.text = 'snooty: idle';
+                    statusIcon.text = 'esbonio: idle';
                     // TODO:
                     // languageClient.onNotification('$snooty/progress', (args) => {
 
