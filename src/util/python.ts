@@ -21,7 +21,6 @@ export class Python {
     if (await this.checkPython(resource)) {
       await this.checkPreviewEngine(resource, false);
       await this.checkLinter(resource, true, false); // inform users to install linter.
-      // wait this.checkSnooty(resource, false, false);
       await this.checkEsbonio(resource, false, false);
       this.ready = true;
     }
@@ -74,31 +73,11 @@ export class Python {
         }
       }
     } else {
-      const sphinx = Configuration.getSphinxPath(resource);
       if (Configuration.getSphinxDisabled()) {
         if (showWarning) {
           await vscode.window.showWarningMessage('No preview. Preview engine sphinx is disabled.');
         }
         return false;
-      }
-      if (!(await this.checkSphinxInstall() || (sphinx != null && await fs.existsSync(sphinx)))) {
-        const choice = await vscode.window.showInformationMessage('Preview engine sphinx is not installed.', 'Install', 'Not now', 'Do not show again');
-        if (choice === 'Install') {
-          this.logger.log('Started to install sphinx...');
-          await this.installSphinx();
-        } else if (choice === 'Do not show again') {
-          this.logger.log('Disabled sphinx engine.');
-          await Configuration.setSphinxDisabled();
-          if (showWarning) {
-            await vscode.window.showWarningMessage('No preview. Preview engine sphinx is now disabled.');
-          }
-          return false;
-        } else {
-          if (showWarning) {
-            await vscode.window.showWarningMessage('No preview. Preview engine sphinx is not installed.');
-          }
-          return false;
-        }
       }
     }
     return true;
@@ -163,46 +142,6 @@ export class Python {
     return true;
   }
 
-  public async checkSnooty(resource: vscode.Uri, showInformation: boolean = true, showWarning: boolean = true): Promise<boolean> {
-    if (Configuration.getLanguageServerDisabled()) {
-      if (showWarning) {
-        vscode.window.showWarningMessage('No IntelliSense. Language server is disabled.');
-      }
-      return false;
-    }
-    if (!(await this.checkSnootyInstall())) {
-      if (showInformation) {
-        const canContinue = await this.checkPipInstall();
-        if (!canContinue) {
-          const upgradePip = await vscode.window.showInformationMessage('Python package pip is too old.', 'Upgrade', 'Not now');
-          if (upgradePip === 'Upgrade') {
-            this.logger.log('Start to upgrade pip...');
-            await this.installPip();
-          } else {
-            vscode.window.showWarningMessage('Python package pip is too old. Snooty language server is not installed.');
-            return false;
-          }
-        }
-        const choice = await vscode.window.showInformationMessage('Snooty language server is not installed or out of date.', 'Install', 'Not now', 'Do not show again');
-        if (choice === 'Install') {
-          this.logger.log('Started to install Snooty...');
-          await this.installSnooty();
-        } else if (choice === 'Do not show again') {
-          this.logger.log('Disabled language server.');
-          await Configuration.setLanguageServerDisabled();
-          vscode.window.showWarningMessage('No IntelliSense. Language server is now disabled.');
-          return false;
-        } else {
-          vscode.window.showWarningMessage('No IntelliSense. Snooty language server is not installed.');
-          return false;
-        }
-      } else {
-        return false;
-      }
-    }
-    return true;
-  }
-
   public async checkEsbonio(resource: vscode.Uri, showInformation: boolean = true, showWarning: boolean = true): Promise<boolean> {
     if (Configuration.getLanguageServerDisabled()) {
       if (showWarning) {
@@ -226,7 +165,7 @@ export class Python {
         const choice = await vscode.window.showInformationMessage('Esbonio language server is not installed or out of date.', 'Install', 'Not now', 'Do not show again');
         if (choice === 'Install') {
           this.logger.log('Started to install Esbonio...');
-          await this.installSnooty();
+          await this.installEsbonio();
         } else if (choice === 'Do not show again') {
           this.logger.log('Disabled language server.');
           await Configuration.setLanguageServerDisabled();
@@ -375,46 +314,16 @@ export class Python {
     }
   }
 
-  private async installSnooty(): Promise<void> {
-    try {
-      // TODO: temp cleanup. Should remove in a future release.
-      await this.exec('-m', 'pip', 'uninstall', 'snooty', '-y');
-      await this.exec('-m', 'pip', 'install', 'snooty-lextudio', '--upgrade');
-      this.logger.log('Finished installing snooty-lextudio');
-      vscode.window.showInformationMessage('The snooty language server is installed.');
-    } catch (e) {
-      this.logger.log('Failed to install snooty-lextudio');
-      vscode.window.showErrorMessage(
-        'Could not install snooty-lextudio. Please run `pip install snooty-lextudio` to use this ' +
-          'extension, or check your Python path.'
-      );
-    }
-  }
-
   private async installEsbonio(): Promise<void> {
     try {
       await this.exec('-m', 'pip', 'install', 'esbonio', '--upgrade');
-      this.logger.log('Finished installing snooty-lextudio');
-      vscode.window.showInformationMessage('The snooty language server is installed.');
+      this.logger.log('Finished installing esbonio');
+      vscode.window.showInformationMessage('The esbonio language server is installed.');
     } catch (e) {
-      this.logger.log('Failed to install snooty-lextudio');
+      this.logger.log('Failed to install esbonio');
       vscode.window.showErrorMessage(
-        'Could not install snooty-lextudio. Please run `pip install snooty-lextudio` to use this ' +
+        'Could not install esbonio. Please run `pip install esbonio` to use this ' +
           'extension, or check your Python path.'
-      );
-    }
-  }
-
-  public async uninstallSnooty(): Promise<void> {
-    try {
-      await this.exec('-m', 'pip', 'uninstall', 'snooty', '-y');
-      await this.exec('-m', 'pip', 'uninstall', 'snooty-lextudio', '-y');
-      this.logger.log('Finished uninstalling snooty-lextudio');
-    } catch (e) {
-      this.logger.log('Failed to uninstall snooty-lextudio');
-      vscode.window.showErrorMessage(
-        'Could not uninstall snooty-lextudio. Please run `pip uninstall snooty-lextudio` to debug this ' +
-          'extension.'
       );
     }
   }
@@ -432,21 +341,12 @@ export class Python {
     }
   }
 
-  public async checkPythonForSnooty(): Promise<boolean> {
+  public async checkPythonForEsbonio(): Promise<boolean> {
     if (this.version !== 3) {
       return false;
     }
     try {
       const versionTooOld = await this.exec('-c', '"import platform; from distutils.version import LooseVersion; print(LooseVersion(platform.python_version()) < LooseVersion(\'3.7.0\'))"');
-      return versionTooOld.trim() === 'False';
-    } catch (e) {
-      return false;
-    }
-  }
-
-  private async checkSnootyInstall(): Promise<boolean> {
-    try {
-      const versionTooOld = await this.exec('-c', '"import snooty; from distutils.version import LooseVersion; print(LooseVersion(snooty.__version__) < LooseVersion(\'1.12.0\'))"');
       return versionTooOld.trim() === 'False';
     } catch (e) {
       return false;

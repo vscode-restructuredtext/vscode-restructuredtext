@@ -22,16 +22,16 @@ export class Configuration {
         return Configuration.loadSetting('docutilsWriterPart', 'html_body', resource);
     }
 
-    public static getSphinxPath(resource: Uri = null): string {
-        return Configuration.loadSetting('sphinxBuildPath', null, resource);
-    }
-
     public static getConfPath(resource: Uri = null): string {
         return Configuration.loadSetting('confPath', null, resource);
     }
 
     public static getOutputFolder(resource: Uri = null): string {
         return Configuration.loadSetting('builtDocumentationPath', null, resource);
+    }
+
+    public static getSourcePath(resource: Uri = null): string {
+        return Configuration.loadSetting('sourcePath', null, resource);
     }
 
     public static getPreviewName(resource: Uri = null): string {
@@ -46,16 +46,12 @@ export class Configuration {
         return Configuration.loadSetting('linter.executablePath', null, resource);
     }
 
-    public static getSnootySourceFolder(resource: Uri = null): string {
-        return this.getConfiguration('snooty', resource).get<string>('sourceFolder');
+    public static getEsbonioSourceFolder(resource: Uri = null): string {
+        return this.getConfiguration('esbonio', resource).get<string>('sourceFolder');
     }
 
-    public static getSnootyDebugLaunch(resource: Uri = null): boolean {
-        return this.getConfiguration('snooty', resource).get<boolean>('debugLaunch', false);
-    }
-
-    public static getSnootyCustomSpec(resource: Uri = null): string {
-        return this.getConfiguration('snooty', resource).get<string>('customSpec');
+    public static getEsbonioDebugLaunch(resource: Uri = null): boolean {
+        return this.getConfiguration('esbonio', resource).get<boolean>('debugLaunch', false);
     }
 
     public static getTelemetryDisabled(resource: Uri = null): boolean {

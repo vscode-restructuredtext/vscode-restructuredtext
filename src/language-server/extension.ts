@@ -90,18 +90,21 @@ import path = require('path');
    */
    function getLanguageClientOptions(config: vscode.WorkspaceConfiguration): LanguageClientOptions {
 
-    // let cache = this.context.storageUri.path
-
     let buildDir = Configuration.getOutputFolder();
     if (!buildDir) {
       buildDir = path.join(Configuration.getConfPath(), '_build');
     }
 
+    let srcDir = Configuration.getSourcePath() ?? Configuration.getConfPath();
+    if (srcDir === '') {
+      srcDir = null;
+    }
+
     let initOptions: InitOptions = {
       sphinx: {
-        srcDir: Configuration.getConfPath(),
-        confDir: Configuration.getConfPath(),
-        buildDir: buildDir
+        srcDir,
+        confDir: srcDir === null ? null : Configuration.getConfPath(),
+        buildDir: srcDir === null ? null : buildDir
       },
       server: {
         logLevel: 'debug',
@@ -135,25 +138,19 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
     }
 
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 1) {
-        vscode.window.showWarningMessage('IntelliSense is not available. Esbonio language server does not support multi-root workspaces.');
+        vscode.window.showWarningMessage('IntelliSense and live preview are not available. Esbonio language server does not support multi-root workspaces.');
         return;
     }
 
-    if (!(await python.checkPython(null, false)) || !(await python.checkPythonForSnooty())) {
+    if (!(await python.checkPython(null, false)) || !(await python.checkPythonForEsbonio())) {
         vscode.window.showErrorMessage('Python is not installed, or its version is too old. Esbonio language server requires 3.7 and above.');
         return;
     }
 
-    // Notify the user that if they change a snooty setting they need to restart
-    // vscode.
-    context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(() => {
-        // TODO:
-    }));
-
     let serverModule: string = await Configuration.getPythonPath();
     let args: string[] = [];
     let options: any = {};
-    const sourceFolder = Configuration.getSnootySourceFolder();
+    const sourceFolder = Configuration.getEsbonioSourceFolder();
     if (sourceFolder) {
         // launch language server from source folder.
         options.cwd = sourceFolder;
@@ -165,7 +162,7 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
             return;
         }
         args.push('-m', 'debugpy', '--listen', '5678');
-        if (Configuration.getSnootyDebugLaunch()) {
+        if (Configuration.getEsbonioDebugLaunch()) {
             args.push('--wait-for-client');
         }
         vscode.window.showInformationMessage('debugpy is at port 5678. Connect and debug.');
@@ -192,27 +189,22 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
         ];
 
         const client = new LanguageClient('Esbonio Language Client', serverOptions, getLanguageClientOptions(null));
-        const restartServer = vscode.commands.registerCommand('snooty.restart', async () => {
+        const restartServer = vscode.commands.registerCommand('esbonio.restart', async () => {
             vscode.commands.executeCommand('workbench.action.reloadWindow');
         });
 
         (() => {
-            let config = workspace.getConfiguration('snooty');
+            let config = workspace.getConfiguration('esbonio');
             let statusStyle = config.get('misc.status', 'short');
             if (statusStyle === 'short' || statusStyle === 'detailed') {
                 let statusIcon = window.createStatusBarItem(StatusBarAlignment.Right);
-                statusIcon.command = 'snooty.restart';
+                statusIcon.command = 'esbonio.restart';
                 statusIcon.text = 'esbonio: loading';
                 statusIcon.tooltip =
                     'Click to reload window and restart Esbonio language server';
                 statusIcon.show();
                 client.onReady().then(() => {
                     statusIcon.text = 'esbonio: idle';
-                    // TODO:
-                    // languageClient.onNotification('$snooty/progress', (args) => {
-
-                    // });
-
                     vscode.languages.registerDocumentLinkProvider(
                         documentSelector,
                         new DocumentLinkProvider(client)
@@ -228,8 +220,7 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
 
         // Register custom command to allow includes, literalincludes, and figures to be clickable
         let hoverFile: string;
-        const clickInclude: vscode.Disposable = vscode.commands.registerCommand('snooty.clickInclude', async () => {
-            // Send request to server (snooty-parser)
+        const clickInclude: vscode.Disposable = vscode.commands.registerCommand('esbonio.clickInclude', async () => {
             const type = mime.getType(hoverFile);
     
             if (type == null || !type.includes("image")) {
@@ -241,49 +232,5 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
             }
         });
         context.subscriptions.push(clickInclude);
-    
-        // Shows clickable link to file after hovering over it
-        // vscode.languages.registerHoverProvider(
-        //     documentSelector,
-        //     new class implements vscode.HoverProvider {
-        //       provideHover(
-        //         _document: vscode.TextDocument,
-        //         _position: vscode.Position,
-        //         _token: vscode.CancellationToken
-        //       ): vscode.ProviderResult<vscode.Hover> {
-        //         // Get range for a link
-        //         const wordRegex = /\/\S+/;
-        //         const wordRange = _document.getWordRangeAtPosition(_position, wordRegex);
-    
-        //         if (wordRange != undefined) {
-        //             // Get text at that range
-        //             const word = _document.getText(wordRange);
-    
-        //             // Request hover information using the snooty-parser server
-        //             let request = async () => {
-        //                 let contents: vscode.MarkdownString;
-    
-        //                 const file: string = await client.sendRequest("textDocument/resolve", {fileName: word, docPath: _document.uri.path, resolveType: "directive"});
-        //                 const command = vscode.Uri.parse(`command:snooty.clickInclude`);
-    
-        //                 // Clean up absolute path for better UX. str.match() was not working with regex but can look into later
-        //                 let workspaceFolder = vscode.workspace.name;
-        //                 if (!workspaceFolder) {
-        //                     return;
-        //                 }
-        //                 let folderIndex = file.search(workspaceFolder);
-        //                 let hoverPathRelative = file.slice(folderIndex);
-    
-        //                 contents = new vscode.MarkdownString(`[${hoverPathRelative}](${command})`);
-        //                 contents.isTrusted = true; // Enables commands to be used
-    
-        //                 return new vscode.Hover(contents, wordRange);
-        //             }
-    
-        //             return request();
-        //         }
-        //       }
-        //     } ()
-        // );
     }
 }

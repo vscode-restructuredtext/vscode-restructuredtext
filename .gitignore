@@ -6,7 +6,6 @@ vscode-restructuredtext.zip
 vscps-preview.zip
 *.vsix
 /.rst
-/.snooty
 
 install\.Lock
 

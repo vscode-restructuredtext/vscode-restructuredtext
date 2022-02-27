@@ -56,5 +56,7 @@ The linter support is based on [Cody Hoover's ruby-linter](https://marketplace.v
 ### Live Preview
 The initial idea was brought from [Thomas Haakon Townsend's ReStructured Text Previewer](https://marketplace.visualstudio.com/items?itemName=tht13.rst-vscode), but soon after moving fully to Sphinx, this extension becomes its own beast.
 
+Currently, the experiment is to enable live preview via Esbonio language server.
+
 ### IntelliSense
-The IntelliSense support is provided by [Snooty Language Server](https://github.com/vscode-restructuredtext/snooty-parser).
+The IntelliSense support is provided by [Esbonio language server](https://github.com/swyddfa/esbonio).

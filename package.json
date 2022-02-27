@@ -433,7 +433,7 @@
       "type": "object",
       "title": "reStructuredText",
       "properties": {
-        "snooty.trace.server": {
+        "esbonio.trace.server": {
           "scope": "window",
           "type": "string",
           "enum": [
@@ -444,29 +444,24 @@
           "default": "verbose",
           "description": "Traces the communication between VS Code and the language server."
         },
-        "snooty.sourceFolder": {
+        "esbonio.sourceFolder": {
           "scope": "resource",
           "type": "string",
           "default": null,
-          "description": "Local source folder of snooty. Used for debugging local language server."
+          "description": "Local source folder of esbonio. Used for debugging local language server."
         },
-        "snooty.debugLaunch": {
+        "esbonio.debugLaunch": {
           "scope": "resource",
           "type": "boolean",
           "default": false,
           "description": "Whether to debug from launch."
         },
-        "snooty.customSpec": {
-          "scope": "resource",
-          "type": "string",
-          "default": null,
-          "description": "Override the reStructuredText directive & role spec."
-        },
         "restructuredtext.conflictingExtensions": {
           "type": "array",
           "default": [
             "tht13.rst-vscode",
-            "TatsuyaNakamori.resttext"
+            "TatsuyaNakamori.resttext",
+            "swyddfa.esbonio"
           ],
           "description": "Extensions that might lead to conflicts.",
           "scope": "application"
@@ -586,6 +581,12 @@
           "description": "Sphinx's HTML output folder. Defaults to 'restructuredtext.confPath'/_build/html This is an absolute path, and you can use ${workspaceFolder} to represent the workspace root folder.",
           "scope": "resource"
         },
+        "restructuredtext.sourcePath": {
+          "type": "string",
+          "default": null,
+          "description": "Sphinx project folder containing the source files. Set this option if it is different from 'restructuredtext.confPath'. This is an absolute path, and you can use ${workspaceFolder} to represent the workspace root folder.",
+          "scope": "resource"
+        },
         "restructuredtext.confPath": {
           "type": "string",
           "default": null,
@@ -602,12 +603,6 @@
           "type": "number",
           "default": "3000",
           "description": "Flag to control after how long a changed event triggers preview update.",
-          "scope": "resource"
-        },
-        "restructuredtext.sphinxBuildPath": {
-          "type": "string",
-          "default": null,
-          "description": "The full path of the sphinx-build executable. This is an absolute path, and you can use ${workspaceFolder} to represent the workspace root folder.",
           "scope": "resource"
         },
         "restructuredtext.docutilsWriter": {
