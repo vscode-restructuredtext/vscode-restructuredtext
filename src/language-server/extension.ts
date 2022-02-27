@@ -143,7 +143,7 @@ export async function activate(context: vscode.ExtensionContext, logger: Logger,
     }
 
     if (!(await python.checkPython(null, false)) || !(await python.checkPythonForEsbonio())) {
-        vscode.window.showErrorMessage('Python is not installed, or its version is too old. Esbonio language server requires 3.7 and above.');
+        vscode.window.showErrorMessage('Python is not installed, or its version is too old. Esbonio language server requires 3.6 and above.');
         return;
     }
 

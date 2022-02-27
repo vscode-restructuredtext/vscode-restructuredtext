@@ -346,7 +346,7 @@ export class Python {
       return false;
     }
     try {
-      const versionTooOld = await this.exec('-c', '"import platform; from distutils.version import LooseVersion; print(LooseVersion(platform.python_version()) < LooseVersion(\'3.7.0\'))"');
+      const versionTooOld = await this.exec('-c', '"import platform; from distutils.version import LooseVersion; print(LooseVersion(platform.python_version()) < LooseVersion(\'3.6.0\'))"');
       return versionTooOld.trim() === 'False';
     } catch (e) {
       return false;
