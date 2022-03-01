@@ -52,10 +52,12 @@ export class RSTEngine {
       let output: string;
       const out = Configuration.getOutputFolder(uri);
       if (out == null) {
-        output = path.join(input, '_build', 'html');
+        output = path.join(input, '_build');
       } else {
         output = out;
       }
+
+      output = path.join(output, 'html');
 
       this.logger.log('[preview] Sphinx html directory: ' + output);
 
