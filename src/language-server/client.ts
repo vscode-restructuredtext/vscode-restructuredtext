@@ -6,6 +6,7 @@ import { LanguageClient, LanguageClientOptions } from "vscode-languageclient"
 import { Commands } from "../constants"
 import { Configuration } from "../util/configuration"
 import { Logger } from "../util/logger";
+import { Python } from "../util/python";
 
 /**
  * Represents the current sphinx configuration / configuration options
@@ -98,7 +99,7 @@ export class EsbonioClient {
 
    constructor(
     private logger: Logger,
-    //private python: PythonManager,
+    private python: Python,
     //private server: ServerManager,
     private channel: vscode.OutputChannel,
     context: vscode.ExtensionContext
@@ -190,6 +191,30 @@ export class EsbonioClient {
   
       let command = [];
       command.push(await Configuration.getPythonPath()); //await this.python.getCmd()
+
+      let options: any = {};
+      const sourceFolder = Configuration.getEsbonioSourceFolder();
+      if (sourceFolder) {
+          // launch language server from source folder.
+          options.cwd = sourceFolder;
+          if (await this.python.checkPython(null, false) && await this.python.checkEsbonio(null, false, false)) {
+              await this.python.uninstallEsbonio();
+              vscode.window.showInformationMessage('Uninstalled esbonio.');
+          }
+          if (!(await this.python.checkPython(null, false)) || !(await this.python.checkDebugPy(null, true))) {
+              return;
+          }
+          command.push('-m', 'debugpy', '--listen', '5678');
+          if (Configuration.getEsbonioDebugLaunch()) {
+              command.push('--wait-for-client');
+          }
+          vscode.window.showInformationMessage('debugpy is at port 5678. Connect and debug.');
+      } else {
+          if (!(await this.python.checkPython(null, false)) || !(await this.python.checkEsbonio(null, true, true))) {
+              return;
+          }
+      }
+  
       let config = vscode.workspace.getConfiguration("esbonio")
   
       let entryPoint = config.get<string>("server.entryPoint")
@@ -213,7 +238,7 @@ export class EsbonioClient {
   
       return new LanguageClient(
         'esbonio', 'Esbonio Language Server',
-        { command: command[0], args: command.slice(1) },
+        { command: command[0], args: command.slice(1), options: options },
         this.getLanguageClientOptions(config)
       )
     }
