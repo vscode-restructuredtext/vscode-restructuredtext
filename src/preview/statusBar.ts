@@ -1,6 +1,6 @@
 'use strict';
 
-import { StatusBarAlignment, StatusBarItem, window, Uri } from 'vscode';
+import * as vscode from 'vscode';
 import { Configuration } from '../util/configuration';
 import { RstTransformerSelector } from './selector';
 import { RstTransformerConfig } from './confPyFinder';
@@ -14,13 +14,13 @@ import { Python } from '../util/python';
  * the menu when the preview is generated next time.
  */
 export default class RstTransformerStatus {
-    private _statusBarItem: StatusBarItem;
+    private _statusBarItem: vscode.StatusBarItem;
     public config: RstTransformerConfig;
     private _logger: Logger;
     private python: Python;
 
     constructor(python: Python, logger: Logger) {
-        this._statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left);
+        this._statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
         this._statusBarItem.command = 'restructuredtext.resetStatus';
         this._logger = logger;
         this.python = python;
@@ -34,7 +34,7 @@ export default class RstTransformerStatus {
     }
 
     public async update() {
-        const editor = window.activeTextEditor;
+        const editor = vscode.window.activeTextEditor;
         if (editor != null && editor.document.languageId === 'restructuredtext') {
             const resource = editor.document.uri;
             const workspaceRoot = Configuration.GetRootPath(resource);
@@ -51,7 +51,7 @@ export default class RstTransformerStatus {
     }
 
     public async reset() {
-        const editor = window.activeTextEditor;
+        const editor = vscode.window.activeTextEditor;
         if (editor != null && editor.document.languageId === 'restructuredtext') {
             let resource = editor.document.uri;
             this._logger.log("[preview] reset config.");
@@ -64,7 +64,7 @@ export default class RstTransformerStatus {
         }
     }
 
-    public async refreshConfig(resource: Uri): Promise<RstTransformerConfig> {
+    public async refreshConfig(resource: vscode.Uri): Promise<RstTransformerConfig> {
         const rstTransformerConf = await RstTransformerSelector.findConfDir(resource, this._logger);
         if (rstTransformerConf == null) {
             return null;
@@ -73,6 +73,12 @@ export default class RstTransformerStatus {
         this.config = rstTransformerConf;
         this._logger.log("[preview] set config to " + rstTransformerConf.confPyDirectory);
         await Configuration.setConfPath(rstTransformerConf.confPyDirectory, resource, true);
+        // Porting over the setting.
+        const section = vscode.workspace.getConfiguration("esbonio");
+        const confDir = Configuration.getConfPath();
+        if (confDir) {
+            await section.update("sphinx.confDir", confDir);
+        }
         return rstTransformerConf;
     }
 }
