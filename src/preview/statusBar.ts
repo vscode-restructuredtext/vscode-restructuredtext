@@ -22,7 +22,6 @@ export default class RstTransformerStatus {
     constructor(python: Python, logger: Logger) {
         this._statusBarItem = window.createStatusBarItem(StatusBarAlignment.Left);
         this._statusBarItem.command = 'restructuredtext.resetStatus';
-        this._statusBarItem.tooltip = 'The active rst to html transformer (click to reset)';
         this._logger = logger;
         this.python = python;
     }
@@ -30,6 +29,7 @@ export default class RstTransformerStatus {
     public setLabel() {
         if (this.config) {
             this._statusBarItem.text = this.config.label;
+            this._statusBarItem.tooltip = this.config.tooltip;
         }
     }
 

@@ -24,6 +24,7 @@ export class RstTransformerSelector {
 
         const docutils = new RstTransformerConfig();
         docutils.label = '$(code) Use docutils';
+        docutils.label = 'Click to reset';
         docutils.description = 'Do not use Sphinx, but docutils instead';
         docutils.confPyDirectory = '';
         docutils.workspaceRoot = workspaceRoot;
@@ -35,7 +36,8 @@ export class RstTransformerSelector {
 
             const pth = path.join(path.normalize(confPathFromSettings), 'conf.py');
             const qpSettings = new RstTransformerConfig();
-            qpSettings.label = '$(gear) Sphinx: ' + pth;
+            qpSettings.label = '$(gear) Sphinx: ' + shrink(pth);
+            qpSettings.tooltip = pth + ". Click to reset";
             qpSettings.description += ' (from restructuredtext.confPath setting)';
             qpSettings.confPyDirectory = path.dirname(pth);
             qpSettings.workspaceRoot = workspaceRoot;
@@ -47,7 +49,8 @@ export class RstTransformerSelector {
                 const pth = path.normalize(confPath);
                 if (pathStrings.indexOf(pth) === -1) {
                     const qp = new RstTransformerConfig();
-                    qp.label = '$(gear) Sphinx: ' + pth;
+                    qp.label = '$(gear) Sphinx: ' + shrink(pth);
+                    qp.tooltip = pth + ". Click to reset";
                     qp.confPyDirectory = path.dirname(pth);
                     qp.workspaceRoot = workspaceRoot;
                     configurations.push(qp);
@@ -75,4 +78,12 @@ export class RstTransformerSelector {
             placeHolder: 'Select how to generate html from rst files',
         });
     }
+}
+
+function shrink(path: string) {
+    if (path.length < 20) {
+        return path;
+    }
+
+    return `...${path.substring(path.length - 20)}`;
 }

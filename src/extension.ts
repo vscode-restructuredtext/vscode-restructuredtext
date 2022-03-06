@@ -36,11 +36,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     setGlobalState(context.globalState);
     setWorkspaceState(context.workspaceState);
 
+    const channel = vscode.window.createOutputChannel('reStructuredText');
+
     await initConfig(context);
 
     extensionPath = context.extensionPath;
 
-    const logger = new Logger();
+    const logger = new Logger(channel);
     logger.log('Please visit https://docs.restructuredtext.net to learn how to configure the extension.');
 
     const conflicting = Configuration.getConflictingExtensions();
@@ -88,12 +90,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     }
 
     await logPlatform(logger);
-    const disableLsp = Configuration.getLanguageServerDisabled();
 
     const python: Python = new Python(logger);
-
-    // activate language services
-    const rstLspPromise = RstLanguageServer.activate(context, logger, disableLsp, python);
 
     // Run it once the first time.
     setContext();
@@ -172,7 +170,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
         );
 
         vscode.window.onDidChangeActiveTextEditor(status.update, status, context.subscriptions);
-        status.update();
+        await status.update();
 
         const cspArbiter = new ExtensionContentSecurityPolicyArbiter(context.globalState, context.workspaceState);
 
@@ -203,6 +201,35 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     }
 
     listEditing.activate(context);
+
+    // porting settings over
+    const section = vscode.workspace.getConfiguration("esbonio");
+
+    const disableLsp = Configuration.getLanguageServerDisabled();
+    await section.update("server.enabled", !disableLsp);
+
+    let buildDir = Configuration.getOutputFolder();
+    if (buildDir) {
+        if (buildDir.endsWith("/html") || buildDir.endsWith("\\html")) {
+            buildDir = buildDir.substring(0, buildDir.length - 5);
+        }
+        await section.update("sphinx.buildDir", buildDir);
+    }
+
+    const confDir = Configuration.getConfPath();
+    if (confDir && confDir != '') {
+        await section.update("sphinx.confDir", confDir);
+    }
+
+    const srcDir = Configuration.getSourcePath();
+    if (srcDir) {
+        await section.update("sphinx.srcDir", srcDir);
+    }
+
+    const lspChannel = vscode.window.createOutputChannel('Esbonio Language Server');
+    const lspLogger = new Logger(lspChannel);
+    // activate language services
+    const rstLspPromise = RstLanguageServer.activate(context, lspChannel, lspLogger, python);
 
     return {
         initializationFinished: Promise.all([rstLspPromise])

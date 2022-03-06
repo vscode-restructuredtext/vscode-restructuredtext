@@ -33,11 +33,23 @@ function isString(value: any): value is string {
 export class Logger {
     private trace?: Trace;
 
-	private readonly outputChannel = lazy(() => vscode.window.createOutputChannel('reStructuredText'));
-
-	constructor() {
+	constructor(
+		private outputChannel: vscode.OutputChannel
+	) {
         this.updateConfiguration();
  	}
+
+	public error(message: string): void {
+		this.log(message);
+	}
+
+	public info(message: string): void {
+		this.log(message);
+	}
+
+	public debug(message: string): void {
+		this.log(message);
+	}
 
 	public log(message: string, data?: any): void {
 		if (this.trace === Trace.Verbose) {
@@ -53,15 +65,15 @@ export class Logger {
 	}
 
 	public appendLine(value: string = '') {
-		return this.outputChannel.value.appendLine(value);
+		return this.outputChannel.appendLine(value);
 	}
 
 	public append(value: string) {
-		return this.outputChannel.value.append(value);
+		return this.outputChannel.append(value);
 	}
 
 	public show() {
-		this.outputChannel.value.show();
+		this.outputChannel.show();
 	}
 
 	private readTrace(): Trace {

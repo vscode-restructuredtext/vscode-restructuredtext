@@ -1,4 +1,4 @@
-import { TextDocument, Uri, Webview } from "vscode";
+import * as vscode from "vscode";
 import * as path from "path";
 import * as fs from 'fs';
 import { Python } from "../util/python";
@@ -17,7 +17,7 @@ export class RSTEngine {
     return `<html><body>${error}</body></html>`;
   }
 
-  public async compile(fileName: string, uri: Uri, confPyDirectory: string, fixLinks: boolean, webview: Webview): Promise<string> {
+  public async compile(fileName: string, uri: vscode.Uri, confPyDirectory: string, fixLinks: boolean, webview: vscode.Webview): Promise<string> {
     this.logger.log(`[preview] Compiling file: ${fileName}`);
     if (confPyDirectory === '' || Configuration.getPreviewName() === 'docutils') {
       if (Configuration.getPreviewName() === 'docutils') {
@@ -50,7 +50,7 @@ export class RSTEngine {
 
       // The directory where Sphinx will write the html output
       let output: string;
-      const out = Configuration.getOutputFolder(uri);
+      const out = vscode.workspace.getConfiguration("esbonio").get<string>("sphinx.buildDir");
       if (out == null) {
         output = path.join(input, '_build');
       } else {
@@ -73,7 +73,7 @@ export class RSTEngine {
     }
   }
 
-  private previewPage(htmlPath: string, input: string, fixLinks: boolean, webView: Webview): Promise<string> {
+  private previewPage(htmlPath: string, input: string, fixLinks: boolean, webView: vscode.Webview): Promise<string> {
     this.logger.log('[preview] Working directory: ' + input);
     this.logger.log('[preview] HTML file: ' + htmlPath);
 
@@ -107,7 +107,7 @@ export class RSTEngine {
     });
   }
 
-  private fixLinks(document: string, documentPath: string, webView: Webview): string {
+  private fixLinks(document: string, documentPath: string, webView: vscode.Webview): string {
     return document.replace(
         new RegExp('((?:src|href)=[\'\"])(.*?)([\'\"])', 'gmi'),
         (subString: string, p1: string, p2: string, p3: string): string => {
@@ -117,9 +117,9 @@ export class RSTEngine {
           }
           const index = p2.indexOf('?');
           if (index > - 1) {
-            p2 = p2.substr(0, index);
+            p2 = p2.substring(0, index);
           }
-          const newPath = Uri.file(path.join(path.dirname(documentPath), p2));
+          const newPath = vscode.Uri.file(path.join(path.dirname(documentPath), p2));
           const newUrl = [
               p1,
               webView.asWebviewUri(newPath),
@@ -151,7 +151,7 @@ export class RSTEngine {
     return help;
   }
 
-  public async preview(doc: TextDocument, webview: Webview): Promise<string> {
+  public async preview(doc: vscode.TextDocument, webview: vscode.Webview): Promise<string> {
     try {
       if (this.status == null) {
         return this.compile(doc.fileName, doc.uri, '', true, webview);

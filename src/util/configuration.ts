@@ -47,11 +47,11 @@ export class Configuration {
     }
 
     public static getEsbonioSourceFolder(resource: Uri = null): string {
-        return this.getConfiguration('esbonio', resource).get<string>('sourceFolder');
+        return this.getConfiguration('esbonio', resource).get<string>('server.sourceFolder', null);
     }
 
     public static getEsbonioDebugLaunch(resource: Uri = null): boolean {
-        return this.getConfiguration('esbonio', resource).get<boolean>('debugLaunch', false);
+        return this.getConfiguration('esbonio', resource).get<boolean>('server.debugLaunch', false);
     }
 
     public static getTelemetryDisabled(resource: Uri = null): boolean {
