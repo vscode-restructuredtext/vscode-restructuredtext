@@ -186,7 +186,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     }
 
     const confDir = Configuration.getConfPath();
-    if (confDir && confDir != '') {
+    if (confDir) {
         await section.update("sphinx.confDir", confDir);
     }
 

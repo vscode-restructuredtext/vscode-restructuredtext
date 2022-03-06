@@ -252,15 +252,16 @@ export class EsbonioClient {
    */
   private getLanguageClientOptions(config: vscode.WorkspaceConfiguration): LanguageClientOptions {
 
+    const confDir = config.get<string>('sphinx.confDir');
     let buildDir = config.get<string>('sphinx.buildDir')
-    if (!buildDir) {
-      buildDir = join(config.get<string>('sphinx.confDir'), '_build')
+    if (!buildDir && confDir) {
+      buildDir = join(confDir, '_build')
     }
 
     let initOptions: InitOptions = {
         sphinx: {
           srcDir: config.get<string>("sphinx.srcDir"),
-          confDir: config.get<string>('sphinx.confDir'),
+          confDir: confDir,
           buildDir: buildDir
         },
         server: {
