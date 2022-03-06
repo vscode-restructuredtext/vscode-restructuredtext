@@ -10,6 +10,7 @@ import { RSTFileTopmostLineMonitor } from '../util/topmostLineMonitor';
 import { RSTPreview, PreviewSettings } from './preview';
 import { RSTPreviewConfigurationManager } from './previewConfig';
 import { RSTContentProvider } from './previewContentProvider';
+import { EsbonioClient } from '../language-server/client';
 
 export class RSTPreviewManager implements vscode.WebviewPanelSerializer {
 	private static readonly rstPreviewActiveContextKey = 'restructuredtextPreviewFocus';
@@ -23,6 +24,7 @@ export class RSTPreviewManager implements vscode.WebviewPanelSerializer {
 	public constructor(
 		private readonly _contentProvider: RSTContentProvider,
 		private readonly _logger: Logger,
+		private esbonio: EsbonioClient,
 	) {
 		this._disposables.push(vscode.window.registerWebviewPanelSerializer(RSTPreview.viewType, this));
 	}
@@ -86,6 +88,7 @@ export class RSTPreviewManager implements vscode.WebviewPanelSerializer {
 			this._contentProvider,
 			this._previewConfigurations,
 			this._logger,
+			this.esbonio,
 			this._topmostLineMonitor);
 
 		this.registerPreview(preview);
@@ -110,6 +113,7 @@ export class RSTPreviewManager implements vscode.WebviewPanelSerializer {
 			this._contentProvider,
 			this._previewConfigurations,
 			this._logger,
+			this.esbonio,
 			this._topmostLineMonitor);
 
 		this.setPreviewActiveContext(true);

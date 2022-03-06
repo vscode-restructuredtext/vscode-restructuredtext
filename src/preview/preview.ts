@@ -17,6 +17,7 @@ import { isRSTFile } from '../util/file';
 import { getExtensionPath } from '../extension';
 import { Configuration } from '../util/configuration';
 import { StatusBarAlignment, StatusBarItem, window } from 'vscode';
+import { EsbonioClient } from '../language-server/client';
 
 const localize = nls.loadMessageBundle();
 
@@ -44,6 +45,7 @@ export class RSTPreview {
 		contentProvider: RSTContentProvider,
 		previewConfigurations: RSTPreviewConfigurationManager,
 		logger: Logger,
+		esbonio: EsbonioClient,
 		topmostLineMonitor: RSTFileTopmostLineMonitor
 	): Promise<RSTPreview> {
 		const resource = vscode.Uri.parse(state.resource);
@@ -56,6 +58,7 @@ export class RSTPreview {
 			locked,
 			contentProvider,
 			previewConfigurations,
+			esbonio,
 			topmostLineMonitor);
 
 		preview.editor.webview.options = RSTPreview.getWebviewOptions(resource);
@@ -74,6 +77,7 @@ export class RSTPreview {
 		contentProvider: RSTContentProvider,
 		previewConfigurations: RSTPreviewConfigurationManager,
 		logger: Logger,
+		esbonio: EsbonioClient,
 		topmostLineMonitor: RSTFileTopmostLineMonitor
 	): RSTPreview {
 		const webview = vscode.window.createWebviewPanel(
@@ -90,6 +94,7 @@ export class RSTPreview {
 			locked,
 			contentProvider,
 			previewConfigurations,
+			esbonio,
 			topmostLineMonitor);
 	}
 
@@ -99,6 +104,7 @@ export class RSTPreview {
 		locked: boolean,
 		private readonly _contentProvider: RSTContentProvider,
 		private readonly _previewConfigurations: RSTPreviewConfigurationManager,
+		esbonio: EsbonioClient,
 		topmostLineMonitor: RSTFileTopmostLineMonitor
 	) {
 		this._statusBarItem = window.createStatusBarItem(StatusBarAlignment.Right);
@@ -137,11 +143,15 @@ export class RSTPreview {
 			}
 		}, null, this.disposables);
 
-		vscode.workspace.onDidChangeTextDocument(event => {
-			if (this.isPreviewOf(event.document.uri)) {
-				this.refresh();
-			}
-		}, null, this.disposables);
+		esbonio.onBuildComplete(() => {
+			this.refresh()
+		  });
+
+		// vscode.workspace.onDidChangeTextDocument(event => {
+		// 	if (this.isPreviewOf(event.document.uri)) {
+		// 		this.refresh();
+		// 	}
+		// }, null, this.disposables);
 
 		topmostLineMonitor.onDidChangeTopmostLine(event => {
 			if (this.isPreviewOf(event.resource)) {

@@ -34,7 +34,7 @@ suite("Preview Tests", function() {
       await initialize();
       python = new Python(logger);
 
-      engine = new RSTEngine(python, logger, null);
+      engine = new RSTEngine(python, logger, null, null);
     } catch (e) {
       throw e;
     }

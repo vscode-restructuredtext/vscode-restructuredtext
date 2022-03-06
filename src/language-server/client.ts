@@ -101,7 +101,7 @@ export class EsbonioClient {
     //private python: PythonManager,
     //private server: ServerManager,
     private channel: vscode.OutputChannel,
-    private context: vscode.ExtensionContext
+    context: vscode.ExtensionContext
   ) {
     context.subscriptions.push(
       vscode.commands.registerCommand(Commands.RESTART_SERVER, this.restartServer, this)
@@ -252,11 +252,9 @@ export class EsbonioClient {
    */
   private getLanguageClientOptions(config: vscode.WorkspaceConfiguration): LanguageClientOptions {
 
-    let cache = this.context.storageUri.path
-
     let buildDir = config.get<string>('sphinx.buildDir')
     if (!buildDir) {
-      buildDir = join(cache, 'sphinx')
+      buildDir = join(config.get<string>('sphinx.confDir'), '_build')
     }
 
     let initOptions: InitOptions = {

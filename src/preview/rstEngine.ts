@@ -5,12 +5,14 @@ import { Python } from "../util/python";
 import { Logger } from "../util/logger";
 import RstTransformerStatus from './statusBar';
 import { Configuration } from '../util/configuration';
+import { EsbonioClient } from "../language-server/client";
 
 export class RSTEngine {
   public constructor(
     private readonly python: Python,
     private readonly logger: Logger,
     private readonly status: RstTransformerStatus,
+    private readonly esbonio: EsbonioClient
   ) { }
 
   private errorSnippet(error: string): string {
@@ -49,16 +51,7 @@ export class RSTEngine {
       }
 
       // The directory where Sphinx will write the html output
-      let output: string;
-      const out = vscode.workspace.getConfiguration("esbonio").get<string>("sphinx.buildDir");
-      if (out == null) {
-        output = path.join(input, '_build');
-      } else {
-        output = out;
-      }
-
-      output = path.join(output, 'html');
-
+      const output = this.esbonio.sphinxConfig.buildDir;
       this.logger.log('[preview] Sphinx html directory: ' + output);
 
       // Calculate full path to built html file.

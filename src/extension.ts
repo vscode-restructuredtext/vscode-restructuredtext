@@ -31,7 +31,7 @@ export function getExtensionPath(): string {
     return extensionPath;
 }
 
-export async function activate(context: vscode.ExtensionContext): Promise<{ initializationFinished: Promise<void> }> {
+export async function activate(context: vscode.ExtensionContext): Promise<void> {
 
     setGlobalState(context.globalState);
     setWorkspaceState(context.workspaceState);
@@ -159,48 +159,17 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
         linter.activate(context.subscriptions);
     }
 
-    if (!Configuration.getDocUtilDisabled() || !Configuration.getSphinxDisabled()) {
-        // Status bar to show the active rst->html transformer configuration
-        const status = new RstTransformerStatus(python, logger);
+    // Status bar to show the active rst->html transformer configuration
+    const status = new RstTransformerStatus(python, logger);
 
-        // Hook up the status bar to document change events
-        context.subscriptions.push(
-            vscode.commands.registerCommand('restructuredtext.resetStatus',
-                status.reset, status),
-        );
+    // Hook up the status bar to document change events
+    context.subscriptions.push(
+        vscode.commands.registerCommand('restructuredtext.resetStatus',
+            status.reset, status),
+    );
 
-        vscode.window.onDidChangeActiveTextEditor(status.update, status, context.subscriptions);
-        await status.update();
-
-        const cspArbiter = new ExtensionContentSecurityPolicyArbiter(context.globalState, context.workspaceState);
-
-        const engine: RSTEngine = new RSTEngine(python, logger, status);
-
-        const contentProvider = new RSTContentProvider(context, cspArbiter, engine, logger);
-        const previewManager = new RSTPreviewManager(contentProvider, logger);
-        context.subscriptions.push(previewManager);
-
-        const previewSecuritySelector = new PreviewSecuritySelector(cspArbiter, previewManager);
-
-        const commandManager = new CommandManager();
-        context.subscriptions.push(commandManager);
-        commandManager.register(new commands.ShowPreviewCommand(previewManager, python));
-        commandManager.register(new commands.ShowPreviewToSideCommand(previewManager, python));
-        commandManager.register(new commands.ShowLockedPreviewToSideCommand(previewManager, python));
-        commandManager.register(new commands.ShowSourceCommand(previewManager));
-        commandManager.register(new commands.RefreshPreviewCommand(previewManager));
-        commandManager.register(new commands.MoveCursorToPositionCommand());
-        commandManager.register(new commands.ShowPreviewSecuritySelectorCommand(previewSecuritySelector, previewManager));
-        commandManager.register(new commands.OpenDocumentLinkCommand());
-        commandManager.register(new commands.ToggleLockCommand(previewManager));
-
-        context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(() => {
-            logger.updateConfiguration();
-            previewManager.updateConfiguration();
-        }));
-    }
-
-    listEditing.activate(context);
+    vscode.window.onDidChangeActiveTextEditor(status.update, status, context.subscriptions);
+    await status.update();
 
     // porting settings over
     const section = vscode.workspace.getConfiguration("esbonio");
@@ -229,16 +198,39 @@ export async function activate(context: vscode.ExtensionContext): Promise<{ init
     const lspChannel = vscode.window.createOutputChannel('Esbonio Language Server');
     const lspLogger = new Logger(lspChannel);
     // activate language services
-    const rstLspPromise = RstLanguageServer.activate(context, lspChannel, lspLogger, python);
+    const esbonio = await RstLanguageServer.activate(context, lspChannel, lspLogger, python);
 
-    return {
-        initializationFinished: Promise.all([rstLspPromise])
-            .then((promiseResult) => {
-                // This promise resolver simply swallows the result of Promise.all.
-                // When we decide we want to expose this level of detail
-                // to other extensions then we will design that return type and implement it here.
-            }),
-    };
+    if (!Configuration.getDocUtilDisabled() || !Configuration.getSphinxDisabled()) {
+
+        const cspArbiter = new ExtensionContentSecurityPolicyArbiter(context.globalState, context.workspaceState);
+
+        const engine: RSTEngine = new RSTEngine(python, logger, status, esbonio);
+
+        const contentProvider = new RSTContentProvider(context, cspArbiter, engine, logger);
+        const previewManager = new RSTPreviewManager(contentProvider, logger, esbonio);
+        context.subscriptions.push(previewManager);
+
+        const previewSecuritySelector = new PreviewSecuritySelector(cspArbiter, previewManager);
+
+        const commandManager = new CommandManager();
+        context.subscriptions.push(commandManager);
+        commandManager.register(new commands.ShowPreviewCommand(previewManager, python));
+        commandManager.register(new commands.ShowPreviewToSideCommand(previewManager, python));
+        commandManager.register(new commands.ShowLockedPreviewToSideCommand(previewManager, python));
+        commandManager.register(new commands.ShowSourceCommand(previewManager));
+        commandManager.register(new commands.RefreshPreviewCommand(previewManager));
+        commandManager.register(new commands.MoveCursorToPositionCommand());
+        commandManager.register(new commands.ShowPreviewSecuritySelectorCommand(previewSecuritySelector, previewManager));
+        commandManager.register(new commands.OpenDocumentLinkCommand());
+        commandManager.register(new commands.ToggleLockCommand(previewManager));
+
+        context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(() => {
+            logger.updateConfiguration();
+            previewManager.updateConfiguration();
+        }));
+    }
+
+    listEditing.activate(context);
 }
 
 async function logPlatform(logger: Logger): Promise<void> {

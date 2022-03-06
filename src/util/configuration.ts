@@ -129,7 +129,7 @@ export class Configuration {
     }
 
     public static getUpdateDelay(resource: Uri = null): number {
-        return Configuration.loadAnySetting<number>('updateDelay', 3000, resource);
+        return Configuration.loadAnySetting<number>('updateDelay', 0, resource);
     }
 
     public static getSyntaxHighlightingDisabled(resource: Uri = null): boolean {
