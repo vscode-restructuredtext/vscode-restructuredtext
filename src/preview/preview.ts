@@ -29,10 +29,8 @@ export class RSTPreview {
 	private _locked: boolean;
 
 	private readonly editor: vscode.WebviewPanel;
-	private throttleTimer: any;
 	private line: number | undefined = undefined;
 	private readonly disposables: vscode.Disposable[] = [];
-	private firstUpdate = true;
 	private currentVersion?: { resource: vscode.Uri; version: number; };
 	private forceUpdate = false;
 	private isScrolling = false;
@@ -215,26 +213,8 @@ export class RSTPreview {
 			this.line = getVisibleLine(editor);
 		}
 
-		// If we have changed resources, cancel any pending updates
-		const isResourceChange = resource.fsPath !== this._resource.fsPath;
-		if (isResourceChange) {
-			clearTimeout(this.throttleTimer);
-			this.throttleTimer = undefined;
-		}
-
 		this._resource = resource;
-
-		// Schedule update if none is pending
-		if (!this.throttleTimer) {
-			if (isResourceChange || this.firstUpdate) {
-				this.doUpdate();
-			} else {
-				const timeout = Configuration.getUpdateDelay();
-				this.throttleTimer = setTimeout(() => this.doUpdate(), timeout);
-			}
-		}
-
-		this.firstUpdate = false;
+		this.doUpdate();
 	}
 
 	public refresh() {
@@ -327,9 +307,6 @@ export class RSTPreview {
 
 	private async doUpdate(): Promise<void> {
 		const resource = this._resource;
-
-		clearTimeout(this.throttleTimer);
-		this.throttleTimer = undefined;
 
 		const document = await vscode.workspace.openTextDocument(resource);
 		if (!this.forceUpdate && this.currentVersion && this.currentVersion.resource.fsPath === resource.fsPath && this.currentVersion.version === document.version) {

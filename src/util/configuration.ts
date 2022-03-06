@@ -128,10 +128,6 @@ export class Configuration {
         return Configuration.loadAnySetting('languageServer.disabled', true, resource);
     }
 
-    public static getUpdateDelay(resource: Uri = null): number {
-        return Configuration.loadAnySetting<number>('updateDelay', 0, resource);
-    }
-
     public static getSyntaxHighlightingDisabled(resource: Uri = null): boolean {
         return Configuration.loadAnySetting('syntaxHighlighting.disabled', false, resource);
     }

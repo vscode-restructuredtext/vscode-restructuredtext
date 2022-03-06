@@ -576,12 +576,6 @@
             "description": "Flag to control whether text changed event triggers preview update.",
             "scope": "resource"
           },
-          "restructuredtext.updateDelay": {
-            "type": "number",
-            "default": "0",
-            "description": "Flag to control after how long a changed event triggers preview update.",
-            "scope": "resource"
-          },
           "restructuredtext.docutilsWriter": {
             "type": "string",
             "default": "html",
