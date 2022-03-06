@@ -24,6 +24,7 @@ import { initConfig } from './util/config';
 import { TableEditor } from './editor/tableEditor';
 import { key_alt_enter, key_enter, key_shift_enter, key_shift_tab, key_tab } from './editor/commands';
 import { setContext } from './editor/setContext';
+import { EditorCommands, VSCodeInput } from './editor/link';
 
 let extensionPath = '';
 
@@ -104,6 +105,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     vscode.window.onDidChangeTextEditorSelection((event) => {
         setContext();
     })
+
+    let editorCommands = new EditorCommands(new VSCodeInput())
+    editorCommands.register(context)
 
     // Section creation support.
     context.subscriptions.push(
