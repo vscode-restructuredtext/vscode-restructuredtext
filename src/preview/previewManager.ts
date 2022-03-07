@@ -24,7 +24,7 @@ export class RSTPreviewManager implements vscode.WebviewPanelSerializer {
 	public constructor(
 		private readonly _contentProvider: RSTContentProvider,
 		private readonly _logger: Logger,
-		private esbonio: EsbonioClient,
+		public readonly esbonio: EsbonioClient,
 	) {
 		this._disposables.push(vscode.window.registerWebviewPanelSerializer(RSTPreview.viewType, this));
 	}

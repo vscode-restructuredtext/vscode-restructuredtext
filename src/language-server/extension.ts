@@ -5,7 +5,6 @@
 
 import * as vscode from 'vscode';
 import { Logger } from '../util/logger';
-import { Configuration } from '../util/configuration';
 import { Python } from '../util/python';
 import { EsbonioClient } from './client';
 

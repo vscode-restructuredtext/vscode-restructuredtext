@@ -9,6 +9,7 @@ import { Command } from '../util/commandManager';
 import { RSTPreviewManager } from '../preview/previewManager';
 import { PreviewSettings } from '../preview/preview';
 import { Python } from '../util/python';
+import { Configuration } from '../util/configuration';
 
 interface ShowPreviewSettings {
 	readonly sideBySide?: boolean;
@@ -40,6 +41,13 @@ async function showPreview(
 
 	if (!await python.checkPython(resource) || !await python.checkPreviewEngine(resource)) {
 		// no engine to use.
+		return;
+	}
+
+	if (Configuration.getConfPath(resource) !== '' && (!webviewManager.esbonio || webviewManager.esbonio.hasErrors)) {
+		// project errors, no preview
+		vscode.window.showWarningMessage('Esbonio is disabled or it reports errors. No preview can be displayed.');
+		// TODO: should we fall back to docutils?
 		return;
 	}
 

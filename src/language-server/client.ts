@@ -91,6 +91,7 @@ export class EsbonioClient {
    * managed by the Language server.
    */
   public sphinxConfig?: SphinxConfig
+  public hasErrors: boolean;
 
   private client: LanguageClient
   private statusBar: vscode.StatusBarItem
@@ -113,7 +114,7 @@ export class EsbonioClient {
 
     this.statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right)
     this.statusBar.tooltip = "Click to restart";
-    this.statusBar.command = Commands.RESTART_SERVER;
+    this.statusBar.command = Commands.RESTART;
     context.subscriptions.push(this.statusBar)
   }
 
@@ -133,6 +134,7 @@ export class EsbonioClient {
   async start(): Promise<void> {
     this.statusBar.show()
     this.statusBar.text = "esbonio: $(sync~spin) Starting..."
+    this.hasErrors = false;
 
     this.client = await this.getStdioClient()
 
@@ -145,6 +147,7 @@ export class EsbonioClient {
         }
       })
       this.statusBar.text = "esbonio: $(error) Failed."
+      this.hasErrors = true;
       return
     }
 
@@ -162,6 +165,7 @@ export class EsbonioClient {
 
     } catch (err) {
       this.statusBar.text = "esbonio: $(error) Failed."
+      this.hasErrors = true;
       this.logger.error(err)
     }
   }
@@ -252,12 +256,14 @@ export class EsbonioClient {
 
     this.client.onNotification("esbonio/buildComplete", params => {
       this.logger.debug(`Build complete ${JSON.stringify(params)}`)
+      this.hasErrors = false;
       this.sphinxConfig = params.config.sphinx
 
       let icon;
 
       if (params.error) {
         icon = "$(error)"
+        this.hasErrors = true;
       } else if (params.warnings > 0) {
         icon = `$(warning) ${params.warnings}`
       } else {

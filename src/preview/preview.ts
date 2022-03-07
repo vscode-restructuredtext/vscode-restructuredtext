@@ -15,7 +15,6 @@ import { getVisibleLine, RSTFileTopmostLineMonitor } from '../util/topmostLineMo
 import { RSTPreviewConfigurationManager } from './previewConfig';
 import { isRSTFile } from '../util/file';
 import { getExtensionPath } from '../extension';
-import { Configuration } from '../util/configuration';
 import { StatusBarAlignment, StatusBarItem, window } from 'vscode';
 import { EsbonioClient } from '../language-server/client';
 
@@ -141,15 +140,10 @@ export class RSTPreview {
 			}
 		}, null, this.disposables);
 
-		esbonio.onBuildComplete(() => {
+		esbonio?.onBuildComplete(() => {
+			// TODO: Ideally onBuildComplete should also report which files are affected by the new build.
 			this.refresh()
 		  });
-
-		// vscode.workspace.onDidChangeTextDocument(event => {
-		// 	if (this.isPreviewOf(event.document.uri)) {
-		// 		this.refresh();
-		// 	}
-		// }, null, this.disposables);
 
 		topmostLineMonitor.onDidChangeTopmostLine(event => {
 			if (this.isPreviewOf(event.resource)) {
