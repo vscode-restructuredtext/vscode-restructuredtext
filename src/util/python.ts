@@ -145,7 +145,7 @@ export class Python {
   public async checkEsbonio(resource: vscode.Uri, showInformation: boolean = true, showWarning: boolean = true): Promise<boolean> {
     if (Configuration.getLanguageServerDisabled()) {
       if (showWarning) {
-        vscode.window.showWarningMessage('No IntelliSense. Language server is disabled.');
+        vscode.window.showWarningMessage('No IntelliSense or live preview. Language server is disabled.');
       }
       return false;
     }
@@ -169,10 +169,10 @@ export class Python {
         } else if (choice === 'Do not show again') {
           this.logger.log('Disabled language server.');
           await Configuration.setLanguageServerDisabled();
-          vscode.window.showWarningMessage('No IntelliSense. Language server is now disabled.');
+          vscode.window.showWarningMessage('No IntelliSense or live preview. Language server is now disabled.');
           return false;
         } else {
-          vscode.window.showWarningMessage('No IntelliSense. Esbonio language server is not installed.');
+          vscode.window.showWarningMessage('No IntelliSense or live preview. Esbonio language server is not installed.');
           return false;
         }
       } else {
