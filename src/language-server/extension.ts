@@ -24,6 +24,7 @@ export async function activate(context: vscode.ExtensionContext, channel: vscode
     let config = vscode.workspace.getConfiguration("esbonio.server")
     if (config.get("enabled")) {
         await esbonio.start()
-        return esbonio
     }
+
+    return esbonio
 }
