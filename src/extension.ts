@@ -19,6 +19,7 @@ import { underline } from './editor/underline';
 import { Configuration } from './util/configuration';
 import RstTransformerStatus from './preview/statusBar';
 import * as RstLanguageServer from './language-server/extension';
+import * as EditorFeatures from './editor/extension';
 import { setGlobalState, setWorkspaceState } from './util/stateUtils';
 import { initConfig } from './util/config';
 import { TableEditor } from './editor/tableEditor';
@@ -106,56 +107,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         setContext();
     })
 
-    let editorCommands = new EditorCommands(new VSCodeInput())
-    editorCommands.register(context)
-
-    // Section creation support.
-    context.subscriptions.push(
-        vscode.commands.registerTextEditorCommand('restructuredtext.features.underline.underline', underline),
-        vscode.commands.registerTextEditorCommand('restructuredtext.features.underline.underlineReverse',
-            (textEditor, edit) => underline(textEditor, edit, true)),
-    );
-
-    context.subscriptions.push(
-        vscode.commands.registerCommand('resttext.table.createGrid', () => {
-            const editor = vscode.window.activeTextEditor;
-            if (!editor) { return }
-            const table = new TableEditor(editor);
-            table.createEmptyGrid();
-        }));
-
-    context.subscriptions.push(
-        vscode.commands.registerCommand('resttext.table.dataToTable', () => {
-            const editor = vscode.window.activeTextEditor;
-            if (!editor) { return }
-            const table = new TableEditor(editor);
-            table.dataToTable();
-        }));
-
-    context.subscriptions.push(
-        vscode.commands.registerCommand('resttext.key.enter', () => {
-            key_enter();
-        }));
-
-    context.subscriptions.push(
-        vscode.commands.registerCommand('resttext.key.shift.enter', () => {
-            key_shift_enter();
-        }));
-
-    context.subscriptions.push(
-        vscode.commands.registerCommand('resttext.key.alt.enter', () => {
-            key_alt_enter();
-        }));
-
-    context.subscriptions.push(
-        vscode.commands.registerCommand('resttext.key.tab', () => {
-            key_tab();
-        }));
-
-    context.subscriptions.push(
-        vscode.commands.registerCommand('resttext.key.shift.tab', () => {
-            key_shift_tab();
-        }));
+    EditorFeatures.activate(context);
 
     // Linter support
     if (!Configuration.getLinterDisabled()) {
