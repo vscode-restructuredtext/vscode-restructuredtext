@@ -318,7 +318,7 @@ export class Python {
     try {
       await this.exec('-m', 'pip', 'install', 'esbonio', '--upgrade');
       this.logger.log('Finished installing esbonio');
-      vscode.window.showInformationMessage('The esbonio language server is installed.');
+      vscode.window.showInformationMessage('Esbonio language server is installed.');
     } catch (e) {
       this.logger.log('Failed to install esbonio');
       vscode.window.showErrorMessage(
@@ -355,7 +355,7 @@ export class Python {
 
   private async checkEsbonioInstall(): Promise<boolean> {
     try {
-      const versionTooOld = await this.exec('-c', '"import esbonio.lsp; from distutils.version import LooseVersion; print(LooseVersion(esbonio.lsp.__version__) < LooseVersion(\'0.8.0\'))"');
+      const versionTooOld = await this.exec('-c', '"import esbonio.lsp; from distutils.version import LooseVersion; print(LooseVersion(esbonio.lsp.__version__) < LooseVersion(\'0.9.0\'))"');
       return versionTooOld.trim() === 'False';
     } catch (e) {
       return false;
