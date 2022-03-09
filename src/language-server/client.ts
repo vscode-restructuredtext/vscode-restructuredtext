@@ -154,7 +154,7 @@ export class EsbonioClient {
       this.logger.info("Starting Language Server")
       this.client.start()
 
-      if (!Configuration.getEsbonioSourceFolder()) {
+      if (Configuration.getEsbonioSourceFolder()) {
         // Auto open the output window when debugging
         this.client.outputChannel.show()
       }
