@@ -263,13 +263,16 @@ export class EsbonioClient {
       if (params.error) {
         icon = "$(error)"
         this.ready = false;
-      } else if (params.warnings > 0) {
-        icon = `$(warning) ${params.warnings}`
+        this.statusBar.text = `esbonio: ${icon} Sphinx build error`
+        this.client.outputChannel.show()
       } else {
-        icon = "$(check)"
+        if (params.warnings > 0) {
+          icon = `$(warning) ${params.warnings}`
+        } else {
+          icon = "$(check)"
+        }
+        this.statusBar.text = `esbonio: ${icon} Sphinx[${this.sphinxConfig.builderName}] v${this.sphinxConfig.version}`
       }
-
-      this.statusBar.text = `esbonio: ${icon} Sphinx[${this.sphinxConfig.builderName}] v${this.sphinxConfig.version}`
 
       if (this.buildCompleteCallback) {
         this.buildCompleteCallback()
