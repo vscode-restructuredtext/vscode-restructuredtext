@@ -1,3 +1,4 @@
+import fetch from "node-fetch";
 import * as vscode from "vscode";
 
 /**
@@ -7,7 +8,7 @@ export interface UserInput {
   /**
    * Exposes VSCode `showInputBox` function.
    */
-  inputBox(label: string, placeholder: string): Thenable<string | undefined>
+  inputBox(label: string, placeholder: string, value?: string): Thenable<string | undefined>
 }
 
 /**
@@ -15,8 +16,8 @@ export interface UserInput {
  */
 export class VSCodeInput implements UserInput {
 
-  inputBox(label: string, placeholder: string): Thenable<string> {
-    return vscode.window.showInputBox({ prompt: label, placeHolder: placeholder })
+  inputBox(label: string, placeholder: string, value?: string): Thenable<string> {
+    return vscode.window.showInputBox({ prompt: label, placeHolder: placeholder, value: value })
   }
 
 }
@@ -125,9 +126,21 @@ export class EditorCommands {
     let label: string;
     let url = await this.userInput.inputBox("Link URL", "https://...")
 
+    const parseTitle = (body) => {
+      let match = body.match(/<title>([^<]*)<\/title>/) // regular expression to parse contents of the <title> tag
+      if (!match || typeof match[1] !== 'string')
+        throw new Error('Unable to parse the title tag')
+      return match[1]
+    }
+
+    const title = await fetch(url)
+    .then(res => res.text()) // parse response's body as text
+    .then(body => parseTitle(body))
+    .catch(() => null) // extract <title> from body
+
     let selection = editor.selection
     if (selection.isEmpty) {
-      label = await this.userInput.inputBox("Link Text", "Link Text")
+      label = await this.userInput.inputBox("Link Text", "Link Text", title)
     } else {
       label = editor.document.getText(selection)
     }
