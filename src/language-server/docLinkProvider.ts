@@ -14,6 +14,15 @@ export class DocumentLinkProvider implements vscode.DocumentLinkProvider {
     this.client = client;
   }
 
+  public restart(client: LanguageClient)
+  {
+    this.client = client;
+  }
+
+  public stop() {
+    this.client = null;
+  }
+
   // Provides the text document with the ranges for document links
   public provideDocumentLinks(
     document: vscode.TextDocument,
@@ -39,7 +48,7 @@ export class DocumentLinkProvider implements vscode.DocumentLinkProvider {
     const document = activeTextEditor.document;
     const text = document.getText(link.range);
     const type = link.tooltip.indexOf('document') > -1 ? 'doc' : 'directive';
-    link.target = await this._findTargetUri(document, text, type, token);
+    link.target = await this._findTargetUri(document, text, type, link.range, token);
     return link;
   }
 
@@ -136,18 +145,29 @@ export class DocumentLinkProvider implements vscode.DocumentLinkProvider {
     document: vscode.TextDocument,
     target: string,
     type: string,
+    range: vscode.Range,
     token: CancellationToken
   ): Promise<vscode.Uri> {
-    const file: string = await this.client
-      .sendRequest(
-        'textDocument/resolve', {
-          docPath: document.uri.fsPath,
-          fileName: target,
-          resolveType: type
-        },
-        token
-      );
+    if (this.client) {
+      const file: string = await this.client
+        .sendRequest(
+          'documentLink/resolve', {
+            range: {
+              start: range.start,
+              end: range.end
+            },
+            target,
+            data: {
+              fileName: document.fileName,
+              type
+            }
+          },
+          token
+        );
 
-    return vscode.Uri.file(file);
+      return vscode.Uri.file(file);
+    }
+
+    return null;
   }
 }

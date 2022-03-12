@@ -7,6 +7,7 @@ import { Commands } from "../constants"
 import { Configuration } from "../util/configuration"
 import { Logger } from "../util/logger";
 import { Python } from "../util/python";
+import { DocumentLinkProvider } from "./docLinkProvider";
 
 /**
  * Represents the current sphinx configuration / configuration options
@@ -95,6 +96,7 @@ export class EsbonioClient {
 
   private client: LanguageClient
   private statusBar: vscode.StatusBarItem
+  private documentLinkProvider: DocumentLinkProvider
 
   private buildCompleteCallback
 
@@ -122,6 +124,7 @@ export class EsbonioClient {
     this.statusBar.hide()
 
     if (this.client) {
+      this.documentLinkProvider.stop();
       await this.client.stop()
     }
 
@@ -162,6 +165,17 @@ export class EsbonioClient {
       await this.client.onReady()
       this.configureHandlers()
 
+      if (this.documentLinkProvider) {
+        this.documentLinkProvider.restart(this.client);
+      } else {
+        this.documentLinkProvider = new DocumentLinkProvider(this.client)
+        vscode.languages.registerDocumentLinkProvider(
+          [
+            { scheme: 'file', language: 'restructuredtext' },
+          ],
+          this.documentLinkProvider
+        );
+      }
     } catch (err) {
       this.statusBar.text = "esbonio: $(error) Failed."
       this.logger.error(err)
