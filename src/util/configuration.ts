@@ -38,12 +38,28 @@ export class Configuration {
         return Configuration.loadSetting('preview.name', 'sphinx', resource);
     }
 
-    public static getLinterName(resource: Uri = null): string {
-        return Configuration.loadSetting('linter.name', 'rstcheck', resource);
+    public static getDoc8Path(resource: Uri = null): string {
+        return Configuration.loadSetting('linter.doc8.executablePath', null, resource);
     }
 
-    public static getLinterPath(resource: Uri = null): string {
-        return Configuration.loadSetting('linter.executablePath', null, resource);
+    public static getDoc8ExtraArgs(resource: Uri = null): string[] {
+        return Configuration.loadAnySetting<string[]>('linter.doc8.extraArgs', null, resource);
+    }
+
+    public static getRstCheckPath(resource: Uri = null): string {
+        return Configuration.loadSetting('linter.rstcheck.executablePath', null, resource);
+    }
+
+    public static getRstCheckExtraArgs(resource: Uri = null): string[] {
+        return Configuration.loadAnySetting<string[]>('linter.rstcheck.extraArgs', null, resource);
+    }
+
+    public static getRstLintPath(resource: Uri = null): string {
+        return Configuration.loadSetting('linter.rst-lint.executablePath', null, resource);
+    }
+
+    public static getRstLintExtraArgs(resource: Uri = null): string[] {
+        return Configuration.loadAnySetting<string[]>('linter.rst-lint.extraArgs', null, resource);
     }
 
     public static getEsbonioSourceFolder(resource: Uri = null): string {
@@ -58,10 +74,6 @@ export class Configuration {
         return Configuration.loadAnySetting('telemetry.disabled', false, resource);
     }
     
-    public static getExtraArgs(resource: Uri = null): string[] {
-        return Configuration.loadAnySetting<string[]>('linter.extraArgs', null, resource);
-    }
-
     public static getRunType(resource: Uri = null): string {
         return Configuration.loadAnySetting('linter.run', 'onType', resource);
     }
@@ -112,8 +124,8 @@ export class Configuration {
         return primary;
     }
 
-    public static getLinterDisabled(resource: Uri = null): boolean {
-        return Configuration.loadAnySetting('linter.disabled', true, resource);
+    public static getLinterDisabled(resource: Uri = null): string[] {
+        return Configuration.loadAnySetting<string[]>('linter.disabledLinters', [], resource);
     }
 
     public static getSphinxDisabled(resource: Uri = null): boolean {

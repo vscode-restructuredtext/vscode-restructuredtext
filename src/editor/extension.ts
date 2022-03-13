@@ -4,8 +4,23 @@ import { key_alt_enter, key_enter, key_shift_enter, key_shift_tab, key_tab } fro
 import { EditorCommands, VSCodeInput } from "./link";
 import { TableEditor } from "./tableEditor";
 import { underline } from "./underline";
+import * as listEditing from './listEditing';
+import { setContext } from './setContext';
 
 export async function activate(context: vscode.ExtensionContext) {
+
+    // Run it once the first time.
+    setContext();
+    vscode.workspace.onDidCloseTextDocument((event) => {
+        setContext();
+    })
+    vscode.window.onDidChangeActiveTextEditor((event) => {
+        setContext();
+    })
+    vscode.window.onDidChangeTextEditorSelection((event) => {
+        setContext();
+    })
+
     let editorCommands = new EditorCommands(new VSCodeInput())
     editorCommands.register(context)
 
@@ -56,4 +71,6 @@ export async function activate(context: vscode.ExtensionContext) {
         vscode.commands.registerCommand('resttext.key.shift.tab', () => {
             key_shift_tab();
         }));
+
+    listEditing.activate(context);
 }

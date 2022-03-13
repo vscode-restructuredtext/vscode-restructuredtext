@@ -13,19 +13,13 @@ import { Python } from './util/python';
 import { RSTEngine } from './preview/rstEngine';
 import { ExtensionContentSecurityPolicyArbiter, PreviewSecuritySelector } from './util/security';
 
-import * as listEditing from './editor/listEditing';
-import RstLintingProvider from './linter/rstLinter';
-import { underline } from './editor/underline';
 import { Configuration } from './util/configuration';
 import RstTransformerStatus from './preview/statusBar';
 import * as RstLanguageServer from './language-server/extension';
 import * as EditorFeatures from './editor/extension';
+import * as LinterFeatures from './linter/extension';
 import { setGlobalState, setWorkspaceState } from './util/stateUtils';
 import { initConfig } from './util/config';
-import { TableEditor } from './editor/tableEditor';
-import { key_alt_enter, key_enter, key_shift_enter, key_shift_tab, key_tab } from './editor/commands';
-import { setContext } from './editor/setContext';
-import { EditorCommands, VSCodeInput } from './editor/link';
 
 let extensionPath = '';
 
@@ -95,25 +89,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
     const python: Python = new Python(logger);
 
-    // Run it once the first time.
-    setContext();
-    vscode.workspace.onDidCloseTextDocument((event) => {
-        setContext();
-    })
-    vscode.window.onDidChangeActiveTextEditor((event) => {
-        setContext();
-    })
-    vscode.window.onDidChangeTextEditorSelection((event) => {
-        setContext();
-    })
-
     EditorFeatures.activate(context);
 
-    // Linter support
-    if (!Configuration.getLinterDisabled()) {
-        const linter = new RstLintingProvider(logger, python);
-        linter.activate(context.subscriptions);
-    }
+    LinterFeatures.activate(context, python, logger);
 
     // Status bar to show the active rst->html transformer configuration
     const status = new RstTransformerStatus(python, logger);
@@ -185,8 +163,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
             previewManager.updateConfiguration();
         }));
     }
-
-    listEditing.activate(context);
 }
 
 async function logPlatform(logger: Logger): Promise<void> {

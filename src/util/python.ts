@@ -19,9 +19,8 @@ export class Python {
 
   public async setup(resource: Uri): Promise<void> {
     if (await this.checkPython(resource)) {
-      await this.checkPreviewEngine(resource, false);
-      await this.checkLinter(resource, true, false); // inform users to install linter.
       await this.checkEsbonio(resource, false, false);
+      await this.checkPreviewEngine(resource, false);
       this.ready = true;
     }
   }
@@ -69,72 +68,6 @@ export class Python {
           if (showWarning) {
             await vscode.window.showWarningMessage('No preview. Preview engine docutils is not installed.');
           }
-          return false;
-        }
-      }
-    } else {
-      if (Configuration.getSphinxDisabled()) {
-        if (showWarning) {
-          await vscode.window.showWarningMessage('No preview. Preview engine sphinx is disabled.');
-        }
-        return false;
-      }
-    }
-    return true;
-  }
-
-  public async checkLinter(resource: vscode.Uri, showInformation: boolean = true, showWarning: boolean = true): Promise<boolean> {
-    if (Configuration.getLinterDisabled()) {
-      if (showWarning) {
-        vscode.window.showWarningMessage('No linting. Linter is disabled.');
-      }
-      return false;
-    }
-
-    if (!(await this.checkPython(null, false))) {
-      vscode.window.showErrorMessage('No linting. Python is not installed.');
-      return false;
-    }
-
-    if (Configuration.getLinterName(resource) === 'doc8') {
-      const doc8 = Configuration.getLinterPath(resource);
-      if (!(await this.checkDoc8Install() || (doc8 != null && await fs.existsSync(doc8)))) {
-        if (showInformation) {
-          const choice = await vscode.window.showInformationMessage('Linter doc8 is not installed.', 'Install', 'Not now', 'Do not show again');
-          if (choice === 'Install') {
-            this.logger.log('Started to install doc8...');
-            await this.installDoc8();
-          } else if (choice === 'Do not show again') {
-            this.logger.log('Disabled linter.');
-            await Configuration.setLinterDisabled();
-            vscode.window.showWarningMessage('No linting. Linter is now disabled.');
-            return false;
-          } else {
-            vscode.window.showWarningMessage('No linting. Linter doc8 is not installed.');
-            return false;
-          }
-        } else {
-          return false;
-        }
-      }
-    } else if (Configuration.getLinterName(resource) === 'rstcheck') {
-      const rstcheck = Configuration.getLinterPath(resource);
-      if (!(await this.checkRstCheckInstall() || (rstcheck != null && await fs.existsSync(rstcheck)))) {
-        if (showInformation) {
-          const choice = await vscode.window.showInformationMessage('Linter rstcheck is not installed.', 'Install', 'Not now', 'Do not show again');
-          if (choice === 'Install') {
-            this.logger.log('Started to install rstcheck...');
-            await this.installRstCheck();
-          } else if (choice === 'Do not show again') {
-            this.logger.log('Disabled linter.');
-            await Configuration.setLinterDisabled();
-            vscode.window.showWarningMessage('No linting. Linter is now disabled.');
-            return false;
-          } else {
-            vscode.window.showWarningMessage('No linting. Linter rstcheck is not installed.');
-            return false;
-          }
-        } else {
           return false;
         }
       }
@@ -232,12 +165,12 @@ export class Python {
       this.logger.log('Failed to install doc8');
       vscode.window.showErrorMessage(
         'Could not install doc8. Please run `pip install doc8` to use this ' +
-          'extension, or check your Python path.'
+          'linter, or check your Python path.'
       );
     }
   }
 
-  private async checkDoc8Install(): Promise<boolean> {
+  public async checkDoc8Install(): Promise<boolean> {
     try {
       await this.exec('-c', '"import doc8.main;"');
       return true;
@@ -255,14 +188,37 @@ export class Python {
       this.logger.log('Failed to install rstcheck');
       vscode.window.showErrorMessage(
         'Could not install rstcheck. Please run `pip install rstcheck` to use this ' +
-          'extension, or check your Python path.'
+          'linter, or check your Python path.'
       );
     }
   }
 
-  private async checkRstCheckInstall(): Promise<boolean> {
+  public async checkRstCheckInstall(): Promise<boolean> {
     try {
       await this.exec('-c', '"import rstcheck;"');
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  private async installRstLint(): Promise<void> {
+    try {
+      await this.exec('-m', 'pip', 'install', 'restructuredtext_lint');
+      this.logger.log('Finished installing restructuredtext_lint');
+      vscode.window.showInformationMessage('The linter restructuredtext_lint is installed.');
+    } catch (e) {
+      this.logger.log('Failed to install restructuredtext_lint');
+      vscode.window.showErrorMessage(
+        'Could not install restructuredtext_lint. Please run `pip install restructuredtext_lint` to use this ' +
+          'linter, or check your Python path.'
+      );
+    }
+  }
+
+  public async checkRstLintInstall(): Promise<boolean> {
+    try {
+      await this.exec('-c', '"import restructuredtext_lint;"');
       return true;
     } catch (e) {
       return false;

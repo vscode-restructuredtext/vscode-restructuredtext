@@ -45,6 +45,7 @@ export interface ILinterConfiguration {
 
 export interface ILinter {
     languageId: string;
+    name: string;
     loadConfiguration: (resource: vscode.Uri) => Promise<ILinterConfiguration>;
     process: (output: string[]) => vscode.Diagnostic[];
 }
@@ -141,11 +142,7 @@ export class LintingProvider {
     }
 
     private async doLint(textDocument: vscode.TextDocument): Promise<void> {
-        if (Configuration.getLinterDisabled()) {
-            return;
-        }
-
-        if (!(await this.python.checkPython(textDocument.uri, false)) || !(await this.python.checkLinter(textDocument.uri, false, false))) {
+        if (!(await this.python.checkPython(textDocument.uri, false))) {
             return;
         }
 

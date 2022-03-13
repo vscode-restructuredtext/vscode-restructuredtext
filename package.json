@@ -28,6 +28,7 @@
     "ts-node": "^8.8.1",
     "tslib": "^1.9.3",
     "typescript": "^3.8.3",
+    "vsce": "^2.7.0",
     "vscode-test": "^1.1.33",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.11"
@@ -591,12 +592,6 @@
             "description": "Sphinx's configuration folder containing conf.py. Set this option if the path is not found automatically. This is an absolute path, and you can use ${workspaceFolder} to represent the workspace root folder.",
             "scope": "resource"
           },
-          "restructuredtext.updateOnTextChanged": {
-            "type": "string",
-            "default": "true",
-            "description": "Flag to control whether text changed event triggers preview update.",
-            "scope": "resource"
-          },
           "restructuredtext.docutilsWriter": {
             "type": "string",
             "default": "html",
@@ -613,7 +608,8 @@
             "type": "boolean",
             "default": false,
             "description": "Flag to disable linter if critical issues happen.",
-            "scope": "resource"
+            "scope": "resource",
+            "deprecationMessage": "Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
           },
           "restructuredtext.linter.name": {
             "type": "string",
@@ -621,12 +617,64 @@
               "doc8",
               "rstcheck"
             ],
-            "default": "rstcheck"
+            "default": "rstcheck",
+            "deprecationMessage": "Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
           },
           "restructuredtext.linter.executablePath": {
             "type": "string",
             "default": null,
             "description": "Points to the doc8 or rstcheck executable.",
+            "scope": "resource",
+            "deprecationMessage": "Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
+          },
+          "restructuredtext.linter.disabledLinters": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "doc8",
+                "rstcheck",
+                "rst-lint"
+              ]
+            },
+            "default": [],
+            "description": "Flag to disable linters if critical issues happen.",
+            "scope": "resource"
+          },
+          "restructuredtext.linter.doc8.executablePath": {
+            "type": "string",
+            "default": null,
+            "description": "Points to the doc8 executable.",
+            "scope": "resource"
+          },
+          "restructuredtext.linter.doc8.extraArgs": {
+            "type": "array",
+            "default": [],
+            "description": "Extra arguments to doc8.",
+            "scope": "resource"
+          },
+          "restructuredtext.linter.rstcheck.executablePath": {
+            "type": "string",
+            "default": null,
+            "description": "Points to the doc8 executable.",
+            "scope": "resource"
+          },
+          "restructuredtext.linter.rstcheck.extraArgs": {
+            "type": "array",
+            "default": [],
+            "description": "Extra arguments to doc8.",
+            "scope": "resource"
+          },
+          "restructuredtext.linter.rst-lint.executablePath": {
+            "type": "string",
+            "default": null,
+            "description": "Points to the doc8 executable.",
+            "scope": "resource"
+          },
+          "restructuredtext.linter.rst-lint.extraArgs": {
+            "type": "array",
+            "default": [],
+            "description": "Extra arguments to doc8.",
             "scope": "resource"
           },
           "restructuredtext.linter.run": {
@@ -644,7 +692,8 @@
             "type": "array",
             "default": [],
             "description": "Extra arguments to doc8 or rst check.",
-            "scope": "resource"
+            "scope": "resource",
+            "deprecationMessage": "Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
           },
           "restructuredtext.languageServer.disabled": {
             "type": "boolean",
