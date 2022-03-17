@@ -311,7 +311,7 @@ export class Python {
 
   private async checkEsbonioInstall(): Promise<boolean> {
     try {
-      const versionTooOld = await this.exec('-c', '"import esbonio.lsp; from distutils.version import LooseVersion; print(LooseVersion(esbonio.lsp.__version__) < LooseVersion(\'0.9.0\'))"');
+      const versionTooOld = await this.exec('-c', '"import esbonio.lsp; from distutils.version import LooseVersion; print(LooseVersion(esbonio.lsp.__version__) < LooseVersion(\'0.10.0\'))"');
       return versionTooOld.trim() === 'False';
     } catch (e) {
       return false;
