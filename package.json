@@ -578,19 +578,22 @@
             "type": "string",
             "default": null,
             "description": "Sphinx's HTML output folder. Defaults to 'restructuredtext.confPath'/_build/html This is an absolute path, and you can use ${workspaceFolder} to represent the workspace root folder.",
-            "scope": "resource"
+            "scope": "resource",
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
           },
           "restructuredtext.sourcePath": {
             "type": "string",
             "default": null,
             "description": "Sphinx project folder containing the source files. Set this option if it is different from 'restructuredtext.confPath'. This is an absolute path, and you can use ${workspaceFolder} to represent the workspace root folder.",
-            "scope": "resource"
+            "scope": "resource",
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
           },
           "restructuredtext.confPath": {
             "type": "string",
             "default": null,
             "description": "Sphinx's configuration folder containing conf.py. Set this option if the path is not found automatically. This is an absolute path, and you can use ${workspaceFolder} to represent the workspace root folder.",
-            "scope": "resource"
+            "scope": "resource",
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
           },
           "restructuredtext.docutilsWriter": {
             "type": "string",
@@ -609,7 +612,7 @@
             "default": false,
             "description": "Flag to disable linter if critical issues happen.",
             "scope": "resource",
-            "deprecationMessage": "Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
           },
           "restructuredtext.linter.name": {
             "type": "string",
@@ -618,14 +621,14 @@
               "rstcheck"
             ],
             "default": "rstcheck",
-            "deprecationMessage": "Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
           },
           "restructuredtext.linter.executablePath": {
             "type": "string",
             "default": null,
             "description": "Points to the doc8 or rstcheck executable.",
             "scope": "resource",
-            "deprecationMessage": "Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
           },
           "restructuredtext.linter.disabledLinters": {
             "type": "array",
@@ -693,19 +696,21 @@
             "default": [],
             "description": "Extra arguments to doc8 or rst check.",
             "scope": "resource",
-            "deprecationMessage": "Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
           },
           "restructuredtext.languageServer.disabled": {
             "type": "boolean",
             "default": false,
             "description": "Flag to disable language server based IntelliSense if critical issues happen.",
-            "scope": "resource"
+            "scope": "resource",
+            "deprecationMessage": "This setting is obsolete."
           },
           "restructuredtext.languageServer.maxNumberOfProblems": {
             "type": "number",
             "default": 100,
             "description": "Controls the maximum number of problems produced by the server.",
-            "scope": "resource"
+            "scope": "resource",
+            "deprecationMessage": "This setting is obsolete."
           },
           "restructuredtext.languageServer.trace.server": {
             "type": "string",
@@ -716,7 +721,8 @@
             ],
             "default": "off",
             "description": "Traces the communication between VSCode and the server.",
-            "scope": "resource"
+            "scope": "resource",
+            "deprecationMessage": "This setting is obsolete."
           },
           "restructuredtext.editor.listEditing.list.indentationSize": {
             "type": "string",

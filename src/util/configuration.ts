@@ -23,15 +23,15 @@ export class Configuration {
     }
 
     public static getConfPath(resource: Uri = null): string {
-        return Configuration.loadSetting('confPath', null, resource);
+        return Configuration.loadSetting('sphinx.confDir', null, resource, true, 'esbonio');
     }
 
     public static getOutputFolder(resource: Uri = null): string {
-        return Configuration.loadSetting('builtDocumentationPath', null, resource);
+        return Configuration.loadSetting('sphinx.buildDir', null, resource, true, 'esbonio');
     }
 
     public static getSourcePath(resource: Uri = null): string {
-        return Configuration.loadSetting('sourcePath', null, resource);
+        return Configuration.loadSetting('sphinx.srcDir', null, resource, true, 'esbonio');
     }
 
     public static getPreviewName(resource: Uri = null): string {
@@ -168,15 +168,7 @@ export class Configuration {
     }
 
     public static async setConfPath(value: string, resource: Uri = null, insertMacro: boolean): Promise<string> {
-        return await Configuration.saveSetting('confPath', value, resource, insertMacro);
-    }
-
-    public static async setLanguageServerDisabled(resource: Uri = null) {
-        await Configuration.saveAnySetting('languageServer.disabled', true, resource);
-    }
-
-    public static async setLinterDisabled(resource: Uri = null) {
-        await Configuration.saveAnySetting('linter.disabled', true, resource);
+        return await Configuration.saveSetting('sphinx.confDir', value, resource, insertMacro, 'esbonio');
     }
 
     public static async setSphinxDisabled(resource: Uri = null) {
@@ -262,10 +254,10 @@ export class Configuration {
 
         let expanded: string;
         if (input.indexOf('${env:') > -1) {
-            expanded = input.replace(/\$\{env\:(.+)\}/, (match, p1)=>
+            expanded = input.replace(/\$\{env\:(.+)\}/, (_match, p1)=>
                 {
                     const variable = process.env[p1];
-                    return variable == null ? '' : variable;
+                    return variable ?? '';
                 });
         } else {
             expanded = input;

@@ -106,27 +106,28 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     await status.update();
 
     // porting settings over
-    const section = vscode.workspace.getConfiguration("esbonio");
+    const newSection = vscode.workspace.getConfiguration("esbonio");
+    const oldSection = vscode.workspace.getConfiguration("restructuredtext");
 
-    const disableLsp = Configuration.getLanguageServerDisabled();
-    await section.update("server.enabled", !disableLsp);
-
-    let buildDir = Configuration.getOutputFolder();
+    let buildDir = oldSection.get<string>('builtDocumentationPath');
     if (buildDir) {
         if (buildDir.endsWith("/html") || buildDir.endsWith("\\html")) {
             buildDir = buildDir.substring(0, buildDir.length - 5);
         }
-        await section.update("sphinx.buildDir", buildDir);
+        await newSection.update("sphinx.buildDir", buildDir);
+        vscode.window.showWarningMessage('Setting "restructuredtext.builtDocumentationPath" is migrated to "esbonio.sphinx.buildDir". Please manually delete "restructuredtext.builtDocumentationPath" from your config file.');
     }
 
-    const confDir = Configuration.getConfPath();
+    const confDir = oldSection.get<string>('confPath');
     if (confDir) {
-        await section.update("sphinx.confDir", confDir);
+        await newSection.update("sphinx.confDir", confDir);
+        vscode.window.showWarningMessage('Setting "restructuredtext.confPath" is migrated to "esbonio.sphinx.confDir". Please manually delete "restructuredtext.confPath" from your config file.');
     }
 
-    const srcDir = Configuration.getSourcePath();
+    const srcDir = oldSection.get<string>('sourcePath');
     if (srcDir) {
-        await section.update("sphinx.srcDir", srcDir);
+        await newSection.update("sphinx.srcDir", srcDir);
+        vscode.window.showWarningMessage('Setting "restructuredtext.sourcePath" is migrated to "esbonio.sphinx.srcDir". Please manually delete "restructuredtext.sourcePath" from your config file.');
     }
 
     const lspChannel = vscode.window.createOutputChannel('Esbonio Language Server');

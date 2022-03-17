@@ -95,15 +95,10 @@ export class Python {
             return false;
           }
         }
-        const choice = await vscode.window.showInformationMessage('Esbonio language server is not installed or out of date.', 'Install', 'Not now', 'Do not show again');
+        const choice = await vscode.window.showInformationMessage('Esbonio language server is not installed or out of date.', 'Install', 'Not now');
         if (choice === 'Install') {
           this.logger.log('Started to install Esbonio...');
           await this.installEsbonio();
-        } else if (choice === 'Do not show again') {
-          this.logger.log('Disabled language server.');
-          await Configuration.setLanguageServerDisabled();
-          vscode.window.showWarningMessage('No IntelliSense or live preview. Language server is now disabled.');
-          return false;
         } else {
           vscode.window.showWarningMessage('No IntelliSense or live preview. Esbonio language server is not installed.');
           return false;
