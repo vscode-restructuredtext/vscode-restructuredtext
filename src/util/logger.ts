@@ -92,4 +92,18 @@ export class Logger {
 		}
 		return JSON.stringify(data, undefined, 2);
 	}
+
+	public async logPlatform(): Promise<void> {
+		const os = require('os');
+		let platform = os.platform();
+		this.log(`OS is ${platform}`);
+		if (platform === 'darwin' || platform === 'win32') {
+			return;
+		}
+	
+		const osInfo = require('linux-os-info');
+		const result = await osInfo();
+		const dist = result.id;
+		this.log(`dist: ${dist}`);
+	}
 }

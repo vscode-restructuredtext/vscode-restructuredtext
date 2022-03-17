@@ -85,7 +85,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         }
     }
 
-    await logPlatform(logger);
+    await logger.logPlatform();
 
     const python: Python = new Python(logger);
 
@@ -163,18 +163,4 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
             previewManager.updateConfiguration();
         }));
     }
-}
-
-async function logPlatform(logger: Logger): Promise<void> {
-    const os = require('os');
-    let platform = os.platform();
-    logger.log(`OS is ${platform}`);
-    if (platform === 'darwin' || platform === 'win32') {
-        return;
-    }
-
-    const osInfo = require('linux-os-info');
-    const result = await osInfo();
-    const dist = result.id;
-    logger.log(`dist: ${dist}`);
 }
