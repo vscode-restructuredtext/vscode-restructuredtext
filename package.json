@@ -862,7 +862,7 @@
           "esbonio.sphinx.confDir": {
             "scope": "window",
             "type": "string",
-            "default": null,
+            "default": "",
             "description": "The Language Server should be able to automatically find the folder containing your project's 'conf.py' file. However this setting can be used to force the Language Server to use a particular directory if required."
           },
           "esbonio.sphinx.srcDir": {

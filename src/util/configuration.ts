@@ -23,7 +23,7 @@ export class Configuration {
     }
 
     public static getConfPath(resource: Uri = null): string {
-        return Configuration.loadSetting('sphinx.confDir', null, resource, true, 'esbonio');
+        return Configuration.loadSetting('sphinx.confDir', '', resource, true, 'esbonio');
     }
 
     public static getOutputFolder(resource: Uri = null): string {
@@ -193,8 +193,11 @@ export class Configuration {
     private static async saveAnySetting<T>(
         configSection: string, value: T, resource: Uri, header: string = 'restructuredtext',
     ): Promise<T> {
-        await getConfig(header, resource).update(configSection, value);
-        return value;
+        if (workspace.workspaceFolders)
+        {
+            await getConfig(header, resource).update(configSection, value);
+            return value;
+        }
     }
 
     private static loadSetting(
