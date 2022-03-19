@@ -313,12 +313,16 @@ export class RSTPreview {
 
 		this.currentVersion = { resource, version: document.version };
 		this._statusBarItem.show();
-		const content: string = await this._contentProvider.provideTextDocumentContent(document, this._previewConfigurations, this.editor.webview, this.line, this.state);
-		if (this._resource === resource) {
-			this.editor.title = RSTPreview.getPreviewTitle(this._resource, this._locked);
-			this.editor.iconPath = this.iconPath;
-			this.editor.webview.options = RSTPreview.getWebviewOptions(resource);
-			this.editor.webview.html = content;
+		try
+		{
+			const content: string = await this._contentProvider.provideTextDocumentContent(document, this._previewConfigurations, this.editor.webview, this.line, this.state);
+			if (this._resource === resource) {
+				this.editor.title = RSTPreview.getPreviewTitle(this._resource, this._locked);
+				this.editor.iconPath = this.iconPath;
+				this.editor.webview.options = RSTPreview.getWebviewOptions(resource);
+				this.editor.webview.html = content;
+			}
+		} finally {
 			this._statusBarItem.hide();
 		}
 	}
