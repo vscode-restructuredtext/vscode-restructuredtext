@@ -881,7 +881,7 @@
     "compile": "yarn build-ext && yarn build-preview",
     "build-ext": "npx tsc -p ./tsconfig.json",
     "build-preview": "webpack",
-    "watch": "npx tsc -watch -p ./tsconfig.json",
+    "watch": "webpack && npx tsc -watch -p ./tsconfig.json",
     "pretest": "yarn compile",
     "test": "node ./out/test/runTest.js",
     "package": "yarn install && vsce package"
