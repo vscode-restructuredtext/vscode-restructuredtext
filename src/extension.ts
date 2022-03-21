@@ -20,6 +20,7 @@ import * as EditorFeatures from './editor/extension';
 import * as LinterFeatures from './linter/extension';
 import { setGlobalState, setWorkspaceState } from './util/stateUtils';
 import { initConfig } from './util/config';
+import { Commands } from './constants';
 
 let extensionPath = '';
 
@@ -45,9 +46,18 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     for (const element of conflicting) {
         const found = vscode.extensions.getExtension(element);
         if (found) {
-            const message = `Found conflicting extension ${element}. Please uninstall it.`;
-            logger.log(message);
-            vscode.window.showErrorMessage(message);
+            const message = `Found conflicting extension ${found.packageJSON.displayName}(${element}). Do you want to uninstall it now?`;
+            logger.log(`found ${element}`);
+            const choice = await vscode.window.showErrorMessage(message, "Yes", "No");
+            if (choice === 'Yes') {
+                await vscode.commands.executeCommand(Commands.OPEN_EXTENSION, element);
+                await vscode.commands.executeCommand(Commands.UNINSTALL_EXTENSION, element);
+                await vscode.commands.executeCommand(Commands.RELOAD_WINDOW);
+
+            } else {
+                vscode.window.showWarningMessage('Since conflicting extension is not uninstalled, extension activation ends now.');
+                return;
+            }
         }
     }
 
@@ -59,8 +69,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         const choice = await vscode.window.showInformationMessage(message, 'Install', 'Not now', 'Do not show again');
         if (choice === 'Install') {
             logger.log('Started to install ms-python...');
-            await vscode.commands.executeCommand('extension.open', msPythonName);
-            await vscode.commands.executeCommand('workbench.extensions.installExtension', msPythonName);
+            await vscode.commands.executeCommand(Commands.OPEN_EXTENSION, msPythonName);
+            await vscode.commands.executeCommand(Commands.INSTALL_EXTENSION, msPythonName);
         } else if (choice === 'Do not show again') {
             logger.log('Disabled ms-python prompt.');
             await Configuration.setPythonRecommendationDisabled();
@@ -74,8 +84,8 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         const choice = await vscode.window.showInformationMessage(message, 'Install', 'Not now', 'Do not show again');
         if (choice === 'Install') {
             logger.log('Started to install simple-rst...');
-            await vscode.commands.executeCommand('extension.open', simpleRstName);
-            await vscode.commands.executeCommand('workbench.extensions.installExtension', simpleRstName);
+            await vscode.commands.executeCommand(Commands.OPEN_EXTENSION, simpleRstName);
+            await vscode.commands.executeCommand(Commands.INSTALL_EXTENSION, simpleRstName);
         } else if (choice === 'Do not show again') {
             logger.log('Disabled syntax highlighting.');
             await Configuration.setSyntaxHighlightingDisabled();

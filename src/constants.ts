@@ -15,5 +15,8 @@ export namespace Commands {
   export const RESTART_SERVER = "esbonio.server.restart"
   export const UPDATE_SERVER = "esbonio.server.update"
 
-  export const RESTART = "workbench.action.reloadWindow"
+  export const RELOAD_WINDOW = "workbench.action.reloadWindow"
+  export const OPEN_EXTENSION = "extension.open"
+  export const INSTALL_EXTENSION = "workbench.extensions.installExtension"
+  export const UNINSTALL_EXTENSION = "workbench.extensions.uninstallExtension"
 }
