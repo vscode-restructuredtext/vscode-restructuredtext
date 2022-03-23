@@ -1,8 +1,8 @@
 
 import { join } from "path";
 import * as vscode from "vscode";
-
 import { LanguageClient, LanguageClientOptions } from "vscode-languageclient"
+import AsyncLock = require("async-lock");
 import { Commands } from "../constants"
 import { Configuration } from "../util/configuration"
 import { Logger } from "../util/logger";
@@ -95,7 +95,7 @@ export class EsbonioClient {
 
   private client: LanguageClient
   private statusBar: vscode.StatusBarItem
-
+  private restartLock: AsyncLock = new AsyncLock;
   private buildCompleteCallback
 
   constructor(
@@ -174,9 +174,11 @@ export class EsbonioClient {
   async restartServer() {
     let config = vscode.workspace.getConfiguration("esbonio.server")
     if (config.get("enabled")) {
-      this.logger.info("==================== RESTARTING SERVER =====================")
-      await this.stop()
-      await this.start()
+      this.restartLock.acquire("restart", async () => {
+        this.logger.info("==================== RESTARTING SERVER =====================")
+        await this.stop()
+        await this.start()
+      });
     }
   }
 
