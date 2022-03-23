@@ -18,6 +18,7 @@ export default class RstTransformerStatus {
     public config: RstTransformerConfig;
     private _logger: Logger;
     private python: Python;
+    private inReset:  boolean;
 
     constructor(python: Python, logger: Logger) {
         this._statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
@@ -55,17 +56,19 @@ export default class RstTransformerStatus {
         if (editor != null && editor.document.languageId === 'restructuredtext') {
             let resource = editor.document.uri;
             this._logger.log("[preview] reset config.");
-            const newValue = await Configuration.setConfPath(undefined, resource, false);
-            if (newValue !== undefined) {
-                this._logger.log("[preview] reset failed.");
+            this.inReset = true;
+            try
+            {
+                await this.refreshConfig(resource);
+                this.setLabel();
+            } finally {
+                this.inReset = false;
             }
-            await this.refreshConfig(resource);
-            this.setLabel();
         }
     }
 
     public async refreshConfig(resource: vscode.Uri): Promise<RstTransformerConfig> {
-        const rstTransformerConf = await RstTransformerSelector.findConfDir(resource, this._logger);
+        const rstTransformerConf = await RstTransformerSelector.findConfDir(resource, this._logger, this.inReset);
         if (rstTransformerConf == null) {
             return null;
         }

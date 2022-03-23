@@ -10,7 +10,7 @@ import { Logger } from '../util/logger';
  *
  */
 export class RstTransformerSelector {
-    public static async findConfDir(resource: Uri, logger: Logger): Promise<RstTransformerConfig> {
+    public static async findConfDir(resource: Uri, logger: Logger, inReset: boolean = false): Promise<RstTransformerConfig> {
         const rstPath = resource.fsPath;
         // Sanity check - the file we are previewing must exist
         if (!fs.existsSync(rstPath) || !fs.statSync(rstPath).isFile) {
@@ -29,7 +29,7 @@ export class RstTransformerSelector {
         docutils.confPyDirectory = '';
         docutils.workspaceRoot = workspaceRoot;
 
-        if (confPathFromSettings != null) {
+        if (!inReset) {
             if (confPathFromSettings === '') {
                 return docutils;
             }
