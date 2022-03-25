@@ -76,12 +76,6 @@ export default class RstTransformerStatus {
         this.config = rstTransformerConf;
         this._logger.log("[preview] set config to " + rstTransformerConf.confPyDirectory);
         await Configuration.setConfPath(rstTransformerConf.confPyDirectory, resource, true);
-        // Porting over the setting.
-        const section = vscode.workspace.getConfiguration("esbonio");
-        const confDir = Configuration.getConfPath();
-        if (confDir) {
-            await section.update("sphinx.confDir", confDir);
-        }
         return rstTransformerConf;
     }
 }
