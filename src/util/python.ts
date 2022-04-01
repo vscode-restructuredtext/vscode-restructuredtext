@@ -17,7 +17,7 @@ export class Python {
     return this.ready;
   }
 
-  public async setup(resource: Uri): Promise<void> {
+  public async setup(resource: Uri = null): Promise<void> {
     if (await this.checkPython(resource)) {
       await this.checkEsbonio(resource, false, false);
       await this.checkPreviewEngine(resource, false);

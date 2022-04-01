@@ -98,10 +98,11 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     await logger.logPlatform();
 
     const python: Python = new Python(logger);
+    await python.setup();
 
-    EditorFeatures.activate(context);
+    await EditorFeatures.activate(context);
 
-    LinterFeatures.activate(context, python, logger);
+    await LinterFeatures.activate(context, python, logger);
 
     // Status bar to show the active rst->html transformer configuration
     const status = new RstTransformerStatus(python, logger);
