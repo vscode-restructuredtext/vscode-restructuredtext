@@ -258,7 +258,7 @@ export class Python {
 
   private async checkPipInstall(): Promise<boolean> {
     try {
-      const versionTooOld = await this.exec('-c', '"import pip; from distutils.version import LooseVersion; print(LooseVersion(pip.__version__) < LooseVersion(\'20.1.2\'))"');
+      const versionTooOld = await this.exec('-c', '"import pip; from distutils.version import LooseVersion; print(LooseVersion(pip.__version__) < LooseVersion(\'20.0.2\'))"');
       return versionTooOld.trim() === 'False';
     } catch (e) {
       return false;
