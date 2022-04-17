@@ -51,6 +51,12 @@ export class RSTEngine {
       }
 
       // The directory where Sphinx will write the html output
+      if (this.esbonio.error) {
+        return this.showHelp('<p>Esbonio detected build errors.</p>', 'Not Available');
+      }
+      if (!this.esbonio.ready) {
+        return this.showWait();
+      }
       const output = this.esbonio.sphinxConfig.buildDir;
       this.logger.log('[preview] Sphinx html directory: ' + output);
 
@@ -87,7 +93,7 @@ export class RSTEngine {
                       <p>Possible causes are,</p>\
                       <ul>\
                       <li>A wrong "conf.py" file is selected.</li>\
-                      <li>Wrong value is set on "restructuredtext.builtDocumentationPath".</li>\
+                      <li>Wrong value is set on "esbonio.sphinx.buildDir".</li>\
                       </ul>';
           const errorMessage = [
             err.name,
@@ -134,7 +140,26 @@ export class RSTEngine {
           <h4>Detailed error message</h4>\
           <pre>' + error + '</pre>\
           <h4>More Information</h4>\
-          <p>Diagnostics information has been written to OUTPUT | reStructuredText panel.</p>\
+          <p>Diagnostics information has been written to OUTPUT | Esbonio Language Server panel.</p>\
+          <p>The troubleshooting guide can be found at</p>\
+          <pre>https://docs.restructuredtext.net/articles/troubleshooting.html</pre>\
+        </header>\
+      </article>\
+    </section>\
+  </body>';
+    return help;
+  }
+
+  private showWait(): string {
+    const help = '<body>\
+    <section>\
+      <article>\
+        <header>\
+          <h2>Esbonio is busy.</h2>\
+          <h4>Description:</h4>\
+          <p>Esbonio is still working in the background. This panel will automatically refresh when the preview page is ready.</p>\
+          <h4>More Information</h4>\
+          <p>Diagnostics information has been written to OUTPUT | Esbonio Language Server panel.</p>\
           <p>The troubleshooting guide can be found at</p>\
           <pre>https://docs.restructuredtext.net/articles/troubleshooting.html</pre>\
         </header>\

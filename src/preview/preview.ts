@@ -34,7 +34,6 @@ export class RSTPreview {
 	private forceUpdate = false;
 	private isScrolling = false;
 	private _disposed: boolean = false;
-	private _statusBarItem: StatusBarItem;
 
 	public static async revive(
 		webview: vscode.WebviewPanel,
@@ -104,9 +103,6 @@ export class RSTPreview {
 		esbonio: EsbonioClient,
 		topmostLineMonitor: RSTFileTopmostLineMonitor
 	) {
-		this._statusBarItem = window.createStatusBarItem(StatusBarAlignment.Right);
-		this._statusBarItem.text = '$(open-preview) Preview is loading...';
-
 		this._resource = resource;
 		this._locked = locked;
 		this.editor = webview;
@@ -312,18 +308,12 @@ export class RSTPreview {
 		this.forceUpdate = false;
 
 		this.currentVersion = { resource, version: document.version };
-		this._statusBarItem.show();
-		try
-		{
-			const content: string = await this._contentProvider.provideTextDocumentContent(document, this._previewConfigurations, this.editor.webview, this.line, this.state);
-			if (this._resource === resource) {
-				this.editor.title = RSTPreview.getPreviewTitle(this._resource, this._locked);
-				this.editor.iconPath = this.iconPath;
-				this.editor.webview.options = RSTPreview.getWebviewOptions(resource);
-				this.editor.webview.html = content;
-			}
-		} finally {
-			this._statusBarItem.hide();
+		const content: string = await this._contentProvider.provideTextDocumentContent(document, this._previewConfigurations, this.editor.webview, this.line, this.state);
+		if (this._resource === resource) {
+			this.editor.title = RSTPreview.getPreviewTitle(this._resource, this._locked);
+			this.editor.iconPath = this.iconPath;
+			this.editor.webview.options = RSTPreview.getWebviewOptions(resource);
+			this.editor.webview.html = content;
 		}
 	}
 

@@ -44,12 +44,6 @@ async function showPreview(
 		return;
 	}
 
-	if (!(Configuration.getConfPath(resource) === '' || webviewManager.esbonio!.ready)) {
-		// project errors, no preview
-		vscode.window.showWarningMessage('Esbonio is disabled or it reports errors. No preview can be displayed.');
-		// TODO: should we fall back to docutils?
-		return;
-	}
 
 	const resourceColumn = (vscode.window.activeTextEditor && vscode.window.activeTextEditor.viewColumn) || vscode.ViewColumn.One;
 	webviewManager.preview(resource, {

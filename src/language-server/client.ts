@@ -92,6 +92,7 @@ export class EsbonioClient {
    */
   public sphinxConfig?: SphinxConfig
   public ready: boolean;
+  public error: boolean;
 
   private client: LanguageClient
   private statusBar: vscode.StatusBarItem
@@ -253,6 +254,7 @@ export class EsbonioClient {
       this.statusBar.text = "esbonio: $(sync~spin) Building..."
       this.logger.debug("Build start.")
       this.ready = false;
+      this.error = false;
     })
 
     this.client.onNotification("esbonio/buildComplete", params => {
@@ -265,6 +267,7 @@ export class EsbonioClient {
       if (params.error) {
         icon = "$(error)"
         this.ready = false;
+        this.error = true;
         this.statusBar.text = `esbonio: ${icon} Sphinx build error`
         this.client.outputChannel.show()
       } else {
