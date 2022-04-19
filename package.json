@@ -870,8 +870,8 @@
             "scope": "window",
             "type": "string",
             "default": null,
-            "description": "The directory containing your rst source files. By default the Language Server will assume this is the same as `esbonio.sphinx.confDir` but this opton can override this if necessary.",
-            "markdownDescription": "The directory containing your rst source files. By default the Language Server will assume this is the same as `#esbonio.sphinx.confDir#` but this opton can override this if necessary."
+            "description": "The directory containing your rst source files. By default the Language Server will assume this is the same as `esbonio.sphinx.confDir` but this option can override this if necessary.",
+            "markdownDescription": "The directory containing your rst source files. By default the Language Server will assume this is the same as `#esbonio.sphinx.confDir#` but this option can override this if necessary."
           }
         }
       }
