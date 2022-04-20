@@ -19,57 +19,50 @@ export class RSTEngine {
     return `<html><body>${error}</body></html>`;
   }
 
-  public async compile(fileName: string, uri: vscode.Uri, confPyDirectory: string, fixLinks: boolean, webview: vscode.Webview): Promise<string> {
+  public async compile(fileName: string, uri: vscode.Uri, fixLinks: boolean, webview: vscode.Webview): Promise<string> {
     this.logger.log(`[preview] Compiling file: ${fileName}`);
-    if (confPyDirectory === '' || Configuration.getPreviewName() === 'docutils') {
-      if (Configuration.getPreviewName() === 'docutils') {
-        this.logger.log('[preview] Forced to use docutils due to setting "preview.name".')
-      }
-
-      // docutils
-      const writer = Configuration.getDocutilsWriter(uri);
-      const writerPart = Configuration.getDocutilsWriterPart(uri);
-      return await this.python.exec(
-        '"' + path.join(__dirname, '..', '..', 'python-scripts', 'preview.py') + '"',
-        '"' + fileName + '"',
-        '"' + writer + '"',
-        '"' + writerPart + '"'
-      );
-    } else {
-      // sphinx
-      let input = confPyDirectory;
-      this.logger.log('[preview] Sphinx conf.py directory: ' + input);
-
-      // Make sure the conf.py file exists
-      let confFile = path.join(input, 'conf.py');
-      if (!fs.existsSync(confFile)) {
-        await this.status.reset();
-        this.logger.log('[preview] conf.py not found. Refresh the settings.');
-        input = confPyDirectory;
-        this.logger.log('[preview] Sphinx conf.py directory: ' + input);
-        confFile = path.join(input, 'conf.py');
-      }
-
-      // The directory where Sphinx will write the html output
-      if (this.esbonio.error) {
-        return this.showHelp('<p>Esbonio detected build errors.</p>', 'Not Available');
-      }
-      if (!this.esbonio.ready) {
-        return this.showWait();
-      }
-      const output = this.esbonio.sphinxConfig.buildDir;
-      this.logger.log('[preview] Sphinx html directory: ' + output);
-
-      // Calculate full path to built html file.
-      let whole = uri.fsPath;
-      const ext = whole.lastIndexOf('.');
-      whole = whole.substring(0, ext) + '.html';
-      const source = path.dirname(whole);
-      const sourceRelative = path.relative(confPyDirectory, source);
-      const outputRelative = path.relative(confPyDirectory, output);
-      const htmlPath = path.join(confPyDirectory, outputRelative, sourceRelative, path.basename(whole));
-      return this.previewPage(htmlPath, input, fixLinks, webview);
+    
+    if (Configuration.getPreviewName() === 'docutils') {
+      this.logger.log('[preview] Forced to use docutils due to setting "preview.name".')
+      return await this.useDocutils(uri, fileName);
     }
+
+    if (this.esbonio.error) {
+      // Fallback to docutils
+      this.logger.log(`[preview] Esbonio detected build errors, falling back to docutils preview`);
+      return await this.useDocutils(uri, fileName);
+    }
+
+    if (!this.esbonio.ready) {
+      return this.showWait();
+    }
+
+    const confDir = this.esbonio.sphinxConfig.confDir;
+    const output = this.esbonio.sphinxConfig.buildDir;
+
+    this.logger.log('[preview] Sphinx conf.py directory: ' + confDir);
+    this.logger.log('[preview] Sphinx html directory: ' + output);
+
+    // Calculate full path to built html file.
+    let whole = uri.fsPath;
+    const ext = whole.lastIndexOf('.');
+    whole = whole.substring(0, ext) + '.html';
+    const source = path.dirname(whole);
+    const sourceRelative = path.relative(confDir, source);
+    const outputRelative = path.relative(confDir, output);
+    const htmlPath = path.join(confDir, outputRelative, sourceRelative, path.basename(whole));
+    return this.previewPage(htmlPath, confDir, fixLinks, webview);
+  }
+
+  private async useDocutils(uri: vscode.Uri, fileName: string) { 
+    const writer = Configuration.getDocutilsWriter(uri);
+    const writerPart = Configuration.getDocutilsWriterPart(uri);
+    return await this.python.exec(
+      '"' + path.join(__dirname, '..', '..', 'python-scripts', 'preview.py') + '"',
+      '"' + fileName + '"',
+      '"' + writer + '"',
+      '"' + writerPart + '"'
+    );
   }
 
   private previewPage(htmlPath: string, input: string, fixLinks: boolean, webView: vscode.Webview): Promise<string> {
@@ -171,12 +164,7 @@ export class RSTEngine {
 
   public async preview(doc: vscode.TextDocument, webview: vscode.Webview): Promise<string> {
     try {
-      if (this.status == null) {
-        return this.compile(doc.fileName, doc.uri, '', true, webview);
-      } else if (this.status.config == null) {
-        await this.status.refreshConfig(doc.uri);
-      }
-      return this.compile(doc.fileName, doc.uri, this.status.config.confPyDirectory, true, webview);
+      return this.compile(doc.fileName, doc.uri, true, webview);
     } catch (e) {
       return this.errorSnippet(e.toString());
     }
