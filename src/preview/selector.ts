@@ -27,6 +27,7 @@ export class RstTransformerSelector {
         docutils.tooltip = 'Click to reset';
         docutils.description = 'Do not use Sphinx, but docutils instead';
         docutils.confPyDirectory = '';
+        docutils.engine = 'docutils'
         docutils.workspaceRoot = workspaceRoot;
 
         if (!inReset) {
@@ -41,6 +42,7 @@ export class RstTransformerSelector {
             qpSettings.description += ' (from restructuredtext.confPath setting)';
             qpSettings.confPyDirectory = path.dirname(pth);
             qpSettings.workspaceRoot = workspaceRoot;
+            qpSettings.engine = 'sphinx';
             return qpSettings;
         }
         // Add path to a directory containing conf.py if it is not already stored
@@ -53,6 +55,7 @@ export class RstTransformerSelector {
                     qp.tooltip = `Click to reset. Full path: ${pth}`;
                     qp.confPyDirectory = path.dirname(pth);
                     qp.workspaceRoot = workspaceRoot;
+                    qp.engine = 'sphinx';
                     configurations.push(qp);
                     pathStrings.push(pth);
                 }
