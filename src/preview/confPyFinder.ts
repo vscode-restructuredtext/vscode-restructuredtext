@@ -27,7 +27,7 @@ export async function findConfPyFiles(resource: Uri): Promise<string[]> {
 
     const items = await workspace.findFiles(
             /*include*/ '{**/conf.py}',
-            /*exclude*/ '{}',
+            /*exclude*/ '{**/site-packages/**/conf.py}',
             /*maxResults*/ 100);
     return urisToPaths(items, resource);
 }
