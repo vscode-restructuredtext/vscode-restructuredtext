@@ -88,5 +88,5 @@ function shrink(path: string) {
         return path;
     }
 
-    return `...${path.substring(path.length - 22)}`;
+    return `...${path.substring(path.length - 32)}`;
 }
