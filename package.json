@@ -882,7 +882,7 @@
           "esbonio.sphinx.numJobs": {
             "scope": "window",
             "type": "integer",
-            "default": 0,
+            "default": 1,
             "markdownDescription": "The number of parallel jobs to use during a Sphinx build.\n\n- A value of `0` is equivalent to passing `-j auto` to a `sphinx-build` command.\n- A value of `1` will disable parallel processing."
           },
           "esbonio.sphinx.srcDir": {
