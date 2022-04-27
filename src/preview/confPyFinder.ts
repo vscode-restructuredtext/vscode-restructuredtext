@@ -14,6 +14,7 @@ export class RstTransformerConfig implements QuickPickItem {
     public description: string = 'Use Sphinx with the selected conf.py path';
     public confPyDirectory: string;
     public workspaceRoot: string;
+    public shortLabel: string;
 }
 
 /**

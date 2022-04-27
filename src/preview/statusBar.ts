@@ -29,7 +29,7 @@ export default class RstTransformerStatus {
 
     public setLabel() {
         if (this.config) {
-            this._statusBarItem.text = this.config.label;
+            this._statusBarItem.text = this.config.shortLabel;
             this._statusBarItem.tooltip = this.config.tooltip;
         }
     }

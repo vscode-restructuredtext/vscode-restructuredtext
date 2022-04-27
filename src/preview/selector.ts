@@ -1,7 +1,7 @@
 'use strict';
 
 import * as fs from 'fs';
-import * as path from 'path';
+const path = require('path/posix');
 import { Uri, window } from 'vscode';
 import { Configuration } from '../util/configuration';
 import { findConfPyFiles, findConfPyFilesInParentDirs, RstTransformerConfig } from './confPyFinder';
@@ -11,7 +11,7 @@ import { Logger } from '../util/logger';
  */
 export class RstTransformerSelector {
     public static async findConfDir(resource: Uri, logger: Logger, inReset: boolean = false): Promise<RstTransformerConfig> {
-        const rstPath = resource.fsPath;
+        const rstPath = resource.path;
         // Sanity check - the file we are previewing must exist
         if (!fs.existsSync(rstPath) || !fs.statSync(rstPath).isFile) {
             return Promise.reject('RST extension got invalid file name: ' + rstPath);
@@ -28,6 +28,7 @@ export class RstTransformerSelector {
         docutils.description = 'Do not use Sphinx, but docutils instead';
         docutils.confPyDirectory = '';
         docutils.workspaceRoot = workspaceRoot;
+        docutils.shortLabel = '$(code) Use docutils';
 
         if (!inReset) {
             if (confPathFromSettings === '') {
@@ -36,11 +37,12 @@ export class RstTransformerSelector {
 
             const pth = path.join(path.normalize(confPathFromSettings), 'conf.py');
             const qpSettings = new RstTransformerConfig();
-            qpSettings.label = '$(gear) Sphinx: ' + shrink(pth);
+            qpSettings.label = `\$(gear) Sphinx: ${pth}`;
             qpSettings.tooltip = `Click to reset. Full path: ${pth}`;
             qpSettings.description += ' (from restructuredtext.confPath setting)';
             qpSettings.confPyDirectory = path.dirname(pth);
             qpSettings.workspaceRoot = workspaceRoot;
+            qpSettings.shortLabel = `\$(gear) Sphinx: ${shrink(pth)}`;
             return qpSettings;
         }
         // Add path to a directory containing conf.py if it is not already stored
@@ -49,10 +51,11 @@ export class RstTransformerSelector {
                 const pth = path.normalize(confPath);
                 if (pathStrings.indexOf(pth) === -1) {
                     const qp = new RstTransformerConfig();
-                    qp.label = '$(gear) Sphinx: ' + shrink(pth);
+                    qp.label = `\$(gear) Sphinx: ${pth}`;
                     qp.tooltip = `Click to reset. Full path: ${pth}`;
                     qp.confPyDirectory = path.dirname(pth);
                     qp.workspaceRoot = workspaceRoot;
+                    qp.shortLabel = `\$(gear) Sphinx: ${shrink(pth)}`;
                     configurations.push(qp);
                     pathStrings.push(pth);
                 }
