@@ -278,7 +278,11 @@ export class EsbonioClient {
         this.ready = false;
         this.error = true;
         this.statusBar.text = `esbonio: ${icon} Sphinx build error`
-        this.client.outputChannel.show()
+
+        let config = vscode.workspace.getConfiguration("esbonio")
+        if (config.get<boolean>('server.showOutputOnError')) {
+          this.client.outputChannel.show()
+        }
       } else {
         if (params.warnings > 0) {
           icon = `$(warning) ${params.warnings}`

@@ -854,6 +854,12 @@
             "type": "boolean",
             "default": false,
             "description": "Whether to debug from launch."
+          },
+          "esbonio.server.showOutputOnError": {
+            "scope": "resource",
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to show output panel when errors occur."
           }
         }
       },
