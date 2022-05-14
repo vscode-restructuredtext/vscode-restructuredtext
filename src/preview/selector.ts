@@ -1,7 +1,7 @@
 'use strict';
 
 import * as fs from 'fs';
-const path = require('path/posix');
+import * as path from 'path';
 import { Uri, window } from 'vscode';
 import { Configuration } from '../util/configuration';
 import { findConfPyFiles, findConfPyFilesInParentDirs, RstTransformerConfig } from './confPyFinder';
@@ -11,7 +11,7 @@ import { Logger } from '../util/logger';
  */
 export class RstTransformerSelector {
     public static async findConfDir(resource: Uri, logger: Logger, inReset: boolean = false): Promise<RstTransformerConfig> {
-        const rstPath = resource.path;
+        const rstPath = resource.fsPath;
         // Sanity check - the file we are previewing must exist
         if (!fs.existsSync(rstPath) || !fs.statSync(rstPath).isFile) {
             return Promise.reject('RST extension got invalid file name: ' + rstPath);
@@ -28,7 +28,7 @@ export class RstTransformerSelector {
         docutils.description = 'Do not use Sphinx, but docutils instead';
         docutils.confPyDirectory = '';
         docutils.workspaceRoot = workspaceRoot;
-        docutils.shortLabel = '$(code) Use docutils';
+        docutils.shortLabel = docutils.label;
 
         if (!inReset) {
             if (confPathFromSettings === '') {
