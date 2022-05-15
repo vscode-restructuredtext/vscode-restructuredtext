@@ -15,6 +15,7 @@ export class RstTransformerConfig implements QuickPickItem {
     public confPyDirectory: string;
     public engine: string;
     public workspaceRoot: string;
+    public shortLabel: string;
 }
 
 /**

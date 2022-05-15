@@ -15,21 +15,6 @@ import { Python } from "../util/python";
 export interface SphinxConfig {
 
   /**
-   * Sphinx's version number.
-   */
-  version?: string
-
-  /**
-   * The directory containing the project's 'conf.py' file.
-   */
-  confDir?: string
-
-  /**
-   * The source dir containing the *.rst files for the project.
-   */
-  srcDir?: string
-
-  /**
    * The directory where Sphinx's build output should be stored.
    */
   buildDir?: string
@@ -39,6 +24,30 @@ export interface SphinxConfig {
    */
   builderName?: string
 
+  /**
+   * The directory containing the project's 'conf.py' file.
+   */
+  confDir?: string
+
+  /**
+   * Flag to force a full build of the documentation on startup.
+   */
+  forceFullBuild?: boolean
+
+  /**
+   * The number of parallel jobs to use
+   */
+  numJobs?: number | string
+
+  /**
+   * The source dir containing the *.rst files for the project.
+   */
+  srcDir?: string
+
+  /**
+   * Sphinx's version number.
+   */
+  version?: string
 }
 
 /**
@@ -222,13 +231,13 @@ export class EsbonioClient {
 
     let config = vscode.workspace.getConfiguration("esbonio")
 
-    let entryPoint = config.get<string>("server.entryPoint")
+    let startupModule = config.get<string>("server.startupModule")
 
     // Entry point can either be a script, or it can be a python module.
-    if (entryPoint.endsWith(".py") || entryPoint.includes("/") || entryPoint.includes("\\")) {
-      command.push(entryPoint)
+    if (startupModule.endsWith(".py") || startupModule.includes("/") || startupModule.includes("\\")) {
+      command.push(startupModule)
     } else {
-      command.push("-m", entryPoint)
+      command.push("-m", startupModule)
     }
 
     config.get<string[]>('server.includedModules').forEach(mod => {
@@ -269,7 +278,11 @@ export class EsbonioClient {
         this.ready = false;
         this.error = true;
         this.statusBar.text = `esbonio: ${icon} Sphinx build error`
-        this.client.outputChannel.show()
+
+        let config = vscode.workspace.getConfiguration("esbonio")
+        if (config.get<boolean>('server.showOutputOnError')) {
+          this.client.outputChannel.show()
+        }
       } else {
         if (params.warnings > 0) {
           icon = `$(warning) ${params.warnings}`
@@ -292,6 +305,8 @@ export class EsbonioClient {
 
     const confDir = config.get<string>('sphinx.confDir');
     let buildDir = config.get<string>('sphinx.buildDir')
+    let numJobs = config.get<number>('sphinx.numJobs')
+
     if (!buildDir && confDir) {
       buildDir = join(confDir, '_build')
     }
@@ -300,6 +315,8 @@ export class EsbonioClient {
       sphinx: {
         srcDir: config.get<string>("sphinx.srcDir"),
         confDir: confDir,
+        forceFullBuild: config.get<boolean>('sphinx.forceFullBuild'),
+        numJobs: numJobs === 0 ? 'auto' : numJobs,
         buildDir: buildDir
       },
       server: {

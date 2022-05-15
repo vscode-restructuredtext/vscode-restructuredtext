@@ -29,6 +29,7 @@ export class RstTransformerSelector {
         docutils.confPyDirectory = '';
         docutils.engine = 'docutils'
         docutils.workspaceRoot = workspaceRoot;
+        docutils.shortLabel = docutils.label;
 
         if (!inReset) {
             if (confPathFromSettings === '') {
@@ -37,12 +38,14 @@ export class RstTransformerSelector {
 
             const pth = path.join(path.normalize(confPathFromSettings), 'conf.py');
             const qpSettings = new RstTransformerConfig();
-            qpSettings.label = '$(gear) Sphinx: ' + shrink(pth);
+            qpSettings.label = `\$(gear) Sphinx: ${pth}`;
             qpSettings.tooltip = `Click to reset. Full path: ${pth}`;
             qpSettings.description += ' (from restructuredtext.confPath setting)';
             qpSettings.confPyDirectory = path.dirname(pth);
             qpSettings.workspaceRoot = workspaceRoot;
             qpSettings.engine = 'sphinx';
+            qpSettings.shortLabel = `\$(gear) Sphinx: ${shrink(pth)}`;
+
             return qpSettings;
         }
         // Add path to a directory containing conf.py if it is not already stored
@@ -51,11 +54,13 @@ export class RstTransformerSelector {
                 const pth = path.normalize(confPath);
                 if (pathStrings.indexOf(pth) === -1) {
                     const qp = new RstTransformerConfig();
-                    qp.label = '$(gear) Sphinx: ' + shrink(pth);
+                    qp.label = `\$(gear) Sphinx: ${pth}`;
                     qp.tooltip = `Click to reset. Full path: ${pth}`;
                     qp.confPyDirectory = path.dirname(pth);
                     qp.workspaceRoot = workspaceRoot;
                     qp.engine = 'sphinx';
+                    qp.shortLabel = `\$(gear) Sphinx: ${shrink(pth)}`;
+
                     configurations.push(qp);
                     pathStrings.push(pth);
                 }
