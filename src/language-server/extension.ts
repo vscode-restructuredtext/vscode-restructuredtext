@@ -8,7 +8,7 @@ import { Logger } from '../util/logger';
 import { Python } from '../util/python';
 import { EsbonioClient } from './client';
 
-export async function activate(context: vscode.ExtensionContext, channel: vscode.OutputChannel, logger: Logger, python: Python): Promise<EsbonioClient> {
+export async function activate(context: vscode.ExtensionContext, logger: Logger, python: Python): Promise<EsbonioClient> {
 
     if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 1) {
         vscode.window.showWarningMessage('IntelliSense and live preview are not available. Esbonio language server does not support multi-root workspaces.');
@@ -20,7 +20,7 @@ export async function activate(context: vscode.ExtensionContext, channel: vscode
         return;
     }
 
-    const esbonio = new EsbonioClient(logger, python, channel, context);
+    const esbonio = new EsbonioClient(logger, python, context);
     let config = vscode.workspace.getConfiguration("esbonio.server")
     if (config.get("enabled")) {
         await esbonio.start()

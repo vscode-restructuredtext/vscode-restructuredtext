@@ -9,6 +9,8 @@ import { Python } from '../util/python';
 import { ThrottledDelayer } from '../util/async';
 import { Configuration } from '../util/configuration';
 import { LineDecoder } from '../util/lineDecoder';
+import container from '../inversify.config';
+import { TYPES } from '../types';
 
 enum RunTrigger {
     onSave,
@@ -119,7 +121,8 @@ export class LintingProvider {
 
     private async triggerLint(textDocument: vscode.TextDocument): Promise<void> {
 
-        const currentFolder = Configuration.GetRootPath(textDocument.uri);
+        const configuration = container.get<Configuration>(TYPES.Configuration);
+        const currentFolder = configuration.getRootPath(textDocument.uri);
         if (this.linterConfiguration === null || (currentFolder && this.linterConfiguration.rootPath !== currentFolder)) {
             await this.loadConfiguration(textDocument.uri);
         }
@@ -147,11 +150,12 @@ export class LintingProvider {
         }
 
         return new Promise<void>((resolve, reject) => {
+            const configuration = container.get<Configuration>(TYPES.Configuration);
             const executable = this.linterConfiguration.executable;
             const decoder = new LineDecoder();
             let diagnostics: vscode.Diagnostic[] = [];
             const file = '"' + textDocument.fileName + '"';
-            const rootPath = Configuration.GetRootPath(textDocument.uri);
+            const rootPath = configuration.getRootPath(textDocument.uri);
             const options = rootPath ? { rootPath, shell: true } : undefined;
             let args: string[] = [];
             args = args.concat(this.linterConfiguration.module);

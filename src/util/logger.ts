@@ -1,11 +1,21 @@
-import { Configuration } from './configuration';
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { lazy } from './lazy';
+import { injectable } from 'inversify';
+
+export interface Logger {
+	info(message: string): void;
+	error(message: string): void;
+	warning(message: string): void;
+	debug(message: string): void;
+	log(message: string): void;
+	logPlatform(): void;
+	outputChannel: vscode.OutputChannel;
+	updateConfiguration(): void;
+}
 
 export enum Trace {
 	Off,
@@ -30,12 +40,13 @@ function isString(value: any): value is string {
 	return Object.prototype.toString.call(value) === '[object String]';
 }
 
-export class Logger {
+@injectable()
+export class ConsoleLogger implements Logger {
     private trace?: Trace;
+	public outputChannel: vscode.OutputChannel;
 
-	constructor(
-		private outputChannel: vscode.OutputChannel
-	) {
+	constructor(name: string) {
+		this.outputChannel = vscode.window.createOutputChannel(name);
         this.updateConfiguration();
  	}
 
@@ -51,11 +62,15 @@ export class Logger {
 		this.log(message);
 	}
 
+	public warning(message: string): void {
+		this.log(message);
+	}
+
 	public log(message: string, data?: any): void {
 		if (this.trace === Trace.Verbose) {
 			this.appendLine(`[Log - ${(new Date().toLocaleTimeString())}] ${message}`);
 			if (data) {
-				this.appendLine(Logger.data2String(data));
+				this.appendLine(ConsoleLogger.data2String(data));
 			}
 		}
     }

@@ -7,6 +7,8 @@ import { Commands } from "../constants"
 import { Configuration } from "../util/configuration"
 import { Logger } from "../util/logger";
 import { Python } from "../util/python";
+import container from "../inversify.config";
+import { TYPES } from "../types";
 
 /**
  * Represents the current sphinx configuration / configuration options
@@ -93,6 +95,7 @@ export interface InitOptions {
  * creating the LanguageClient instance that utilmately starts the server
  * running.
  */
+
 export class EsbonioClient {
 
   /**
@@ -111,8 +114,6 @@ export class EsbonioClient {
   constructor(
     private logger: Logger,
     private python: Python,
-    //private server: ServerManager,
-    private channel: vscode.OutputChannel,
     context: vscode.ExtensionContext
   ) {
     context.subscriptions.push(
@@ -153,7 +154,7 @@ export class EsbonioClient {
         "See output window for more details"
       vscode.window.showErrorMessage(message, { title: "Show Output" }).then(opt => {
         if (opt && opt.title === "Show Output") {
-          this.channel.show()
+          this.logger.outputChannel.show()
         }
       })
       this.statusBar.text = "esbonio: $(error) Failed."
@@ -164,7 +165,8 @@ export class EsbonioClient {
       this.logger.info("Starting Language Server")
       this.client.start()
 
-      if (Configuration.getEsbonioSourceFolder()) {
+      const configuration = container.get<Configuration>(TYPES.Configuration);
+      if (configuration.getEsbonioSourceFolder()) {
         // Auto open the output window when debugging
         this.client.outputChannel.show()
       }
@@ -204,10 +206,11 @@ export class EsbonioClient {
     //   }
 
     let command = [];
-    command.push(await Configuration.getPythonPath()); //await this.python.getCmd()
+    const configuration = container.get<Configuration>(TYPES.Configuration);
+    command.push(await configuration.getPythonPath()); //await this.python.getCmd()
 
     let options: any = {};
-    const sourceFolder = Configuration.getEsbonioSourceFolder();
+    const sourceFolder = configuration.getEsbonioSourceFolder();
     if (sourceFolder) {
       // launch language server from source folder.
       options.cwd = sourceFolder;
@@ -219,7 +222,7 @@ export class EsbonioClient {
         return;
       }
       command.push('-m', 'debugpy', '--listen', '5678');
-      if (Configuration.getEsbonioDebugLaunch()) {
+      if (configuration.getEsbonioDebugLaunch()) {
         command.push('--wait-for-client');
       }
       vscode.window.showInformationMessage('debugpy is at port 5678. Connect and debug.');
@@ -339,7 +342,7 @@ export class EsbonioClient {
     let clientOptions: LanguageClientOptions = {
       documentSelector: documentSelector,
       initializationOptions: initOptions,
-      outputChannel: this.channel
+      outputChannel: this.logger.outputChannel
     }
     this.logger.debug(`LanguageClientOptions: ${JSON.stringify(clientOptions)}`)
     return clientOptions

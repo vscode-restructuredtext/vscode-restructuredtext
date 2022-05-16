@@ -9,8 +9,9 @@ import { getFromWorkspaceState, updateWorkspaceState } from './stateUtils';
 
 const WORKSPACE_IS_TRUSTED_KEY = 'WORKSPACE_IS_TRUSTED_KEY';
 const SECURITY_SENSITIVE_CONFIG: string[] = [
-    'sphinxBuildPath',
-    'linter.executablePath'
+    'linter.doc8.executablePath',
+    'linter.rstcheck.executablePath',
+    'linter.rst-lint.executablePath'
 ];
 
 export async function initConfig(ctx: vscode.ExtensionContext) {

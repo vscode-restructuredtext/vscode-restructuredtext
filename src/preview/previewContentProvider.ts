@@ -13,6 +13,9 @@ import { Logger } from '../util/logger';
 import { ContentSecurityPolicyArbiter, RSTPreviewSecurityLevel } from '../util/security';
 import { RSTPreviewConfigurationManager, RSTPreviewConfiguration } from './previewConfig';
 import { RSTEngine } from './rstEngine';
+import { inject, injectable, named } from 'inversify';
+import { NAMES, TYPES } from '../types';
+import { PreviewContext } from './PreviewContext';
 
 /**
  * Strings used inside the html preview.
@@ -34,12 +37,13 @@ const previewStrings = {
 		'Content Disabled Security Warning')
 };
 
+@injectable()
 export class RSTContentProvider {
 	constructor(
-		private readonly context: vscode.ExtensionContext,
-		private readonly cspArbiter: ContentSecurityPolicyArbiter,
-		private readonly engine: RSTEngine,
-		private readonly logger: Logger
+		@inject(TYPES.Policy) private readonly cspArbiter: ContentSecurityPolicyArbiter,
+		@inject(TYPES.RstEngine) private readonly engine: RSTEngine,
+		@inject(TYPES.Logger) @named(NAMES.Main) private readonly logger: Logger,
+		@inject(TYPES.PreviewContext) private readonly context: PreviewContext
 	) { }
 
 	private readonly TAG_RegEx = /^\s*?\<(p|h[1-6]|img|code|blockquote|li)((\s+.*?)(class="(.*?)")(.*?\>)|\>|\>|\/\>|\s+.*?\>)/;
@@ -143,7 +147,7 @@ export class RSTContentProvider {
 	}
 
 	private extensionResourcePath(mediaFile: string, webview: vscode.Webview): string {
-		return webview.asWebviewUri(vscode.Uri.file(this.context.asAbsolutePath(path.join('media', mediaFile))))
+		return webview.asWebviewUri(vscode.Uri.file(this.context.extensionContext.asAbsolutePath(path.join('media', mediaFile))))
 			.toString();
 	}
 

@@ -3,6 +3,8 @@
 // See LICENSE in the project root for license information.
 // ============================================================
 import * as vscode from 'vscode';
+import container from '../inversify.config';
+import { TYPES } from '../types';
 import { Configuration } from '../util/configuration';
 import * as util from './util';
 
@@ -28,7 +30,8 @@ export class TableEditor {
     }
 
     public async reformat() {
-        if (Configuration.getTableEditorReformatDisabled()) {
+        const configuration = container.get<Configuration>(TYPES.Configuration);
+        if (configuration.getTableEditorReformatDisabled()) {
             return;
         }
         this.tableLineNumbers = util.tableIsSelected(this.editor);

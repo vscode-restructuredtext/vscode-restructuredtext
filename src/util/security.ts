@@ -8,6 +8,9 @@ import * as vscode from 'vscode';
 import { RSTPreviewManager } from '../preview/previewManager';
 
 import * as nls from 'vscode-nls';
+import { inject, injectable } from 'inversify';
+import { PreviewContext } from '../preview/PreviewContext';
+import { TYPES } from '../types';
 
 const localize = nls.loadMessageBundle();
 
@@ -30,32 +33,32 @@ export interface ContentSecurityPolicyArbiter {
 	setShouldDisableSecurityWarning(shouldShow: boolean): Thenable<void>;
 }
 
+@injectable()
 export class ExtensionContentSecurityPolicyArbiter implements ContentSecurityPolicyArbiter {
 	private readonly old_trusted_workspace_key = 'trusted_preview_workspace:';
 	private readonly security_level_key = 'preview_security_level:';
 	private readonly should_disable_security_warning_key = 'preview_should_show_security_warning:';
 
 	constructor(
-		private readonly globalState: vscode.Memento,
-		private readonly workspaceState: vscode.Memento
+		@inject(TYPES.PreviewContext) private readonly context: PreviewContext
 	) { }
 
 	public getSecurityLevelForResource(resource: vscode.Uri): RSTPreviewSecurityLevel {
 		// Use new security level setting first
-		const level = this.globalState.get<RSTPreviewSecurityLevel | undefined>(this.security_level_key + this.getRoot(resource), undefined);
+		const level = this.context.extensionContext.globalState.get<RSTPreviewSecurityLevel | undefined>(this.security_level_key + this.getRoot(resource), undefined);
 		if (typeof level !== 'undefined') {
 			return level;
 		}
 
 		// Fallback to old trusted workspace setting
-		if (this.globalState.get<boolean>(this.old_trusted_workspace_key + this.getRoot(resource), false)) {
+		if (this.context.extensionContext.globalState.get<boolean>(this.old_trusted_workspace_key + this.getRoot(resource), false)) {
 			return RSTPreviewSecurityLevel.AllowScriptsAndAllContent;
 		}
 		return RSTPreviewSecurityLevel.Strict;
 	}
 
 	public setSecurityLevelForResource(resource: vscode.Uri, level: RSTPreviewSecurityLevel): Thenable<void> {
-		return this.globalState.update(this.security_level_key + this.getRoot(resource), level);
+		return this.context.extensionContext.globalState.update(this.security_level_key + this.getRoot(resource), level);
 	}
 
 	public shouldAllowSvgsForResource(resource: vscode.Uri) {
@@ -64,11 +67,11 @@ export class ExtensionContentSecurityPolicyArbiter implements ContentSecurityPol
 	}
 
 	public shouldDisableSecurityWarnings(): boolean {
-		return this.workspaceState.get<boolean>(this.should_disable_security_warning_key, false);
+		return this.context.extensionContext.workspaceState.get<boolean>(this.should_disable_security_warning_key, false);
 	}
 
 	public setShouldDisableSecurityWarning(disabled: boolean): Thenable<void> {
-		return this.workspaceState.update(this.should_disable_security_warning_key, disabled);
+		return this.context.extensionContext.workspaceState.update(this.should_disable_security_warning_key, disabled);
 	}
 
 	private getRoot(resource: vscode.Uri): vscode.Uri {
@@ -87,11 +90,12 @@ export class ExtensionContentSecurityPolicyArbiter implements ContentSecurityPol
 	}
 }
 
+@injectable()
 export class PreviewSecuritySelector {
 
 	public constructor(
-		private readonly cspArbiter: ContentSecurityPolicyArbiter,
-		private readonly webviewManager: RSTPreviewManager
+		@inject(TYPES.Policy) private readonly cspArbiter: ContentSecurityPolicyArbiter,
+		@inject(TYPES.PreviewManager) private readonly webviewManager: RSTPreviewManager
 	) { }
 
 	public async showSecuritySelectorForResource(resource: vscode.Uri): Promise<void> {

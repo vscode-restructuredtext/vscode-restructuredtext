@@ -9,12 +9,14 @@
   },
   "dependencies": {
     "async-lock": "^1.3.1",
+    "inversify": "^6.0.1",
     "linux-os-info": "^2.0.0",
     "lodash.throttle": "^4.1.1",
     "meaw": "^4.1.0",
     "mime": "^2.4.6",
     "node-fetch": "^2.0.0",
     "open": "^7.3.0",
+    "reflect-metadata": "^0.1.13",
     "vscode-languageclient": "^6.1.3",
     "vscode-nls": "^4.0.0"
   },

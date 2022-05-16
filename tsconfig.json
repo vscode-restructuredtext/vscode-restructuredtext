@@ -7,7 +7,9 @@
 		"rootDir": "src",
 		"sourceMap": true,
 		"importHelpers": true,
-		"strict": false
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"strict": false,
 	},
 	"include": [
 		"src/**/*"

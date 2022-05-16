@@ -17,6 +17,8 @@ import {
 } from "./initialize";
 import { Python } from "../../util/python";
 import { Logger } from "../../util/logger";
+import container from "../../inversify.config";
+import { TYPES } from "../../types";
 
 // Defines a Mocha test suite to group tests of similar kind together
 let engine: RSTEngine;
@@ -32,7 +34,7 @@ suite("Preview Tests", function() {
     this.timeout(30000);
     try {
       await initialize();
-      python = new Python(logger);
+      python = container.get<Python>(TYPES.Python);
 
       engine = new RSTEngine(python, logger, null, null);
     } catch (e) {

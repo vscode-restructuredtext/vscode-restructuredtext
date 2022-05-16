@@ -3,12 +3,15 @@
 // See LICENSE in the project root for license information.
 // ============================================================
 import * as vscode from 'vscode';
+import container from '../inversify.config';
+import { TYPES } from '../types';
 import { Configuration } from '../util/configuration';
 import * as util from './util';
 
 
 export async function setContext() {
-    if (Configuration.getTableEditorDisabled()) { return; }
+    const configuration = container.get<Configuration>(TYPES.Configuration);
+    if (configuration.getTableEditorDisabled()) { return; }
 
     const editor = vscode.window.activeTextEditor;
     if (editor) {

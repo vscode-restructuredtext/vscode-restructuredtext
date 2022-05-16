@@ -1,23 +1,30 @@
+'use strict';
+
+import { inject, injectable, named } from "inversify";
 import { exec, ExecException } from 'child_process';
-import * as fs from 'fs';
 import * as vscode from 'vscode';
 import { Uri } from 'vscode';
 import { Configuration } from './configuration';
 import { Logger } from './logger';
+import { NAMES, TYPES } from "./../types";
 
+@injectable()
 export class Python {
+
   private version: 2 | 3 | null = null;
-  private pythonPath: string;
+  private pythonPath: string | undefined;
   private ready: boolean = false;
 
-  public constructor(private readonly logger: Logger) {
+  public constructor(
+      @inject(TYPES.Logger) @named(NAMES.Main) private readonly logger: Logger,
+      @inject(TYPES.Configuration) private readonly configuration: Configuration) {
   }
 
   public isReady(): boolean {
     return this.ready;
   }
 
-  public async setup(resource: Uri = null): Promise<void> {
+  public async setup(resource?: Uri): Promise<void> {
     if (await this.checkPython(resource)) {
       await this.checkEsbonio(resource, false, false);
       await this.checkPreviewEngine(resource, false);
@@ -26,7 +33,7 @@ export class Python {
   }
 
   public async checkPython(resource: vscode.Uri, showInformation: boolean = true): Promise<boolean> {
-    const path = await Configuration.getPythonPath(resource);
+    const path = await this.configuration.getPythonPath(resource);
     if (path) {
       this.pythonPath = `"${path}"`;
       if (await this.getVersion()) {
@@ -34,7 +41,7 @@ export class Python {
       }
     }
 
-    this.logger.log('Cannot find Python.');
+    this.logger.error('Cannot find Python.');
     if (showInformation) {
       const choice = await vscode.window.showErrorMessage('Please review Python installation on this machine before using this extension.', 'Learn more...');
       if (choice === 'Learn more...') {
@@ -45,8 +52,8 @@ export class Python {
   }
 
   public async checkPreviewEngine(resource: vscode.Uri, showWarning: boolean = true): Promise<boolean> {
-    if (Configuration.getConfPath(resource) === '') {
-      if (Configuration.getDocUtilDisabled()) {
+    if (this.configuration.getConfPath(resource) === '') {
+      if (this.configuration.getDocUtilDisabled()) {
         if (showWarning) {
           await vscode.window.showWarningMessage('No preview. Preview engine docutils is disabled.');
         }
@@ -55,11 +62,11 @@ export class Python {
       if (!(await this.checkDocutilsInstall())) {
         const choice = await vscode.window.showInformationMessage('Preview engine docutils is not installed.', 'Install', 'Not now', 'Do not show again');
         if (choice === 'Install') {
-          this.logger.log('Started to install docutils...');
+          this.logger.info('Started to install docutils...');
           await this.installDocUtils();
         } else if (choice === 'Do not show again') {
-          this.logger.log('Disabled docutils engine.');
-          await Configuration.setDocUtilDisabled();
+          this.logger.info('Disabled docutils engine.');
+          await this.configuration.setDocUtilDisabled();
           if (showWarning) {
             await vscode.window.showWarningMessage('No preview. Preview engine docutils is now disabled.');
           }
@@ -76,7 +83,7 @@ export class Python {
   }
 
   public async checkEsbonio(resource: vscode.Uri, showInformation: boolean = true, showWarning: boolean = true): Promise<boolean> {
-    if (Configuration.getLanguageServerDisabled()) {
+    if (this.configuration.getLanguageServerDisabled()) {
       if (showWarning) {
         vscode.window.showWarningMessage('No IntelliSense or live preview. Language server is disabled.');
       }
@@ -88,7 +95,7 @@ export class Python {
         if (!canContinue) {
           const upgradePip = await vscode.window.showInformationMessage('Python package pip is too old.', 'Upgrade', 'Not now');
           if (upgradePip === 'Upgrade') {
-            this.logger.log('Start to upgrade pip...');
+            this.logger.info('Start to upgrade pip...');
             await this.installPip();
           } else {
             vscode.window.showWarningMessage('Python package pip is too old. Esbonio language server is not installed.');
@@ -97,7 +104,7 @@ export class Python {
         }
         const choice = await vscode.window.showInformationMessage('Esbonio language server is not installed or out of date.', 'Install', 'Not now');
         if (choice === 'Install') {
-          this.logger.log('Started to install Esbonio...');
+          this.logger.info('Started to install Esbonio...');
           await this.installEsbonio();
         } else {
           vscode.window.showWarningMessage('No IntelliSense or live preview. Esbonio language server is not installed.');
@@ -115,7 +122,7 @@ export class Python {
       if (showInformation) {
         const choice = await vscode.window.showInformationMessage('Python package debugpy is not installed.', 'Install', 'Not now');
         if (choice === 'Install') {
-          this.logger.log('Started to install debugpy...');
+          this.logger.info('Started to install debugpy...');
           await this.installDebugPy();
         } else {
           vscode.window.showWarningMessage('Cannot debug. Python package debugpy is not installed.');
@@ -131,10 +138,10 @@ export class Python {
   private async installDocUtils(): Promise<void> {
     try {
       await this.exec('-m', 'pip', 'install', 'docutils');
-      this.logger.log('Finished installing docutils');
+      this.logger.info('Finished installing docutils');
       vscode.window.showInformationMessage('The preview engine docutils is installed.');
     } catch (e) {
-      this.logger.log('Failed to install docutils');
+      this.logger.error('Failed to install docutils');
       vscode.window.showErrorMessage(
         'Could not install docutils. Please run `pip install docutils` to use this ' +
           'extension, or check your Python path.'
@@ -154,10 +161,10 @@ export class Python {
   private async installDoc8(): Promise<void> {
     try {
       await this.exec('-m', 'pip', 'install', 'doc8');
-      this.logger.log('Finished installing doc8');
+      this.logger.info('Finished installing doc8');
       vscode.window.showInformationMessage('The linter doc8 is installed.');
     } catch (e) {
-      this.logger.log('Failed to install doc8');
+      this.logger.error('Failed to install doc8');
       vscode.window.showErrorMessage(
         'Could not install doc8. Please run `pip install doc8` to use this ' +
           'linter, or check your Python path.'
@@ -177,10 +184,10 @@ export class Python {
   private async installRstCheck(): Promise<void> {
     try {
       await this.exec('-m', 'pip', 'install', 'rstcheck');
-      this.logger.log('Finished installing rstcheck');
+      this.logger.info('Finished installing rstcheck');
       vscode.window.showInformationMessage('The linter rstcheck is installed.');
     } catch (e) {
-      this.logger.log('Failed to install rstcheck');
+      this.logger.error('Failed to install rstcheck');
       vscode.window.showErrorMessage(
         'Could not install rstcheck. Please run `pip install rstcheck` to use this ' +
           'linter, or check your Python path.'
@@ -200,10 +207,10 @@ export class Python {
   private async installRstLint(): Promise<void> {
     try {
       await this.exec('-m', 'pip', 'install', 'restructuredtext_lint');
-      this.logger.log('Finished installing restructuredtext_lint');
+      this.logger.info('Finished installing restructuredtext_lint');
       vscode.window.showInformationMessage('The linter restructuredtext_lint is installed.');
     } catch (e) {
-      this.logger.log('Failed to install restructuredtext_lint');
+      this.logger.error('Failed to install restructuredtext_lint');
       vscode.window.showErrorMessage(
         'Could not install restructuredtext_lint. Please run `pip install restructuredtext_lint` to use this ' +
           'linter, or check your Python path.'
@@ -223,10 +230,10 @@ export class Python {
   private async installSphinx(): Promise<void> {
     try {
       await this.exec('-m', 'pip', 'install', 'sphinx', 'sphinx-autobuild');
-      this.logger.log('Finished installing sphinx');
+      this.logger.info('Finished installing sphinx');
       vscode.window.showInformationMessage('The preview engine sphinx is installed.');
     } catch (e) {
-      this.logger.log('Failed to install sphinx');
+      this.logger.error('Failed to install sphinx');
       vscode.window.showErrorMessage(
         'Could not install sphinx. Please run `pip install sphinx sphinx-autobuild` to use this ' +
           'extension, or check your Python path.'
@@ -246,9 +253,9 @@ export class Python {
   private async installPip(): Promise<void> {
     try {
       await this.exec('-m', 'pip', 'install', 'pip', '--upgrade');
-      this.logger.log('Finished installing pip');
+      this.logger.info('Finished installing pip');
     } catch (e) {
-      this.logger.log('Failed to install pip');
+      this.logger.error('Failed to install pip');
       vscode.window.showErrorMessage(
         'Could not install pip. Please run `pip install pip --upgrade` to use this ' +
           'extension, or check your Python path.'
@@ -268,10 +275,10 @@ export class Python {
   private async installEsbonio(): Promise<void> {
     try {
       await this.exec('-m', 'pip', 'install', 'esbonio', '--upgrade');
-      this.logger.log('Finished installing esbonio');
+      this.logger.info('Finished installing esbonio');
       vscode.window.showInformationMessage('Esbonio language server is installed.');
     } catch (e) {
-      this.logger.log('Failed to install esbonio');
+      this.logger.error('Failed to install esbonio');
       vscode.window.showErrorMessage(
         'Could not install esbonio. Please run `pip install esbonio` to use this ' +
           'extension, or check your Python path.'
@@ -282,9 +289,9 @@ export class Python {
   public async uninstallEsbonio(): Promise<void> {
     try {
       await this.exec('-m', 'pip', 'uninstall', 'esbonio', '-y');
-      this.logger.log('Finished uninstalling esbonio');
+      this.logger.info('Finished uninstalling esbonio');
     } catch (e) {
-      this.logger.log('Failed to uninstall esbonio');
+      this.logger.error('Failed to uninstall esbonio');
       vscode.window.showErrorMessage(
         'Could not uninstall esbonio. Please run `pip uninstall esbonio` to debug this ' +
           'extension.'
@@ -316,10 +323,10 @@ export class Python {
   private async installDebugPy(): Promise<void> {
     try {
       await this.exec('-m', 'pip', 'install', 'debugpy');
-      this.logger.log('Finished installing debugpy');
+      this.logger.info('Finished installing debugpy');
       vscode.window.showInformationMessage('The helper debugpy is installed.');
     } catch (e) {
-      this.logger.log('Failed to install debugpy');
+      this.logger.error('Failed to install debugpy');
       vscode.window.showErrorMessage(
         'Could not install debugpy. Please run `pip install debugpy` to debug this ' +
           'extension, or check your Python path.'
@@ -361,7 +368,7 @@ export class Python {
   public exec(...args: string[]): Promise<string> {
     const cmd = [this.pythonPath, ...args];
     return new Promise<string>((resolve, reject) => {
-      this.logger.log(`Running cmd: ${this.pythonPath} ${args.join(' ')}`);
+      this.logger.info(`Running cmd: ${this.pythonPath} ${args.join(' ')}`);
       exec(
         cmd.join(' '),
         (error: ExecException | null, stdout: string, stderr: string) => {
@@ -373,10 +380,10 @@ export class Python {
               '',
               stderr.toString()
             ].join('\n');
-            this.logger.log(errorMessage);
+            this.logger.error(errorMessage);
             reject(errorMessage);
           } else {
-            this.logger.log('Successful exec');
+            this.logger.info('Successful exec');
             resolve(stdout.toString());
           }
         }

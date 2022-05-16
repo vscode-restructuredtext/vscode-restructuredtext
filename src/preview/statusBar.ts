@@ -6,6 +6,8 @@ import { RstTransformerSelector } from './selector';
 import { RstTransformerConfig } from './confPyFinder';
 import { Logger } from '../util/logger';
 import { Python } from '../util/python';
+import { NAMES, TYPES } from '../types';
+import { inject, injectable, named } from 'inversify';
 
 /**
  * Status bar updates. Shows the selected RstTransformerConfig when a
@@ -13,18 +15,20 @@ import { Python } from '../util/python';
  * then the RstTransformerConfig is reset and you will need to select from
  * the menu when the preview is generated next time.
  */
+@injectable()
 export default class RstTransformerStatus {
     private _statusBarItem: vscode.StatusBarItem;
     public config: RstTransformerConfig;
-    private _logger: Logger;
-    private python: Python;
     private inReset:  boolean;
 
-    constructor(python: Python, logger: Logger) {
+    constructor(
+        @inject(TYPES.Python) private python: Python,
+        @inject(TYPES.Logger) @named(NAMES.Main) private logger: Logger,
+        @inject(TYPES.Configuration) private configuration: Configuration,
+        @inject(TYPES.TransformSelector) private selector: RstTransformerSelector
+    ) {
         this._statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
         this._statusBarItem.command = 'restructuredtext.resetStatus';
-        this._logger = logger;
-        this.python = python;
     }
 
     public setLabel() {
@@ -38,7 +42,7 @@ export default class RstTransformerStatus {
         const editor = vscode.window.activeTextEditor;
         if (editor != null && editor.document.languageId === 'restructuredtext') {
             const resource = editor.document.uri;
-            const workspaceRoot = Configuration.GetRootPath(resource);
+            const workspaceRoot = this.configuration.getRootPath(resource);
             if (!this.config || this.config.workspaceRoot !== workspaceRoot) {
                 await this.refreshConfig(resource);
                 this.python.setup(resource);
@@ -55,7 +59,7 @@ export default class RstTransformerStatus {
         const editor = vscode.window.activeTextEditor;
         if (editor != null && editor.document.languageId === 'restructuredtext') {
             let resource = editor.document.uri;
-            this._logger.log("[preview] reset config.");
+            this.logger.log("[preview] reset config.");
             this.inReset = true;
             try
             {
@@ -68,7 +72,7 @@ export default class RstTransformerStatus {
     }
 
     public async refreshConfig(resource: vscode.Uri): Promise<RstTransformerConfig> {
-        const rstTransformerConf = await RstTransformerSelector.findConfDir(resource, this._logger, this.inReset);
+        const rstTransformerConf = await this.selector.findConfDir(resource, this.inReset);
         if (rstTransformerConf == null) {
             return null;
         }
@@ -76,12 +80,12 @@ export default class RstTransformerStatus {
         this.config = rstTransformerConf;
 
         if (rstTransformerConf.engine === 'docutils') {
-            this._logger.log("[preview] engine set to docutils");
-            await Configuration.setPreviewName('docutils', resource)
+            this.logger.log("[preview] engine set to docutils");
+            await this.configuration.setPreviewName('docutils', resource)
         } else {
-            this._logger.log("[preview] set config to " + rstTransformerConf.confPyDirectory);
-            await Configuration.setPreviewName('sphinx', resource)
-            await Configuration.setConfPath(rstTransformerConf.confPyDirectory, resource, true);
+            this.logger.log("[preview] set config to " + rstTransformerConf.confPyDirectory);
+            await this.configuration.setPreviewName('sphinx', resource)
+            await this.configuration.setConfPath(rstTransformerConf.confPyDirectory, resource, true);
         }
 
         return rstTransformerConf;

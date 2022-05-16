@@ -3,17 +3,21 @@ import * as path from "path";
 import * as fs from 'fs';
 import { Python } from "../util/python";
 import { Logger } from "../util/logger";
-import RstTransformerStatus from './statusBar';
 import { Configuration } from '../util/configuration';
-import { EsbonioClient } from "../language-server/client";
+import { NAMES, TYPES } from "../types";
+import { inject, injectable, named } from "inversify";
+import { PreviewContext } from "./PreviewContext";
 
+@injectable()
 export class RSTEngine {
+
   public constructor(
-    private readonly python: Python,
-    private readonly logger: Logger,
-    private readonly status: RstTransformerStatus,
-    private readonly esbonio: EsbonioClient
-  ) { }
+    @inject(TYPES.Python) private readonly python: Python,
+    @inject(TYPES.Logger) @named(NAMES.Main) private readonly logger: Logger,
+    @inject(TYPES.PreviewContext) private readonly context: PreviewContext,
+    @inject(TYPES.Configuration) private readonly configuration: Configuration,
+  ) {
+  }
 
   private errorSnippet(error: string): string {
     return `<html><body>${error}</body></html>`;
@@ -21,24 +25,23 @@ export class RSTEngine {
 
   public async compile(fileName: string, uri: vscode.Uri, fixLinks: boolean, webview: vscode.Webview): Promise<string> {
     this.logger.log(`[preview] Compiling file: ${fileName}`);
-    
-    if (Configuration.getPreviewName() === 'docutils') {
+    if (this.configuration.getPreviewName() === 'docutils') {
       this.logger.log('[preview] Forced to use docutils due to setting "preview.name".')
       return await this.useDocutils(uri, fileName);
     }
 
-    if (this.esbonio.error) {
+    if (this.context.esbonio.error) {
       // Fallback to docutils
       this.logger.log(`[preview] Esbonio detected build errors, falling back to docutils preview`);
       return await this.useDocutils(uri, fileName);
     }
 
-    if (!this.esbonio.ready) {
+    if (!this.context.esbonio.ready) {
       return this.showWait();
     }
 
-    const confDir = this.esbonio.sphinxConfig.confDir;
-    const output = this.esbonio.sphinxConfig.buildDir;
+    const confDir = this.context.esbonio.sphinxConfig.confDir;
+    const output = this.context.esbonio.sphinxConfig.buildDir;
 
     this.logger.log('[preview] Sphinx conf.py directory: ' + confDir);
     this.logger.log('[preview] Sphinx html directory: ' + output);
@@ -55,8 +58,8 @@ export class RSTEngine {
   }
 
   private async useDocutils(uri: vscode.Uri, fileName: string) { 
-    const writer = Configuration.getDocutilsWriter(uri);
-    const writerPart = Configuration.getDocutilsWriterPart(uri);
+    const writer = this.configuration.getDocutilsWriter(uri);
+    const writerPart = this.configuration.getDocutilsWriterPart(uri);
     return await this.python.exec(
       '"' + path.join(__dirname, '..', '..', 'python-scripts', 'preview.py') + '"',
       '"' + fileName + '"',
@@ -71,8 +74,6 @@ export class RSTEngine {
 
     // Build and display file.
     return new Promise<string>((resolve, reject) => {
-
-
       fs.readFile(htmlPath, 'utf8', (err, data) => {
         if (err === null) {
           if (fixLinks) {

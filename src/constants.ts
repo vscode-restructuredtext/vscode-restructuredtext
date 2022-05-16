@@ -1,5 +1,9 @@
 export const PYTHON_EXTENSION = "ms-python.python"
 
+export class Constants {
+  public static readonly python = "python";
+  public static readonly shrinkLength = 32;
+}
 
 export namespace Server {
   export const REQUIRED_PYTHON = "3.6.0"

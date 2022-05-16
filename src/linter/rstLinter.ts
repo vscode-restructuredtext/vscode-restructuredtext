@@ -4,6 +4,8 @@ import { Logger } from '../util/logger';
 import { Python } from '../util/python';
 import { Configuration } from '../util/configuration';
 import { ILinter, ILinterConfiguration, LintingProvider } from './lintingProvider';
+import container from '../inversify.config';
+import { TYPES } from '../types';
 
 export default class RstLintingProvider implements ILinter {
 
@@ -26,10 +28,11 @@ export default class RstLintingProvider implements ILinter {
     public async loadConfiguration(resource: Uri): Promise<ILinterConfiguration> {
 
         let module: string[] = [];
+        const configuration = container.get<Configuration>(TYPES.Configuration);
 
         let build = this.path;
         if (build == null) {
-            const python = await Configuration.getPythonPath(resource);
+            const python = await configuration.getPythonPath(resource);
             if (python) {
                 build = '"' + python + '"';
                 module = module.concat(['-m', this.module]);
@@ -47,9 +50,9 @@ export default class RstLintingProvider implements ILinter {
             module,
             fileArgs: [],
             bufferArgs: [],
-            extraArgs: this.extraArgs.map((value, index) => Configuration.expandMacro(value, resource)),
-            runTrigger: Configuration.getRunType(resource),
-            rootPath: Configuration.GetRootPath(resource)
+            extraArgs: this.extraArgs.map((value) => configuration.expandMacro(value, resource)),
+            runTrigger: configuration.getRunType(resource),
+            rootPath: configuration.getRootPath(resource)
         };
     }
 

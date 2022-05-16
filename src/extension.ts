@@ -6,12 +6,10 @@
 import * as vscode from 'vscode';
 import { CommandManager } from './util/commandManager';
 import * as commands from './commands/index';
-import { RSTContentProvider } from './preview/previewContentProvider';
 import { RSTPreviewManager } from './preview/previewManager';
 import { Logger } from './util/logger';
 import { Python } from './util/python';
-import { RSTEngine } from './preview/rstEngine';
-import { ExtensionContentSecurityPolicyArbiter, PreviewSecuritySelector } from './util/security';
+import { PreviewSecuritySelector } from './util/security';
 
 import { Configuration } from './util/configuration';
 import RstTransformerStatus from './preview/statusBar';
@@ -21,6 +19,9 @@ import * as LinterFeatures from './linter/extension';
 import { setGlobalState, setWorkspaceState } from './util/stateUtils';
 import { initConfig } from './util/config';
 import { Commands } from './constants';
+import container from './inversify.config';
+import { NAMES, TYPES } from './types';
+import { PreviewContext } from './preview/PreviewContext';
 
 let extensionPath = '';
 
@@ -33,16 +34,15 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     setGlobalState(context.globalState);
     setWorkspaceState(context.workspaceState);
 
-    const channel = vscode.window.createOutputChannel('reStructuredText');
-
     await initConfig(context);
 
     extensionPath = context.extensionPath;
 
-    const logger = new Logger(channel);
+    const logger = container.getNamed<Logger>(TYPES.Logger, NAMES.Main);
     logger.log('Please visit https://docs.restructuredtext.net to learn how to configure the extension.');
 
-    const conflicting = Configuration.getConflictingExtensions();
+    const configuration = container.get<Configuration>(TYPES.Configuration);
+    const conflicting = configuration.getConflictingExtensions();
     for (const element of conflicting) {
         const found = vscode.extensions.getExtension(element);
         if (found) {
@@ -64,7 +64,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     const msPythonName = 'ms-python.python';
     // guide the users to install Microsoft Python extension.
     const msPython = vscode.extensions.getExtension(msPythonName);
-    if (!msPython && !Configuration.getPythonRecommendationDisabled()) {
+    if (!msPython && !configuration.getPythonRecommendationDisabled()) {
         const message = 'It is recommended to install Microsoft Python extension. Do you want to install it now?';
         const choice = await vscode.window.showInformationMessage(message, 'Install', 'Not now', 'Do not show again');
         if (choice === 'Install') {
@@ -73,13 +73,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
             await vscode.commands.executeCommand(Commands.INSTALL_EXTENSION, msPythonName);
         } else if (choice === 'Do not show again') {
             logger.log('Disabled ms-python prompt.');
-            await Configuration.setPythonRecommendationDisabled();
+            await configuration.setPythonRecommendationDisabled();
         }
     }
 
     const simpleRstName = 'trond-snekvik.simple-rst';
     const simpleRst = vscode.extensions.getExtension(simpleRstName);
-    if (!simpleRst && !Configuration.getSyntaxHighlightingDisabled()) {
+    if (!simpleRst && !configuration.getSyntaxHighlightingDisabled()) {
         const message = 'Syntax highlighting is now provided by Trond Snekvik\'s extension. Do you want to install it now?';
         const choice = await vscode.window.showInformationMessage(message, 'Install', 'Not now', 'Do not show again');
         if (choice === 'Install') {
@@ -88,7 +88,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
             await vscode.commands.executeCommand(Commands.INSTALL_EXTENSION, simpleRstName);
         } else if (choice === 'Do not show again') {
             logger.log('Disabled syntax highlighting.');
-            await Configuration.setSyntaxHighlightingDisabled();
+            await configuration.setSyntaxHighlightingDisabled();
             vscode.window.showWarningMessage('Syntax highlighting is now disabled.');
         } else {
             vscode.window.showWarningMessage('No Syntax highlighting. Trond Snekvik\'s extension is not installed.');
@@ -97,7 +97,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
     await logger.logPlatform();
 
-    const python: Python = new Python(logger);
+    const python = container.get<Python>(TYPES.Python);
     await python.setup();
 
     await EditorFeatures.activate(context);
@@ -105,7 +105,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     await LinterFeatures.activate(context, python, logger);
 
     // Status bar to show the active rst->html transformer configuration
-    const status = new RstTransformerStatus(python, logger);
+    const status = container.get<RstTransformerStatus>(TYPES.TransformStatus);
 
     // Hook up the status bar to document change events
     context.subscriptions.push(
@@ -141,22 +141,17 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         vscode.window.showWarningMessage('Setting "restructuredtext.sourcePath" is migrated to "esbonio.sphinx.srcDir". Please manually delete "restructuredtext.sourcePath" from your config file.');
     }
 
-    const lspChannel = vscode.window.createOutputChannel('Esbonio Language Server');
-    const lspLogger = new Logger(lspChannel);
+    const lspLogger = container.getNamed<Logger>(TYPES.Logger, NAMES.Lsp);
     // activate language services
-    const esbonio = await RstLanguageServer.activate(context, lspChannel, lspLogger, python);
+    const esbonio = await RstLanguageServer.activate(context, lspLogger, python); // TODO: move to preview context.
+    container.bind<PreviewContext>(TYPES.PreviewContext).toConstantValue(new PreviewContext(esbonio, context));
 
-    if (!Configuration.getDocUtilDisabled() || !Configuration.getSphinxDisabled()) {
+    if (!configuration.getDocUtilDisabled() || !configuration.getSphinxDisabled()) {
 
-        const cspArbiter = new ExtensionContentSecurityPolicyArbiter(context.globalState, context.workspaceState);
-
-        const engine: RSTEngine = new RSTEngine(python, logger, status, esbonio);
-
-        const contentProvider = new RSTContentProvider(context, cspArbiter, engine, logger);
-        const previewManager = new RSTPreviewManager(contentProvider, logger, esbonio);
+        const previewManager = container.get<RSTPreviewManager>(TYPES.PreviewManager);
         context.subscriptions.push(previewManager);
 
-        const previewSecuritySelector = new PreviewSecuritySelector(cspArbiter, previewManager);
+        const previewSecuritySelector = container.get<PreviewSecuritySelector>(TYPES.SecuritySelector);
 
         const commandManager = new CommandManager();
         context.subscriptions.push(commandManager);

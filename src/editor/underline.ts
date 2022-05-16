@@ -4,8 +4,11 @@
 import * as vscode from 'vscode';
 import * as meaw from 'meaw';
 import { Configuration } from '../util/configuration';
+import container from '../inversify.config';
+import { TYPES } from '../types';
 
-const underlineChars = Configuration.getAdornments();
+const configuration = container.get<Configuration>(TYPES.Configuration);
+const underlineChars = configuration.getAdornments();
 
 /**
  * Analyze current underline char and return the underline character corresponding
