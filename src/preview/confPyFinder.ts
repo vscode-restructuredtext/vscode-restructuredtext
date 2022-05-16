@@ -11,8 +11,9 @@ import { QuickPickItem, Uri, workspace } from 'vscode';
 export class RstTransformerConfig implements QuickPickItem {
     public label: string;
     public tooltip: string;
-    public description: string = 'Use Sphinx with the selected conf.py path';
+    public description: string = 'Use Sphinx with this conf.py';
     public confPyDirectory: string;
+    public engine: string;
     public workspaceRoot: string;
     public shortLabel: string;
 }
@@ -27,7 +28,7 @@ export async function findConfPyFiles(resource: Uri): Promise<string[]> {
 
     const items = await workspace.findFiles(
             /*include*/ '{**/conf.py}',
-            /*exclude*/ '{}',
+            /*exclude*/ '{**/site-packages/**/conf.py}',
             /*maxResults*/ 100);
     return urisToPaths(items, resource);
 }

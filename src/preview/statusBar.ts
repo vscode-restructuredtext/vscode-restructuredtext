@@ -74,8 +74,16 @@ export default class RstTransformerStatus {
         }
 
         this.config = rstTransformerConf;
-        this._logger.log("[preview] set config to " + rstTransformerConf.confPyDirectory);
-        await Configuration.setConfPath(rstTransformerConf.confPyDirectory, resource, true);
+
+        if (rstTransformerConf.engine === 'docutils') {
+            this._logger.log("[preview] engine set to docutils");
+            await Configuration.setPreviewName('docutils', resource)
+        } else {
+            this._logger.log("[preview] set config to " + rstTransformerConf.confPyDirectory);
+            await Configuration.setPreviewName('sphinx', resource)
+            await Configuration.setConfPath(rstTransformerConf.confPyDirectory, resource, true);
+        }
+
         return rstTransformerConf;
     }
 }

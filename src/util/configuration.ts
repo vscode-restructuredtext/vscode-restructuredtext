@@ -171,6 +171,10 @@ export class Configuration {
         return await Configuration.saveSetting('sphinx.confDir', value, resource, insertMacro, 'esbonio');
     }
 
+    public static async setPreviewName(value: string, resource: Uri = null): Promise<string> {
+        return await Configuration.saveAnySetting('preview.name', value, resource);
+    }    
+
     public static async setSphinxDisabled(resource: Uri = null) {
         await Configuration.saveAnySetting('preview.sphinx.disabled', true, resource);
     }
