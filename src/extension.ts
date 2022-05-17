@@ -95,7 +95,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         }
     }
 
-    await logger.logPlatform();
+    const minor = require('semver/functions/minor');
+    const minorVersion = minor(context.extension.packageJSON.version);
+    if (minorVersion % 2 !== 0) {
+        vscode.window.showInformationMessage('Rollbar logging is enabled in preview release. Switch to a stable release to disable it.');
+        await logger.logPlatform();
+    }
 
     const python = container.get<Python>(TYPES.Python);
     await python.setup();

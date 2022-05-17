@@ -5,6 +5,7 @@
 
 import * as vscode from 'vscode';
 import { injectable } from 'inversify';
+import * as Rollbar from 'rollbar';
 
 export interface Logger {
 	info(message: string): void;
@@ -12,9 +13,10 @@ export interface Logger {
 	warning(message: string): void;
 	debug(message: string): void;
 	log(message: string): void;
-	logPlatform(): void;
+	logPlatform(): Promise<void>;
 	outputChannel: vscode.OutputChannel;
 	updateConfiguration(): void;
+	collect(message: string): void;
 }
 
 export enum Trace {
@@ -44,10 +46,17 @@ function isString(value: any): value is string {
 export class ConsoleLogger implements Logger {
     private trace?: Trace;
 	public outputChannel: vscode.OutputChannel;
+	private rollbar: Rollbar;
 
 	constructor(name: string) {
 		this.outputChannel = vscode.window.createOutputChannel(name);
         this.updateConfiguration();
+
+		this.rollbar = new Rollbar({
+			accessToken: 'ae7bc72e09184fb4aa1ea1c4a3cfb705',
+			captureUncaught: true,
+			captureUnhandledRejections: true,
+			});
  	}
 
 	public error(message: string): void {
@@ -64,6 +73,10 @@ export class ConsoleLogger implements Logger {
 
 	public warning(message: string): void {
 		this.log(message);
+	}
+
+	public collect(message: string): void {
+		this.rollbar.log(message);
 	}
 
 	public log(message: string, data?: any): void {
@@ -110,15 +123,18 @@ export class ConsoleLogger implements Logger {
 
 	public async logPlatform(): Promise<void> {
 		const os = require('os');
-		let platform = os.platform();
-		this.log(`OS is ${platform}`);
+		const platform = os.platform();
+		const release = os.release();
+		let dist: string;
 		if (platform === 'darwin' || platform === 'win32') {
-			return;
+			dist = '';
+		} else {		
+			const osInfo = require('linux-os-info');
+			const result = await osInfo();
+			dist = result.id;
 		}
-	
-		const osInfo = require('linux-os-info');
-		const result = await osInfo();
-		const dist = result.id;
-		this.log(`dist: ${dist}`);
+
+		this.log(`OS is ${platform} ${release} ${dist}`);
+		this.collect(`start from ${platform} ${release} ${dist}`);
 	}
 }
