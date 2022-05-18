@@ -236,9 +236,9 @@ export class Configuration {
             return input;
         }
 
-        let path: string | undefined;
+        let workspaceRootPath: string | undefined;
         if (!workspace.workspaceFolders) {
-            path = workspace.rootPath;
+            workspaceRootPath = workspace.rootPath;
         } else {
             let root: WorkspaceFolder | undefined;
             if (workspace.workspaceFolders.length === 1) {
@@ -247,11 +247,12 @@ export class Configuration {
                 root = workspace.getWorkspaceFolder(resource);
             }
 
-            path = root?.uri.fsPath;
+            workspaceRootPath = root?.uri.fsPath;
         }
 
-        if (path && input.startsWith(path)) {
-            return input.replace(path, '${workspaceFolder}');
+        if (workspaceRootPath && input.startsWith(workspaceRootPath)) {
+            const substitutePath = input.replace(workspaceRootPath, '${workspaceFolder}');
+            return substitutePath.split(path.sep).join(path.posix.sep);
         }
         return input;
     }
