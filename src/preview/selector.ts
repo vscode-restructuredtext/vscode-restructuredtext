@@ -55,7 +55,7 @@ export class RstTransformerSelector {
             qpSettings.confPyDirectory = path.dirname(pth);
             qpSettings.workspaceRoot = workspaceRoot;
             qpSettings.engine = 'sphinx';
-            qpSettings.shortLabel = `\$(gear) Sphinx: ${this.shrink(pth)}`;
+            qpSettings.shortLabel = `\$(gear) Sphinx: ${this.shrink(pth, workspaceRoot)}`;
 
             return qpSettings;
         }
@@ -91,7 +91,7 @@ export class RstTransformerSelector {
                 qp.confPyDirectory = path.dirname(pth);
                 qp.workspaceRoot = workspaceRoot;
                 qp.engine = 'sphinx';
-                qp.shortLabel = `\$(gear) Sphinx: ${this.shrink(pth)}`;
+                qp.shortLabel = `\$(gear) Sphinx: ${this.shrink(pth, workspaceRoot)}`;
 
                 options.push(qp);
                 pathStrings.push(pth);
@@ -99,11 +99,12 @@ export class RstTransformerSelector {
         });
     }
 
-    private shrink(path: string) {
-        if (path.length < Constants.shrinkLength) {
-            return path;
+    private shrink(path: string, workspaceRoot: string) {
+        const start = (path.indexOf(workspaceRoot) === -1) ? path : path.substring(workspaceRoot.length + 1);
+        if (start.length < Constants.shrinkLength) {
+            return start;
         }
 
-        return `...${path.substring(path.length - Constants.shrinkLength + '...'.length)}`;
+        return `...${start.substring(start.length - Constants.shrinkLength + '...'.length)}`;
     }
 }
