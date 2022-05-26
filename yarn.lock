@@ -2542,10 +2542,15 @@ ts-node@^10.7.0:
     v8-compile-cache-lib "^3.0.0"
     yn "3.1.1"
 
-tslib@^2.2.0, tslib@^2.3.1:
+tslib@^2.2.0:
   version "2.3.1"
   resolved "https://registry.npmjs.org/tslib/-/tslib-2.3.1.tgz"
   integrity sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==
+
+tslib@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.4.0.tgz#7cecaa7f073ce680a05847aa77be941098f36dc3"
+  integrity sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==
 
 tunnel-agent@^0.6.0:
   version "0.6.0"
@@ -2580,10 +2585,10 @@ typed-rest-client@^1.8.4:
     tunnel "0.0.6"
     underscore "^1.12.1"
 
-typescript@^4.6.2:
-  version "4.6.3"
-  resolved "https://registry.npmjs.org/typescript/-/typescript-4.6.3.tgz"
-  integrity sha512-yNIatDa5iaofVozS/uQJEl3JRWLKKGJKh6Yaiv0GLGSuhpFJe7P3SbHZ8/yjAHRQwKRoA6YZqlfjXWmVzoVSMw==
+typescript@^4.7.2:
+  version "4.7.2"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.7.2.tgz#1f9aa2ceb9af87cca227813b4310fff0b51593c4"
+  integrity sha512-Mamb1iX2FDUpcTRzltPxgWMKy3fhg0TN378ylbktPGPK/99KbDtMQ4W1hwgsbPAsG3a0xKa1vmw4VKZQbkvz5A==
 
 uc.micro@^1.0.1, uc.micro@^1.0.5:
   version "1.0.6"
@@ -2638,10 +2643,10 @@ v8-compile-cache@^2.0.3:
   resolved "https://registry.yarnpkg.com/v8-compile-cache/-/v8-compile-cache-2.3.0.tgz#2de19618c66dc247dcfb6f99338035d8245a2cee"
   integrity sha512-l8lCEmLcLYZh4nbunNZvQCJc5pv7+RCwa8q/LdUx8u7lsWvPDKmpodJAJNwkAhJC//dFY48KuIEmjtd4RViDrA==
 
-vsce@^2.7.0:
-  version "2.7.0"
-  resolved "https://registry.npmjs.org/vsce/-/vsce-2.7.0.tgz"
-  integrity sha512-CKU34wrQlbKDeJCRBkd1a8iwF9EvNxcYMg9hAUH6AxFGR6Wo2IKWwt3cJIcusHxx6XdjDHWlfAS/fJN30uvVnA==
+vsce@^2.8.0:
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/vsce/-/vsce-2.8.0.tgz#3d40d369d8d774fa221318a2a39ed1d6b353c3d7"
+  integrity sha512-p6BTbUVp33Ed0OWRRhRQT55yrmgLEca2fTmqxZJW44T1eP4yVWEsdaNIDsjFIeuCrjG/CYvwi1QLG4ql0s7bDA==
   dependencies:
     azure-devops-node-api "^11.0.1"
     chalk "^2.4.2"
