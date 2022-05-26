@@ -6,6 +6,7 @@
 import * as vscode from 'vscode';
 import { injectable } from 'inversify';
 import * as Rollbar from 'rollbar';
+import si = require('@jedithepro/system-info');
 
 export interface Logger {
 	info(message: string): void;
@@ -13,7 +14,7 @@ export interface Logger {
 	warning(message: string): void;
 	debug(message: string): void;
 	log(message: string): void;
-	logPlatform(): Promise<void>;
+	logPlatform(version: string): Promise<void>;
 	outputChannel: vscode.OutputChannel;
 	updateConfiguration(): void;
 	collect(message: string): void;
@@ -121,20 +122,14 @@ export class ConsoleLogger implements Logger {
 		return JSON.stringify(data, undefined, 2);
 	}
 
-	public async logPlatform(): Promise<void> {
-		const os = require('os');
-		const platform = os.platform();
-		const release = os.release();
-		let dist: string;
-		if (platform === 'darwin' || platform === 'win32') {
-			dist = '';
-		} else {		
-			const osInfo = require('linux-os-info');
-			const result = await osInfo();
-			dist = result.id;
-		}
+	public async logPlatform(version: string): Promise<void> {
+		const result = await si.osInfo();
+		const platform = result.platform;
+		const release = result.release;
+		const dist = result.distro;
+		const arch = result.arch;
 
-		this.log(`OS is ${platform} ${release} ${dist}`);
-		this.collect(`start from ${platform} ${release} ${dist}`);
+		this.log(`OS is ${platform} ${release} ${dist} ${arch}`);
+		this.collect(`start ${version} from ${platform} ${release} ${dist} ${arch}`);
 	}
 }

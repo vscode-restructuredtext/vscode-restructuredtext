@@ -48,6 +48,11 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz#b520529ec21d8e5945a1851dfd1c32e94e39ff45"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
+"@jedithepro/system-info@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@jedithepro/system-info/-/system-info-3.0.0.tgz#6a0a4f6df9c3815adf0769b819fbf655d4da2e03"
+  integrity sha512-RNBFgv2jenEYepLndjPbNir5MG7sqlFmuxZCRrlXLB4P11I00/oT7tBVJmZwbSl3jCxVyhSPFSB6WgZRwDSNhA==
+
 "@studio/changes@^2.2.0":
   version "2.2.0"
   resolved "https://registry.npmjs.org/@studio/changes/-/changes-2.2.0.tgz"
@@ -1589,11 +1594,6 @@ linkify-it@^3.0.1:
   integrity sha512-ynTsyrFSdE5oZ/O9GEf00kPngmOfVwazR5GKDq6EYfhlpFug3J2zybX56a2PRRpc9P+FuSoGNAwjlbDs9jJBPQ==
   dependencies:
     uc.micro "^1.0.1"
-
-linux-os-info@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.npmjs.org/linux-os-info/-/linux-os-info-2.0.0.tgz"
-  integrity sha512-ZopyH4kT2Ehnmix8iUgS/41pfv7fSlUV1JukIn3DB3qD3byvhBNtgCbUApoAtiqcHRLKXCY3zakXlJgiExm2Qg==
 
 listenercount@~1.0.1:
   version "1.0.1"
