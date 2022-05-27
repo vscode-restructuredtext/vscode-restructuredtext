@@ -55,8 +55,8 @@ export class ConsoleLogger implements Logger {
 
 		this.rollbar = new Rollbar({
 			accessToken: 'ae7bc72e09184fb4aa1ea1c4a3cfb705',
-			captureUncaught: true,
-			captureUnhandledRejections: true,
+			captureUncaught: false,
+			captureUnhandledRejections: false,
 			});
  	}
 
