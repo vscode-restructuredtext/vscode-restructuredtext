@@ -916,6 +916,6 @@
     "pretest": "yarn compile",
     "test": "node ./out/test/runTest.js",
     "package:stable": "yarn install && vsce package",
-    "package:preview": "yarn install && vsce package --pre-release"
+    "package": "yarn install && vsce package --pre-release"
   }
 }
