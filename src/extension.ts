@@ -38,6 +38,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     await initConfig(context);
 
     extensionPath = context.extensionPath;
+    await EditorFeatures.activate(context);
 
     const logger = new Logger(channel);
     logger.log('Please visit https://docs.restructuredtext.net to learn how to configure the extension.');
@@ -99,8 +100,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
     const python: Python = new Python(logger);
     await python.setup();
-
-    await EditorFeatures.activate(context);
 
     await LinterFeatures.activate(context, python, logger);
 
