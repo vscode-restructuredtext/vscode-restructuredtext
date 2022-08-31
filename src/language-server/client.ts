@@ -210,6 +210,7 @@ export class EsbonioClient {
     command.push(await configuration.getPythonPath()); //await this.python.getCmd()
 
     let options: any = {};
+    options.shell = true;
     const sourceFolder = configuration.getEsbonioSourceFolder();
     if (sourceFolder) {
       // launch language server from source folder.
