@@ -40,10 +40,10 @@ export class RSTEngine {
       return this.showWait();
     }
 
-    const confDir = this.context.esbonio.sphinxConfig.confDir;
+    const srcDir = this.context.esbonio.sphinxConfig.srcDir;
     const output = this.context.esbonio.sphinxConfig.buildDir;
 
-    this.logger.log('[preview] Sphinx conf.py directory: ' + confDir);
+    this.logger.log('[preview] Sphinx source directory: ' + srcDir);
     this.logger.log('[preview] Sphinx html directory: ' + output);
 
     // Calculate full path to built html file.
@@ -51,10 +51,10 @@ export class RSTEngine {
     const ext = whole.lastIndexOf('.');
     whole = whole.substring(0, ext) + '.html';
     const source = path.dirname(whole);
-    const sourceRelative = path.relative(confDir, source);
-    const outputRelative = path.relative(confDir, output);
-    const htmlPath = path.join(confDir, outputRelative, sourceRelative, path.basename(whole));
-    return this.previewPage(htmlPath, confDir, fixLinks, webview);
+    const sourceRelative = path.relative(srcDir, source);
+    const outputRelative = path.relative(srcDir, output);
+    const htmlPath = path.join(srcDir, outputRelative, sourceRelative, path.basename(whole));
+    return this.previewPage(htmlPath, srcDir, fixLinks, webview);
   }
 
   private async useDocutils(uri: vscode.Uri, fileName: string) { 
