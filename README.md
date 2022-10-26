@@ -1,7 +1,8 @@
 # reStructuredText Language Support for Visual Studio Code
 
 [![Build Status](https://img.shields.io/github/workflow/status/vscode-restructuredtext/vscode-restructuredtext/Node.js%20CI/master)](https://github.com/vscode-restructuredtext/vscode-restructuredtext/actions)
-[![Current Version](https://img.shields.io/visual-studio-marketplace/v/lextudio.restructuredtext.svg)](https://marketplace.visualstudio.com/items?itemName=lextudio.restructuredtext)
+[![Stable Version](https://img.shields.io/visual-studio-marketplace/v/lextudio.restructuredtext?label=stable%20version)](https://marketplace.visualstudio.com/items?itemName=lextudio.restructuredtext)
+[![Latest Version](https://img.shields.io/visual-studio-marketplace/v/lextudio.restructuredtext?include_prereleases&label=latest%20version&color=red)](https://marketplace.visualstudio.com/items?itemName=lextudio.restructuredtext)
 [![Install Count](https://img.shields.io/visual-studio-marketplace/i/lextudio.restructuredtext.svg)](https://marketplace.visualstudio.com/items?itemName=lextudio.restructuredtext)
 [![Download Count](https://img.shields.io/visual-studio-marketplace/d/lextudio.restructuredtext.svg)](https://marketplace.visualstudio.com/items?itemName=lextudio.restructuredtext)
 [![Gitter](https://img.shields.io/gitter/room/vscode-restructuredtext/vscode-restructuredtext.svg)](https://gitter.im/vscode-restructuredtext/vscode-restructuredtext)
@@ -20,7 +21,7 @@ that VS Code provides.
 - Linter
 - IntelliSense (**Experimental**)
 
-> To get Syntax Highlighting, please also install [this extension](https://marketplace.visualstudio.com/items?itemName=trond-snekvik.simple-rst) by Trond Snekvik.
+> To get Syntax Highlighting, you might install [this extension](https://marketplace.visualstudio.com/items?itemName=trond-snekvik.simple-rst) by Trond Snekvik.
 
 Frequent Asked Questions can be found [here](https://github.com/vscode-restructuredtext/vscode-restructuredtext/issues?q=is%3Aissue+label%3A%22faq+candidate%22+).
 
@@ -34,6 +35,8 @@ This extension is hosted at [Visual Studio Marketplace](https://marketplace.visu
 1. Click "Install" button to install "reStructuredText" extension (by LeXtudio Inc.).
 
 After installing this extension, please visit [the homepage for this extension](https://docs.restructuredtext.net) to learn how to use it.
+
+> If you want to stay on the edge, you can install Visual Studio Code Insider and then install the preview version of this extension.
 
 ## Contributing to the code
 
