@@ -207,7 +207,7 @@ export class EsbonioClient {
 
     let command = [];
     const configuration = container.get<Configuration>(TYPES.Configuration);
-    command.push(await configuration.getPythonPath()); //await this.python.getCmd()
+    command.push('"' + await configuration.getPythonPath()  + '"'); //await this.python.getCmd()
 
     let options: any = {};
     options.shell = true;
