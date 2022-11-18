@@ -2,30 +2,37 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { Uri, window } from 'vscode';
-import { Configuration } from '../util/configuration';
-import { findConfPyFiles, findConfPyFilesInParentDirs, RstTransformerConfig } from './confPyFinder';
-import { Logger } from '../util/logger';
-import { NAMES, TYPES } from '../types';
-import { inject, injectable, named } from 'inversify';
-import { Constants } from '../constants';
+import {Uri, window} from 'vscode';
+import {Configuration} from '../util/configuration';
+import {
+    findConfPyFiles,
+    findConfPyFilesInParentDirs,
+    RstTransformerConfig,
+} from './confPyFinder';
+import {Logger} from '../util/logger';
+import {NAMES, TYPES} from '../types';
+import {inject, injectable, named} from 'inversify';
+import {Constants} from '../constants';
 /**
  *
  */
 @injectable()
 export class RstTransformerSelector {
-
     constructor(
         @inject(TYPES.Configuration) private configuration: Configuration,
-        @inject(TYPES.Logger) @named(NAMES.Main) private logger: Logger,
-    ) {
-    }
+        @inject(TYPES.Logger) @named(NAMES.Main) private logger: Logger
+    ) {}
 
-    public async findConfDir(resource: Uri, inReset: boolean = false): Promise<RstTransformerConfig> {
+    public async findConfDir(
+        resource: Uri,
+        inReset = false
+    ): Promise<RstTransformerConfig> {
         const rstPath = resource.fsPath;
         // Sanity check - the file we are previewing must exist
         if (!fs.existsSync(rstPath) || !fs.statSync(rstPath).isFile) {
-            return Promise.reject('RST extension got invalid file name: ' + rstPath);
+            return Promise.reject(
+                'RST extension got invalid file name: ' + rstPath
+            );
         }
         const configurations: RstTransformerConfig[] = [];
         const pathStrings: string[] = [];
@@ -38,7 +45,7 @@ export class RstTransformerSelector {
         docutils.tooltip = 'Click to reset';
         docutils.description = 'Do not use Sphinx, but docutils instead';
         docutils.confPyDirectory = '';
-        docutils.engine = 'docutils'
+        docutils.engine = 'docutils';
         docutils.workspaceRoot = workspaceRoot;
         docutils.shortLabel = docutils.label;
 
@@ -47,15 +54,22 @@ export class RstTransformerSelector {
                 return docutils;
             }
 
-            const pth = path.join(path.normalize(confPathFromSettings), 'conf.py');
+            const pth = path.join(
+                path.normalize(confPathFromSettings),
+                'conf.py'
+            );
             const qpSettings = new RstTransformerConfig();
             qpSettings.label = `\$(gear) Sphinx: ${pth}`;
             qpSettings.tooltip = `Click to reset. Full path: ${pth}`;
-            qpSettings.description += ' (from restructuredtext.confPath setting)';
+            qpSettings.description +=
+                ' (from restructuredtext.confPath setting)';
             qpSettings.confPyDirectory = path.dirname(pth);
             qpSettings.workspaceRoot = workspaceRoot;
             qpSettings.engine = 'sphinx';
-            qpSettings.shortLabel = `\$(gear) Sphinx: ${this.shrink(pth, workspaceRoot)}`;
+            qpSettings.shortLabel = `\$(gear) Sphinx: ${this.shrink(
+                pth,
+                workspaceRoot
+            )}`;
 
             return qpSettings;
         }
@@ -66,7 +80,9 @@ export class RstTransformerSelector {
         const paths2: string[] = findConfPyFilesInParentDirs(rstPath);
         this.addPaths(paths1, pathStrings, configurations, workspaceRoot);
         this.addPaths(paths2, pathStrings, configurations, workspaceRoot);
-        this.logger.log('[preview] Found conf.py paths: ' + JSON.stringify(pathStrings));
+        this.logger.log(
+            '[preview] Found conf.py paths: ' + JSON.stringify(pathStrings)
+        );
 
         // The user can choose to use docutils instead of Sphinx
         configurations.push(docutils);
@@ -81,8 +97,13 @@ export class RstTransformerSelector {
         });
     }
 
-    private addPaths(pathsToAdd: string[], pathStrings: string[], options: RstTransformerConfig[], workspaceRoot: string) {
-        pathsToAdd.forEach((confPath) => {
+    private addPaths(
+        pathsToAdd: string[],
+        pathStrings: string[],
+        options: RstTransformerConfig[],
+        workspaceRoot: string
+    ) {
+        pathsToAdd.forEach(confPath => {
             const pth = path.normalize(confPath);
             if (pathStrings.indexOf(pth) === -1) {
                 const qp = new RstTransformerConfig();
@@ -91,7 +112,10 @@ export class RstTransformerSelector {
                 qp.confPyDirectory = path.dirname(pth);
                 qp.workspaceRoot = workspaceRoot;
                 qp.engine = 'sphinx';
-                qp.shortLabel = `\$(gear) Sphinx: ${this.shrink(pth, workspaceRoot)}`;
+                qp.shortLabel = `\$(gear) Sphinx: ${this.shrink(
+                    pth,
+                    workspaceRoot
+                )}`;
 
                 options.push(qp);
                 pathStrings.push(pth);
@@ -100,11 +124,16 @@ export class RstTransformerSelector {
     }
 
     private shrink(path: string, workspaceRoot: string) {
-        const start = (path.indexOf(workspaceRoot) === -1) ? path : path.substring(workspaceRoot.length + 1);
+        const start =
+            path.indexOf(workspaceRoot) === -1
+                ? path
+                : path.substring(workspaceRoot.length + 1);
         if (start.length < Constants.shrinkLength) {
             return start;
         }
 
-        return `...${start.substring(start.length - Constants.shrinkLength + '...'.length)}`;
+        return `...${start.substring(
+            start.length - Constants.shrinkLength + '...'.length
+        )}`;
     }
 }

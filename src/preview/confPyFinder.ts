@@ -2,7 +2,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { QuickPickItem, Uri, workspace } from 'vscode';
+import {QuickPickItem, Uri, workspace} from 'vscode';
 
 /**
  * Configuration for how to transform rst files to html. Either use Sphinx
@@ -27,16 +27,17 @@ export async function findConfPyFiles(resource: Uri): Promise<string[]> {
     }
 
     const items = await workspace.findFiles(
-            /*include*/ '{**/conf.py}',
-            /*exclude*/ '{**/site-packages/**/conf.py}',
-            /*maxResults*/ 100);
+        /*include*/ '{**/conf.py}',
+        /*exclude*/ '{**/site-packages/**/conf.py}',
+        /*maxResults*/ 100
+    );
     return urisToPaths(items, resource);
 }
 
 function urisToPaths(uris: Uri[], resource: Uri): string[] {
     const paths: string[] = [];
     const workspaceFolder = workspace.getWorkspaceFolder(resource);
-    uris.forEach((uri) => {
+    uris.forEach(uri => {
         const folder = workspace.getWorkspaceFolder(uri);
         if (folder === workspaceFolder) {
             paths.push(uri.fsPath);

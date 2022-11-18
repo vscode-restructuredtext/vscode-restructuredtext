@@ -1,13 +1,13 @@
 'use strict';
 
 import * as vscode from 'vscode';
-import { Configuration } from '../util/configuration';
-import { RstTransformerSelector } from './selector';
-import { RstTransformerConfig } from './confPyFinder';
-import { Logger } from '../util/logger';
-import { Python } from '../util/python';
-import { NAMES, TYPES } from '../types';
-import { inject, injectable, named } from 'inversify';
+import {Configuration} from '../util/configuration';
+import {RstTransformerSelector} from './selector';
+import {RstTransformerConfig} from './confPyFinder';
+import {Logger} from '../util/logger';
+import {Python} from '../util/python';
+import {NAMES, TYPES} from '../types';
+import {inject, injectable, named} from 'inversify';
 
 /**
  * Status bar updates. Shows the selected RstTransformerConfig when a
@@ -19,15 +19,18 @@ import { inject, injectable, named } from 'inversify';
 export default class RstTransformerStatus {
     private _statusBarItem: vscode.StatusBarItem;
     public config: RstTransformerConfig;
-    private inReset:  boolean;
+    private inReset: boolean;
 
     constructor(
         @inject(TYPES.Python) private python: Python,
         @inject(TYPES.Logger) @named(NAMES.Main) private logger: Logger,
         @inject(TYPES.Configuration) private configuration: Configuration,
-        @inject(TYPES.TransformSelector) private selector: RstTransformerSelector
+        @inject(TYPES.TransformSelector)
+        private selector: RstTransformerSelector
     ) {
-        this._statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
+        this._statusBarItem = vscode.window.createStatusBarItem(
+            vscode.StatusBarAlignment.Left
+        );
         this._statusBarItem.command = 'restructuredtext.resetStatus';
     }
 
@@ -40,7 +43,10 @@ export default class RstTransformerStatus {
 
     public async update() {
         const editor = vscode.window.activeTextEditor;
-        if (editor != null && editor.document.languageId === 'restructuredtext') {
+        if (
+            editor != null &&
+            editor.document.languageId === 'restructuredtext'
+        ) {
             const resource = editor.document.uri;
             const workspaceRoot = this.configuration.getRootPath(resource);
             if (!this.config || this.config.workspaceRoot !== workspaceRoot) {
@@ -57,12 +63,14 @@ export default class RstTransformerStatus {
 
     public async reset() {
         const editor = vscode.window.activeTextEditor;
-        if (editor != null && editor.document.languageId === 'restructuredtext') {
-            let resource = editor.document.uri;
-            this.logger.log("[preview] reset config.");
+        if (
+            editor != null &&
+            editor.document.languageId === 'restructuredtext'
+        ) {
+            const resource = editor.document.uri;
+            this.logger.log('[preview] reset config.');
             this.inReset = true;
-            try
-            {
+            try {
                 await this.refreshConfig(resource);
                 this.setLabel();
             } finally {
@@ -71,8 +79,13 @@ export default class RstTransformerStatus {
         }
     }
 
-    public async refreshConfig(resource: vscode.Uri): Promise<RstTransformerConfig> {
-        const rstTransformerConf = await this.selector.findConfDir(resource, this.inReset);
+    public async refreshConfig(
+        resource: vscode.Uri
+    ): Promise<RstTransformerConfig> {
+        const rstTransformerConf = await this.selector.findConfDir(
+            resource,
+            this.inReset
+        );
         if (rstTransformerConf == null) {
             return null;
         }
@@ -80,12 +93,18 @@ export default class RstTransformerStatus {
         this.config = rstTransformerConf;
 
         if (rstTransformerConf.engine === 'docutils') {
-            this.logger.log("[preview] engine set to docutils");
-            await this.configuration.setPreviewName('docutils', resource)
+            this.logger.log('[preview] engine set to docutils');
+            await this.configuration.setPreviewName('docutils', resource);
         } else {
-            this.logger.log("[preview] set config to " + rstTransformerConf.confPyDirectory);
-            await this.configuration.setPreviewName('sphinx', resource)
-            await this.configuration.setConfPath(rstTransformerConf.confPyDirectory, resource, true);
+            this.logger.log(
+                '[preview] set config to ' + rstTransformerConf.confPyDirectory
+            );
+            await this.configuration.setPreviewName('sphinx', resource);
+            await this.configuration.setConfPath(
+                rstTransformerConf.confPyDirectory,
+                resource,
+                true
+            );
         }
 
         return rstTransformerConf;

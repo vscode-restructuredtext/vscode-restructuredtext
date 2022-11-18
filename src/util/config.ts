@@ -5,13 +5,13 @@
  *--------------------------------------------------------*/
 
 import vscode = require('vscode');
-import { getFromWorkspaceState, updateWorkspaceState } from './stateUtils';
+import {getFromWorkspaceState, updateWorkspaceState} from './stateUtils';
 
 const WORKSPACE_IS_TRUSTED_KEY = 'WORKSPACE_IS_TRUSTED_KEY';
 const SECURITY_SENSITIVE_CONFIG: string[] = [
     'linter.doc8.executablePath',
     'linter.rstcheck.executablePath',
-    'linter.rst-lint.executablePath'
+    'linter.rst-lint.executablePath',
 ];
 
 export async function initConfig(ctx: vscode.ExtensionContext) {
@@ -19,20 +19,30 @@ export async function initConfig(ctx: vscode.ExtensionContext) {
     if (isTrusted !== defaultConfig.workspaceIsTrusted()) {
         defaultConfig.toggleWorkspaceIsTrusted();
     }
-    ctx.subscriptions.push(vscode.commands.registerCommand('restructuredtext.workspace.isTrusted.toggle', toggleWorkspaceIsTrusted));
+    ctx.subscriptions.push(
+        vscode.commands.registerCommand(
+            'restructuredtext.workspace.isTrusted.toggle',
+            toggleWorkspaceIsTrusted
+        )
+    );
 
     if (isTrusted) {
         return;
     }
-    const ignored = ignoredWorkspaceConfig(vscode.workspace.getConfiguration('restructuredtext'), SECURITY_SENSITIVE_CONFIG);
+    const ignored = ignoredWorkspaceConfig(
+        vscode.workspace.getConfiguration('restructuredtext'),
+        SECURITY_SENSITIVE_CONFIG
+    );
     if (ignored.length === 0) {
         return;
     }
-    const ignoredSettings = ignored.map((x) => `"restructuredtext.${x}"`).join(',');
+    const ignoredSettings = ignored
+        .map(x => `"restructuredtext.${x}"`)
+        .join(',');
     const val = await vscode.window.showWarningMessage(
         `Some workspace/folder-level settings (${ignoredSettings}) from the untrusted workspace are disabled ` +
-        'by default. If this workspace is trusted, explicitly enable the workspace/folder-level settings ' +
-        'by running the "reStructuredText: Toggle Workspace Trust Flag" command.',
+            'by default. If this workspace is trusted, explicitly enable the workspace/folder-level settings ' +
+            'by running the "reStructuredText: Toggle Workspace Trust Flag" command.',
         'OK',
         'Trust This Workspace',
         'More Info'
@@ -43,7 +53,9 @@ export async function initConfig(ctx: vscode.ExtensionContext) {
             break;
         case 'More Info':
             vscode.env.openExternal(
-                vscode.Uri.parse('https://docs.restructuredtext.net/articles/configuration.html#security')
+                vscode.Uri.parse(
+                    'https://docs.restructuredtext.net/articles/configuration.html#security'
+                )
             );
             break;
         default:
@@ -51,10 +63,16 @@ export async function initConfig(ctx: vscode.ExtensionContext) {
     }
 }
 
-function ignoredWorkspaceConfig(cfg: vscode.WorkspaceConfiguration, keys: string[]) {
-    return keys.filter((key) => {
+function ignoredWorkspaceConfig(
+    cfg: vscode.WorkspaceConfiguration,
+    keys: string[]
+) {
+    return keys.filter(key => {
         const inspect = cfg.inspect(key);
-        return inspect.workspaceValue !== undefined || inspect.workspaceFolderValue !== undefined;
+        return (
+            inspect.workspaceValue !== undefined ||
+            inspect.workspaceFolderValue !== undefined
+        );
     });
 }
 
@@ -65,7 +83,10 @@ async function toggleWorkspaceIsTrusted() {
 
 // reStructuredText extension configuration for a workspace.
 export class Configuration {
-    constructor(private _workspaceIsTrusted = false, private getConfiguration = vscode.workspace.getConfiguration) { }
+    constructor(
+        private _workspaceIsTrusted = false,
+        private getConfiguration = vscode.workspace.getConfiguration
+    ) {}
 
     public toggleWorkspaceIsTrusted() {
         this._workspaceIsTrusted = !this._workspaceIsTrusted;
@@ -74,7 +95,10 @@ export class Configuration {
 
     // returns a Proxied vscode.WorkspaceConfiguration, which prevents
     // from using the workspace configuration if the workspace is untrusted.
-    public get(section: string, uri?: vscode.Uri): vscode.WorkspaceConfiguration {
+    public get(
+        section: string,
+        uri?: vscode.Uri
+    ): vscode.WorkspaceConfiguration {
         const cfg = this.getConfiguration(section, uri);
         if (section !== 'restructuredtext' || this._workspaceIsTrusted) {
             return cfg;
@@ -103,7 +127,10 @@ class WrappedConfiguration implements vscode.WorkspaceConfiguration {
         for (const prop in desc) {
             // TODO(hyangah): find a better way to exclude WrappedConfiguration's members.
             // These methods are defined by WrappedConfiguration.
-            if (typeof prop === 'string' && !['get', 'has', 'inspect', 'update', '_wrapped'].includes(prop)) {
+            if (
+                typeof prop === 'string' &&
+                !['get', 'has', 'inspect', 'update', '_wrapped'].includes(prop)
+            ) {
                 const d = desc[prop];
                 if (SECURITY_SENSITIVE_CONFIG.includes(prop)) {
                     const inspect = this._wrapped.inspect(prop);
@@ -133,7 +160,12 @@ class WrappedConfiguration implements vscode.WorkspaceConfiguration {
         configurationTarget?: boolean | vscode.ConfigurationTarget,
         overrideInLanguage?: boolean
     ): Thenable<void> {
-        return this._wrapped.update(section, value, configurationTarget, overrideInLanguage);
+        return this._wrapped.update(
+            section,
+            value,
+            configurationTarget,
+            overrideInLanguage
+        );
     }
 }
 
@@ -149,4 +181,5 @@ export function getConfig(section: string, uri?: vscode.Uri) {
 }
 
 // True if the extension is running in known cloud-based IDEs.
-export const IsInCloudIDE = process.env.CLOUD_SHELL === 'true' || process.env.CODESPACES === 'true';
+export const IsInCloudIDE =
+    process.env.CLOUD_SHELL === 'true' || process.env.CODESPACES === 'true';

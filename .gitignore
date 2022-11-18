@@ -13,3 +13,4 @@ test-resources/sphinx/_build/html/
 test-resources/**/settings.json
 media/pre.js
 media/index.js
+build/
