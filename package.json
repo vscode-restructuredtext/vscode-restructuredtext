@@ -2,7 +2,7 @@
   "name": "restructuredtext",
   "displayName": "%displayName%",
   "description": "%description%",
-  "version": "189.2.0",
+  "version": "189.3.0",
   "publisher": "lextudio",
   "engines": {
     "vscode": "^1.43.0"
