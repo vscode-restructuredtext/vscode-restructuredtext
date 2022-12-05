@@ -5,7 +5,8 @@
 
 import { getSettings } from './settings';
 
-const codeLineClass = 'code-line';
+const codeLineClass = 'linemarker';
+const lineNumberPrefix = 'linemarker-';
 
 function clamp(min: number, max: number, value: number) {
 	return Math.min(max, Math.max(min, value));
@@ -27,17 +28,21 @@ const getCodeLineElements = (() => {
 		if (!elements) {
 			elements = [{ element: document.body, line: 0 }];
 			for (const element of document.getElementsByClassName(codeLineClass)) {
-				const line = +element.getAttribute('data-line')!;
-				if (isNaN(line)) {
-					continue;
-				}
+				for (const className of element.classList) {
+					if (className.startsWith(lineNumberPrefix)) {
+						const line = +className.substring(lineNumberPrefix.length)!;
+						if (isNaN(line)) {
+							continue;
+						}
 
-				if (element.tagName === 'CODE' && element.parentElement && element.parentElement.tagName === 'PRE') {
-					// Fenched code blocks are a special case since the `code-line` can only be marked on
-					// the `<code>` element and not the parent `<pre>` element.
-					elements.push({ element: element.parentElement as HTMLElement, line });
-				} else {
-					elements.push({ element: element as HTMLElement, line });
+						if (element.tagName === 'CODE' && element.parentElement && element.parentElement.tagName === 'PRE') {
+							// Fenched code blocks are a special case since the `code-line` can only be marked on
+							// the `<code>` element and not the parent `<pre>` element.
+							elements.push({ element: element.parentElement as HTMLElement, line });
+						} else {
+							elements.push({ element: element as HTMLElement, line });
+						}
+					}
 				}
 			}
 		}

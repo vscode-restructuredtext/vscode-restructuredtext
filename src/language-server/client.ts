@@ -69,6 +69,11 @@ export interface ServerConfig {
    * A flag to indicate if Sphinx build output should be omitted from the log.
    */
   hideSphinxOutput: boolean
+
+  /**
+   * Flag to add line numbers to enable scroll sync.
+   */
+  enableScrollSync?: boolean;
 }
 
 /**
@@ -323,7 +328,8 @@ export class EsbonioClient {
       server: {
         logLevel: config.get<string>('server.logLevel'),
         logFilter: config.get<string[]>('server.logFilter'),
-        hideSphinxOutput: config.get<boolean>('server.hideSphinxOutput')
+        hideSphinxOutput: config.get<boolean>('server.hideSphinxOutput'),
+        enableScrollSync: true,
       }
     }
 

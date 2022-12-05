@@ -69,28 +69,11 @@ export class RSTContentProvider {
 		const nonce = new Date().getTime() + '' + new Date().getMilliseconds();
 		const csp = this.getCspForResource(sourceUri, nonce, useSphinx, webview);
 
-		if (useSphinx) {
-			// sphinx based preview.
-			let elementCount: number = 0;
-			let canStart: boolean = false;
-			const parsedDoc = body.split(/\r?\n/).map((l) => {
-				if (l.search('<div itemprop="articleBody">') > -1) {
-					canStart = true;
-				}
-				if (!canStart) {
-					return l;
-				}
-				return l.replace(this.TAG_RegEx, (
-					match: string, p1: string, p2: string, p3: string, 
-					p4: string, p5: string, p6: string, offset: number) => {
-					elementCount++;
-					return typeof p5 !== 'string'
-                        ? `<${p1} class="code-line" data-line="${elementCount}" ${p2}`
-                        : `<${p1} ${p3} class="${p5} code-line" data-line="${elementCount}" ${p6}`;
-				});
-			}
-			).join('\n');
-			const newHead = parsedDoc.replace('</head>', `
+        if (useSphinx) {
+            // sphinx based preview.
+            const newHead = body.replace(
+                '</head>',
+                `
 			<meta id="vscode-rst-preview-data"
 			data-settings="${JSON.stringify(initialData).replace(/"/g, '&quot;')}"
 			data-strings="${JSON.stringify(previewStrings).replace(/"/g, '&quot;')}"
@@ -99,28 +82,44 @@ export class RSTContentProvider {
 		<script src="${this.extensionResourcePath('index.js', webview)}" nonce="${nonce}"></script>
 		<base href="${webview.asWebviewUri(rstDocument.uri)}">
 		</head>
-			`);
-			const newBody = newHead.replace('<body class="',
-			`<body class="vscode-body ${config.scrollBeyondLastLine ? 'scrollBeyondLastLine' : ''} ${config.wordWrap ? 'wordWrap' : ''} ${config.rstEditorSelection ? 'showEditorSelection' : ''} `);
-			const newAll = newBody.replace('</body>', `
-			    <div class="code-line" data-line="${rstDocument.lineCount}"></div>
-			</body>
-			`);
-        	this.logger.log("[preview] Document line count: " + rstDocument.lineCount + "; element count: " + elementCount);
-			if (rstDocument.lineCount < elementCount) {
-				this.logger.log("[preview] WARN: documentl line count is less than element count.");
-			}
-			return newAll;
-		} else {
-			const parsedDoc = body.split(/\r?\n/).map((l, i) =>
-				l.replace(this.TAG_RegEx, (
-					match: string, p1: string, p2: string, p3: string,
-					p4: string, p5: string, p6: string, offset: number) =>
-				typeof p5 !== 'string'
-                    ? `<${p1} class="code-line" data-line="${i + 1}" ${p2}`
-                    : `<${p1} ${p3} class="${p5} code-line" data-line="${i + 1}" ${p6}`)
-			).join('\n');
-			return `<!DOCTYPE html>
+			`
+            );
+            const newBody = newHead.replace(
+                '<body class="',
+                `<body class="vscode-body ${
+                    config.scrollBeyondLastLine ? 'scrollBeyondLastLine' : ''
+                } ${config.wordWrap ? 'wordWrap' : ''} ${
+                    config.rstEditorSelection ? 'showEditorSelection' : ''
+                } `
+            );
+            return newBody;
+        } else {
+            const parsedDoc = body
+                .split(/\r?\n/)
+                .map((l, i) =>
+                    l.replace(
+                        this.TAG_RegEx,
+                        (
+                            match: string,
+                            p1: string,
+                            p2: string,
+                            p3: string,
+                            p4: string,
+                            p5: string,
+                            p6: string,
+                            offset: number
+                        ) =>
+                            typeof p5 !== 'string'
+                                ? `<${p1} class="linemarker linemarker-${
+                                      i + 1
+                                  }" ${p2}`
+                                : `<${p1} ${p3} class="${p5} linemarker linemarker-${
+                                      i + 1
+                                  }" ${p6}`
+                    )
+                )
+                .join('\n');
+            return `<!DOCTYPE html>
 				<html>
 				<head>
 					<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
