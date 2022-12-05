@@ -394,7 +394,7 @@ export class Python {
         try {
             const versionTooOld = await this.exec(
                 '-c',
-                '"import esbonio.lsp; from distutils.version import LooseVersion; print(LooseVersion(esbonio.lsp.__version__) < LooseVersion(\'0.11.2\'))"'
+                '"import esbonio.lsp; from distutils.version import LooseVersion; print(LooseVersion(esbonio.lsp.__version__) < LooseVersion(\'0.15.0\'))"'
             );
             return versionTooOld.trim() === 'False';
         } catch (e) {
