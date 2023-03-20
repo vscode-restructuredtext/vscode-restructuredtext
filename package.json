@@ -884,6 +884,12 @@
             "default": "",
             "description": "The Language Server should be able to automatically find the folder containing your project's 'conf.py' file. However this setting can be used to force the Language Server to use a particular directory if required."
           },
+          "esbonio.sphinx.configOverrides": {
+            "scope": "window",
+            "type": "object",
+            "default": {},
+            "description": "Any conf.py options to override."
+          },
           "esbonio.sphinx.forceFullBuild": {
             "scope": "window",
             "type": "boolean",

@@ -32,6 +32,11 @@ export interface SphinxConfig {
   confDir?: string
 
   /**
+   * Any conf.py options to override.
+   */
+  configOverrides?: { [key: string]: any }
+
+  /**
    * Flag to force a full build of the documentation on startup.
    */
   forceFullBuild?: boolean
@@ -319,6 +324,7 @@ export class EsbonioClient {
       sphinx: {
         srcDir: config.get<string>("sphinx.srcDir"),
         confDir: confDir,
+        configOverrides: config.get<object>('sphinx.configOverrides'),
         forceFullBuild: config.get<boolean>('sphinx.forceFullBuild'),
         numJobs: numJobs === 0 ? 'auto' : numJobs,
         buildDir: buildDir
