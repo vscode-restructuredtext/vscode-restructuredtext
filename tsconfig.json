@@ -1,20 +1,14 @@
 {
+	"extends": "./node_modules/gts/tsconfig-google.json",
 	"compilerOptions": {
-		"module": "commonjs",
-		"target": "es2017",
 		"outDir": "out",
-		"lib": ["es6"],
 		"rootDir": "src",
-		"sourceMap": true,
-		"importHelpers": true,
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
 		"strict": false,
+		"noImplicitReturns": false
 	},
 	"include": [
 		"src/**/*"
 	],
-	"exclude": [
-		"node_modules"
-	]
 }

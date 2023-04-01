@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 'use strict';
 
 import {
@@ -87,11 +88,11 @@ function onEnterKey(modifiers?: string) {
     const textAfterCursor = line.text.substr(cursorPos.character);
 
     let lineBreakPos = cursorPos;
-    if (modifiers == 'ctrl') {
+    if (modifiers === 'ctrl') {
         lineBreakPos = line.range.end;
     }
 
-    if (modifiers == 'shift') {
+    if (modifiers === 'shift') {
         // || isInFencedCodeBlock(editor.document, cursorPos.line) || mathEnvCheck(editor.document, cursorPos)) {
         return asNormal('enter', modifiers);
     }
@@ -100,7 +101,7 @@ function onEnterKey(modifiers?: string) {
     const lineTextNoSpace = line.text.replace(/\s/g, '');
     if (
         lineTextNoSpace.length > 2 &&
-        (lineTextNoSpace.replace(/\-/g, '').length === 0 ||
+        (lineTextNoSpace.replace(/-/g, '').length === 0 ||
             lineTextNoSpace.replace(/\*/g, '').length === 0)
     ) {
         return asNormal('enter', modifiers);
@@ -111,7 +112,7 @@ function onEnterKey(modifiers?: string) {
         /^(>|([-+*•‣⁃]|[0-9]+[.)]|#.)( +\[[ x]\])?)$/.test(
             textBeforeCursor.trim()
         ) &&
-        textAfterCursor.trim().length == 0
+        textAfterCursor.trim().length === 0
     ) {
         return editor
             .edit(editBuilder => {
@@ -133,7 +134,7 @@ function onEnterKey(modifiers?: string) {
             })
             .then(() => {
                 // Fix cursor position
-                if (modifiers == 'ctrl' && !cursorPos.isEqual(lineBreakPos)) {
+                if (modifiers === 'ctrl' && !cursorPos.isEqual(lineBreakPos)) {
                     const newCursorPos = cursorPos.with(line.lineNumber + 1, 2);
                     editor.selection = new Selection(
                         newCursorPos,
@@ -159,7 +160,7 @@ function onEnterKey(modifiers?: string) {
             })
             .then(() => {
                 // Fix cursor position
-                if (modifiers == 'ctrl' && !cursorPos.isEqual(lineBreakPos)) {
+                if (modifiers === 'ctrl' && !cursorPos.isEqual(lineBreakPos)) {
                     const newCursorPos = cursorPos.with(
                         line.lineNumber + 1,
                         matches[1].length
@@ -189,7 +190,7 @@ function onEnterKey(modifiers?: string) {
         let trailingSpace = matches[4];
         const gfmCheckbox = matches[5].replace('[x]', '[ ]');
         const textIndent = (previousMarker + delimiter + trailingSpace).length;
-        if (config == 'ordered') {
+        if (config === 'ordered') {
             marker = String(Number(previousMarker) + 1);
         }
         // Add enough trailing spaces so that the text is aligned with the previous list item, but always keep at least one space
@@ -208,7 +209,7 @@ function onEnterKey(modifiers?: string) {
             )
             .then(() => {
                 // Fix cursor position
-                if (modifiers == 'ctrl' && !cursorPos.isEqual(lineBreakPos)) {
+                if (modifiers === 'ctrl' && !cursorPos.isEqual(lineBreakPos)) {
                     const newCursorPos = cursorPos.with(
                         line.lineNumber + 1,
                         toBeAdded.length
@@ -376,6 +377,7 @@ function indent(editor?: TextEditor) {
                 }
             }
             return workspace.applyEdit(edit);
+        // eslint-disable-next-line no-empty
         } catch (error) {}
     }
 
@@ -438,6 +440,7 @@ function outdent(editor?: TextEditor) {
                 }
             }
             return workspace.applyEdit(edit);
+        // eslint-disable-next-line no-empty
         } catch (error) {}
     }
 
@@ -542,7 +545,7 @@ export function fixMarker(line?: number) {
     if (
         workspace
             .getConfiguration('restructuredtext.editor.listEditing.orderedList')
-            .get<string>('marker') == 'one'
+            .get<string>('marker') === 'one'
     )
         return;
 
