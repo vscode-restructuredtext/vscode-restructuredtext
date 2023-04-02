@@ -11,51 +11,51 @@ import {RSTEngine} from './preview/rstEngine';
 import {RSTPreviewManager} from './preview/previewManager';
 import {RSTContentProvider} from './preview/previewContentProvider';
 import {
-    ExtensionContentSecurityPolicyArbiter,
-    PreviewSecuritySelector,
+  ExtensionContentSecurityPolicyArbiter,
+  PreviewSecuritySelector,
 } from './util/security';
 
 const container = new Container();
 
 const main = new ConsoleLogger('reStructuredText');
 container
-    .bind<Logger>(TYPES.Logger)
-    .toConstantValue(main)
-    .whenTargetNamed(NAMES.Main);
+  .bind<Logger>(TYPES.Logger)
+  .toConstantValue(main)
+  .whenTargetNamed(NAMES.Main);
 const lsp = new ConsoleLogger('Esbonio Language Server');
 container
-    .bind<Logger>(TYPES.Logger)
-    .toConstantValue(lsp)
-    .whenTargetNamed(NAMES.Lsp);
+  .bind<Logger>(TYPES.Logger)
+  .toConstantValue(lsp)
+  .whenTargetNamed(NAMES.Lsp);
 container
-    .bind<Configuration>(TYPES.Configuration)
-    .to(Configuration)
-    .inSingletonScope();
+  .bind<Configuration>(TYPES.Configuration)
+  .to(Configuration)
+  .inSingletonScope();
 container.bind<Python>(TYPES.Python).to(Python).inSingletonScope();
 container
-    .bind<RstTransformerStatus>(TYPES.TransformStatus)
-    .to(RstTransformerStatus)
-    .inSingletonScope();
+  .bind<RstTransformerStatus>(TYPES.TransformStatus)
+  .to(RstTransformerStatus)
+  .inSingletonScope();
 container
-    .bind<RstTransformerSelector>(TYPES.TransformSelector)
-    .to(RstTransformerSelector)
-    .inSingletonScope();
+  .bind<RstTransformerSelector>(TYPES.TransformSelector)
+  .to(RstTransformerSelector)
+  .inSingletonScope();
 container.bind<RSTEngine>(TYPES.RstEngine).to(RSTEngine).inSingletonScope();
 container
-    .bind<ExtensionContentSecurityPolicyArbiter>(TYPES.Policy)
-    .to(ExtensionContentSecurityPolicyArbiter)
-    .inSingletonScope();
+  .bind<ExtensionContentSecurityPolicyArbiter>(TYPES.Policy)
+  .to(ExtensionContentSecurityPolicyArbiter)
+  .inSingletonScope();
 container
-    .bind<RSTContentProvider>(TYPES.ContentProvider)
-    .to(RSTContentProvider)
-    .inSingletonScope();
+  .bind<RSTContentProvider>(TYPES.ContentProvider)
+  .to(RSTContentProvider)
+  .inSingletonScope();
 container
-    .bind<RSTPreviewManager>(TYPES.PreviewManager)
-    .to(RSTPreviewManager)
-    .inSingletonScope();
+  .bind<RSTPreviewManager>(TYPES.PreviewManager)
+  .to(RSTPreviewManager)
+  .inSingletonScope();
 container
-    .bind<PreviewSecuritySelector>(TYPES.SecuritySelector)
-    .to(PreviewSecuritySelector)
-    .inSingletonScope();
+  .bind<PreviewSecuritySelector>(TYPES.SecuritySelector)
+  .to(PreviewSecuritySelector)
+  .inSingletonScope();
 
 export default container;

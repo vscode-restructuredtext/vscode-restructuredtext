@@ -908,8 +908,8 @@
     "watch": "webpack && npx tsc -watch -p ./tsconfig.json",
     "pretest": "yarn compile",
     "test": "node ./out/test/runTest.js",
-    "package:stable": "yarn install && vsce package",
-    "package": "yarn install && vsce package --pre-release",
+    "dist:stable": "yarn install && vsce package",
+    "dist": "yarn install && vsce package --pre-release",
     "lint": "gts lint --verbose",
     "clean": "gts clean",
     "fix": "gts fix",
@@ -918,7 +918,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn run lint && yarn run fix"
+      "pre-commit": "yarn run fix"
     }
   }
 }

@@ -25,10 +25,8 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm install -g vsce
     - run: npm install -g yarn
-    - run: yarn install
-    - run: vsce package
+    - run: yarn dist
 
   macOS:
 
@@ -45,10 +43,8 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm install -g vsce
     - run: npm install -g yarn
-    - run: yarn install
-    - run: vsce package
+    - run: yarn dist
 
   windows:
 
@@ -65,7 +61,5 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm install -g vsce
     - run: npm install -g yarn
-    - run: yarn install
-    - run: vsce package
+    - run: yarn dist

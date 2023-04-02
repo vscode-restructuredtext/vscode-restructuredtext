@@ -3,6 +3,8 @@
   "ignorePatterns": [
     "out",
     "build",
-    "**/*.d.ts"
+    "**/*.d.ts",
+    "media",
+    "src/test"
   ]
 }
