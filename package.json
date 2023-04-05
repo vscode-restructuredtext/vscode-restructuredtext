@@ -551,6 +551,12 @@
             "scope": "resource",
             "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
           },
+          "restructuredtext.activeFolder": {
+            "type": "string",
+            "default": "",
+            "description": "The folder that shows the selected config file in status bar. Leave it empty to use the first folder in the workspace.",
+            "scope": "window"
+          },
           "restructuredtext.docutilsWriter": {
             "type": "string",
             "default": "html",

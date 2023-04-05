@@ -12,7 +12,7 @@ import {Python} from './util/python';
 import {PreviewSecuritySelector} from './util/security';
 
 import {Configuration} from './util/configuration';
-import RstTransformerStatus from './preview/statusBar';
+import SelectedConfigFileStatus from './preview/statusBar';
 import * as RstLanguageServer from './language-server/extension';
 import * as EditorFeatures from './editor/extension';
 import * as LinterFeatures from './linter/extension';
@@ -145,7 +145,7 @@ export async function activate(
   await LinterFeatures.activate(context, python, logger);
 
   // Status bar to show the active rst->html transformer configuration
-  const status = container.get<RstTransformerStatus>(TYPES.TransformStatus);
+  const status = container.get<SelectedConfigFileStatus>(TYPES.TransformStatus);
 
   // Hook up the status bar to document change events
   context.subscriptions.push(

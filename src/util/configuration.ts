@@ -33,6 +33,10 @@ export class Configuration {
     return this.loadSetting('docutilsWriterPart', 'html_body', resource);
   }
 
+  public getActiveFolder(): string | undefined {
+    return this.loadAnySetting<string>('activeFolder', '');
+  }
+
   public getConfPath(resource?: Uri): string | undefined {
     return this.loadSetting('sphinx.confDir', '', resource, true, 'esbonio');
   }
@@ -244,6 +248,10 @@ export class Configuration {
 
   public async setPythonRecommendationDisabled(resource?: Uri) {
     await this.saveAnySetting('pythonRecommendation.disabled', true, resource);
+  }
+
+  public async setActiveFolder(value: string): Promise<string> {
+    return await this.saveAnySetting('activeFolder', value);
   }
 
   public async setConfPath(

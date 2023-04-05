@@ -5,8 +5,8 @@ import {NAMES, TYPES} from './types';
 import {ConsoleLogger, Logger} from './util/logger';
 import {Python} from './util/python';
 import {Configuration} from './util/configuration';
-import RstTransformerStatus from './preview/statusBar';
-import {RstTransformerSelector} from './preview/selector';
+import SelectedConfigFileStatus from './preview/statusBar';
+import {ConfigFileSelector} from './preview/selector';
 import {RSTEngine} from './preview/rstEngine';
 import {RSTPreviewManager} from './preview/previewManager';
 import {RSTContentProvider} from './preview/previewContentProvider';
@@ -33,12 +33,12 @@ container
   .inSingletonScope();
 container.bind<Python>(TYPES.Python).to(Python).inSingletonScope();
 container
-  .bind<RstTransformerStatus>(TYPES.TransformStatus)
-  .to(RstTransformerStatus)
+  .bind<SelectedConfigFileStatus>(TYPES.TransformStatus)
+  .to(SelectedConfigFileStatus)
   .inSingletonScope();
 container
-  .bind<RstTransformerSelector>(TYPES.TransformSelector)
-  .to(RstTransformerSelector)
+  .bind<ConfigFileSelector>(TYPES.TransformSelector)
+  .to(ConfigFileSelector)
   .inSingletonScope();
 container.bind<RSTEngine>(TYPES.RstEngine).to(RSTEngine).inSingletonScope();
 container
