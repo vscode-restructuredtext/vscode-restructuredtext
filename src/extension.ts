@@ -144,8 +144,26 @@ export async function activate(
 
   await LinterFeatures.activate(context, python, logger);
 
+  const folders = vscode.workspace.workspaceFolders;
+  const singleFolder = folders?.length === 1;
   // Status bar to show the active rst->html transformer configuration
-  const status = container.get<SelectedConfigFileStatus>(TYPES.TransformStatus);
+
+  if (!singleFolder) {
+    const statusActiveFolder = container.get<SelectedConfigFileStatus>(
+      TYPES.FolderStatus
+    );
+    context.subscriptions.push(
+      vscode.commands.registerCommand(
+        'restructuredtext.resetFolder',
+        statusActiveFolder.reset,
+        statusActiveFolder
+      )
+    );
+
+    await statusActiveFolder.update();
+  }
+
+  const status = container.get<SelectedConfigFileStatus>(TYPES.FileStatus);
 
   // Hook up the status bar to document change events
   context.subscriptions.push(

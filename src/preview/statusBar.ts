@@ -108,9 +108,9 @@ export default class SelectedConfigFileStatus {
     @inject(TYPES.Python) private python: Python,
     @inject(TYPES.Logger) @named(NAMES.Main) private logger: Logger,
     @inject(TYPES.Configuration) private configuration: Configuration,
-    @inject(TYPES.TransformSelector)
+    @inject(TYPES.FileSelector)
     private selector: ConfigFileSelector,
-    private singleFolder: boolean
+    @inject(TYPES.SingleFolder) private singleFolder: boolean
   ) {
     this._statusBarItem = vscode.window.createStatusBarItem(
       vscode.StatusBarAlignment.Left

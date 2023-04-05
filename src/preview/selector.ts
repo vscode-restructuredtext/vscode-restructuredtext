@@ -86,7 +86,9 @@ export class ConfigFileSelector {
     if (configurations.length === 1) {
       if (inReset) {
         window.showInformationMessage(
-          'A single config file detected. No other files to select from.'
+          configurations[0].configDirectory === ''
+            ? 'Docutils will be used to generate HTML from source files.'
+            : 'A single config file detected. No other files to select from.'
         );
       }
       return configurations[0];
@@ -95,7 +97,7 @@ export class ConfigFileSelector {
     if (inReset) {
       // Found multiple conf.py files, let the user decide
       return window.showQuickPick(configurations, {
-        placeHolder: 'Select how to generate html from rst files',
+        placeHolder: 'Select how to generate HTML from source files',
       });
     }
 

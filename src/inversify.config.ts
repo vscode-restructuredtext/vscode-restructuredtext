@@ -5,7 +5,9 @@ import {NAMES, TYPES} from './types';
 import {ConsoleLogger, Logger} from './util/logger';
 import {Python} from './util/python';
 import {Configuration} from './util/configuration';
-import SelectedConfigFileStatus from './preview/statusBar';
+import SelectedConfigFileStatus, {
+  ActiveFolderStatus,
+} from './preview/statusBar';
 import {ConfigFileSelector} from './preview/selector';
 import {RSTEngine} from './preview/rstEngine';
 import {RSTPreviewManager} from './preview/previewManager';
@@ -14,8 +16,12 @@ import {
   ExtensionContentSecurityPolicyArbiter,
   PreviewSecuritySelector,
 } from './util/security';
+import {workspace} from 'vscode';
 
 const container = new Container();
+
+const folders = workspace.workspaceFolders;
+const singleFolder = folders?.length === 1;
 
 const main = new ConsoleLogger('reStructuredText');
 container
@@ -32,12 +38,17 @@ container
   .to(Configuration)
   .inSingletonScope();
 container.bind<Python>(TYPES.Python).to(Python).inSingletonScope();
+container.bind<boolean>(TYPES.SingleFolder).toConstantValue(singleFolder);
 container
-  .bind<SelectedConfigFileStatus>(TYPES.TransformStatus)
+  .bind<ActiveFolderStatus>(TYPES.FolderStatus)
+  .to(ActiveFolderStatus)
+  .inSingletonScope();
+container
+  .bind<SelectedConfigFileStatus>(TYPES.FileStatus)
   .to(SelectedConfigFileStatus)
   .inSingletonScope();
 container
-  .bind<ConfigFileSelector>(TYPES.TransformSelector)
+  .bind<ConfigFileSelector>(TYPES.FileSelector)
   .to(ConfigFileSelector)
   .inSingletonScope();
 container.bind<RSTEngine>(TYPES.RstEngine).to(RSTEngine).inSingletonScope();
