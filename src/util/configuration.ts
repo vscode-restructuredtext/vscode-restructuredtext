@@ -33,6 +33,20 @@ export class Configuration {
     return this.loadSetting('docutilsWriterPart', 'html_body', resource);
   }
 
+  public getActiveResource(): Uri | undefined {
+    if (workspace.workspaceFolders === undefined) {
+      return undefined;
+    }
+    let result = workspace.workspaceFolders![0].uri;
+    if (workspace.workspaceFolders.length > 1) {
+      const folder = this.getActiveFolder();
+      result = workspace.workspaceFolders!.find(
+        item => item.name === folder
+      )!.uri;
+    }
+    return result;
+  }
+
   public getActiveFolder(): string | undefined {
     return this.loadAnySetting<string>('activeFolder', '');
   }

@@ -730,32 +730,32 @@
         "title": "Server",
         "properties": {
           "esbonio.server.enabled": {
-            "scope": "window",
+            "scope": "resource",
             "type": "boolean",
             "default": true,
             "description": "Enable/Disable the language server"
           },
           "esbonio.server.enabledInPyFiles": {
-            "scope": "window",
+            "scope": "resource",
             "type": "boolean",
             "default": true,
             "description": "Enable/Disable the language server in Python files."
           },
           "esbonio.server.startupModule": {
-            "scope": "window",
+            "scope": "resource",
             "type": "string",
             "default": "esbonio",
             "description": "The module (or script) to use to launch the server."
           },
           "esbonio.server.entryPoint": {
-            "scope": "window",
+            "scope": "resource",
             "type": "string",
             "default": "esbonio",
             "description": "The entry point to use when launching the server.",
             "deprecationMessage": "This setting is obsolete. Please use esbonio.server.startupModule."
           },
           "esbonio.server.excludedModules": {
-            "scope": "window",
+            "scope": "resource",
             "type": "array",
             "default": [],
             "items": {
@@ -764,7 +764,7 @@
             "description": "A list of modules to exclude from the server's configuration"
           },
           "esbonio.server.includedModules": {
-            "scope": "window",
+            "scope": "resource",
             "type": "array",
             "default": [],
             "items": {
@@ -773,7 +773,7 @@
             "description": "A list of additional modules to include in the server's configuration"
           },
           "esbonio.server.logLevel": {
-            "scope": "window",
+            "scope": "resource",
             "type": "string",
             "default": "error",
             "enum": [
@@ -784,7 +784,7 @@
             "description": "The level of log message to show in the log"
           },
           "esbonio.server.logFilter": {
-            "scope": "window",
+            "scope": "resource",
             "type": "array",
             "default": [],
             "items": {
@@ -793,13 +793,13 @@
             "description": "A list of logger names to limit output from"
           },
           "esbonio.server.pythonPath": {
-            "scope": "window",
+            "scope": "resource",
             "type": "string",
             "default": "",
             "description": "The path to the Python interpreter to use when running the Langague Server.\n\nBy default this extension will try to use the interpreter configured via the Python Extension. If you do not use the Python Extension or you wish to use a different environment, then this option can be used to override the default behavior."
           },
           "esbonio.server.hideSphinxOutput": {
-            "scope": "window",
+            "scope": "resource",
             "type": "boolean",
             "default": false,
             "description": "Hide Sphinx build output from the Language Server log."
@@ -828,32 +828,32 @@
         "title": "Sphinx",
         "properties": {
           "esbonio.sphinx.buildDir": {
-            "scope": "window",
+            "scope": "resource",
             "type": "string",
             "default": null,
             "description": "The directory in which to store Sphinx's build output.\n\nBy default the Language Server will store any build files in a storage area provided by VSCode, this option allows you to override this to be a directory of your choosing e.g. your local _build/ directory.",
             "markdownDescription": "The directory in which to store Sphinx's build output.\n\nBy default the Language Server will store any build files in a storage area provided by VSCode, this option allows you to override this to be a directory of your choosing e.g. your local `_build/` directory."
           },
           "esbonio.sphinx.confDir": {
-            "scope": "window",
+            "scope": "resource",
             "type": "string",
             "default": "",
             "description": "The Language Server should be able to automatically find the folder containing your project's 'conf.py' file. However this setting can be used to force the Language Server to use a particular directory if required."
           },
           "esbonio.sphinx.forceFullBuild": {
-            "scope": "window",
+            "scope": "resource",
             "type": "boolean",
             "default": true,
             "description": "By default the language server will force a full build of your documentation on startup to help improve the accuracy of some features like diagnostics. Disabling this option can help improve startup time for larger projects at the expense of certain features being less accurate."
           },
           "esbonio.sphinx.numJobs": {
-            "scope": "window",
+            "scope": "resource",
             "type": "integer",
             "default": 1,
             "markdownDescription": "The number of parallel jobs to use during a Sphinx build.\n\n- A value of `0` is equivalent to passing `-j auto` to a `sphinx-build` command.\n- A value of `1` will disable parallel processing."
           },
           "esbonio.sphinx.srcDir": {
-            "scope": "window",
+            "scope": "source",
             "type": "string",
             "default": null,
             "description": "The directory containing your rst source files. By default the Language Server will assume this is the same as `esbonio.sphinx.confDir` but this option can override this if necessary.",

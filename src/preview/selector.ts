@@ -61,7 +61,7 @@ export class ConfigFileSelector {
     configSelected.tooltip = `Full path: ${fullPathSelected}. Click to reset.`;
     configSelected.description += textConfigFileSelectedPostfix;
     configSelected.configDirectory = fullPathSelected;
-    configSelected.workspaceRoot = workspaceRoot!.uri.fsPath;
+    configSelected.workspaceRoot = workspaceRoot?.uri.fsPath;
     configSelected.engine = 'sphinx';
     configSelected.shortLabel = `$(gear) Config file in ${shrink(
       fullPathSelected
@@ -77,7 +77,7 @@ export class ConfigFileSelector {
         docutils.description = 'Do not use Sphinx, but docutils instead';
         docutils.configDirectory = '';
         docutils.engine = 'docutils';
-        docutils.workspaceRoot = workspaceRoot!.uri.fsPath;
+        docutils.workspaceRoot = workspaceRoot?.uri.fsPath;
         docutils.shortLabel = docutils.label;
         configurations.push(docutils);
       }

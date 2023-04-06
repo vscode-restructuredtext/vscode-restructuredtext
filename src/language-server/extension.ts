@@ -11,7 +11,8 @@ import {EsbonioClient} from './client';
 export async function activate(
   context: vscode.ExtensionContext,
   logger: Logger,
-  python: Python
+  python: Python,
+  resource: vscode.Uri
 ): Promise<EsbonioClient> {
   if (
     vscode.workspace.workspaceFolders &&
@@ -24,7 +25,7 @@ export async function activate(
   }
 
   if (
-    !(await python.checkPython(null, false)) ||
+    !(await python.checkPython(resource, false)) ||
     !(await python.checkPythonForEsbonio())
   ) {
     vscode.window.showErrorMessage(

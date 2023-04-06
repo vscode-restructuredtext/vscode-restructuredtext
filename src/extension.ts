@@ -96,38 +96,6 @@ export async function activate(
     }
   }
 
-  const simpleRstName = 'trond-snekvik.simple-rst';
-  const simpleRst = vscode.extensions.getExtension(simpleRstName);
-  if (!simpleRst && !configuration.getSyntaxHighlightingDisabled()) {
-    const message =
-      "Syntax highlighting is now provided by Trond Snekvik's extension. Do you want to install it now?";
-    const choice = await vscode.window.showInformationMessage(
-      message,
-      'Install',
-      'Not now',
-      'Do not show again'
-    );
-    if (choice === 'Install') {
-      logger.log('Started to install simple-rst...');
-      await vscode.commands.executeCommand(
-        Commands.OPEN_EXTENSION,
-        simpleRstName
-      );
-      await vscode.commands.executeCommand(
-        Commands.INSTALL_EXTENSION,
-        simpleRstName
-      );
-    } else if (choice === 'Do not show again') {
-      logger.log('Disabled syntax highlighting.');
-      await configuration.setSyntaxHighlightingDisabled();
-      vscode.window.showWarningMessage('Syntax highlighting is now disabled.');
-    } else {
-      vscode.window.showWarningMessage(
-        "No Syntax highlighting. Trond Snekvik's extension is not installed."
-      );
-    }
-  }
-
   const minor = require('semver/functions/minor');
   const minorVersion = minor(context.extension.packageJSON.version);
   if (minorVersion % 2 !== 0) {
@@ -146,9 +114,7 @@ export async function activate(
 
   const folders = vscode.workspace.workspaceFolders;
   const singleFolder = folders?.length === 1;
-  // Status bar to show the active rst->html transformer configuration
-
-  if (!singleFolder) {
+  if (folders && !singleFolder) {
     const statusActiveFolder = container.get<SelectedConfigFileStatus>(
       TYPES.FolderStatus
     );
@@ -174,16 +140,24 @@ export async function activate(
     )
   );
 
-  vscode.window.onDidChangeActiveTextEditor(
-    status.update,
-    status,
-    context.subscriptions
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      'restructuredtext.syncStatus',
+      status.update,
+      status
+    )
   );
+
   await status.update();
 
+  const resource = configuration.getActiveResource();
+
   // porting settings over
-  const newSection = vscode.workspace.getConfiguration('esbonio');
-  const oldSection = vscode.workspace.getConfiguration('restructuredtext');
+  const newSection = vscode.workspace.getConfiguration('esbonio', resource);
+  const oldSection = vscode.workspace.getConfiguration(
+    'restructuredtext',
+    resource
+  );
 
   let buildDir = oldSection.get<string>('builtDocumentationPath');
   if (buildDir) {
@@ -214,7 +188,12 @@ export async function activate(
 
   const lspLogger = container.getNamed<Logger>(TYPES.Logger, NAMES.Lsp);
   // activate language services
-  const esbonio = await RstLanguageServer.activate(context, lspLogger, python); // TODO: move to preview context.
+  const esbonio = await RstLanguageServer.activate(
+    context,
+    lspLogger,
+    python,
+    resource
+  ); // TODO: move to preview context.
   container
     .bind<PreviewContext>(TYPES.PreviewContext)
     .toConstantValue(new PreviewContext(esbonio, context));

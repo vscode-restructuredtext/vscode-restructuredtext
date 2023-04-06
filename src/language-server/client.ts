@@ -175,7 +175,8 @@ export class EsbonioClient {
       this.client.start();
 
       const configuration = container.get<Configuration>(TYPES.Configuration);
-      if (configuration.getEsbonioSourceFolder()) {
+      const resource = configuration.getActiveResource();
+      if (configuration.getEsbonioSourceFolder(resource)) {
         // Auto open the output window when debugging
         this.client.outputChannel.show();
       }
@@ -192,7 +193,12 @@ export class EsbonioClient {
    * Restart the language server.
    */
   async restartServer() {
-    const config = vscode.workspace.getConfiguration('esbonio.server');
+    const configuration = container.get<Configuration>(TYPES.Configuration);
+    const resource = configuration.getActiveResource();
+    const config = vscode.workspace.getConfiguration(
+      'esbonio.server',
+      resource
+    );
     if (config.get('enabled')) {
       this.restartLock.acquire('restart', async () => {
         this.logger.info(
@@ -216,30 +222,31 @@ export class EsbonioClient {
 
     const command = [];
     const configuration = container.get<Configuration>(TYPES.Configuration);
-    command.push(await configuration.getPythonPath()); //await this.python.getCmd()
+    const resource = configuration.getActiveResource();
+    command.push(await configuration.getPythonPath(resource)); //await this.python.getCmd()
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const options: any = {};
     options.shell = true;
-    const sourceFolder = configuration.getEsbonioSourceFolder();
+    const sourceFolder = configuration.getEsbonioSourceFolder(resource);
     if (sourceFolder) {
       // launch language server from source folder.
       options.cwd = sourceFolder;
       if (
-        (await this.python.checkPython(null, false)) &&
-        (await this.python.checkEsbonio(null, false, false))
+        (await this.python.checkPython(resource, false)) &&
+        (await this.python.checkEsbonio(resource, false, false))
       ) {
         await this.python.uninstallEsbonio();
         vscode.window.showInformationMessage('Uninstalled esbonio.');
       }
       if (
-        !(await this.python.checkPython(null, false)) ||
-        !(await this.python.checkDebugPy(null, true))
+        !(await this.python.checkPython(resource, false)) ||
+        !(await this.python.checkDebugPy(resource, true))
       ) {
         return;
       }
       command.push('-m', 'debugpy', '--listen', '5678');
-      if (configuration.getEsbonioDebugLaunch()) {
+      if (configuration.getEsbonioDebugLaunch(resource)) {
         command.push('--wait-for-client');
       }
       vscode.window.showInformationMessage(
@@ -247,14 +254,14 @@ export class EsbonioClient {
       );
     } else {
       if (
-        !(await this.python.checkPython(null, false)) ||
-        !(await this.python.checkEsbonio(null, true, true))
+        !(await this.python.checkPython(resource, false)) ||
+        !(await this.python.checkEsbonio(resource, true, true))
       ) {
         return;
       }
     }
 
-    const config = vscode.workspace.getConfiguration('esbonio');
+    const config = vscode.workspace.getConfiguration('esbonio', resource);
 
     const startupModule = config.get<string>('server.startupModule');
 
@@ -308,7 +315,9 @@ export class EsbonioClient {
         this.error = true;
         this.statusBar.text = `esbonio: ${icon} Sphinx build error`;
 
-        const config = vscode.workspace.getConfiguration('esbonio');
+        const configuration = container.get<Configuration>(TYPES.Configuration);
+        const resource = configuration.getActiveResource();
+        const config = vscode.workspace.getConfiguration('esbonio', resource);
         if (config.get<boolean>('server.showOutputOnError')) {
           this.client.outputChannel.show();
         }
@@ -381,16 +390,19 @@ export class EsbonioClient {
   private async configChanged(event: vscode.ConfigurationChangeEvent) {
     this.logger.debug('ConfigurationChangeEvent');
 
-    const config = vscode.workspace.getConfiguration('esbonio');
+    const configuration = container.get<Configuration>(TYPES.Configuration);
+    const resource = configuration.getActiveResource();
+    const config = vscode.workspace.getConfiguration('esbonio', resource);
     if (!config.get('server.enabled')) {
       await this.stop();
       return;
     }
 
+    // TODO: should we add selectection changed conditions?
     const conditions = [
-      event.affectsConfiguration('esbonio'),
+      event.affectsConfiguration('esbonio', resource),
       !config.get<string>('server.pythonPath') &&
-        event.affectsConfiguration('python.pythonPath'),
+        event.affectsConfiguration('python.pythonPath', resource),
     ];
 
     if (conditions.some(i => i)) {
