@@ -6,7 +6,8 @@
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
 		"strict": false,
-		"noImplicitReturns": false
+		"noImplicitReturns": false,
+		"sourceMap": true
 	},
 	"include": [
 		"src/**/*"
