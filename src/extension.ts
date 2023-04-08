@@ -22,6 +22,7 @@ import {Commands} from './constants';
 import container from './inversify.config';
 import {NAMES, TYPES} from './types';
 import {PreviewContext} from './preview/PreviewContext';
+import {updateActivationCount} from './rating';
 
 let extensionPath = '';
 
@@ -240,5 +241,7 @@ export async function activate(
         previewManager.updateConfiguration();
       })
     );
+
+    await updateActivationCount(context);
   }
 }
