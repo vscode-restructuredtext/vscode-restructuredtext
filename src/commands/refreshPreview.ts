@@ -7,11 +7,11 @@ import {Command} from '../util/commandManager';
 import {RSTPreviewManager} from '../preview/previewManager';
 
 export class RefreshPreviewCommand implements Command {
-  public readonly id = 'restructuredtext.preview.refresh';
+    public readonly id = 'restructuredtext.preview.refresh';
 
-  public constructor(private readonly webviewManager: RSTPreviewManager) {}
+    public constructor(private readonly webviewManager: RSTPreviewManager) {}
 
-  public execute() {
-    this.webviewManager.refresh();
-  }
+    public execute() {
+        this.webviewManager.refresh();
+    }
 }

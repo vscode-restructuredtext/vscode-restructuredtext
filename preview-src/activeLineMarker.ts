@@ -5,31 +5,34 @@
 import {getElementsForSourceLine} from './scroll-sync';
 
 export class ActiveLineMarker {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private _current: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private _current: any;
 
-  onDidChangeTextEditorSelection(line: number) {
-    const {previous} = getElementsForSourceLine(line);
-    this._update(previous && previous.element);
-  }
-
-  _update(before: HTMLElement | undefined) {
-    this._unmarkActiveElement(this._current);
-    this._markActiveElement(before);
-    this._current = before;
-  }
-
-  _unmarkActiveElement(element: HTMLElement | undefined) {
-    if (!element) {
-      return;
+    onDidChangeTextEditorSelection(line: number) {
+        const {previous} = getElementsForSourceLine(line);
+        this._update(previous && previous.element);
     }
-    element.className = element.className.replace(/\bcode-active-line\b/g, '');
-  }
 
-  _markActiveElement(element: HTMLElement | undefined) {
-    if (!element) {
-      return;
+    _update(before: HTMLElement | undefined) {
+        this._unmarkActiveElement(this._current);
+        this._markActiveElement(before);
+        this._current = before;
     }
-    element.className += ' code-active-line';
-  }
+
+    _unmarkActiveElement(element: HTMLElement | undefined) {
+        if (!element) {
+            return;
+        }
+        element.className = element.className.replace(
+            /\bcode-active-line\b/g,
+            ''
+        );
+    }
+
+    _markActiveElement(element: HTMLElement | undefined) {
+        if (!element) {
+            return;
+        }
+        element.className += ' code-active-line';
+    }
 }

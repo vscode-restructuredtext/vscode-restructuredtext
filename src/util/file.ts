@@ -6,5 +6,5 @@
 import * as vscode from 'vscode';
 
 export function isRSTFile(document: vscode.TextDocument) {
-  return document.languageId === 'restructuredtext';
+    return document.languageId === 'restructuredtext';
 }

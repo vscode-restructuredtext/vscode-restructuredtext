@@ -18,12 +18,12 @@ const underlineChars = configuration.getAdornments();
  * @return - The next underline char in the list of precedence
  */
 export function nextUnderlineChar(current: string, reverse = false): string {
-  const nextIndex = underlineChars.indexOf(current) + (reverse ? -1 : 1);
-  const nextCharIndex =
-    nextIndex >= 0
-      ? nextIndex % underlineChars.length
-      : nextIndex + underlineChars.length;
-  return underlineChars[nextCharIndex];
+    const nextIndex = underlineChars.indexOf(current) + (reverse ? -1 : 1);
+    const nextCharIndex =
+        nextIndex >= 0
+            ? nextIndex % underlineChars.length
+            : nextIndex + underlineChars.length;
+    return underlineChars[nextCharIndex];
 }
 
 /**
@@ -35,18 +35,18 @@ export function nextUnderlineChar(current: string, reverse = false): string {
  * @return - the current underline character if any or null
  */
 export function currentUnderlineChar(
-  currentLine: string,
-  nextLine: string
+    currentLine: string,
+    nextLine: string
 ): string {
-  for (const char of underlineChars) {
-    if (
-      nextLine.length >= currentLine.length &&
-      nextLine === char.repeat(nextLine.length)
-    ) {
-      return char;
+    for (const char of underlineChars) {
+        if (
+            nextLine.length >= currentLine.length &&
+            nextLine === char.repeat(nextLine.length)
+        ) {
+            return char;
+        }
     }
-  }
-  return null;
+    return null;
 }
 
 /**
@@ -54,39 +54,39 @@ export function currentUnderlineChar(
  * corresponding to the nextitle level and replace the current underline.
  */
 export function underline(
-  textEditor: vscode.TextEditor,
-  edit: vscode.TextEditorEdit,
-  reverse = false
+    textEditor: vscode.TextEditor,
+    edit: vscode.TextEditorEdit,
+    reverse = false
 ) {
-  textEditor.selections.forEach(selection => {
-    const position = selection.active;
-    const line = textEditor.document.lineAt(position.line).text;
-    if (line === '') {
-      return; // don't underline empty lines
-    }
+    textEditor.selections.forEach(selection => {
+        const position = selection.active;
+        const line = textEditor.document.lineAt(position.line).text;
+        if (line === '') {
+            return; // don't underline empty lines
+        }
 
-    let underlineChar = null;
-    let nextLine = null;
-    if (position.line < textEditor.document.lineCount - 1) {
-      nextLine = textEditor.document.lineAt(position.line + 1).text;
-      underlineChar = currentUnderlineChar(line, nextLine);
-    }
+        let underlineChar = null;
+        let nextLine = null;
+        if (position.line < textEditor.document.lineCount - 1) {
+            nextLine = textEditor.document.lineAt(position.line + 1).text;
+            underlineChar = currentUnderlineChar(line, nextLine);
+        }
 
-    const lineWidth = underlineWidth(line);
-    if (underlineChar === null) {
-      edit.insert(
-        new vscode.Position(position.line, line.length),
-        '\n' + '='.repeat(lineWidth)
-      );
-    } else {
-      const nextLineRange = new vscode.Range(
-        new vscode.Position(position.line + 1, 0),
-        new vscode.Position(position.line + 1, nextLine.length)
-      );
-      const replacement = nextUnderlineChar(underlineChar, reverse);
-      edit.replace(nextLineRange, replacement.repeat(lineWidth));
-    }
-  });
+        const lineWidth = underlineWidth(line);
+        if (underlineChar === null) {
+            edit.insert(
+                new vscode.Position(position.line, line.length),
+                '\n' + '='.repeat(lineWidth)
+            );
+        } else {
+            const nextLineRange = new vscode.Range(
+                new vscode.Position(position.line + 1, 0),
+                new vscode.Position(position.line + 1, nextLine.length)
+            );
+            const replacement = nextUnderlineChar(underlineChar, reverse);
+            edit.replace(nextLineRange, replacement.repeat(lineWidth));
+        }
+    });
 }
 
 /**
@@ -96,5 +96,5 @@ export function underline(
  * TODO: consider the count of combining chars same as docutils.
  */
 export function underlineWidth(line: string): number {
-  return meaw.computeWidth(line.normalize());
+    return meaw.computeWidth(line.normalize());
 }

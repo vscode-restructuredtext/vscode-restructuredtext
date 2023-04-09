@@ -5,31 +5,31 @@ import * as vscode from 'vscode';
  * Iterface that allows us to mock out various user input commands.
  */
 export interface UserInput {
-  /**
-   * Exposes VSCode `showInputBox` function.
-   */
-  inputBox(
-    label: string,
-    placeholder: string,
-    value?: string
-  ): Thenable<string | undefined>;
+    /**
+     * Exposes VSCode `showInputBox` function.
+     */
+    inputBox(
+        label: string,
+        placeholder: string,
+        value?: string
+    ): Thenable<string | undefined>;
 }
 
 /**
  * Implementation of UserInput that uses VSCode's APIs
  */
 export class VSCodeInput implements UserInput {
-  inputBox(
-    label: string,
-    placeholder: string,
-    value?: string
-  ): Thenable<string> {
-    return vscode.window.showInputBox({
-      prompt: label,
-      placeHolder: placeholder,
-      value: value,
-    });
-  }
+    inputBox(
+        label: string,
+        placeholder: string,
+        value?: string
+    ): Thenable<string> {
+        return vscode.window.showInputBox({
+            prompt: label,
+            placeHolder: placeholder,
+            value: value,
+        });
+    }
 }
 
 /**
@@ -38,133 +38,139 @@ export class VSCodeInput implements UserInput {
  * Is there a built-in way to get this??
  */
 function getEOLSequence(eol: vscode.EndOfLine): string {
-  switch (eol) {
-    case vscode.EndOfLine.LF:
-      return '\n';
-    case vscode.EndOfLine.CRLF:
-      return '\r\n';
-  }
+    switch (eol) {
+        case vscode.EndOfLine.LF:
+            return '\n';
+        case vscode.EndOfLine.CRLF:
+            return '\r\n';
+    }
 }
 
 /**
  * Class that holds all the text editor commands.
  */
 export class EditorCommands {
-  public static INSERT_LINK = 'esbonio.insert.link';
-  public static INSERT_INLINE_LINK = 'esbonio.insert.inlineLink';
+    public static INSERT_LINK = 'esbonio.insert.link';
+    public static INSERT_INLINE_LINK = 'esbonio.insert.inlineLink';
 
-  LINK_PATTERN = /\.\.[ ]_\S+:[ ]\S+\n/;
+    LINK_PATTERN = /\.\.[ ]_\S+:[ ]\S+\n/;
 
-  constructor(public userInput: UserInput) {}
+    constructor(public userInput: UserInput) {}
 
-  async insertLink(editor: vscode.TextEditor) {
-    const link = await this.getLinkInfo(editor);
-    if (!link.url || !link.label) {
-      return;
+    async insertLink(editor: vscode.TextEditor) {
+        const link = await this.getLinkInfo(editor);
+        if (!link.url || !link.label) {
+            return;
+        }
+
+        const selection = editor.selection;
+        const eol = getEOLSequence(editor.document.eol);
+
+        const lastLine = editor.document.lineAt(editor.document.lineCount - 1);
+        let lineText = editor.document.getText(
+            lastLine.rangeIncludingLineBreak
+        );
+
+        let prefix = '';
+        if (lineText.length === 0) {
+            const line = editor.document.lineAt(editor.document.lineCount - 2);
+            lineText = editor.document.getText(line.rangeIncludingLineBreak);
+        } else {
+            prefix = eol;
+        }
+
+        // If the text at the bottom of the page is not a set of links, insert an
+        // extra new line to start a separate block.
+        if (!this.LINK_PATTERN.test(lineText)) {
+            prefix += eol;
+        }
+
+        const linkRef = `\`${link.label}\`_`;
+        const linkDef = `${prefix}.. _${link.label}: ${link.url}${eol}`;
+
+        await editor.edit(edit => {
+            edit.replace(selection, linkRef);
+            edit.insert(lastLine.range.end, linkDef);
+        });
+
+        // Clear the selection
+        const position = editor.selection.end;
+        editor.selection = new vscode.Selection(position, position);
     }
 
-    const selection = editor.selection;
-    const eol = getEOLSequence(editor.document.eol);
+    /**
+     * Insert inline link.
+     *
+     */
+    async insertInlineLink(editor: vscode.TextEditor) {
+        const link = await this.getLinkInfo(editor);
+        if (!link.url || !link.label) {
+            return;
+        }
 
-    const lastLine = editor.document.lineAt(editor.document.lineCount - 1);
-    let lineText = editor.document.getText(lastLine.rangeIncludingLineBreak);
+        const selection = editor.selection;
 
-    let prefix = '';
-    if (lineText.length === 0) {
-      const line = editor.document.lineAt(editor.document.lineCount - 2);
-      lineText = editor.document.getText(line.rangeIncludingLineBreak);
-    } else {
-      prefix = eol;
+        const inlineLink = `\`${link.label} <${link.url}>\`_`;
+
+        await editor.edit(edit => {
+            edit.replace(selection, inlineLink);
+        });
+
+        // Clear the selection.
+        const position = editor.selection.end;
+        editor.selection = new vscode.Selection(position, position);
     }
 
-    // If the text at the bottom of the page is not a set of links, insert an
-    // extra new line to start a separate block.
-    if (!this.LINK_PATTERN.test(lineText)) {
-      prefix += eol;
+    /**
+     * Register all the commands this class provides
+     */
+    register(context: vscode.ExtensionContext) {
+        context.subscriptions.push(
+            vscode.commands.registerTextEditorCommand(
+                EditorCommands.INSERT_INLINE_LINK,
+                this.insertInlineLink,
+                this
+            )
+        );
+        context.subscriptions.push(
+            vscode.commands.registerTextEditorCommand(
+                EditorCommands.INSERT_LINK,
+                this.insertLink,
+                this
+            )
+        );
     }
 
-    const linkRef = `\`${link.label}\`_`;
-    const linkDef = `${prefix}.. _${link.label}: ${link.url}${eol}`;
+    /**
+     * Helper function that returns the url to be linked and its label
+     */
+    private async getLinkInfo(editor: vscode.TextEditor) {
+        let label: string;
+        const url = await this.userInput.inputBox('Link URL', 'https://...');
 
-    await editor.edit(edit => {
-      edit.replace(selection, linkRef);
-      edit.insert(lastLine.range.end, linkDef);
-    });
+        const parseTitle = body => {
+            const match = body.match(/<title>([^<]*)<\/title>/); // regular expression to parse contents of the <title> tag
+            if (!match || typeof match[1] !== 'string')
+                throw new Error('Unable to parse the title tag');
+            return match[1];
+        };
 
-    // Clear the selection
-    const position = editor.selection.end;
-    editor.selection = new vscode.Selection(position, position);
-  }
+        const title = await fetch(url)
+            .then(res => res.text()) // parse response's body as text
+            .then(body => parseTitle(body))
+            .catch(() => null); // extract <title> from body
 
-  /**
-   * Insert inline link.
-   *
-   */
-  async insertInlineLink(editor: vscode.TextEditor) {
-    const link = await this.getLinkInfo(editor);
-    if (!link.url || !link.label) {
-      return;
+        const selection = editor.selection;
+        if (selection.isEmpty) {
+            label = await this.userInput.inputBox(
+                'Link Text',
+                'Link Text',
+                title
+            );
+        } else {
+            label = editor.document.getText(selection);
+        }
+
+        return {label: label, url: url};
     }
-
-    const selection = editor.selection;
-
-    const inlineLink = `\`${link.label} <${link.url}>\`_`;
-
-    await editor.edit(edit => {
-      edit.replace(selection, inlineLink);
-    });
-
-    // Clear the selection.
-    const position = editor.selection.end;
-    editor.selection = new vscode.Selection(position, position);
-  }
-
-  /**
-   * Register all the commands this class provides
-   */
-  register(context: vscode.ExtensionContext) {
-    context.subscriptions.push(
-      vscode.commands.registerTextEditorCommand(
-        EditorCommands.INSERT_INLINE_LINK,
-        this.insertInlineLink,
-        this
-      )
-    );
-    context.subscriptions.push(
-      vscode.commands.registerTextEditorCommand(
-        EditorCommands.INSERT_LINK,
-        this.insertLink,
-        this
-      )
-    );
-  }
-
-  /**
-   * Helper function that returns the url to be linked and its label
-   */
-  private async getLinkInfo(editor: vscode.TextEditor) {
-    let label: string;
-    const url = await this.userInput.inputBox('Link URL', 'https://...');
-
-    const parseTitle = body => {
-      const match = body.match(/<title>([^<]*)<\/title>/); // regular expression to parse contents of the <title> tag
-      if (!match || typeof match[1] !== 'string')
-        throw new Error('Unable to parse the title tag');
-      return match[1];
-    };
-
-    const title = await fetch(url)
-      .then(res => res.text()) // parse response's body as text
-      .then(body => parseTitle(body))
-      .catch(() => null); // extract <title> from body
-
-    const selection = editor.selection;
-    if (selection.isEmpty) {
-      label = await this.userInput.inputBox('Link Text', 'Link Text', title);
-    } else {
-      label = editor.document.getText(selection);
-    }
-
-    return {label: label, url: url};
-  }
 }
