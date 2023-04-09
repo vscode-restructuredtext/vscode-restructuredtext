@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {injectable} from 'inversify';
-import * as Rollbar from 'rollbar';
+import Rollbar = require('rollbar');
 import si = require('@jedithepro/system-info');
 
 export interface Logger {
@@ -18,7 +18,7 @@ export interface Logger {
     logPlatform(version: string): Promise<void>;
     outputChannel: vscode.OutputChannel;
     updateConfiguration(): void;
-    collect(message: string): void;
+    collect(version: string, platform: string): void;
 }
 
 export enum Trace {
@@ -41,8 +41,7 @@ export namespace Trace {
     }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function isString(value: any): value is string {
+function isString(value: unknown): value is string {
     return Object.prototype.toString.call(value) === '[object String]';
 }
 
@@ -80,12 +79,11 @@ export class ConsoleLogger implements Logger {
         this.log(message);
     }
 
-    public collect(message: string): void {
-        this.rollbar.log(message);
+    public collect(version: string, platform: string): void {
+        this.rollbar.log(version, {details: platform});
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public log(message: string, data?: any): void {
+    public log(message: string, data?: unknown): void {
         if (this.trace === Trace.Verbose) {
             this.appendLine(
                 `[Log - ${new Date().toLocaleTimeString()}] ${message}`
@@ -120,8 +118,7 @@ export class ConsoleLogger implements Logger {
         );
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    private static data2String(data: any): string {
+    private static data2String(data: unknown): string {
         if (data instanceof Error) {
             if (isString(data.stack)) {
                 return data.stack;
@@ -142,8 +139,6 @@ export class ConsoleLogger implements Logger {
         const arch = result.arch;
 
         this.log(`OS is ${platform} ${release} ${dist} ${arch}`);
-        this.collect(
-            `start ${version} from ${platform} ${release} ${dist} ${arch}`
-        );
+        this.collect(version, `${platform} ${release} ${dist} ${arch}`);
     }
 }

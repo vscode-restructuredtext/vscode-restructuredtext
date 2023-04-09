@@ -5,8 +5,9 @@ export class LineDecoder {
     private remaining: string;
     private lines: string[];
 
-    constructor(encoding: BufferEncoding = 'utf8') {
-        this.stringDecoder = new StringDecoder(encoding);
+    constructor(encoding = 'utf8') {
+        const input = encoding as BufferEncoding;
+        this.stringDecoder = new StringDecoder(input);
         this.remaining = null;
         this.lines = [];
     }

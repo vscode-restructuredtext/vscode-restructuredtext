@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 'use strict';
 
 import {
@@ -377,8 +376,9 @@ function indent(editor?: TextEditor) {
                 }
             }
             return workspace.applyEdit(edit);
-        // eslint-disable-next-line no-empty
-        } catch (error) {}
+        } catch (error) {
+            /* empty */
+        }
     }
 
     return commands.executeCommand('editor.action.indentLines');
@@ -440,8 +440,9 @@ function outdent(editor?: TextEditor) {
                 }
             }
             return workspace.applyEdit(edit);
-        // eslint-disable-next-line no-empty
-        } catch (error) {}
+        } catch (error) {
+            /* empty */
+        }
     }
 
     return commands.executeCommand('editor.action.outdentLines');

@@ -67,8 +67,7 @@ export class Throttler<T> {
                     this.activePromise = null;
                     resolve(result);
                 },
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                (err: any) => {
+                (err: unknown) => {
                     this.activePromise = null;
                     reject(err);
                 }
