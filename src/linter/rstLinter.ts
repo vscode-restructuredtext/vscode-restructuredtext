@@ -1,14 +1,17 @@
 'use strict';
-import { Diagnostic, DiagnosticSeverity, Disposable, Range, Uri } from 'vscode';
-import { Logger } from '../util/logger';
-import { Python } from '../util/python';
-import { Configuration } from '../util/configuration';
-import { ILinter, ILinterConfiguration, LintingProvider } from './lintingProvider';
+import {Diagnostic, DiagnosticSeverity, Disposable, Range, Uri} from 'vscode';
+import {Logger} from '../util/logger';
+import {Python} from '../util/python';
+import {Configuration} from '../util/configuration';
+import {
+    ILinter,
+    ILinterConfiguration,
+    LintingProvider,
+} from './lintingProvider';
 import container from '../inversify.config';
-import { TYPES } from '../types';
+import {TYPES} from '../types';
 
 export default class RstLintingProvider implements ILinter {
-
     public languageId = 'restructuredtext';
 
     public constructor(
@@ -17,21 +20,22 @@ export default class RstLintingProvider implements ILinter {
         private path: string,
         private extraArgs: string[],
         private readonly logger: Logger,
-        private readonly python: Python) {
-    }
+        private readonly python: Python
+    ) {}
 
     public activate(subscriptions: Disposable[]) {
         const provider = new LintingProvider(this, this.logger, this.python);
         provider.activate(subscriptions);
     }
 
-    public async loadConfiguration(resource: Uri): Promise<ILinterConfiguration> {
-
+    public async loadConfiguration(
+        resource: Uri
+    ): Promise<ILinterConfiguration> {
         let module: string[] = [];
         const configuration = container.get<Configuration>(TYPES.Configuration);
 
         let build = this.path;
-        if (build == null) {
+        if (build === null) {
             const python = await configuration.getPythonPath(resource);
             if (python) {
                 build = '"' + python + '"';
@@ -41,7 +45,7 @@ export default class RstLintingProvider implements ILinter {
             build = '"' + build + '"';
         }
 
-        if (build == null) {
+        if (build === null) {
             build = this.name;
         }
 
@@ -50,9 +54,11 @@ export default class RstLintingProvider implements ILinter {
             module,
             fileArgs: [],
             bufferArgs: [],
-            extraArgs: this.extraArgs.map((value) => configuration.expandMacro(value, resource)),
+            extraArgs: this.extraArgs.map(value =>
+                configuration.expandMacro(value, resource)
+            ),
             runTrigger: configuration.getRunType(resource),
-            rootPath: configuration.getRootPath(resource)
+            rootPath: configuration.getRootPath(resource),
         };
     }
 
@@ -65,12 +71,13 @@ export default class RstLintingProvider implements ILinter {
                     severity: DiagnosticSeverity.Warning,
                     message: text,
                     code: null,
-                    source: this.name
+                    source: this.name,
                 });
                 continue;
             }
 
-            const regex = /(([A-Z]+)\s+)?(.+?):([0-9]+):?\s(([A-Z0-9]+)\s)?(\(([A-Z]+)\/[0-9]+\)\s)?(.+)/;
+            const regex =
+                /(([A-Z]+)\s+)?(.+?):([0-9]+):?\s(([A-Z0-9]+)\s)?(\(([A-Z]+)\/[0-9]+\)\s)?(.+)/;
             const matches = regex.exec(text);
             if (matches === null) {
                 continue;
@@ -82,7 +89,7 @@ export default class RstLintingProvider implements ILinter {
             const code = matches[6];
             const severity2 = matches[8];
             const message = matches[9];
-            if (file.endsWith('.py') && this.name == 'doc8') {
+            if (file.endsWith('.py') && this.name === 'doc8') {
                 // doc8 internal issues.
                 continue;
             }
@@ -93,7 +100,7 @@ export default class RstLintingProvider implements ILinter {
                 severity: DiagnosticSeverity.Warning,
                 message,
                 code: severity1 ?? severity2 ?? code,
-                source: this.name
+                source: this.name,
             });
         }
         return diagnostics;

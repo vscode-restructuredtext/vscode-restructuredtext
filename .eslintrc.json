@@ -1,12 +1,10 @@
 {
-    "extends": "eslint:recommended",
-    "rules": {
-        "indent": 0,
-        "max-line-length": 1,
-        "quotemark": [2, "single"],
-        "no-namespace": 0,
-        "trailing-comma": 0,
-        "member-ordering": 0,
-        "object-literal-sort-keys": 0
-    }
+  "extends": "./node_modules/gts/",
+  "ignorePatterns": [
+    "out",
+    "build",
+    "**/*.d.ts",
+    "media",
+    "src/test"
+  ]
 }

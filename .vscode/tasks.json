@@ -3,11 +3,10 @@
 
     "tasks": [
         {
-            "label": "npm",
+            "label": "compile",
             "type": "shell",
-            "command": "npm",
+            "command": "yarn",
             "args": [
-                "run",
                 "compile",
                 "--loglevel",
                 "silent"
@@ -19,9 +18,8 @@
         {
             "label": "watch",
             "type": "shell",
-            "command": "npm",
+            "command": "yarn",
             "args": [
-                "run",
                 "watch",
                 "--loglevel",
                 "silent"

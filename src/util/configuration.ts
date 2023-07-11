@@ -1,17 +1,28 @@
 'use strict';
 
-import { injectable } from "inversify";
-import fs = require("fs");
-import path = require("path");
-import { extensions, Uri, workspace, WorkspaceConfiguration, WorkspaceFolder } from "vscode";
-import { getConfig } from "./config";
-import { Constants } from "../constants";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import {injectable} from 'inversify';
+import fs = require('fs');
+import path = require('path');
+import {
+    extensions,
+    Uri,
+    workspace,
+    WorkspaceConfiguration,
+    WorkspaceFolder,
+} from 'vscode';
+import {getConfig} from './config';
+import {Constants} from '../constants';
 
 @injectable()
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export class Configuration {
-
     public getConflictingExtensions(resource?: Uri): string[] | undefined {
-        return this.loadAnySetting<string[]>('conflictingExtensions', undefined, resource);
+        return this.loadAnySetting<string[]>(
+            'conflictingExtensions',
+            undefined,
+            resource
+        );
     }
 
     public getDocutilsWriter(resource?: Uri): string | undefined {
@@ -22,16 +33,52 @@ export class Configuration {
         return this.loadSetting('docutilsWriterPart', 'html_body', resource);
     }
 
+    public getActiveResource(): Uri | undefined {
+        if (workspace.workspaceFolders === undefined) {
+            return undefined;
+        }
+        let result = workspace.workspaceFolders![0].uri;
+        if (workspace.workspaceFolders.length > 1) {
+            const folder = this.getActiveFolder();
+            result = workspace.workspaceFolders!.find(
+                item => item.name === folder
+            )!.uri;
+        }
+        return result;
+    }
+
+    public getActiveFolder(): string | undefined {
+        return this.loadAnySetting<string>('activeFolder', '');
+    }
+
     public getConfPath(resource?: Uri): string | undefined {
-        return this.loadSetting('sphinx.confDir', '', resource, true, 'esbonio');
+        return this.loadSetting(
+            'sphinx.confDir',
+            '',
+            resource,
+            true,
+            'esbonio'
+        );
     }
 
     public getOutputFolder(resource?: Uri): string | undefined {
-        return this.loadSetting('sphinx.buildDir', undefined, resource, true, 'esbonio');
+        return this.loadSetting(
+            'sphinx.buildDir',
+            undefined,
+            resource,
+            true,
+            'esbonio'
+        );
     }
 
     public getSourcePath(resource?: Uri): string | undefined {
-        return this.loadSetting('sphinx.srcDir', undefined, resource, true, 'esbonio');
+        return this.loadSetting(
+            'sphinx.srcDir',
+            undefined,
+            resource,
+            true,
+            'esbonio'
+        );
     }
 
     public getPreviewName(resource?: Uri): string | undefined {
@@ -39,41 +86,70 @@ export class Configuration {
     }
 
     public getDoc8Path(resource?: Uri): string | undefined {
-        return this.loadSetting('linter.doc8.executablePath', undefined, resource);
+        return this.loadSetting(
+            'linter.doc8.executablePath',
+            undefined,
+            resource
+        );
     }
 
     public getDoc8ExtraArgs(resource?: Uri): string[] | undefined {
-        return this.loadAnySetting<string[]>('linter.doc8.extraArgs', undefined, resource);
+        return this.loadAnySetting<string[]>(
+            'linter.doc8.extraArgs',
+            undefined,
+            resource
+        );
     }
 
     public getRstCheckPath(resource?: Uri): string | undefined {
-        return this.loadSetting('linter.rstcheck.executablePath', undefined, resource);
+        return this.loadSetting(
+            'linter.rstcheck.executablePath',
+            undefined,
+            resource
+        );
     }
 
     public getRstCheckExtraArgs(resource?: Uri): string[] | undefined {
-        return this.loadAnySetting<string[]>('linter.rstcheck.extraArgs', undefined, resource);
+        return this.loadAnySetting<string[]>(
+            'linter.rstcheck.extraArgs',
+            undefined,
+            resource
+        );
     }
 
     public getRstLintPath(resource?: Uri): string | undefined {
-        return this.loadSetting('linter.rst-lint.executablePath', undefined, resource);
+        return this.loadSetting(
+            'linter.rst-lint.executablePath',
+            undefined,
+            resource
+        );
     }
 
     public getRstLintExtraArgs(resource?: Uri): string[] | undefined {
-        return this.loadAnySetting<string[]>('linter.rst-lint.extraArgs', undefined, resource);
+        return this.loadAnySetting<string[]>(
+            'linter.rst-lint.extraArgs',
+            undefined,
+            resource
+        );
     }
 
     public getEsbonioSourceFolder(resource?: Uri): string | undefined {
-        return this.getConfiguration('esbonio', resource).get<string>('server.sourceFolder');
+        return this.getConfiguration('esbonio', resource).get<string>(
+            'server.sourceFolder'
+        );
     }
 
     public getEsbonioDebugLaunch(resource?: Uri): boolean {
-        return this.getConfiguration('esbonio', resource).get<boolean>('server.debugLaunch', false);
+        return this.getConfiguration('esbonio', resource).get<boolean>(
+            'server.debugLaunch',
+            false
+        );
     }
 
     public getTelemetryDisabled(resource?: Uri): boolean | undefined {
         return this.loadAnySetting('telemetry.disabled', false, resource);
     }
-    
+
     public getRunType(resource?: Uri): string | undefined {
         return this.loadAnySetting('linter.run', 'onType', resource);
     }
@@ -84,22 +160,32 @@ export class Configuration {
             if (!extension) {
                 return Constants.python;
             }
-            const usingNewInterpreterStorage = extension.packageJSON?.featureFlags?.usingNewInterpreterStorage;
+            const usingNewInterpreterStorage =
+                extension.packageJSON?.featureFlags?.usingNewInterpreterStorage;
             if (usingNewInterpreterStorage) {
                 if (!extension.isActive) {
                     await extension.activate();
                 }
-                const pythonPath = extension.exports.settings.getExecutionDetails(resource).execCommand[0];
+                const pythonPath =
+                    extension.exports.settings.getExecutionDetails(resource)
+                        .execCommand[0];
                 return pythonPath;
             } else {
-                return this.getConfiguration('python', resource).get<string>('pythonPath') ?? Constants.python;
+                return (
+                    this.getConfiguration('python', resource).get<string>(
+                        'pythonPath'
+                    ) ?? Constants.python
+                );
             }
         } catch (error) {
             return Constants.python;
         }
     }
 
-    public getConfiguration(section?: string, resource?: Uri ): WorkspaceConfiguration {
+    public getConfiguration(
+        section?: string,
+        resource?: Uri
+    ): WorkspaceConfiguration {
         if (resource) {
             return workspace.getConfiguration(section, resource);
         } else {
@@ -109,7 +195,13 @@ export class Configuration {
 
     public getPythonPath2(resource?: Uri): string | undefined {
         // IMPORTANT: python3 does not work, so the default comes from Python extension.
-        const primary = this.loadSetting('pythonPath', 'python3', resource, true, 'python');
+        const primary = this.loadSetting(
+            'pythonPath',
+            'python3',
+            resource,
+            true,
+            'python'
+        );
         // the user setting python.defaultInterpreterPath must be used to invoke the interpreter from the
         // VSCode internal storage
         if (primary) {
@@ -125,7 +217,11 @@ export class Configuration {
     }
 
     public getLinterDisabled(resource?: Uri): string[] | undefined {
-        return this.loadAnySetting<string[]>('linter.disabledLinters', [], resource);
+        return this.loadAnySetting<string[]>(
+            'linter.disabledLinters',
+            [],
+            resource
+        );
     }
 
     public getSphinxDisabled(resource?: Uri): boolean | undefined {
@@ -141,37 +237,80 @@ export class Configuration {
     }
 
     public getSyntaxHighlightingDisabled(resource?: Uri): boolean | undefined {
-        return this.loadAnySetting('syntaxHighlighting.disabled', false, resource);
+        return this.loadAnySetting(
+            'syntaxHighlighting.disabled',
+            false,
+            resource
+        );
     }
 
     public getTableEditorDisabled(resource?: Uri): boolean | undefined {
-        return this.loadAnySetting('editor.tableEditor.disabled', false, resource);
+        return this.loadAnySetting(
+            'editor.tableEditor.disabled',
+            false,
+            resource
+        );
     }
 
     public getTableEditorReformatDisabled(resource?: Uri): boolean | undefined {
-        return this.loadAnySetting('editor.tableEditor.reformat.disabled', false, resource);
+        return this.loadAnySetting(
+            'editor.tableEditor.reformat.disabled',
+            false,
+            resource
+        );
     }
 
     // list of underline characters, from higher level to lower level
     // Use the recommended items from http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html#sections,
     // The first six items are convention of Python documentation, https://devguide.python.org/documenting/#sections
     public getAdornments(resource?: Uri): string | undefined {
-        return this.loadAnySetting('editor.sectionEditor.adornments', "#*=-^\"'`:.~_+", resource);
+        return this.loadAnySetting(
+            'editor.sectionEditor.adornments',
+            '#*=-^"\'`:.~_+',
+            resource
+        );
     }
 
-    public getPythonRecommendationDisabled(resource?: Uri): boolean | undefined {
-        return this.loadAnySetting('pythonRecommendation.disabled', false, resource);
+    public getPythonRecommendationDisabled(
+        resource?: Uri
+    ): boolean | undefined {
+        return this.loadAnySetting(
+            'pythonRecommendation.disabled',
+            false,
+            resource
+        );
     }
 
     public async setPythonRecommendationDisabled(resource?: Uri) {
-        await this.saveAnySetting('pythonRecommendation.disabled', true, resource);
+        await this.saveAnySetting(
+            'pythonRecommendation.disabled',
+            true,
+            resource
+        );
     }
 
-    public async setConfPath(value: string, resource?: Uri, insertMacro: boolean = true): Promise<string|undefined> {
-        return await this.saveSetting('sphinx.confDir', value, resource, insertMacro, 'esbonio');
+    public async setActiveFolder(value: string): Promise<string> {
+        return await this.saveAnySetting('activeFolder', value);
     }
 
-    public async setPreviewName(value: string, resource?: Uri): Promise<string> {
+    public async setConfPath(
+        value: string,
+        resource?: Uri,
+        insertMacro = true
+    ): Promise<string | undefined> {
+        return await this.saveSetting(
+            'sphinx.confDir',
+            value,
+            resource,
+            insertMacro,
+            'esbonio'
+        );
+    }
+
+    public async setPreviewName(
+        value: string,
+        resource?: Uri
+    ): Promise<string> {
         return await this.saveAnySetting('preview.name', value, resource);
     }
 
@@ -184,11 +323,18 @@ export class Configuration {
     }
 
     public async setSyntaxHighlightingDisabled(resource?: Uri) {
-        await this.saveAnySetting('syntaxHighlighting.disabled', true, resource);
+        await this.saveAnySetting(
+            'syntaxHighlighting.disabled',
+            true,
+            resource
+        );
     }
 
     private loadAnySetting<T>(
-        configSection: string, defaultValue?: T, resource?: Uri, header: string = 'restructuredtext',
+        configSection: string,
+        defaultValue?: T,
+        resource?: Uri,
+        header = 'restructuredtext'
     ): T | undefined {
         if (defaultValue) {
             return getConfig(header, resource).get(configSection, defaultValue);
@@ -197,10 +343,12 @@ export class Configuration {
     }
 
     private async saveAnySetting<T>(
-        configSection: string, value: T, resource?: Uri, header: string = 'restructuredtext',
+        configSection: string,
+        value: T,
+        resource?: Uri,
+        header = 'restructuredtext'
     ): Promise<T | undefined> {
-        if (workspace.workspaceFolders)
-        {
+        if (workspace.workspaceFolders) {
             await getConfig(header, resource).update(configSection, value);
             return value;
         }
@@ -211,10 +359,15 @@ export class Configuration {
         configSection: string,
         defaultValue?: string,
         resource?: Uri,
-        expand: boolean = true,
-        header: string = 'restructuredtext'
+        expand = true,
+        header = 'restructuredtext'
     ): string | undefined {
-        const result = this.loadAnySetting<string>(configSection, defaultValue, resource, header);
+        const result = this.loadAnySetting<string>(
+            configSection,
+            defaultValue,
+            resource,
+            header
+        );
         if (expand && result) {
             return this.expandMacro(result!, resource);
         }
@@ -223,12 +376,21 @@ export class Configuration {
     }
 
     private async saveSetting(
-        configSection: string, value: string, resource?: Uri, insertMacro: boolean = false, header: string = 'restructuredtext',
+        configSection: string,
+        value: string,
+        resource?: Uri,
+        insertMacro = false,
+        header = 'restructuredtext'
     ): Promise<string | undefined> {
         if (insertMacro) {
             value = this.insertMacro(value, resource);
         }
-        return await this.saveAnySetting<string>(configSection, value, resource, header);
+        return await this.saveAnySetting<string>(
+            configSection,
+            value,
+            resource,
+            header
+        );
     }
 
     private insertMacro(input: string, resource?: Uri): string {
@@ -263,11 +425,10 @@ export class Configuration {
 
         let expanded: string;
         if (input.indexOf('${env:') > -1) {
-            expanded = input.replace(/\$\{env\:(.+)\}/, (_match, p1)=>
-                {
-                    const variable = process.env[p1];
-                    return variable ?? '';
-                });
+            expanded = input.replace(/\$\{env:(.+)\}/, (_match, p1) => {
+                const variable = process.env[p1];
+                return variable ?? '';
+            });
         } else {
             expanded = input;
         }
@@ -286,7 +447,10 @@ export class Configuration {
 
     public getRootPath(resource?: Uri): string | undefined {
         if (!workspace.workspaceFolders) {
-            return workspace.rootPath ?? (resource ? path.dirname(resource.fsPath) : undefined);
+            return (
+                workspace.rootPath ??
+                (resource ? path.dirname(resource.fsPath) : undefined)
+            );
         }
 
         let root: WorkspaceFolder | undefined;

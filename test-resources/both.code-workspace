@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"path": "docutils"
+		},
+		{
+			"path": "sphinx"
+		}
+	],
+	"settings": {
+		"esbonio.sphinx.confDir": "${workspaceFolder}",
+		"restructuredtext.syntaxHighlighting.disabled": true,
+		"restructuredtext.activeFolder": "sphinx"
+	}
+}

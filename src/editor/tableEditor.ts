@@ -4,23 +4,23 @@
 // ============================================================
 import * as vscode from 'vscode';
 import container from '../inversify.config';
-import { TYPES } from '../types';
-import { Configuration } from '../util/configuration';
+import {TYPES} from '../types';
+import {Configuration} from '../util/configuration';
 import * as util from './util';
 
 interface CellPosition {
-    line: number,
-    column: number,
-    row: number
+    line: number;
+    column: number;
+    row: number;
 }
 
 export class TableEditor {
     editor: vscode.TextEditor;
     tableRange: vscode.Range;
-    tableLineNumbers: number[]|undefined;
+    tableLineNumbers: number[] | undefined;
     selectedCellPosition: CellPosition;
 
-    constructor(editor:vscode.TextEditor) {
+    constructor(editor: vscode.TextEditor) {
         this.editor = editor;
 
         this.tableLineNumbers = util.tableIsSelected(this.editor);
@@ -36,94 +36,112 @@ export class TableEditor {
         }
         this.tableLineNumbers = util.tableIsSelected(this.editor);
 
-        const cellContents:string[][] = this._getCellContents();
-        const hasHeader:boolean = this._hasHeader();
+        const cellContents: string[][] = this._getCellContents();
+        const hasHeader: boolean = this._hasHeader();
         const insertText = this._generateTableString(cellContents, hasHeader);
 
-        const editOptions = {undoStopBefore: false, undoStopAfter: false}
-        await this.editor.edit((editBuilder) => {
+        const editOptions = {undoStopBefore: false, undoStopAfter: false};
+        await this.editor.edit(editBuilder => {
             const tableRange = this._tableRange();
             editBuilder.replace(tableRange, insertText);
         }, editOptions);
     }
 
     public async createEmptyGrid() {
-
+        // eslint-disable-next-line prefer-const
         let [row, column] = util.tableSizeIsSelected(this.editor);
 
-        const inputResult = await vscode.window.showQuickPick(["With Header", "Without Header"])
-        if (!inputResult) { return }
-        const header = (inputResult === "With Header");
+        const inputResult = await vscode.window.showQuickPick([
+            'With Header',
+            'Without Header',
+        ]);
+        if (!inputResult) {
+            return;
+        }
+        const header = inputResult === 'With Header';
 
         if (header) {
             row += 1;
         }
 
-        const contentsLine = new Array(column).fill("");               // ""-filled array: ["", "", "".....]
-        const cellContents = new Array(row).fill(contentsLine);        // []-filled array: [["", ""], ["", ""], ["", ""].....]
+        const contentsLine = new Array(column).fill(''); // ""-filled array: ["", "", "".....]
+        const cellContents = new Array(row).fill(contentsLine); // []-filled array: [["", ""], ["", ""], ["", ""].....]
         const insertText = this._generateTableString(cellContents, header);
 
         const curLine = this.editor.selection.start.line;
         const curLineRange = this.editor.document.lineAt(curLine).range;
 
-        const editOptions = {undoStopBefore: false, undoStopAfter: false}
-        await this.editor.edit((editBuilder) => {
+        const editOptions = {undoStopBefore: false, undoStopAfter: false};
+        await this.editor.edit(editBuilder => {
             editBuilder.replace(curLineRange, insertText);
         }, editOptions);
 
-        const newPos = new vscode.Position(curLine+1, 2);
+        const newPos = new vscode.Position(curLine + 1, 2);
         this.editor.selection = new vscode.Selection(newPos, newPos);
     }
 
     public async dataToTable() {
-        if (this.editor.selection.isEmpty) { return }
+        if (this.editor.selection.isEmpty) {
+            return;
+        }
 
         const selection = this.editor.selection;
         const startPos = new vscode.Position(selection.start.line, 0);
         const endLine = selection.end.line;
-        const endLastChar = this.editor.document.lineAt(endLine).range.end.character;
+        const endLastChar =
+            this.editor.document.lineAt(endLine).range.end.character;
         const endPos = new vscode.Position(endLine, endLastChar);
 
-        const data = this.editor.document.getText(new vscode.Range(startPos, endPos));
+        const data = this.editor.document.getText(
+            new vscode.Range(startPos, endPos)
+        );
         const dataLines = data.split(/\r\n|\r|\n/);
 
         // First, we will parse the selected csv format string.
-        let cellContents:string[][] = [];
+        const cellContents: string[][] = [];
         for (let i = 0; i < dataLines.length; i++) {
             const dataLine = dataLines[i];
-            const contents = dataLine.split(",");
+            const contents = dataLine.split(',');
             cellContents.push([]);
 
             for (let j = 0; j < contents.length; j++) {
                 let content = contents[j];
                 content = content.trim();
-                content = content.replace(/(\s)\s*/g, "$1");
+                content = content.replace(/(\s)\s*/g, '$1');
                 cellContents[i].push(content);
             }
         }
 
-        const inputResult = await vscode.window.showQuickPick(["With Header", "Without Header"])
-        if (!inputResult) { return }
-        const header = (inputResult == "With Header");
+        const inputResult = await vscode.window.showQuickPick([
+            'With Header',
+            'Without Header',
+        ]);
+        if (!inputResult) {
+            return;
+        }
+        const header = inputResult === 'With Header';
 
         const insertText = this._generateTableString(cellContents, header);
 
-        const editOptions = {undoStopBefore: false, undoStopAfter: false}
-        await this.editor.edit((editBuilder) => {
+        const editOptions = {undoStopBefore: false, undoStopAfter: false};
+        await this.editor.edit(editBuilder => {
             editBuilder.replace(new vscode.Range(startPos, endPos), insertText);
         }, editOptions);
 
-        const newPos = new vscode.Position(startPos.line+1, 2);
+        const newPos = new vscode.Position(startPos.line + 1, 2);
         this.editor.selection = new vscode.Selection(newPos, newPos);
     }
 
-    private _generateTableString(cellContents:string[][], header:boolean):string {
+    private _generateTableString(
+        cellContents: string[][],
+        header: boolean
+    ): string {
         // Record the maximum number of characters in each column in an array (At least three.)
-        let cellStrLengthList:number[] = [];
+        const cellStrLengthList: number[] = [];
         for (let i = 0; i < cellContents.length; i++) {
             for (let j = 0; j < cellContents[i].length; j++) {
-                if (j > cellStrLengthList.length-1) {
-                    cellStrLengthList.push(3)
+                if (j > cellStrLengthList.length - 1) {
+                    cellStrLengthList.push(3);
                 }
 
                 const content = cellContents[i][j];
@@ -135,84 +153,105 @@ export class TableEditor {
                     if (rows.length > 1) {
                         strCount -= 1;
                     }
-                    cellStrLengthList[j] = Math.max(cellStrLengthList[j], strCount);
+                    cellStrLengthList[j] = Math.max(
+                        cellStrLengthList[j],
+                        strCount
+                    );
                 }
             }
         }
 
         // GenerateGrid
-        let gridRow:string = "";
-        let headerRow:string = "";
+        let gridRow = '';
+        let headerRow = '';
         for (let i = 0; i < cellStrLengthList.length; i++) {
             const width = cellStrLengthList[i] + 2;
-            gridRow   += `+${"-".repeat(width)}`;  // +-----
-            headerRow += `+${"=".repeat(width)}`;  // +=====
+            gridRow += `+${'-'.repeat(width)}`; // +-----
+            headerRow += `+${'='.repeat(width)}`; // +=====
         }
-        gridRow   += `+`;  // +-----+----+---+
-        headerRow += `+`;  // +=====+====+===+
+        gridRow += '+'; // +-----+----+---+
+        headerRow += '+'; // +=====+====+===+
 
-        let insertTextLines:string[] = [];
+        const insertTextLines: string[] = [];
         for (let i = 0; i < cellContents.length; i++) {
-            if (i == 0) {
-                insertTextLines.push(gridRow);  // +-----+----+---+  // roof
+            if (i === 0) {
+                insertTextLines.push(gridRow); // +-----+----+---+  // roof
             }
 
-            let multiLineCell:string[][] = [];
+            const multiLineCell: string[][] = [];
             const columnContents = cellContents[i];
-            for (let columnIndex = 0; columnIndex < columnContents.length; columnIndex++) {
+            for (
+                let columnIndex = 0;
+                columnIndex < columnContents.length;
+                columnIndex++
+            ) {
                 const cellText = columnContents[columnIndex];
                 const cellTextSplit = cellText.split(/\r\n|\r|\n/);
 
-                if (columnIndex == 0) {
+                if (columnIndex === 0) {
                     for (let j = 0; j < cellTextSplit.length; j++) {
-                        multiLineCell.push([]);  // []-filled array:[[], [].....]
+                        multiLineCell.push([]); // []-filled array:[[], [].....]
                     }
                 }
 
-                for (let lineIndex = 0; lineIndex < cellTextSplit.length; lineIndex++) {
+                for (
+                    let lineIndex = 0;
+                    lineIndex < cellTextSplit.length;
+                    lineIndex++
+                ) {
                     const contentLine = cellTextSplit[lineIndex];
-                    multiLineCell[lineIndex].push(contentLine)
+                    multiLineCell[lineIndex].push(contentLine);
                 }
             }
 
-            for (let lineIndex = 0; lineIndex < multiLineCell.length; lineIndex++) {
-                let cellRow:string = "";
+            for (
+                let lineIndex = 0;
+                lineIndex < multiLineCell.length;
+                lineIndex++
+            ) {
+                let cellRow = '';
                 const lineTextList = multiLineCell[lineIndex];
 
-                for (let columnIndex = 0; columnIndex < cellStrLengthList.length; columnIndex++) {
+                for (
+                    let columnIndex = 0;
+                    columnIndex < cellStrLengthList.length;
+                    columnIndex++
+                ) {
                     const textMaxWidth = cellStrLengthList[columnIndex];
-                    let content = lineTextList[columnIndex];
+                    const content = lineTextList[columnIndex];
 
                     if (columnIndex < lineTextList.length) {
                         const strCount = util.countTextWidth(content);
-                        const missingSpaces = `${" ".repeat(textMaxWidth-strCount+1)}`;
+                        const missingSpaces = `${' '.repeat(
+                            textMaxWidth - strCount + 1
+                        )}`;
 
                         if (multiLineCell.length > 1) {
-                            cellRow += `|${content}${missingSpaces} `;  // || ABC
+                            cellRow += `|${content}${missingSpaces} `; // || ABC
                         } else {
-                            cellRow += `| ${content}${missingSpaces}`;  // | ABC
+                            cellRow += `| ${content}${missingSpaces}`; // | ABC
                         }
                     } else {
-                        cellRow += `|${" ".repeat(textMaxWidth+2)}`;    // |.....
+                        cellRow += `|${' '.repeat(textMaxWidth + 2)}`; // |.....
                     }
                 }
-                cellRow += `|`;  // | ABC | DE | F |
-                insertTextLines.push(cellRow);  // | ABC | DE | F |
+                cellRow += '|'; // | ABC | DE | F |
+                insertTextLines.push(cellRow); // | ABC | DE | F |
             }
 
-            if (i == 0 && header) {
-                insertTextLines.push(headerRow);  // +=====+====+===+
+            if (i === 0 && header) {
+                insertTextLines.push(headerRow); // +=====+====+===+
             } else {
-                insertTextLines.push(gridRow);    // +-----+----+---+
+                insertTextLines.push(gridRow); // +-----+----+---+
             }
         }
 
-        return insertTextLines.join("\n");
+        return insertTextLines.join('\n');
     }
 
     private _hasHeader(): boolean {
         if (!this.tableLineNumbers) {
-            return false
+            return false;
         }
 
         // Various regular expressions
@@ -226,24 +265,25 @@ export class TableEditor {
 
             const gridHeaderLineMatch = regGridHeaderLine.exec(lineText);
             if (gridHeaderLineMatch) {
-                return true
+                return true;
             }
         }
 
-        return false
+        return false;
     }
 
     private _getCellContents(): string[][] {
         if (!this.tableLineNumbers) {
-            return []
+            return [];
         }
 
         // Various regular expressions
         const regContentsLine = /^(\+)?\|.+\|(\+)?$/;
-        const regCellContents = /(?<=\|(\+|-)?([<>^v])*) (?<content>([^|]|(\*\|\*)|(\`\|\`))*?) (?=([<>^v])*(\+|-)?\|)/g;
+        const regCellContents =
+            /(?<=\|(\+|-)?([<>^v])*) (?<content>([^|]|(\*\|\*)|(`\|`))*?) (?=([<>^v])*(\+|-)?\|)/g;
 
-        let curLineKind:("contents"|undefined);
-        const cellContents:string[][] = [];
+        let curLineKind: 'contents' | undefined;
+        const cellContents: string[][] = [];
         for (let i = 0; i < this.tableLineNumbers.length; i++) {
             const tableLine = this.tableLineNumbers[i];
 
@@ -253,52 +293,59 @@ export class TableEditor {
             const contentsLine = regContentsLine.exec(lineText);
             if (!contentsLine) {
                 curLineKind = undefined;
-                continue
+                continue;
             }
 
-            if (curLineKind != "contents") {
+            if (curLineKind !== 'contents') {
                 cellContents.push([]);
             }
 
             let columnIndex = 0;
-            var match;
-            while (match = regCellContents.exec(lineText)) {
-                if (!match?.groups) { continue }
+            let match;
+            while ((match = regCellContents.exec(lineText))) {
+                if (!match?.groups) {
+                    continue;
+                }
 
-                let content = match.groups["content"];
+                let content = match.groups['content'];
                 content = content.trim();
-                content = content.replace(/(\s)\s*/g, "$1");
+                content = content.replace(/(\s)\s*/g, '$1');
 
-                if (curLineKind != "contents") {
-                    cellContents[cellContents.length-1].push(content);
+                if (curLineKind !== 'contents') {
+                    cellContents[cellContents.length - 1].push(content);
                 } else {
-                    let prevContent = cellContents[cellContents.length-1][columnIndex];
+                    let prevContent =
+                        cellContents[cellContents.length - 1][columnIndex];
 
                     if (!prevContent) {
-                        prevContent = `| `;
-                    } else if (!prevContent.startsWith("|")) {
+                        prevContent = '| ';
+                    } else if (!prevContent.startsWith('|')) {
                         prevContent = `| ${prevContent}`;
                     }
-                    cellContents[cellContents.length-1][columnIndex] = `${prevContent}\n| ${content}`;
+                    cellContents[cellContents.length - 1][
+                        columnIndex
+                    ] = `${prevContent}\n| ${content}`;
                     columnIndex += 1;
                 }
             }
-            curLineKind = "contents";
+            curLineKind = 'contents';
         }
 
-        return cellContents
+        return cellContents;
     }
 
     private _tableRange(): vscode.Range {
         if (this.tableLineNumbers) {
-            const startPos    = new vscode.Position(this.tableLineNumbers[0], 0);
-            const endLine     = this.tableLineNumbers[this.tableLineNumbers.length-1];
-            const endLastChar = this.editor.document.lineAt(endLine).range.end.character;
-            const endPos      = new vscode.Position(endLine, endLastChar);
+            const startPos = new vscode.Position(this.tableLineNumbers[0], 0);
+            const endLine =
+                this.tableLineNumbers[this.tableLineNumbers.length - 1];
+            const endLastChar =
+                this.editor.document.lineAt(endLine).range.end.character;
+            const endPos = new vscode.Position(endLine, endLastChar);
             return new vscode.Range(startPos, endPos);
         } else {
             const startPos = new vscode.Position(0, 0);
-            const endPos   = new vscode.Position(0, 0);
+            const endPos = new vscode.Position(0, 0);
             return new vscode.Range(startPos, endPos);
         }
     }
@@ -309,7 +356,7 @@ export class TableEditor {
         const tableRange = this._tableRange();
         const tableStartLine = tableRange.start.line;
 
-        return (curLine == tableStartLine)
+        return curLine === tableStartLine;
     }
 
     public isSelectedLastGrid(): boolean {
@@ -318,142 +365,152 @@ export class TableEditor {
         const tableRange = this._tableRange();
         const tableLastLine = tableRange.end.line;
 
-        return (curLine == tableLastLine)
+        return curLine === tableLastLine;
     }
 
-    public selectedCellColumn():CellPosition {
-        const curLine  = this.editor.selection.start.line;
-        const curChar  = this.editor.selection.start.character;
+    public selectedCellColumn(): CellPosition {
+        const curLine = this.editor.selection.start.line;
+        const curChar = this.editor.selection.start.character;
         const lineText = this.editor.document.lineAt(curLine).text;
 
         const regContentsLine = /^\+?\|.+\|\+?$/;
-        const regCellContents = /(?<=\|)(?<cell>(\+|-)?([<>v^])* .*? ([<>v^])*(\+|-)?)(?=\|)/g;
+        const regCellContents =
+            /(?<=\|)(?<cell>(\+|-)?([<>v^])* .*? ([<>v^])*(\+|-)?)(?=\|)/g;
 
         let column = -1;
         let row = -1;
         if (!regContentsLine.exec(lineText) || !this.tableLineNumbers) {
-            const selectedCell:CellPosition = {
+            const selectedCell: CellPosition = {
                 line: curLine,
                 column: column,
-                row: row
-            }
-            return selectedCell
+                row: row,
+            };
+            return selectedCell;
         }
 
         // Column Index
         let match;
-        while (match = regCellContents.exec(lineText)) {
-            if (!match?.groups) { continue }
+        while ((match = regCellContents.exec(lineText))) {
+            if (!match?.groups) {
+                continue;
+            }
             column += 1;
 
             const matchIndex = match.index;
-            const cellText = match.groups["cell"];
+            const cellText = match.groups['cell'];
             const lastIndex = matchIndex + cellText.length;
 
             if (curChar <= lastIndex) {
-                break
+                break;
             }
         }
 
         // Row Index
-        let curLineKind:("contents"|undefined);
+        let curLineKind: 'contents' | undefined;
         for (let i = 0; i < this.tableLineNumbers.length; i++) {
             const lineNumber = this.tableLineNumbers[i];
             const lineText = this.editor.document.lineAt(lineNumber).text;
 
             if (!regContentsLine.exec(lineText)) {
                 curLineKind = undefined;
-                continue
+                continue;
             }
 
             if (!curLineKind) {
                 row += 1;
-                curLineKind = "contents";
+                curLineKind = 'contents';
             }
 
             if (lineNumber >= curLine) {
-                break
+                break;
             }
         }
 
-        const selectedCell:CellPosition = {
+        const selectedCell: CellPosition = {
             line: curLine,
             column: column,
-            row: row
-        }
+            row: row,
+        };
 
-        return selectedCell
+        return selectedCell;
     }
 
-    public selectCellContent(cellPosition:CellPosition, offset?:("top"|"buttom"|"left"|"right"), offsetType?:("cellIndex"|"lineNumber")) {
-        if (!this.tableLineNumbers) { return }
+    public selectCellContent(
+        cellPosition: CellPosition,
+        offset?: 'top' | 'buttom' | 'left' | 'right',
+        offsetType?: 'cellIndex' | 'lineNumber'
+    ) {
+        if (!this.tableLineNumbers) {
+            return;
+        }
 
         let lineNumber = cellPosition.line;
         let rowIndex = cellPosition.row;
         let columnIndex = cellPosition.column;
-        if (rowIndex == -1) {
+        if (rowIndex === -1) {
             rowIndex = 0;
         }
-        if (columnIndex == -1) {
+        if (columnIndex === -1) {
             columnIndex = 0;
         }
 
         let curLine = lineNumber;
-        if (offset == "top") {
+        if (offset === 'top') {
             curLine -= 1;
             rowIndex -= 1;
-        } else if (offset == "buttom") {
+        } else if (offset === 'buttom') {
             curLine += 1;
             rowIndex += 1;
-        } else if (offset == "right") {
+        } else if (offset === 'right') {
             columnIndex += 1;
-        } else if (offset == "left") {
+        } else if (offset === 'left') {
             columnIndex -= 1;
         }
 
         // Calc Row Number
-        let lineText = "";
+        let lineText = '';
         const regContentsLine = /^\|.+\|$/;
 
-        if (offsetType == "cellIndex") {
+        if (offsetType === 'cellIndex') {
             let curRowIndex = -1;
-            let curLineKind:("contents"|undefined);
+            let curLineKind: 'contents' | undefined;
             for (let i = 0; i < this.tableLineNumbers.length; i++) {
                 const curLineNumber = this.tableLineNumbers[i];
-                const lineText = this.editor.document.lineAt(curLineNumber).text;
+                const lineText =
+                    this.editor.document.lineAt(curLineNumber).text;
 
                 if (!regContentsLine.exec(lineText)) {
                     curLineKind = undefined;
-                    continue
+                    continue;
                 }
 
                 if (!curLineKind) {
                     curRowIndex += 1;
-                    curLineKind = "contents";
+                    curLineKind = 'contents';
                 }
 
                 if (curRowIndex >= rowIndex) {
                     lineNumber = curLineNumber;
-                    break
+                    break;
                 }
             }
             lineText = this.editor.document.lineAt(lineNumber).text;
         } else {
             let matchedContentsLine = false;
-            if (offset == "top" || offset == "buttom") {
+            if (offset === 'top' || offset === 'buttom') {
                 while (this.tableLineNumbers.includes(curLine)) {
                     lineText = this.editor.document.lineAt(curLine).text;
 
                     if (!regContentsLine.exec(lineText)) {
-                        if (offset == "top") {
+                        if (offset === 'top') {
                             curLine -= 1;
-                        } else if (offset == "buttom") {
+                        } else if (offset === 'buttom') {
                             curLine += 1;
                         }
                     } else {
                         matchedContentsLine = true;
                         lineNumber = curLine;
-                        break
+                        break;
                     }
                 }
             }
@@ -464,20 +521,23 @@ export class TableEditor {
         }
 
         // Get Column Index (match.index)
-        const regCellContents = /(?<=\|)(?<cell> ([^|]|(\*\|\*)|(\`\|\`))* )(?=\|)/g;
+        const regCellContents =
+            /(?<=\|)(?<cell> ([^|]|(\*\|\*)|(`\|`))* )(?=\|)/g;
 
         let curColumn = 0;
         let match;
-        while (match = regCellContents.exec(lineText)) {
+        while ((match = regCellContents.exec(lineText))) {
             if (curColumn >= columnIndex) {
-                break
+                break;
             }
             curColumn += 1;
         }
 
-        if (!match?.groups) { return }
+        if (!match?.groups) {
+            return;
+        }
         const matchIndex = match.index;
-        const cellText = match.groups["cell"];
+        const cellText = match.groups['cell'];
 
         // Index of characters to select
         const regAllSpaces = /^(\s+)$/;
@@ -499,11 +559,11 @@ export class TableEditor {
 
         // Range
         const newPosStart = new vscode.Position(lineNumber, wordFirstIndex);
-        const newPosEnd   = new vscode.Position(lineNumber, wordLastIndex);
-        this.editor.selection = new vscode.Selection(newPosStart, newPosEnd)
+        const newPosEnd = new vscode.Position(lineNumber, wordLastIndex);
+        this.editor.selection = new vscode.Selection(newPosStart, newPosEnd);
     }
 
-    public async selectionChange(moveTo:("top"|"buttom"|"right"|"left")) {
+    public async selectionChange(moveTo: 'top' | 'buttom' | 'right' | 'left') {
         await this.reformat();
         this.selectCellContent(this.selectedCellPosition, moveTo);
     }
@@ -515,27 +575,29 @@ export class TableEditor {
         const lineEndPosition = curTextLine.range.end;
 
         const regCellContents = /(?<=\|)( .*? )(?=\|)/g;
-        const emptyRow = lineText.replace(regCellContents, "   ");
+        const emptyRow = lineText.replace(regCellContents, '   ');
         const insertText = `\n${emptyRow}`;
 
-        const editOptions = {undoStopBefore: false, undoStopAfter: false}
-        await this.editor.edit((editBuilder) => {
+        const editOptions = {undoStopBefore: false, undoStopAfter: false};
+        await this.editor.edit(editBuilder => {
             editBuilder.replace(lineEndPosition, insertText);
         }, editOptions);
 
         await this.reformat();
 
-        this.selectCellContent(this.selectedCellPosition, "buttom");
+        this.selectCellContent(this.selectedCellPosition, 'buttom');
     }
 
     public async addRow() {
-        if (!this.tableLineNumbers) { return }
+        if (!this.tableLineNumbers) {
+            return;
+        }
 
         const curLine = this.editor.selection.start.line;
         let startIndex = this.tableLineNumbers.indexOf(curLine);
-        if (startIndex == -1) {
-            return
-        } else if (startIndex == 0) {
+        if (startIndex === -1) {
+            return;
+        } else if (startIndex === 0) {
             startIndex += 1;
         }
 
@@ -548,21 +610,24 @@ export class TableEditor {
             const gridLineMatch = regGridLine.exec(lineText);
             if (gridLineMatch) {
                 insertRowLineNumber = this.tableLineNumbers[i];
-                break
+                break;
             }
         }
 
         // Get information about the content
-        const cellContents:string[][] = this._getCellContents();
-        const hasHeader:boolean = this._hasHeader();
+        const cellContents: string[][] = this._getCellContents();
+        const hasHeader: boolean = this._hasHeader();
 
         const insertRowIndex = this.selectedCellPosition.row + 1;
-        cellContents.splice(insertRowIndex, 0, [""]);
+        cellContents.splice(insertRowIndex, 0, ['']);
 
         // Updating a table
-        const editOptions = {undoStopBefore: false, undoStopAfter: false}
-        await this.editor.edit((editBuilder) => {
-            const insertText = this._generateTableString(cellContents, hasHeader);
+        const editOptions = {undoStopBefore: false, undoStopAfter: false};
+        await this.editor.edit(editBuilder => {
+            const insertText = this._generateTableString(
+                cellContents,
+                hasHeader
+            );
             const tableRange = this._tableRange();
             editBuilder.replace(tableRange, insertText);
         }, editOptions);
@@ -571,7 +636,11 @@ export class TableEditor {
         this.tableLineNumbers = util.tableIsSelected(this.editor);
         this.selectedCellPosition.column = 0;
         this.selectedCellPosition.line = insertRowLineNumber;
-        this.selectCellContent(this.selectedCellPosition, "buttom", "cellIndex");
+        this.selectCellContent(
+            this.selectedCellPosition,
+            'buttom',
+            'cellIndex'
+        );
     }
 
     public async removeRow() {
@@ -579,21 +648,23 @@ export class TableEditor {
         this.selectCellContent(this.selectedCellPosition);
     }
 
-    public async moveRow(moveTo:("top"|"bottom")) {
-        if (!this.tableLineNumbers) { return }
+    public async moveRow(moveTo: 'top' | 'bottom') {
+        if (!this.tableLineNumbers) {
+            return;
+        }
 
         const numOfTimesToMove = this._getNumberOfTimesToMove(moveTo);
 
         // Get information about the content
-        const cellContents:string[][] = this._getCellContents();
-        const hasHeader:boolean = this._hasHeader();
+        const cellContents: string[][] = this._getCellContents();
+        const hasHeader: boolean = this._hasHeader();
 
         // Rowの入れ替え
         const row_from = this.selectedCellPosition.row;
         let row_to = row_from + numOfTimesToMove;
         if (row_to < 0) {
             row_to = 0;
-        } else if (row_to > cellContents.length-1) {
+        } else if (row_to > cellContents.length - 1) {
             row_to = cellContents.length - 1;
         }
 
@@ -602,9 +673,12 @@ export class TableEditor {
         cellContents.splice(row_to, 0, moveRowContents); // 要素(行)を追加
 
         // Updating a table
-        const editOptions = {undoStopBefore: false, undoStopAfter: false}
-        await this.editor.edit((editBuilder) => {
-            const insertText = this._generateTableString(cellContents, hasHeader);
+        const editOptions = {undoStopBefore: false, undoStopAfter: false};
+        await this.editor.edit(editBuilder => {
+            const insertText = this._generateTableString(
+                cellContents,
+                hasHeader
+            );
             const tableRange = this._tableRange();
             editBuilder.replace(tableRange, insertText);
         }, editOptions);
@@ -615,33 +689,35 @@ export class TableEditor {
     }
 
     public async addColumn() {
-        if (!this.tableLineNumbers) { return }
+        if (!this.tableLineNumbers) {
+            return;
+        }
 
         // Locate the operator.
-        let addLastColumn = util.isSelectingLastChara();
+        const addLastColumn = util.isSelectingLastChara();
 
         const curLine = this.editor.selection.start.line;
         const curLineText = this.editor.document.lineAt(curLine).text;
         const regContents = /(?<=\|)(\+?)( .*? )(\+?)(?=\|)/g;
         let match;
         let afterOperator;
-        while (match = regContents.exec(curLineText)) {
+        while ((match = regContents.exec(curLineText))) {
             if (match[3]) {
                 afterOperator = match[3];
-                break
+                break;
             }
         }
 
         // Get information about the content
-        const cellContents:string[][] = this._getCellContents();
-        const hasHeader:boolean = this._hasHeader();
+        const cellContents: string[][] = this._getCellContents();
+        const hasHeader: boolean = this._hasHeader();
 
         // Make sure that each line has a newline.
-        let newLineCount:number[] = [];
-        for (var i = 0; i < cellContents.length; i++) {
+        const newLineCount: number[] = [];
+        for (let i = 0; i < cellContents.length; i++) {
             newLineCount.push(0);
 
-            const rowContents = cellContents[i]
+            const rowContents = cellContents[i];
             for (let j = 0; j < rowContents.length; j++) {
                 const cellContent = rowContents[j];
                 const lineCount = cellContent.split(/\r\n|\r|\n/).length;
@@ -654,26 +730,33 @@ export class TableEditor {
         if (afterOperator || addLastColumn) {
             insertColumnIndex += 1;
         }
-        for (var i = 0; i < cellContents.length; i++) {
+        for (let i = 0; i < cellContents.length; i++) {
             const rowContents = cellContents[i];
             if (newLineCount[i] > 1) {
-                rowContents.splice(insertColumnIndex, 0, `${"\n".repeat(newLineCount[i]-1)}`); // 要素を追加
+                rowContents.splice(
+                    insertColumnIndex,
+                    0,
+                    `${'\n'.repeat(newLineCount[i] - 1)}`
+                ); // 要素を追加
             } else {
-                rowContents.splice(insertColumnIndex, 0, ""); // 要素を追加
+                rowContents.splice(insertColumnIndex, 0, ''); // 要素を追加
             }
         }
 
         // Updating a table
-        const editOptions = {undoStopBefore: false, undoStopAfter: false}
-        await this.editor.edit((editBuilder) => {
-            const insertText = this._generateTableString(cellContents, hasHeader);
+        const editOptions = {undoStopBefore: false, undoStopAfter: false};
+        await this.editor.edit(editBuilder => {
+            const insertText = this._generateTableString(
+                cellContents,
+                hasHeader
+            );
             const tableRange = this._tableRange();
 
             editBuilder.replace(tableRange, insertText);
         }, editOptions);
 
         // Select a cell
-        if (curLineText.startsWith("+|")) {
+        if (curLineText.startsWith('+|')) {
             this.selectedCellPosition.column = 0;
         } else if (afterOperator || addLastColumn) {
             this.selectedCellPosition.column += 1;
@@ -682,29 +765,34 @@ export class TableEditor {
     }
 
     public async removeColumn() {
-        if (!this.tableLineNumbers) { return }
+        if (!this.tableLineNumbers) {
+            return;
+        }
 
         // Get information about the content
-        const cellContents:string[][] = this._getCellContents();
-        const hasHeader:boolean = this._hasHeader();
+        const cellContents: string[][] = this._getCellContents();
+        const hasHeader: boolean = this._hasHeader();
 
         const delColumnIndex = this.selectedCellPosition.column;
-        for (var i = 0; i < cellContents.length; i++) {
-            const rowContents = cellContents[i]
+        for (let i = 0; i < cellContents.length; i++) {
+            const rowContents = cellContents[i];
             rowContents.splice(delColumnIndex, 1); // 要素を削除
         }
 
         // Updating a table
-        const editOptions = {undoStopBefore: false, undoStopAfter: false}
-        await this.editor.edit((editBuilder) => {
-            const insertText = this._generateTableString(cellContents, hasHeader);
+        const editOptions = {undoStopBefore: false, undoStopAfter: false};
+        await this.editor.edit(editBuilder => {
+            const insertText = this._generateTableString(
+                cellContents,
+                hasHeader
+            );
             const tableRange = this._tableRange();
 
             editBuilder.replace(tableRange, insertText);
         }, editOptions);
 
         // Select a cell
-        const curColumn = this.selectedCellPosition.column
+        const curColumn = this.selectedCellPosition.column;
         if (curColumn > 0) {
             this.selectedCellPosition.column -= 1;
         } else {
@@ -713,25 +801,27 @@ export class TableEditor {
         this.selectCellContent(this.selectedCellPosition);
     }
 
-    public async moveColumn(moveTo:("right"|"left")) {
-        if (!this.tableLineNumbers) { return }
+    public async moveColumn(moveTo: 'right' | 'left') {
+        if (!this.tableLineNumbers) {
+            return;
+        }
 
         const numOfTimesToMove = this._getNumberOfTimesToMove(moveTo);
 
         // Get information about the content
-        const cellContents:string[][] = this._getCellContents();
-        const hasHeader:boolean = this._hasHeader();
+        const cellContents: string[][] = this._getCellContents();
+        const hasHeader: boolean = this._hasHeader();
 
         // Columnの入れ替え
         const column_from = this.selectedCellPosition.column;
         let column_to = column_from + numOfTimesToMove;
         if (column_to < 0) {
             column_to = 0;
-        } else if (column_to > cellContents[0].length-1) {
+        } else if (column_to > cellContents[0].length - 1) {
             column_to = cellContents[0].length - 1;
         }
 
-        for (var i = 0; i < cellContents.length; i++) {
+        for (let i = 0; i < cellContents.length; i++) {
             const rowContents = cellContents[i];
             const moveColumnContent = rowContents[column_from];
             rowContents.splice(column_from, 1); // 要素を削除
@@ -739,9 +829,12 @@ export class TableEditor {
         }
 
         // Updating a table
-        const editOptions = {undoStopBefore: false, undoStopAfter: false}
-        await this.editor.edit((editBuilder) => {
-            const insertText = this._generateTableString(cellContents, hasHeader);
+        const editOptions = {undoStopBefore: false, undoStopAfter: false};
+        await this.editor.edit(editBuilder => {
+            const insertText = this._generateTableString(
+                cellContents,
+                hasHeader
+            );
             const tableRange = this._tableRange();
             editBuilder.replace(tableRange, insertText);
         }, editOptions);
@@ -751,35 +844,39 @@ export class TableEditor {
         this.selectCellContent(this.selectedCellPosition);
     }
 
-    private _getNumberOfTimesToMove(moveTo:("top"|"bottom"|"right"|"left")):number {
-        let checkChar = "";
-        if (moveTo == "top") {
-            checkChar = "^";
-        } else if (moveTo == "bottom") {
-            checkChar = "v";
-        } else if (moveTo == "right") {
-            checkChar = ">";
-        } else if (moveTo == "left") {
-            checkChar = "<";
+    private _getNumberOfTimesToMove(
+        moveTo: 'top' | 'bottom' | 'right' | 'left'
+    ): number {
+        let checkChar = '';
+        if (moveTo === 'top') {
+            checkChar = '^';
+        } else if (moveTo === 'bottom') {
+            checkChar = 'v';
+        } else if (moveTo === 'right') {
+            checkChar = '>';
+        } else if (moveTo === 'left') {
+            checkChar = '<';
         }
 
         const curLine = this.editor.selection.start.line;
-        const curLineCharList = this.editor.document.lineAt(curLine).text.split("");
+        const curLineCharList = this.editor.document
+            .lineAt(curLine)
+            .text.split('');
 
         let curChar = this.editor.selection.start.character - 1;
         let numOfTimesToMove = 0;
         while (curChar >= 0) {
-            if (checkChar != curLineCharList[curChar]) {
-                break
+            if (checkChar !== curLineCharList[curChar]) {
+                break;
             }
             numOfTimesToMove += 1;
             curChar -= 1;
         }
 
-        if (moveTo == "right" || moveTo == "bottom") {
-            return numOfTimesToMove
+        if (moveTo === 'right' || moveTo === 'bottom') {
+            return numOfTimesToMove;
         } else {
-            return -numOfTimesToMove
+            return -numOfTimesToMove;
         }
     }
 }

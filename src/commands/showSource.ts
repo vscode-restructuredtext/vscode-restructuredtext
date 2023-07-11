@@ -4,20 +4,20 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { Command } from '../util/commandManager';
-import { RSTPreviewManager } from '../preview/previewManager';
+import {Command} from '../util/commandManager';
+import {RSTPreviewManager} from '../preview/previewManager';
 
 export class ShowSourceCommand implements Command {
-	public readonly id = 'restructuredtext.showSource';
+    public readonly id = 'restructuredtext.showSource';
 
-	public constructor(
-		private readonly previewManager: RSTPreviewManager
-	) { }
+    public constructor(private readonly previewManager: RSTPreviewManager) {}
 
-	public execute() {
-		if (this.previewManager.activePreviewResource) {
-			return vscode.window.showTextDocument(this.previewManager.activePreviewResource);
-		}
-		return undefined;
-	}
+    public execute() {
+        if (this.previewManager.activePreviewResource) {
+            return vscode.window.showTextDocument(
+                this.previewManager.activePreviewResource
+            );
+        }
+        return undefined;
+    }
 }
