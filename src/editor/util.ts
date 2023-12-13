@@ -55,16 +55,7 @@ export function isAscii(text: string): boolean {
 }
 
 export function countTextWidth(text: string): number {
-    let count = 0;
-    for (let i = 0; i < text.length; i++) {
-        const chr = text[i];
-        if (isAscii(chr)) {
-            count += 1;
-        } else {
-            count += 2;
-        }
-    }
-    return count;
+    return text.length;
 }
 
 export function tableSizeIsSelected(
