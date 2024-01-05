@@ -24,7 +24,7 @@
     "url": "https://github.com/vscode-restructuredtext/vscode-restructuredtext.git"
   },
   "bugs": "https://github.com/vscode-restructuredtext/vscode-restructuredtext/issues",
-  "main": "./out/extension",
+  "main": "./dist/extension",
   "activationEvents": [
     "workspaceContains:**/*.rst",
     "onWebviewPanel:restructuredtext.preview",
@@ -65,18 +65,6 @@
         "command": "esbonio.insert.link",
         "key": "alt+shift+l",
         "when": "editorTextFocus && editorLangId == restructuredtext"
-      },
-      {
-        "command": "restructuredtext.showPreview",
-        "key": "shift+ctrl+r",
-        "mac": "shift+cmd+r",
-        "when": "editorLangId == restructuredtext"
-      },
-      {
-        "command": "restructuredtext.showPreviewToSide",
-        "key": "ctrl+k ctrl+r",
-        "mac": "cmd+k cmd+r",
-        "when": "editorLangId == restructuredtext"
       },
       {
         "command": "restructuredtext.features.underline.underline",
@@ -198,57 +186,6 @@
         "category": "Esbonio"
       },
       {
-        "command": "restructuredtext.showPreview",
-        "title": "%restructuredtext.preview.title%",
-        "category": "reStructuredText",
-        "icon": {
-          "light": "./media/Preview.svg",
-          "dark": "./media/Preview_inverse.svg"
-        }
-      },
-      {
-        "command": "restructuredtext.showPreviewToSide",
-        "title": "%restructuredtext.previewSide.title%",
-        "category": "reStructuredText",
-        "icon": {
-          "light": "./media/PreviewOnRightPane_16x.svg",
-          "dark": "./media/PreviewOnRightPane_16x_dark.svg"
-        }
-      },
-      {
-        "command": "restructuredtext.showLockedPreviewToSide",
-        "title": "%restructuredtext.showLockedPreviewToSide.title%",
-        "category": "reStructuredText",
-        "icon": {
-          "light": "./media/PreviewOnRightPane_16x.svg",
-          "dark": "./media/PreviewOnRightPane_16x_dark.svg"
-        }
-      },
-      {
-        "command": "restructuredtext.showSource",
-        "title": "%restructuredtext.showSource.title%",
-        "category": "reStructuredText",
-        "icon": {
-          "light": "./media/ViewSource.svg",
-          "dark": "./media/ViewSource_inverse.svg"
-        }
-      },
-      {
-        "command": "restructuredtext.showPreviewSecuritySelector",
-        "title": "%restructuredtext.showPreviewSecuritySelector.title%",
-        "category": "reStructuredText"
-      },
-      {
-        "command": "restructuredtext.preview.refresh",
-        "title": "%restructuredtext.preview.refresh.title%",
-        "category": "reStructuredText"
-      },
-      {
-        "command": "restructuredtext.preview.toggleLock",
-        "title": "%restructuredtext.preview.toggleLock.title%",
-        "category": "reStructuredText"
-      },
-      {
         "command": "restructuredtext.workspace.isTrusted.toggle",
         "title": "reStructuredText: Toggle Workspace Trust Flag",
         "description": "Toggle the workspace trust flag. Workspace settings that determine tool locations are disabled by default in untrusted workspaces."
@@ -309,74 +246,7 @@
           "when": "editorTextFocus && !editorHasMultipleSelections && editorHasSelection && editorLangId==restructuredtext"
         }
       ],
-      "editor/title": [
-        {
-          "when": "resourceLangId == restructuredtext",
-          "command": "restructuredtext.showPreviewToSide",
-          "alt": "restructuredtext.showPreview",
-          "group": "navigation"
-        },
-        {
-          "when": "restructuredtextPreviewFocus",
-          "command": "restructuredtext.showSource",
-          "group": "navigation"
-        },
-        {
-          "command": "restructuredtext.preview.refresh",
-          "when": "restructuredtextPreviewFocus",
-          "group": "restructuredtext"
-        },
-        {
-          "command": "restructuredtext.preview.toggleLock",
-          "when": "restructuredtextPreviewFocus",
-          "group": "restructuredtext"
-        },
-        {
-          "command": "restructuredtext.showPreviewSecuritySelector",
-          "when": "restructuredtextPreviewFocus",
-          "group": "restructuredtext"
-        }
-      ],
-      "explorer/context": [
-        {
-          "when": "resourceLangId == restructuredtext",
-          "command": "restructuredtext.showPreview",
-          "group": "navigation"
-        }
-      ],
       "commandPalette": [
-        {
-          "command": "restructuredtext.showPreview",
-          "when": "editorLangId == restructuredtext",
-          "group": "navigation"
-        },
-        {
-          "command": "restructuredtext.showPreviewToSide",
-          "when": "editorLangId == restructuredtext",
-          "group": "navigation"
-        },
-        {
-          "command": "restructuredtext.showLockedPreviewToSide",
-          "when": "editorLangId == restructuredtext",
-          "group": "navigation"
-        },
-        {
-          "command": "restructuredtext.showSource",
-          "when": "restructuredtextPreviewFocus",
-          "group": "navigation"
-        },
-        {
-          "command": "restructuredtext.showPreviewSecuritySelector",
-          "when": "editorLangId == restructuredtext"
-        },
-        {
-          "command": "restructuredtext.showPreviewSecuritySelector",
-          "when": "restructuredtextPreviewFocus"
-        },
-        {
-          "command": "restructuredtext.preview.toggleLock",
-          "when": "restructuredtextPreviewFocus"
-        },
         {
           "command": "resttext.table.createGrid",
           "when": "never"
@@ -416,9 +286,19 @@
             "default": [
               "tht13.rst-vscode",
               "TatsuyaNakamori.resttext",
-              "swyddfa.esbonio"
+              "CeresNorthPole.rst-lim"
             ],
             "description": "Extensions that might lead to conflicts.",
+            "scope": "application"
+          },
+          "restructuredtext.recommendedExtensions": {
+            "type": "array",
+            "default": [
+              "ms-python.python",
+              "trond-snekvik.simple-rst",
+              "swyddfa.esbonio"
+            ],
+            "description": "Extensions that should be installed together.",
             "scope": "application"
           },
           "restructuredtext.editor.sectionEditor.adornments": {
@@ -449,13 +329,15 @@
             "type": "boolean",
             "default": false,
             "description": "Flag to disable syntax highlighting.",
-            "scope": "resource"
+            "scope": "resource",
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
           },
           "restructuredtext.styles": {
             "type": "array",
             "default": [],
             "description": "%restructuredtext.styles.dec%",
-            "scope": "resource"
+            "scope": "resource",
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
           },
           "restructuredtext.preview.name": {
             "type": "string",
@@ -464,61 +346,71 @@
               "docutils"
             ],
             "default": "sphinx",
-            "scope": "resource"
+            "scope": "resource",
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
           },
           "restructuredtext.preview.sphinx.disabled": {
             "type": "boolean",
             "default": false,
             "description": "Flag to disable sphinx based preview if critical issues happen.",
-            "scope": "resource"
+            "scope": "resource",
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
           },
           "restructuredtext.preview.docutils.disabled": {
             "type": "boolean",
             "default": false,
             "description": "Flag to disable docutils based preview if critical issues happen.",
-            "scope": "resource"
+            "scope": "resource",
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
           },
           "restructuredtext.preview.fontFamily": {
             "type": "string",
             "default": "-apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'HelveticaNeue-Light', 'Ubuntu', 'Droid Sans', sans-serif",
             "description": "%restructuredtext.preview.fontFamily.desc%",
-            "scope": "resource"
+            "scope": "resource",
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
           },
           "restructuredtext.preview.fontSize": {
             "type": "number",
             "default": 14,
             "description": "%restructuredtext.preview.fontSize.desc%",
-            "scope": "resource"
+            "scope": "resource",
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
           },
           "restructuredtext.preview.lineHeight": {
             "type": "number",
             "default": 1.6,
             "description": "%restructuredtext.preview.lineHeight.desc%",
-            "scope": "resource"
+            "scope": "resource",
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
           },
           "restructuredtext.preview.scrollPreviewWithEditor": {
             "type": "boolean",
             "default": true,
             "description": "%restructuredtext.preview.scrollPreviewWithEditor.desc%",
-            "scope": "resource"
+            "scope": "resource",
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
           },
           "restructuredtext.preview.markEditorSelection": {
             "type": "boolean",
             "default": true,
             "description": "%restructuredtext.preview.markEditorSelection.desc%",
-            "scope": "resource"
+            "scope": "resource",
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
           },
           "restructuredtext.preview.scrollEditorWithPreview": {
             "type": "boolean",
             "default": true,
             "description": "%restructuredtext.preview.scrollEditorWithPreview.desc%",
-            "scope": "resource"
+            "scope": "resource",
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
           },
           "restructuredtext.preview.doubleClickToSwitchToEditor": {
             "type": "boolean",
             "default": true,
             "description": "%restructuredtext.preview.doubleClickToSwitchToEditor.desc%",
-            "scope": "resource"
+            "scope": "resource",
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
           },
           "restructuredtext.trace": {
             "type": "string",
@@ -555,19 +447,22 @@
             "type": "string",
             "default": "",
             "description": "The folder that shows the selected config file in status bar. Leave it empty to use the first folder in the workspace.",
-            "scope": "window"
+            "scope": "window",
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
           },
           "restructuredtext.docutilsWriter": {
             "type": "string",
             "default": "html",
             "description": "The docutils writer that will generate the output.",
-            "scope": "resource"
+            "scope": "resource",
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
           },
           "restructuredtext.docutilsWriterPart": {
             "type": "string",
             "default": "html_body",
             "description": "The output part of the docutils writer.",
-            "scope": "resource"
+            "scope": "resource",
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
           },
           "restructuredtext.linter.disabled": {
             "type": "boolean",
@@ -729,24 +624,6 @@
       {
         "title": "Server",
         "properties": {
-          "esbonio.server.enabled": {
-            "scope": "resource",
-            "type": "boolean",
-            "default": true,
-            "description": "Enable/Disable the language server"
-          },
-          "esbonio.server.enabledInPyFiles": {
-            "scope": "resource",
-            "type": "boolean",
-            "default": true,
-            "description": "Enable/Disable the language server in Python files."
-          },
-          "esbonio.server.startupModule": {
-            "scope": "resource",
-            "type": "string",
-            "default": "esbonio",
-            "description": "The module (or script) to use to launch the server."
-          },
           "esbonio.server.entryPoint": {
             "scope": "resource",
             "type": "string",
@@ -754,73 +631,33 @@
             "description": "The entry point to use when launching the server.",
             "deprecationMessage": "This setting is obsolete. Please use esbonio.server.startupModule."
           },
-          "esbonio.server.excludedModules": {
-            "scope": "resource",
-            "type": "array",
-            "default": [],
-            "items": {
-              "type": "string"
-            },
-            "description": "A list of modules to exclude from the server's configuration"
-          },
-          "esbonio.server.includedModules": {
-            "scope": "resource",
-            "type": "array",
-            "default": [],
-            "items": {
-              "type": "string"
-            },
-            "description": "A list of additional modules to include in the server's configuration"
-          },
-          "esbonio.server.logLevel": {
-            "scope": "resource",
-            "type": "string",
-            "default": "error",
-            "enum": [
-              "debug",
-              "info",
-              "error"
-            ],
-            "description": "The level of log message to show in the log"
-          },
-          "esbonio.server.logFilter": {
-            "scope": "resource",
-            "type": "array",
-            "default": [],
-            "items": {
-              "type": "string"
-            },
-            "description": "A list of logger names to limit output from"
-          },
-          "esbonio.server.pythonPath": {
-            "scope": "resource",
-            "type": "string",
-            "default": "",
-            "description": "The path to the Python interpreter to use when running the Langague Server.\n\nBy default this extension will try to use the interpreter configured via the Python Extension. If you do not use the Python Extension or you wish to use a different environment, then this option can be used to override the default behavior."
-          },
           "esbonio.server.hideSphinxOutput": {
             "scope": "resource",
             "type": "boolean",
             "default": false,
-            "description": "Hide Sphinx build output from the Language Server log."
+            "description": "Hide Sphinx build output from the Language Server log.",
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
           },
           "esbonio.server.sourceFolder": {
             "scope": "resource",
             "type": "string",
             "default": null,
-            "description": "Local source folder of esbonio. Used for debugging local language server."
+            "description": "Local source folder of esbonio. Used for debugging local language server.",
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
           },
           "esbonio.server.debugLaunch": {
             "scope": "resource",
             "type": "boolean",
             "default": false,
-            "description": "Whether to debug from launch."
+            "description": "Whether to debug from launch.",
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
           },
           "esbonio.server.showOutputOnError": {
             "scope": "resource",
             "type": "boolean",
             "default": false,
-            "description": "Whether to show output panel when errors occur."
+            "description": "Whether to show output panel when errors occur.",
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
           }
         }
       },
@@ -832,39 +669,53 @@
             "type": "string",
             "default": null,
             "description": "The directory in which to store Sphinx's build output.\n\nBy default the Language Server will store any build files in a storage area provided by VSCode, this option allows you to override this to be a directory of your choosing e.g. your local _build/ directory.",
-            "markdownDescription": "The directory in which to store Sphinx's build output.\n\nBy default the Language Server will store any build files in a storage area provided by VSCode, this option allows you to override this to be a directory of your choosing e.g. your local `_build/` directory."
+            "markdownDescription": "The directory in which to store Sphinx's build output.\n\nBy default the Language Server will store any build files in a storage area provided by VSCode, this option allows you to override this to be a directory of your choosing e.g. your local `_build/` directory.",
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
           },
           "esbonio.sphinx.confDir": {
             "scope": "resource",
             "type": "string",
             "default": "",
-            "description": "The Language Server should be able to automatically find the folder containing your project's 'conf.py' file. However this setting can be used to force the Language Server to use a particular directory if required."
+            "description": "The Language Server should be able to automatically find the folder containing your project's 'conf.py' file. However this setting can be used to force the Language Server to use a particular directory if required.",
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
           },
           "esbonio.sphinx.forceFullBuild": {
             "scope": "resource",
             "type": "boolean",
             "default": true,
-            "description": "By default the language server will force a full build of your documentation on startup to help improve the accuracy of some features like diagnostics. Disabling this option can help improve startup time for larger projects at the expense of certain features being less accurate."
+            "description": "By default the language server will force a full build of your documentation on startup to help improve the accuracy of some features like diagnostics. Disabling this option can help improve startup time for larger projects at the expense of certain features being less accurate.",
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
           },
           "esbonio.sphinx.numJobs": {
             "scope": "resource",
             "type": "integer",
             "default": 1,
-            "markdownDescription": "The number of parallel jobs to use during a Sphinx build.\n\n- A value of `0` is equivalent to passing `-j auto` to a `sphinx-build` command.\n- A value of `1` will disable parallel processing."
+            "markdownDescription": "The number of parallel jobs to use during a Sphinx build.\n\n- A value of `0` is equivalent to passing `-j auto` to a `sphinx-build` command.\n- A value of `1` will disable parallel processing.",
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
           },
           "esbonio.sphinx.srcDir": {
             "scope": "source",
             "type": "string",
             "default": null,
             "description": "The directory containing your rst source files. By default the Language Server will assume this is the same as `esbonio.sphinx.confDir` but this option can override this if necessary.",
-            "markdownDescription": "The directory containing your rst source files. By default the Language Server will assume this is the same as `#esbonio.sphinx.confDir#` but this option can override this if necessary."
+            "markdownDescription": "The directory containing your rst source files. By default the Language Server will assume this is the same as `#esbonio.sphinx.confDir#` but this option can override this if necessary.",
+            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
           }
         }
       }
     ]
   },
   "engines": {
-    "vscode": "^1.63.0"
+    "vscode": "^1.82.0"
+  },
+  "capabilities": {
+    "virtualWorkspaces": {
+        "supported": false
+    },
+    "untrustedWorkspaces": {
+        "supported": false,
+        "description": "Building and inspecting Sphinx projects has the potential to execute arbitrary code."
+    }
   },
   "dependencies": {
     "@jedithepro/system-info": "^3.0.0",
@@ -879,7 +730,6 @@
     "rollbar": "^2.25.0",
     "semver": "^7.3.7",
     "tslib": "^2.4.0",
-    "vscode-languageclient": "^6.1.3",
     "vscode-nls": "^4.0.0"
   },
   "devDependencies": {
@@ -891,6 +741,7 @@
     "@types/vscode": "^1.63.0",
     "@typescript-eslint/eslint-plugin": "^5.43.0",
     "@vscode/test-electron": "^2.3.0",
+    "esbuild": "^0.15.13",
     "eslint": "^8.34.0",
     "eslint-plugin": "^1.0.1",
     "eslint-plugin-node": "^11.1.0",
@@ -902,16 +753,12 @@
     "ts-loader": "^9.4.2",
     "ts-node": "^10.7.0",
     "typescript": "^4.4.2",
-    "vsce": "^2.15.0",
-    "webpack": "^5.75.0",
-    "webpack-cli": "^5.0.1"
+    "vsce": "^2.15.0"
   },
   "scripts": {
     "vscode:prepublish": "yarn compile",
-    "compile": "yarn build-ext && yarn build-preview",
-    "build-ext": "npx tsc -p ./tsconfig.json",
-    "build-preview": "webpack",
-    "watch": "webpack && npx tsc -watch -p ./tsconfig.json",
+    "compile": "node ./src/esbuild-src",
+    "watch": "node ./src/esbuild-src --watch",
     "pretest": "yarn compile",
     "test": "node ./out/test/runTest.js",
     "dist:stable": "yarn install && vsce package",
@@ -919,8 +766,8 @@
     "lint": "gts lint --verbose",
     "clean": "gts clean",
     "fix": "gts fix",
-    "prepare": "yarn run compile",
-    "posttest": "yarn run lint"
+    "prepare": "yarn compile",
+    "posttest": "yarn lint"
   },
   "husky": {
     "hooks": {

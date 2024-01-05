@@ -25,64 +25,12 @@ export class Configuration {
         );
     }
 
-    public getDocutilsWriter(resource?: Uri): string | undefined {
-        return this.loadSetting('docutilsWriter', 'html', resource);
-    }
-
-    public getDocutilsWriterPart(resource?: Uri): string | undefined {
-        return this.loadSetting('docutilsWriterPart', 'html_body', resource);
-    }
-
-    public getActiveResource(): Uri | undefined {
-        if (workspace.workspaceFolders === undefined) {
-            return undefined;
-        }
-        let result = workspace.workspaceFolders![0].uri;
-        if (workspace.workspaceFolders.length > 1) {
-            const folder = this.getActiveFolder();
-            result = workspace.workspaceFolders!.find(
-                item => item.name === folder
-            )!.uri;
-        }
-        return result;
-    }
-
-    public getActiveFolder(): string | undefined {
-        return this.loadAnySetting<string>('activeFolder', '');
-    }
-
-    public getConfPath(resource?: Uri): string | undefined {
-        return this.loadSetting(
-            'sphinx.confDir',
-            '',
-            resource,
-            true,
-            'esbonio'
-        );
-    }
-
-    public getOutputFolder(resource?: Uri): string | undefined {
-        return this.loadSetting(
-            'sphinx.buildDir',
+    public getRecommendedExtensions(resource?: Uri): string[] | undefined {
+        return this.loadAnySetting<string[]>(
+            'recommendedExtensions',
             undefined,
-            resource,
-            true,
-            'esbonio'
+            resource
         );
-    }
-
-    public getSourcePath(resource?: Uri): string | undefined {
-        return this.loadSetting(
-            'sphinx.srcDir',
-            undefined,
-            resource,
-            true,
-            'esbonio'
-        );
-    }
-
-    public getPreviewName(resource?: Uri): string | undefined {
-        return this.loadSetting('preview.name', 'sphinx', resource);
     }
 
     public getDoc8Path(resource?: Uri): string | undefined {
@@ -130,19 +78,6 @@ export class Configuration {
             'linter.rst-lint.extraArgs',
             undefined,
             resource
-        );
-    }
-
-    public getEsbonioSourceFolder(resource?: Uri): string | undefined {
-        return this.getConfiguration('esbonio', resource).get<string>(
-            'server.sourceFolder'
-        );
-    }
-
-    public getEsbonioDebugLaunch(resource?: Uri): boolean {
-        return this.getConfiguration('esbonio', resource).get<boolean>(
-            'server.debugLaunch',
-            false
         );
     }
 
@@ -224,26 +159,6 @@ export class Configuration {
         );
     }
 
-    public getSphinxDisabled(resource?: Uri): boolean | undefined {
-        return this.loadAnySetting('preview.sphinx.disabled', false, resource);
-    }
-
-    public getDocUtilDisabled(resource?: Uri): boolean | undefined {
-        return this.loadAnySetting('preview.docutils.disabled', true, resource);
-    }
-
-    public getLanguageServerDisabled(resource?: Uri): boolean | undefined {
-        return this.loadAnySetting('languageServer.disabled', true, resource);
-    }
-
-    public getSyntaxHighlightingDisabled(resource?: Uri): boolean | undefined {
-        return this.loadAnySetting(
-            'syntaxHighlighting.disabled',
-            false,
-            resource
-        );
-    }
-
     public getTableEditorDisabled(resource?: Uri): boolean | undefined {
         return this.loadAnySetting(
             'editor.tableEditor.disabled',
@@ -284,47 +199,6 @@ export class Configuration {
     public async setPythonRecommendationDisabled(resource?: Uri) {
         await this.saveAnySetting(
             'pythonRecommendation.disabled',
-            true,
-            resource
-        );
-    }
-
-    public async setActiveFolder(value: string): Promise<string> {
-        return await this.saveAnySetting('activeFolder', value);
-    }
-
-    public async setConfPath(
-        value: string,
-        resource?: Uri,
-        insertMacro = true
-    ): Promise<string | undefined> {
-        return await this.saveSetting(
-            'sphinx.confDir',
-            value,
-            resource,
-            insertMacro,
-            'esbonio'
-        );
-    }
-
-    public async setPreviewName(
-        value: string,
-        resource?: Uri
-    ): Promise<string> {
-        return await this.saveAnySetting('preview.name', value, resource);
-    }
-
-    public async setSphinxDisabled(resource?: Uri) {
-        await this.saveAnySetting('preview.sphinx.disabled', true, resource);
-    }
-
-    public async setDocUtilDisabled(resource?: Uri) {
-        await this.saveAnySetting('preview.docutils.disabled', true, resource);
-    }
-
-    public async setSyntaxHighlightingDisabled(resource?: Uri) {
-        await this.saveAnySetting(
-            'syntaxHighlighting.disabled',
             true,
             resource
         );
@@ -373,49 +247,6 @@ export class Configuration {
         }
 
         return result;
-    }
-
-    private async saveSetting(
-        configSection: string,
-        value: string,
-        resource?: Uri,
-        insertMacro = false,
-        header = 'restructuredtext'
-    ): Promise<string | undefined> {
-        if (insertMacro) {
-            value = this.insertMacro(value, resource);
-        }
-        return await this.saveAnySetting<string>(
-            configSection,
-            value,
-            resource,
-            header
-        );
-    }
-
-    private insertMacro(input: string, resource?: Uri): string {
-        if (!resource) {
-            return input;
-        }
-
-        let path: string | undefined;
-        if (!workspace.workspaceFolders) {
-            path = workspace.rootPath;
-        } else {
-            let root: WorkspaceFolder | undefined;
-            if (workspace.workspaceFolders.length === 1) {
-                root = workspace.workspaceFolders[0];
-            } else {
-                root = workspace.getWorkspaceFolder(resource);
-            }
-
-            path = root?.uri.fsPath;
-        }
-
-        if (path && input.startsWith(path)) {
-            return input.replace(path, '${workspaceFolder}');
-        }
-        return input;
     }
 
     public expandMacro(input: string, resource?: Uri): string {

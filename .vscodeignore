@@ -4,6 +4,8 @@
 test-resources/**
 typings/**
 src/**/*.ts
+node_modules/
+**/*.map
 .gitignore
 tsconfig.json
 tslint.json
