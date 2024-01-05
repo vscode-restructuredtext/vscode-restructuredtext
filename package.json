@@ -2,7 +2,7 @@
   "name": "restructuredtext",
   "displayName": "%displayName%",
   "description": "%description%",
-  "version": "190.1.4",
+  "version": "190.1.17",
   "publisher": "lextudio",
   "featureFlags": {
     "usingNewInterpreterStorage": true
