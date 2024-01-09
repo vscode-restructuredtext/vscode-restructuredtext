@@ -4,7 +4,7 @@
 [![Stable Version](https://img.shields.io/visual-studio-marketplace/v/lextudio.restructuredtext.svg?label=stable&color=)](https://marketplace.visualstudio.com/items?itemName=lextudio.restructuredtext)
 [![Install Count](https://img.shields.io/visual-studio-marketplace/i/lextudio.restructuredtext.svg)](https://marketplace.visualstudio.com/items?itemName=lextudio.restructuredtext)
 [![Download Count](https://img.shields.io/visual-studio-marketplace/d/lextudio.restructuredtext.svg)](https://marketplace.visualstudio.com/items?itemName=lextudio.restructuredtext)
-[![Pre-release Version](https://img.shields.io/visual-studio-marketplace/v/lextudio.restructuredtext.svg?include_prereleases&label=pre-release&color=orange)](https://marketplace.visualstudio.com/items?itemName=lextudio.restructuredtext)
+[![Pre-release Version](https://img.shields.io/visual-studio-marketplace/v/lextudio.restructuredtext.svg?include_prereleases&label=pre-release)](https://marketplace.visualstudio.com/items?itemName=lextudio.restructuredtext)
 
 This extension provides rich reStructuredText language support for Visual Studio Code.
 Now you write reStructuredText scripts using the excellent IDE-like interface
