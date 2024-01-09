@@ -710,11 +710,11 @@
   },
   "capabilities": {
     "virtualWorkspaces": {
-        "supported": false
+      "supported": false
     },
     "untrustedWorkspaces": {
-        "supported": false,
-        "description": "Building and inspecting Sphinx projects has the potential to execute arbitrary code."
+      "supported": false,
+      "description": "Building and inspecting Sphinx projects has the potential to execute arbitrary code."
     }
   },
   "dependencies": {
@@ -729,6 +729,7 @@
     "reflect-metadata": "^0.1.13",
     "rollbar": "^2.25.0",
     "semver": "^7.3.7",
+    "string-width": "^7.0.0",
     "tslib": "^2.4.0",
     "vscode-nls": "^4.0.0"
   },

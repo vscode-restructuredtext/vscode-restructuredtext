@@ -4,6 +4,7 @@
 // ============================================================
 import * as vscode from 'vscode';
 import * as i18n from './i18n';
+import stringWidth from 'string-width';
 
 export function getOpenedWorkfolderUri(): vscode.Uri | undefined {
     const workspaceFolders = vscode.workspace.workspaceFolders;
@@ -45,26 +46,8 @@ export function isSelectingLastChara(): boolean | undefined {
     return isLastIndex;
 }
 
-export function isAscii(text: string): boolean {
-    // eslint-disable-next-line no-control-regex
-    if (text.match(/[\x01-\x7E\xA1-\xDF]/)) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
 export function countTextWidth(text: string): number {
-    let count = 0;
-    for (let i = 0; i < text.length; i++) {
-        const chr = text[i];
-        if (isAscii(chr)) {
-            count += 1;
-        } else {
-            count += 2;
-        }
-    }
-    return count;
+    return stringWidth(text);
 }
 
 export function tableSizeIsSelected(
