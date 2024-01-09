@@ -1,5 +1,5 @@
 bin/
-out/
+dist/
 .vscode-test/
 node_modules/
 vscode-restructuredtext.zip
