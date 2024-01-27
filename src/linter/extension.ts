@@ -19,7 +19,7 @@ export async function activate(
         if (doc8Path || (await python.checkDoc8Install())) {
             const doc8 = new RstLintingProvider(
                 'doc8',
-                'doc8.main',
+                'doc8',
                 doc8Path,
                 configuration.getDoc8ExtraArgs(),
                 logger,
