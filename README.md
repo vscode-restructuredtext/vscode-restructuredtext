@@ -15,12 +15,11 @@ that VS Code provides.
 ## Features
 
 - Code Snippets
-- Live Preview
 - Editor Enhancement
 - Linter
-- IntelliSense (**Experimental**)
-
-> To get Syntax Highlighting, please also install [this extension](https://marketplace.visualstudio.com/items?itemName=trond-snekvik.simple-rst) by Trond Snekvik.
+- Syntax Highlighting (via [dependent extension](https://marketplace.visualstudio.com/items?itemName=trond-snekvik.simple-rst) by Trond Snekvik.)
+- IntelliSense (via [dependent extension](https://marketplace.visualstudio.com/items?itemName=swyddfa.esbonio) by Alex Carney.)
+- Live Preview (via [dependent extension](https://marketplace.visualstudio.com/items?itemName=swyddfa.esbonio) by Alex Carney.)
 
 Frequent Asked Questions can be found [here](https://github.com/vscode-restructuredtext/vscode-restructuredtext/issues?q=is%3Aissue+label%3A%22faq+candidate%22+).
 
@@ -28,7 +27,7 @@ Frequent Asked Questions can be found [here](https://github.com/vscode-restructu
 
 This extension is hosted at [Visual Studio Marketplace](https://marketplace.visualstudio.com/items/lextudio.restructuredtext)
 
-1. Upgrade to Visual Studio Code 1.43.0 or above.
+1. Upgrade to Visual Studio Code 1.82.0 or above.
 1. Switch to the Extensions view by clicking the fifth icon in the left most bar.
 1. Type "restructuredtext" in the search box and hit Enter key.
 1. Click "Install" button to install "reStructuredText" extension (by LeXtudio Inc.).
@@ -52,11 +51,3 @@ The project logo comes from [Legendora Icon](http://raindropmemory.deviantart.co
 
 ### Linter
 The linter support is based on [Cody Hoover's ruby-linter](https://marketplace.visualstudio.com/items?itemName=hoovercj.ruby-linter). Either rstcheck or doc8 can be used as default linter.
-
-### Live Preview
-The initial idea was brought from [Thomas Haakon Townsend's ReStructured Text Previewer](https://marketplace.visualstudio.com/items?itemName=tht13.rst-vscode), but soon after moving fully to Sphinx, this extension becomes its own beast.
-
-Currently, the experiment is to enable live preview via Esbonio language server.
-
-### IntelliSense
-The IntelliSense support is provided by [Esbonio language server](https://github.com/swyddfa/esbonio).

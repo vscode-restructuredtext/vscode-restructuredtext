@@ -1,5 +1,5 @@
 reStructuredText for Visual Studio Code
-Copyright (c) Lex Li
+Copyright (c) LeXtudio Inc.
 
 All rights reserved. 
 
