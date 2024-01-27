@@ -36,7 +36,7 @@ export async function activate(
         if (rstcheckPath || (await python.checkRstCheckInstall())) {
             const rstcheck = new RstLintingProvider(
                 'rstcheck',
-                'rstcheck',
+                'rstcheck._cli',
                 rstcheckPath,
                 configuration.getRstCheckExtraArgs(),
                 logger,
