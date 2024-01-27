@@ -33,10 +33,10 @@ export async function activate(
 
     if (disabled.indexOf('rstcheck') === -1) {
         const rstcheckPath = configuration.getRstCheckPath();
-        if (rstcheckPath || (await python.checkRstCheckInstall())) {
+        if (rstcheckPath) {
             const rstcheck = new RstLintingProvider(
                 'rstcheck',
-                'rstcheck._cli',
+                null,
                 rstcheckPath,
                 configuration.getRstCheckExtraArgs(),
                 logger,
@@ -44,7 +44,32 @@ export async function activate(
             );
             rstcheck.activate(context.subscriptions);
             logger.log('Enabled rstcheck linting...');
+            return;
         }
+
+        if (!(await python.checkRstCheckInstall())) {
+            logger.log("Didn't detect rstcheck module, skipping..");
+            return;
+        }
+
+        const major = require('semver/functions/major');
+        const version = await python.checkRstCheckVersion();
+        const value = major(version);
+        if (value < 6) {
+            logger.log(`Detected old rstcheck version ${version}, skipping..`);
+            return;
+        }
+
+        const rstcheck = new RstLintingProvider(
+            'rstcheck',
+            'rstcheck.cli',
+            null,
+            configuration.getRstCheckExtraArgs(),
+            logger,
+            python
+        );
+        rstcheck.activate(context.subscriptions);
+        logger.log('Enabled rstcheck linting...');
     }
 
     if (disabled.indexOf('rst-lint') === -1 && !rstlintToDisable) {

@@ -115,6 +115,24 @@ export class Python {
         }
     }
 
+    public async checkRstCheckVersion(): Promise<string> {
+        try {
+            return await this.exec(
+                '-c',
+                '"from rstcheck import __version__; print(__version__.__version__)"'
+            );
+        } catch (e) {
+            try {
+                return await this.exec(
+                    '-c',
+                    '"import rstcheck; print(rstcheck.__version__)"'
+                );
+            } catch (e) {
+                return '0.0.0';
+            }
+        }
+    }
+
     private async installRstLint(): Promise<void> {
         try {
             await this.exec('-m', 'pip', 'install', 'restructuredtext_lint');

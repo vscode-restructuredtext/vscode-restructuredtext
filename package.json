@@ -734,6 +734,7 @@
     "vscode-nls": "^4.0.0"
   },
   "devDependencies": {
+    "@parcel/watcher": "^2.4.0",
     "@studio/changes": "^2.2.0",
     "@types/glob": "^8.1.0",
     "@types/lodash.throttle": "^4.1.4",

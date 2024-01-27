@@ -34,7 +34,7 @@ export default class RstLintingProvider implements ILinter {
         let module: string[] = [];
         const configuration = container.get<Configuration>(TYPES.Configuration);
 
-        let build = this.path;
+        let build = this.path; // IMPORTANT: custom path takes higher priority than module name.
         if (build === null) {
             const python = await configuration.getPythonPath(resource);
             if (python) {
