@@ -86,7 +86,7 @@ export async function activate(
 
         const rstcheck = new RstLintingProvider(
             'rstcheck',
-            'rstcheck.cli',
+            'rstcheck._cli',
             null,
             configuration.getRstCheckExtraArgs(),
             logger,
