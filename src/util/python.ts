@@ -90,6 +90,17 @@ export class Python {
         }
     }
 
+    public async checkDoc8Version(): Promise<string> {
+        try {
+            return await this.exec(
+                '-c',
+                '"import doc8; print(doc8.__version__)"'
+            );
+        } catch (e) {
+            return '0.0.0';
+        }
+    }
+
     private async installRstCheck(): Promise<void> {
         try {
             await this.exec('-m', 'pip', 'install', 'rstcheck');

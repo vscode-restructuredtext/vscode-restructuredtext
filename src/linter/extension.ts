@@ -16,10 +16,10 @@ export async function activate(
     const disabled = configuration.getLinterDisabled();
     if (disabled.indexOf('doc8') === -1) {
         const doc8Path = configuration.getDoc8Path();
-        if (doc8Path || (await python.checkDoc8Install())) {
+        if (doc8Path) {
             const doc8 = new RstLintingProvider(
                 'doc8',
-                'doc8',
+                null,
                 doc8Path,
                 configuration.getDoc8ExtraArgs(),
                 logger,
@@ -29,6 +29,30 @@ export async function activate(
             rstlintToDisable = true; // doc8 supersedes rst-lint.
             logger.log('Enabled doc8 linting...');
         }
+
+        if (!(await python.checkDoc8Install())) {
+            logger.log("Didn't detect doc8 module, skipping..");
+            return;
+        }
+
+        const semver = require('semver');
+        const version = await python.checkDoc8Version();
+        if (semver.lt(version, '0.8.1')) {
+            logger.log(`Detected old doc8 version ${version}, skipping..`);
+            return;
+        }
+
+        const doc8 = new RstLintingProvider(
+            'doc8',
+            'doc8.main',
+            null,
+            configuration.getDoc8ExtraArgs(),
+            logger,
+            python
+        );
+        doc8.activate(context.subscriptions);
+        rstlintToDisable = true; // doc8 supersedes rst-lint.
+        logger.log('Enabled doc8 linting...');
     }
 
     if (disabled.indexOf('rstcheck') === -1) {
