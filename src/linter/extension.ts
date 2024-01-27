@@ -44,7 +44,7 @@ export async function activate(
 
         const doc8 = new RstLintingProvider(
             'doc8',
-            'doc8.main',
+            'doc8',
             null,
             configuration.getDoc8ExtraArgs(),
             logger,

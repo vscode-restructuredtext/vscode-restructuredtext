@@ -83,7 +83,7 @@ export class Python {
 
     public async checkDoc8Install(): Promise<boolean> {
         try {
-            await this.exec('-c', '"import doc8.main;"');
+            await this.exec('-c', '"import doc8;"');
             return true;
         } catch (e) {
             return false;
