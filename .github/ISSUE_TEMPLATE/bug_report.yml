@@ -72,20 +72,6 @@ body:
       placeholder: xxx.0.0
     validations:
       required: true
-  - type: input
-    id: sphinx
-    attributes:
-      label: Sphinx information
-      description: What version(s) of Sphinx are you using?
-      placeholder: xxx.0.0
-    validations:
-      required: true
-  - type: textarea
-    id: conf
-    attributes:
-      label: Contents of conf.py
-      description: Please copy and paste the contents of conf.py if applicable (optiosn for epub/pdf/latex can be omitted). This will be automatically formatted into code, so no need for backticks.
-      render: python
   - type: textarea
     id: logs
     attributes:
