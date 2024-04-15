@@ -18,9 +18,9 @@ that VS Code provides.
 - Code Snippets
 - Editor Enhancement
 - Linter
-- Syntax Highlighting (via [dependent extension](https://marketplace.visualstudio.com/items?itemName=trond-snekvik.simple-rst) by Trond Snekvik.)
-- IntelliSense (via [dependent extension](https://marketplace.visualstudio.com/items?itemName=swyddfa.esbonio) by Alex Carney.)
-- Live Preview (via [dependent extension](https://marketplace.visualstudio.com/items?itemName=swyddfa.esbonio) by Alex Carney.)
+- Syntax Highlighting (via [dependent extension](https://marketplace.visualstudio.com/items?itemName=trond-snekvik.simple-rst) by Trond Snekvik)
+- IntelliSense (via [dependent extension](https://marketplace.visualstudio.com/items?itemName=swyddfa.esbonio) by Alex Carney)
+- Live Preview (via [dependent extension](https://marketplace.visualstudio.com/items?itemName=swyddfa.esbonio) by Alex Carney)
 
 Frequent Asked Questions can be found [here](https://github.com/vscode-restructuredtext/vscode-restructuredtext/issues?q=is%3Aissue+label%3A%22faq+candidate%22+).
 
