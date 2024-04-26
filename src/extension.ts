@@ -77,28 +77,24 @@ export async function activate(
             const message = `This extension depends on ${element}. Do you want to install it now?`;
             const choice = await vscode.window.showInformationMessage(
                 message,
-                'Install',
+                'Install release version',
+                'Install pre-release version',
                 'Not now',
                 'Do not show again'
             );
-            if (choice === 'Install') {
+            if (
+                choice === 'Install release version' ||
+                choice === 'Install pre-release version'
+            ) {
                 logger.log(`Started to install ${element}..`);
                 await vscode.commands.executeCommand(
                     Commands.OPEN_EXTENSION,
-                    element
+                    element,
+                    {
+                        installPreReleaseVersion:
+                            choice === 'Install pre-release version',
+                    }
                 );
-                if (element === 'swyddfa.esbonio') {
-                    await vscode.commands.executeCommand(
-                        Commands.INSTALL_EXTENSION,
-                        element,
-                        {installPreReleaseVersion: true}
-                    );
-                } else {
-                    await vscode.commands.executeCommand(
-                        Commands.INSTALL_EXTENSION,
-                        element
-                    );
-                }
             } else if (choice === 'Do not show again') {
                 logger.log('Disabled missing dependency prompt.');
                 await configuration.setPythonRecommendationDisabled();
