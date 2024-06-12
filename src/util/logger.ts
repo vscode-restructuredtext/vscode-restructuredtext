@@ -6,7 +6,6 @@
 import * as vscode from 'vscode';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {injectable} from 'inversify';
-import Rollbar = require('rollbar');
 import si = require('@jedithepro/system-info');
 
 export interface Logger {
@@ -50,17 +49,10 @@ function isString(value: unknown): value is string {
 export class ConsoleLogger implements Logger {
     private trace?: Trace;
     public outputChannel: vscode.OutputChannel;
-    private rollbar: Rollbar;
 
     constructor(name: string) {
         this.outputChannel = vscode.window.createOutputChannel(name);
         this.updateConfiguration();
-
-        this.rollbar = new Rollbar({
-            accessToken: 'ae7bc72e09184fb4aa1ea1c4a3cfb705',
-            captureUncaught: false,
-            captureUnhandledRejections: false,
-        });
     }
 
     public error(message: string): void {
@@ -77,10 +69,6 @@ export class ConsoleLogger implements Logger {
 
     public warning(message: string): void {
         this.log(message);
-    }
-
-    public collect(version: string, platform: string): void {
-        this.rollbar.log(version, {details: platform});
     }
 
     public log(message: string, data?: unknown): void {
@@ -139,6 +127,5 @@ export class ConsoleLogger implements Logger {
         const arch = result.arch;
 
         this.log(`OS is ${platform} ${release} ${dist} ${arch}`);
-        this.collect(version, `${platform} ${release} ${dist} ${arch}`);
     }
 }

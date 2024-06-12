@@ -24,7 +24,6 @@
     "url": "https://github.com/vscode-restructuredtext/vscode-restructuredtext.git"
   },
   "bugs": "https://github.com/vscode-restructuredtext/vscode-restructuredtext/issues",
-  "main": "./dist/extension",
   "activationEvents": [
     "workspaceContains:**/*.rst",
     "onWebviewPanel:restructuredtext.preview",
@@ -325,93 +324,6 @@
             "description": "Flag to disable recommendation on Microsoft Python extension.",
             "scope": "resource"
           },
-          "restructuredtext.syntaxHighlighting.disabled": {
-            "type": "boolean",
-            "default": false,
-            "description": "Flag to disable syntax highlighting.",
-            "scope": "resource",
-            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
-          },
-          "restructuredtext.styles": {
-            "type": "array",
-            "default": [],
-            "description": "%restructuredtext.styles.dec%",
-            "scope": "resource",
-            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
-          },
-          "restructuredtext.preview.name": {
-            "type": "string",
-            "enum": [
-              "sphinx",
-              "docutils"
-            ],
-            "default": "sphinx",
-            "scope": "resource",
-            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
-          },
-          "restructuredtext.preview.sphinx.disabled": {
-            "type": "boolean",
-            "default": false,
-            "description": "Flag to disable sphinx based preview if critical issues happen.",
-            "scope": "resource",
-            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
-          },
-          "restructuredtext.preview.docutils.disabled": {
-            "type": "boolean",
-            "default": false,
-            "description": "Flag to disable docutils based preview if critical issues happen.",
-            "scope": "resource",
-            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
-          },
-          "restructuredtext.preview.fontFamily": {
-            "type": "string",
-            "default": "-apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'HelveticaNeue-Light', 'Ubuntu', 'Droid Sans', sans-serif",
-            "description": "%restructuredtext.preview.fontFamily.desc%",
-            "scope": "resource",
-            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
-          },
-          "restructuredtext.preview.fontSize": {
-            "type": "number",
-            "default": 14,
-            "description": "%restructuredtext.preview.fontSize.desc%",
-            "scope": "resource",
-            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
-          },
-          "restructuredtext.preview.lineHeight": {
-            "type": "number",
-            "default": 1.6,
-            "description": "%restructuredtext.preview.lineHeight.desc%",
-            "scope": "resource",
-            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
-          },
-          "restructuredtext.preview.scrollPreviewWithEditor": {
-            "type": "boolean",
-            "default": true,
-            "description": "%restructuredtext.preview.scrollPreviewWithEditor.desc%",
-            "scope": "resource",
-            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
-          },
-          "restructuredtext.preview.markEditorSelection": {
-            "type": "boolean",
-            "default": true,
-            "description": "%restructuredtext.preview.markEditorSelection.desc%",
-            "scope": "resource",
-            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
-          },
-          "restructuredtext.preview.scrollEditorWithPreview": {
-            "type": "boolean",
-            "default": true,
-            "description": "%restructuredtext.preview.scrollEditorWithPreview.desc%",
-            "scope": "resource",
-            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
-          },
-          "restructuredtext.preview.doubleClickToSwitchToEditor": {
-            "type": "boolean",
-            "default": true,
-            "description": "%restructuredtext.preview.doubleClickToSwitchToEditor.desc%",
-            "scope": "resource",
-            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
-          },
           "restructuredtext.trace": {
             "type": "string",
             "enum": [
@@ -421,71 +333,6 @@
             "default": "verbose",
             "description": "%restructuredtext.trace.desc%",
             "scope": "window"
-          },
-          "restructuredtext.builtDocumentationPath": {
-            "type": "string",
-            "default": null,
-            "description": "Sphinx's HTML output folder. Defaults to 'restructuredtext.confPath'/_build/html This is an absolute path, and you can use ${workspaceFolder} to represent the workspace root folder.",
-            "scope": "resource",
-            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
-          },
-          "restructuredtext.sourcePath": {
-            "type": "string",
-            "default": null,
-            "description": "Sphinx project folder containing the source files. Set this option if it is different from 'restructuredtext.confPath'. This is an absolute path, and you can use ${workspaceFolder} to represent the workspace root folder.",
-            "scope": "resource",
-            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
-          },
-          "restructuredtext.confPath": {
-            "type": "string",
-            "default": null,
-            "description": "Sphinx's configuration folder containing conf.py. Set this option if the path is not found automatically. This is an absolute path, and you can use ${workspaceFolder} to represent the workspace root folder.",
-            "scope": "resource",
-            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
-          },
-          "restructuredtext.activeFolder": {
-            "type": "string",
-            "default": "",
-            "description": "The folder that shows the selected config file in status bar. Leave it empty to use the first folder in the workspace.",
-            "scope": "window",
-            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
-          },
-          "restructuredtext.docutilsWriter": {
-            "type": "string",
-            "default": "html",
-            "description": "The docutils writer that will generate the output.",
-            "scope": "resource",
-            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
-          },
-          "restructuredtext.docutilsWriterPart": {
-            "type": "string",
-            "default": "html_body",
-            "description": "The output part of the docutils writer.",
-            "scope": "resource",
-            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#live-preview."
-          },
-          "restructuredtext.linter.disabled": {
-            "type": "boolean",
-            "default": false,
-            "description": "Flag to disable linter if critical issues happen.",
-            "scope": "resource",
-            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
-          },
-          "restructuredtext.linter.name": {
-            "type": "string",
-            "enum": [
-              "doc8",
-              "rstcheck"
-            ],
-            "default": "rstcheck",
-            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
-          },
-          "restructuredtext.linter.executablePath": {
-            "type": "string",
-            "default": null,
-            "description": "Points to the doc8 or rstcheck executable.",
-            "scope": "resource",
-            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
           },
           "restructuredtext.linter.disabledLinters": {
             "type": "array",
@@ -620,88 +467,6 @@
             "scope": "resource"
           }
         }
-      },
-      {
-        "title": "Server",
-        "properties": {
-          "esbonio.server.entryPoint": {
-            "scope": "resource",
-            "type": "string",
-            "default": "esbonio",
-            "description": "The entry point to use when launching the server.",
-            "deprecationMessage": "This setting is obsolete. Please use esbonio.server.startupModule."
-          },
-          "esbonio.server.hideSphinxOutput": {
-            "scope": "resource",
-            "type": "boolean",
-            "default": false,
-            "description": "Hide Sphinx build output from the Language Server log.",
-            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
-          },
-          "esbonio.server.sourceFolder": {
-            "scope": "resource",
-            "type": "string",
-            "default": null,
-            "description": "Local source folder of esbonio. Used for debugging local language server.",
-            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
-          },
-          "esbonio.server.debugLaunch": {
-            "scope": "resource",
-            "type": "boolean",
-            "default": false,
-            "description": "Whether to debug from launch.",
-            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
-          },
-          "esbonio.server.showOutputOnError": {
-            "scope": "resource",
-            "type": "boolean",
-            "default": false,
-            "description": "Whether to show output panel when errors occur.",
-            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
-          }
-        }
-      },
-      {
-        "title": "Sphinx",
-        "properties": {
-          "esbonio.sphinx.buildDir": {
-            "scope": "resource",
-            "type": "string",
-            "default": null,
-            "description": "The directory in which to store Sphinx's build output.\n\nBy default the Language Server will store any build files in a storage area provided by VSCode, this option allows you to override this to be a directory of your choosing e.g. your local _build/ directory.",
-            "markdownDescription": "The directory in which to store Sphinx's build output.\n\nBy default the Language Server will store any build files in a storage area provided by VSCode, this option allows you to override this to be a directory of your choosing e.g. your local `_build/` directory.",
-            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
-          },
-          "esbonio.sphinx.confDir": {
-            "scope": "resource",
-            "type": "string",
-            "default": "",
-            "description": "The Language Server should be able to automatically find the folder containing your project's 'conf.py' file. However this setting can be used to force the Language Server to use a particular directory if required.",
-            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
-          },
-          "esbonio.sphinx.forceFullBuild": {
-            "scope": "resource",
-            "type": "boolean",
-            "default": true,
-            "description": "By default the language server will force a full build of your documentation on startup to help improve the accuracy of some features like diagnostics. Disabling this option can help improve startup time for larger projects at the expense of certain features being less accurate.",
-            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
-          },
-          "esbonio.sphinx.numJobs": {
-            "scope": "resource",
-            "type": "integer",
-            "default": 1,
-            "markdownDescription": "The number of parallel jobs to use during a Sphinx build.\n\n- A value of `0` is equivalent to passing `-j auto` to a `sphinx-build` command.\n- A value of `1` will disable parallel processing.",
-            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
-          },
-          "esbonio.sphinx.srcDir": {
-            "scope": "source",
-            "type": "string",
-            "default": null,
-            "description": "The directory containing your rst source files. By default the Language Server will assume this is the same as `esbonio.sphinx.confDir` but this option can override this if necessary.",
-            "markdownDescription": "The directory containing your rst source files. By default the Language Server will assume this is the same as `#esbonio.sphinx.confDir#` but this option can override this if necessary.",
-            "deprecationMessage": "This setting is obsolete. Please refer to https://docs.restructuredtext.net/articles/configuration.html#linter."
-          }
-        }
       }
     ]
   },
@@ -727,7 +492,6 @@
     "node-fetch": "^2.0.0",
     "open": "^7.3.0",
     "reflect-metadata": "^0.1.13",
-    "rollbar": "^2.25.0",
     "semver": "^7.3.7",
     "string-width": "^7.0.0",
     "tslib": "^2.4.0",
@@ -757,9 +521,11 @@
     "typescript": "^4.4.2",
     "vsce": "^2.15.0"
   },
+  "main": "./dist/extension",
   "scripts": {
-    "vscode:prepublish": "yarn compile",
+    "vscode:prepublish": "yarn compile:release",
     "compile": "node ./src/esbuild-src",
+    "compile:release": "node ./src/esbuild-src --minify",
     "watch": "node ./src/esbuild-src --watch",
     "pretest": "yarn compile",
     "test": "node ./out/test/runTest.js",

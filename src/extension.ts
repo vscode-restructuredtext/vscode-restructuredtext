@@ -39,6 +39,8 @@ export async function activate(
         'Please visit https://docs.restructuredtext.net to learn how to configure the extension.'
     );
 
+    await EditorFeatures.activate(context);
+
     const configuration = container.get<Configuration>(TYPES.Configuration);
     const conflicting = configuration.getConflictingExtensions();
     for (const element of conflicting) {
@@ -105,16 +107,11 @@ export async function activate(
     const minor = require('semver/functions/minor');
     const minorVersion = minor(context.extension.packageJSON.version);
     if (minorVersion % 2 !== 0) {
-        vscode.window.showInformationMessage(
-            'Rollbar logging is enabled in preview release. Switch to a stable release to disable it.'
-        );
         await logger.logPlatform(context.extension.packageJSON.version);
     }
 
     const python = container.get<Python>(TYPES.Python);
     await python.setup();
-
-    await EditorFeatures.activate(context);
 
     await LinterFeatures.activate(context, python, logger);
 
