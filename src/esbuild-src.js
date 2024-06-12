@@ -26,7 +26,7 @@ function build() {
         // inject: [path.join(srcDir, 'pre.ts')],
         bundle: true,
         minify: isMinify,
-        sourcemap: true,
+        sourcemap: !isMinify,
         format: 'cjs',
         outdir: outDir,
         platform: 'node',

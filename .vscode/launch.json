@@ -9,8 +9,8 @@
 			"runtimeExecutable": "${execPath}",
 			"args": ["--extensionDevelopmentPath=${workspaceRoot}" ],
 			"sourceMaps": true,
-			"outFiles": ["${workspaceRoot}/out/extension.js"],
-			"preLaunchTask": "watch"
+			"outFiles": ["${workspaceRoot}/dist/extension.js"],
+			//"preLaunchTask": "watch"
 		},
         {
             "name": "Launch Tests",
@@ -18,7 +18,6 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": ["--extensionDevelopmentPath=${workspaceRoot}", "--extensionTestsPath=${workspaceRoot}/out/test/suite" ],
-            "stopOnEntry": false,
             "sourceMaps": true,
             "outFiles": [ "${workspaceRoot}/out/test/**/*.js" ],
             "preLaunchTask": "npm"
