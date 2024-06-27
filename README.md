@@ -47,8 +47,11 @@ This extension is [licensed under the MIT License](LICENSE.txt).  Please see the
 files that we include with releases of this project.
 
 ## Acknowledgements
+
 ### Logo
+
 The project logo comes from [Legendora Icon](http://raindropmemory.deviantart.com/art/Legendora-Icon-Set-118999011) by [Teekatas Suwannakrua](http://raindropmemory.deviantart.com/).
 
 ### Linter
-The linter support is based on [Cody Hoover's ruby-linter](https://marketplace.visualstudio.com/items?itemName=hoovercj.ruby-linter). Either rstcheck or doc8 can be used as default linter.
+
+The linter support is based on [Cody Hoover's ruby-linter](https://marketplace.visualstudio.com/items?itemName=hoovercj.ruby-linter). Linters like rstcheck/doc8/rst-lint can be used side by side.
