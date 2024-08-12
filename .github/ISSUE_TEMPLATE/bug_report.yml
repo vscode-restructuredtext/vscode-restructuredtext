@@ -1,6 +1,5 @@
 name: Bug Report
 description: Create a report to help us improve
-title: "[Bug]: "
 labels: [bug, triage]
 body:
   - type: markdown
@@ -9,6 +8,10 @@ body:
         Before moving on you might follow [the troubleshooting guide](https://docs.restructuredtext.net/articles/troubleshooting.html) to rule out common issues.
         
         If troubleshooting does not reveal any useful information, please fill out the bug report below.
+        
+        To report an issue related to live preview, please go to [this repo](https://github.com/swyddfa/esbonio/issues) instead.
+        
+        To report an issue related to syntax highlighting, please go to [this repo](https://github.com/trond-snekvik/vscode-rst/issues) instead.
         
         To report an issue privately, please write to [us](mailto:support@lextudio.com).
         
