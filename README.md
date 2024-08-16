@@ -17,7 +17,7 @@ that VS Code provides.
 
 - Code Snippets
 - Editor Enhancement
-- Linter
+- Linter Integration
 - Syntax Highlighting (via [dependent extension](https://marketplace.visualstudio.com/items?itemName=trond-snekvik.simple-rst) by Trond Snekvik)
 - IntelliSense (via [dependent extension](https://marketplace.visualstudio.com/items?itemName=swyddfa.esbonio) by Alex Carney)
 - Live Preview (via [dependent extension](https://marketplace.visualstudio.com/items?itemName=swyddfa.esbonio) by Alex Carney)
