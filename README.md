@@ -55,3 +55,9 @@ The project logo comes from [Legendora Icon](http://raindropmemory.deviantart.co
 ### Linter
 
 The linter support is based on [Cody Hoover's ruby-linter](https://marketplace.visualstudio.com/items?itemName=hoovercj.ruby-linter). Linters like rstcheck/doc8/rst-lint can be used side by side.
+
+### Sponsor
+
+<a href="https://www.cloudflare.com">
+  <img src="https://cf-assets.www.cloudflare.com/slt3lc6tev37/7bIgGp4hk4SFO0o3SBbOKJ/b48185dcf20c579960afad879b25ea11/CF_logo_stacked_blktype.jpg" alt="Cloudflare" width="200"/>
+</a>
