@@ -17,6 +17,7 @@ export interface Logger {
     logPlatform(version: string): Promise<void>;
     outputChannel: vscode.OutputChannel;
     updateConfiguration(): void;
+    show(): void;
 }
 
 export enum Trace {

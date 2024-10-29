@@ -49,18 +49,13 @@ export class Python {
 
         this.logger.error('Cannot find Python.');
         if (showInformation) {
-            const choice = await vscode.window.showErrorMessage(
-                'Please review Python installation on this machine before using this extension.',
-                'Learn more...'
+            this.logger.log(
+                'Please review Python installation on this machine before using this extension.'
             );
-            if (choice === 'Learn more...') {
-                vscode.commands.executeCommand(
-                    'vscode.open',
-                    vscode.Uri.parse(
-                        'https://docs.restructuredtext.net/articles/prerequisites.html#install-python-for-most-features'
-                    )
-                );
-            }
+            this.logger.log(
+                'You can learn more from https://docs.restructuredtext.net/articles/prerequisites.html#install-python-for-most-features'
+            );
+            this.logger.show();
         }
         return false;
     }

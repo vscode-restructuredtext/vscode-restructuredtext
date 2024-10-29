@@ -46,29 +46,9 @@ export async function activate(
     for (const element of conflicting) {
         const found = vscode.extensions.getExtension(element);
         if (found) {
-            const message = `Found conflicting extension ${found.packageJSON.displayName}(${element}). Do you want to uninstall it now?`;
-            logger.log(`found ${element}`);
-            const choice = await vscode.window.showErrorMessage(
-                message,
-                'Yes',
-                'No'
-            );
-            if (choice === 'Yes') {
-                await vscode.commands.executeCommand(
-                    Commands.OPEN_EXTENSION,
-                    element
-                );
-                await vscode.commands.executeCommand(
-                    Commands.UNINSTALL_EXTENSION,
-                    element
-                );
-                await vscode.commands.executeCommand(Commands.RELOAD_WINDOW);
-            } else {
-                vscode.window.showWarningMessage(
-                    'Since conflicting extension is not uninstalled, extension activation ends now.'
-                );
-                return;
-            }
+            const message = `Found conflicting extension ${found.packageJSON.displayName}(${element}). You have to uninstall it.`;
+            logger.log(message);
+            logger.show();
         }
     }
 
@@ -76,31 +56,9 @@ export async function activate(
     for (const element of recommended) {
         const found = vscode.extensions.getExtension(element);
         if (!found && !configuration.getPythonRecommendationDisabled()) {
-            const message = `This extension depends on ${element}. Do you want to install it now?`;
-            const choice = await vscode.window.showInformationMessage(
-                message,
-                'Install release version',
-                'Install pre-release version',
-                'Not now',
-                'Do not show again'
-            );
-            if (
-                choice === 'Install release version' ||
-                choice === 'Install pre-release version'
-            ) {
-                logger.log(`Started to install ${element}..`);
-                await vscode.commands.executeCommand(
-                    Commands.OPEN_EXTENSION,
-                    element,
-                    {
-                        installPreReleaseVersion:
-                            choice === 'Install pre-release version',
-                    }
-                );
-            } else if (choice === 'Do not show again') {
-                logger.log('Disabled missing dependency prompt.');
-                await configuration.setPythonRecommendationDisabled();
-            }
+            const message = `This extension depends on ${found.packageJSON.displayName}. You have to install it.`;
+            logger.log(message);
+            logger.show();
         }
     }
 
