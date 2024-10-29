@@ -17,7 +17,6 @@ export interface Logger {
     logPlatform(version: string): Promise<void>;
     outputChannel: vscode.OutputChannel;
     updateConfiguration(): void;
-    collect(version: string, platform: string): void;
 }
 
 export enum Trace {
@@ -120,6 +119,8 @@ export class ConsoleLogger implements Logger {
     }
 
     public async logPlatform(version: string): Promise<void> {
+        this.log(`Extension version is ${version}`);
+
         const result = await si.osInfo();
         const platform = result.platform;
         const release = result.release;
