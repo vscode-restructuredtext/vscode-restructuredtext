@@ -25,9 +25,7 @@
   },
   "bugs": "https://github.com/vscode-restructuredtext/vscode-restructuredtext/issues",
   "activationEvents": [
-    "workspaceContains:**/*.rst",
-    "onWebviewPanel:restructuredtext.preview",
-    "onCommand:restructuredtext.features.underline.underline"
+    "onLanguage:restructuredtext"
   ],
   "contributes": {
     "languages": [

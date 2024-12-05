@@ -13,7 +13,6 @@ import * as EditorFeatures from './editor/extension';
 import * as LinterFeatures from './linter/extension';
 import {setGlobalState, setWorkspaceState} from './util/stateUtils';
 import {initConfig} from './util/config';
-import {Commands} from './constants';
 import container from './inversify.config';
 import {NAMES, TYPES} from './types';
 import {updateActivationCount} from './rating';
