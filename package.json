@@ -472,14 +472,16 @@
     "vscode": "^1.82.0"
   },
   "capabilities": {
-    "virtualWorkspaces": {
-      "supported": false
-    },
+    "virtualWorkspaces": true,
     "untrustedWorkspaces": {
       "supported": false,
       "description": "Building and inspecting Sphinx projects has the potential to execute arbitrary code."
     }
   },
+  "extensionKind": [
+    "workspace",
+    "ui"
+  ],
   "dependencies": {
     "@jedithepro/system-info": "^3.0.0",
     "async-lock": "^1.3.1",
@@ -496,16 +498,18 @@
     "vscode-nls": "^4.0.0"
   },
   "devDependencies": {
+    "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@parcel/watcher": "^2.4.0",
     "@studio/changes": "^2.2.0",
     "@types/glob": "^8.1.0",
     "@types/lodash.throttle": "^4.1.4",
     "@types/mocha": "^10.0.1",
     "@types/node": "16.x",
-    "@types/vscode": "^1.63.0",
+    "@types/vscode": "^1.66.0",
     "@typescript-eslint/eslint-plugin": "^5.43.0",
     "@vscode/test-electron": "^2.3.0",
-    "esbuild": "^0.15.13",
+    "@vscode/test-web": "^0.0.67",
+    "esbuild": "^0.25.0",
     "eslint": "^8.34.0",
     "eslint-plugin": "^1.0.1",
     "eslint-plugin-node": "^11.1.0",
@@ -514,26 +518,31 @@
     "gts": "^3.1.1",
     "husky": "^8.0.3",
     "mocha": "^10.0.2",
+    "path-browserify": "^1.0.1",
     "ts-loader": "^9.4.2",
     "ts-node": "^10.7.0",
     "typescript": "^4.4.2",
     "vsce": "^2.15.0"
   },
-  "main": "./dist/extension",
+  "main": "./dist/node/extension.js",
+  "browser": "./dist/browser/extension.js",
   "scripts": {
-    "vscode:prepublish": "yarn compile:release",
-    "compile": "node ./src/esbuild-src",
-    "compile:release": "node ./src/esbuild-src --minify",
-    "watch": "node ./src/esbuild-src --watch",
+    "vscode:prepublish": "yarn package",
+    "compile": "node esbuild.js",
+    "package": "node esbuild.js --production",
+    "watch": "node esbuild.js --watch",
     "pretest": "yarn compile",
-    "test": "node ./out/test/runTest.js",
-    "dist:stable": "yarn install && vsce package",
-    "dist": "yarn install && vsce package --pre-release",
+    "test": "yarn test-node && yarn test-web",
+    "test-node": "node ./dist/test/runTest.js",
+    "test-web": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. --extensionTestsPath=./dist/test/suite/index-web",
+    "dist:stable": "yarn install && vsce package --yarn",
+    "dist": "yarn install && vsce package --pre-release --yarn",
     "lint": "gts lint --verbose",
     "clean": "gts clean",
     "fix": "gts fix",
-    "prepare": "yarn compile",
-    "posttest": "yarn lint"
+    "posttest": "yarn lint",
+    "preversion": "yarn test",
+    "postversion": "git push && git push --tags"
   },
   "husky": {
     "hooks": {

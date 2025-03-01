@@ -7,20 +7,11 @@ import * as vscode from 'vscode';
 
 export interface Command {
     readonly id: string;
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     execute(...args: any[]): void;
 }
 
-export class CommandManager {
+export class CommandManager implements vscode.Disposable {
     private readonly commands = new Map<string, vscode.Disposable>();
-
-    public dispose() {
-        for (const registration of this.commands.values()) {
-            registration.dispose();
-        }
-        this.commands.clear();
-    }
 
     public register<T extends Command>(command: T): T {
         this.registerCommand(command.id, command.execute, command);
@@ -29,9 +20,7 @@ export class CommandManager {
 
     private registerCommand(
         id: string,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         impl: (...args: any[]) => void,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         thisArg?: any
     ) {
         if (this.commands.has(id)) {
@@ -43,4 +32,40 @@ export class CommandManager {
             vscode.commands.registerCommand(id, impl, thisArg)
         );
     }
+
+    public dispose(): void {
+        for (const registration of this.commands.values()) {
+            registration.dispose();
+        }
+        this.commands.clear();
+    }
+}
+
+// Add platform detection utility for commands that need different behavior
+export function isPlatformWeb(): boolean {
+    return vscode.env.uiKind === vscode.UIKind.Web;
+}
+
+// Create a decorator that can be used to mark commands as web-compatible or not
+export function webCommand(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+    const originalMethod = descriptor.value;
+    descriptor.value = function(...args: any[]) {
+        // This runs in both environments
+        return originalMethod.apply(this, args);
+    };
+    return descriptor;
+}
+
+export function desktopCommand(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+    const originalMethod = descriptor.value;
+    descriptor.value = function(...args: any[]) {
+        // Check if we're in a web environment
+        if (isPlatformWeb()) {
+            vscode.window.showInformationMessage('This command is not available in web mode');
+            return;
+        }
+        // Only run in desktop environment
+        return originalMethod.apply(this, args);
+    };
+    return descriptor;
 }

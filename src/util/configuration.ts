@@ -2,10 +2,15 @@
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {injectable} from 'inversify';
-import fs = require('fs');
-import path = require('path');
+import * as vscode from 'vscode';
+import { path } from '../pathUtils';
+// Import fs conditionally
+let fs: any;
+if (vscode.env.uiKind === vscode.UIKind.Desktop) {
+    // Only import fs in desktop environment
+    fs = require('fs');
+}
 import {
-    extensions,
     Uri,
     workspace,
     WorkspaceConfiguration,
@@ -202,6 +207,44 @@ export class Configuration {
             true,
             resource
         );
+    }
+
+    // Example of a method that uses fs
+    public readConfigFile(filePath: string): any {
+        // Check if we're in a web environment
+        if (vscode.env.uiKind === vscode.UIKind.Web) {
+            // Return a default value or empty object for web
+            console.log('File system operations not supported in web environment');
+            return {};
+        }
+        
+        try {
+            // Only execute this code in desktop environment
+            const content = fs.readFileSync(filePath, 'utf8');
+            return JSON.parse(content);
+        } catch (err) {
+            console.error(`Error reading config file: ${err}`);
+            return {};
+        }
+    }
+
+    // Example of a method that uses path
+    public resolveConfigPath(relativePath: string): string {
+        // Use the pathUtils instead of direct path dependency
+        return path.resolve(relativePath);
+    }
+
+    // Example of feature detection for web environment
+    public isFeatureSupported(feature: string): boolean {
+        // Disable certain features in web environment
+        if (vscode.env.uiKind === vscode.UIKind.Web) {
+            const webUnsupportedFeatures = ['fileWatcher', 'externalProcess', 'localFileSystem'];
+            if (webUnsupportedFeatures.includes(feature)) {
+                return false;
+            }
+        }
+        // ...existing feature detection logic...
+        return true;
     }
 
     private loadAnySetting<T>(

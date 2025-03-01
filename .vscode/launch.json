@@ -9,7 +9,7 @@
 			"runtimeExecutable": "${execPath}",
 			"args": ["--extensionDevelopmentPath=${workspaceRoot}" ],
 			"sourceMaps": true,
-			"outFiles": ["${workspaceRoot}/dist/extension.js"],
+			"outFiles": ["${workspaceRoot}/dist/node/extension.js"],
 			//"preLaunchTask": "watch"
 		},
         {

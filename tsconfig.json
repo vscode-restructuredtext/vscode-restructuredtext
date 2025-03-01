@@ -7,9 +7,10 @@
 		"emitDecoratorMetadata": true,
 		"strict": false,
 		"noImplicitReturns": false,
-		"sourceMap": true
+		"sourceMap": true,
+		"lib": ["ES2020", "DOM"]
 	},
 	"include": [
 		"src/**/*"
-	],
+, "esbuild.js"	],
 }

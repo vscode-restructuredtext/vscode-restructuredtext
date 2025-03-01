@@ -34,6 +34,14 @@ export async function activate(
     extensionPath = context.extensionPath;
 
     const logger = container.getNamed<Logger>(TYPES.Logger, NAMES.Main);
+    const extensionName = context.extension.packageJSON.displayName;
+    const extensionId = context.extension.id;
+    const extensionVersion = context.extension.packageJSON.version;
+    logger.log(
+        `Loaded extension "${extensionName}" (${extensionId}) in ${vscode.env.appName}.`
+    );
+    logger.log(`Version: ${extensionVersion}`);
+    await logger.logPlatform();
     logger.log(
         'Please visit https://docs.restructuredtext.net to learn how to configure the extension.'
     );
@@ -61,17 +69,6 @@ export async function activate(
         }
     }
 
-    const minor = require('semver/functions/minor');
-    const minorVersion = minor(context.extension.packageJSON.version);
-    if (minorVersion % 2 !== 0) {
-        await logger.logPlatform(context.extension.packageJSON.version);
-    }
-
-    const python = container.get<Python>(TYPES.Python);
-    await python.setup();
-
-    await LinterFeatures.activate(context, python, logger);
-
     const commandManager = new CommandManager();
     context.subscriptions.push(commandManager);
     commandManager.register(new commands.MoveCursorToPositionCommand());
@@ -84,4 +81,34 @@ export async function activate(
     );
 
     await updateActivationCount(context);
+
+    // Initialize platform-specific components
+    if (vscode.env.uiKind === vscode.UIKind.Desktop) {
+        // Node.js specific initialization
+        await activateNodeFeatures(context, logger);
+    } else {
+        // Web-specific initialization
+        await activateWebFeatures(context, logger);
+        vscode.window.showInformationMessage('reStructuredText extension running in web mode with limited features');
+    }
+}
+
+async function activateNodeFeatures(
+    context: vscode.ExtensionContext, 
+    logger: any
+): Promise<void> {
+    // Initialize node-specific features, like linters that require file system access
+    const python = container.get<Python>(TYPES.Python);
+    await python.setup();
+
+    await LinterFeatures.activate(context, python, logger);
+}
+
+async function activateWebFeatures(
+    context: vscode.ExtensionContext,
+    logger: any
+): Promise<void> {
+    // Initialize web-compatible features only
+    logger.log('Running in web mode - some features like linting are disabled');
+    // ...web-specific initialization...
 }

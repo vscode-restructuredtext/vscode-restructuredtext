@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {injectable} from 'inversify';
-import si = require('@jedithepro/system-info');
+import { getSystemInfo } from './systemInfo';
 
 export interface Logger {
     info(message: string): void;
@@ -14,7 +14,7 @@ export interface Logger {
     warning(message: string): void;
     debug(message: string): void;
     log(message: string): void;
-    logPlatform(version: string): Promise<void>;
+    logPlatform(): Promise<void>;
     outputChannel: vscode.OutputChannel;
     updateConfiguration(): void;
     show(): void;
@@ -119,15 +119,15 @@ export class ConsoleLogger implements Logger {
         return JSON.stringify(data, undefined, 2);
     }
 
-    public async logPlatform(version: string): Promise<void> {
-        this.log(`Extension version is ${version}`);
+    public async logPlatform(): Promise<void> {
+        try {
+            const systemInfo = getSystemInfo();
+            const info = await systemInfo.getInfo();
 
-        const result = await si.osInfo();
-        const platform = result.platform;
-        const release = result.release;
-        const dist = result.distro;
-        const arch = result.arch;
-
-        this.log(`OS is ${platform} ${release} ${dist} ${arch}`);
+            // Now use info safely regardless of platform
+            this.log(`OS: ${info.osInfo?.platform || 'unknown'} ${info.osInfo?.distro || ''} ${info.osInfo?.release || ''} ${info.osInfo?.arch || ''}`);
+        } catch (err) {
+            this.log(`Failed to get platform info: ${err}`);
+        }
     }
 }
