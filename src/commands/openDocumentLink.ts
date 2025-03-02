@@ -4,8 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-// Replace direct path import with our pathUtils
-import { path } from '../pathUtils';
+import * as path from 'path';
 
 import {Command} from '../util/commandManager';
 import {isRSTFile} from '../util/file';

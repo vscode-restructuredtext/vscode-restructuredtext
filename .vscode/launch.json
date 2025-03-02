@@ -1,26 +1,50 @@
 // A launch configuration that compiles the extension and then opens it inside a new window
 {
-	"version": "0.2.0",
-	"configurations": [
-		{
-			"name": "Launch Extension",
-			"type": "extensionHost",
-			"request": "launch",
-			"runtimeExecutable": "${execPath}",
-			"args": ["--extensionDevelopmentPath=${workspaceRoot}" ],
-			"sourceMaps": true,
-			"outFiles": ["${workspaceRoot}/dist/node/extension.js"],
-			//"preLaunchTask": "watch"
-		},
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Node Extension",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--extensionDevelopmentPath=${workspaceRoot}"
+            ],
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceRoot}/dist/node/extension.js"
+            ],
+            //"preLaunchTask": "watch"
+        },
+        {
+            "name": "Launch Web Extension",
+            "type": "extensionHost",
+            "request": "launch",
+            "runtimeExecutable": "${execPath}",
+            "args": [
+                "--extensionDevelopmentPath=${workspaceRoot}",
+                "--extensionDevelopmentKind=web"
+            ],
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceRoot}/dist/browser/extension.js"
+            ],
+            //"preLaunchTask": "watch"
+        },
         {
             "name": "Launch Tests",
             "type": "extensionHost",
             "request": "launch",
             "runtimeExecutable": "${execPath}",
-            "args": ["--extensionDevelopmentPath=${workspaceRoot}", "--extensionTestsPath=${workspaceRoot}/out/test/suite" ],
+            "args": [
+                "--extensionDevelopmentPath=${workspaceRoot}",
+                "--extensionTestsPath=${workspaceRoot}/out/test/suite"
+            ],
             "sourceMaps": true,
-            "outFiles": [ "${workspaceRoot}/out/test/**/*.js" ],
+            "outFiles": [
+                "${workspaceRoot}/out/test/**/*.js"
+            ],
             "preLaunchTask": "npm"
         }
-	]
+    ]
 }

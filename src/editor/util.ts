@@ -3,13 +3,12 @@
 // See LICENSE in the project root for license information.
 // ============================================================
 import * as vscode from 'vscode';
-import * as i18n from './i18n';
 import stringWidth from 'string-width';
 
 export function getOpenedWorkfolderUri(): vscode.Uri | undefined {
     const workspaceFolders = vscode.workspace.workspaceFolders;
     if (!workspaceFolders?.length) {
-        console.log(i18n.localize('resttext.sphinx.workspaceFolders.error'));
+        console.log('workspaceFolders length issue.');
         return;
     }
     return workspaceFolders[0].uri;

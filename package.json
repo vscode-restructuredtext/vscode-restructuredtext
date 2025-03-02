@@ -499,6 +499,7 @@
   },
   "devDependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
+    "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
     "@parcel/watcher": "^2.4.0",
     "@studio/changes": "^2.2.0",
     "@types/glob": "^8.1.0",
@@ -548,5 +549,6 @@
     "hooks": {
       "pre-commit": "yarn run fix"
     }
-  }
+  },
+  "l10n": "./l10n"
 }

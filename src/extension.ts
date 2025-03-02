@@ -89,13 +89,15 @@ export async function activate(
     } else {
         // Web-specific initialization
         await activateWebFeatures(context, logger);
-        vscode.window.showInformationMessage('reStructuredText extension running in web mode with limited features');
+        vscode.window.showInformationMessage(
+            'reStructuredText extension running in web mode with limited features'
+        );
     }
 }
 
 async function activateNodeFeatures(
-    context: vscode.ExtensionContext, 
-    logger: any
+    context: vscode.ExtensionContext,
+    logger: Logger
 ): Promise<void> {
     // Initialize node-specific features, like linters that require file system access
     const python = container.get<Python>(TYPES.Python);
@@ -106,7 +108,7 @@ async function activateNodeFeatures(
 
 async function activateWebFeatures(
     context: vscode.ExtensionContext,
-    logger: any
+    logger: Logger
 ): Promise<void> {
     // Initialize web-compatible features only
     logger.log('Running in web mode - some features like linting are disabled');

@@ -2,7 +2,7 @@
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {inject, injectable, named} from 'inversify';
-import {exec, ExecException} from 'child_process';
+import * as cp from 'child_process';
 import * as vscode from 'vscode';
 import {Uri} from 'vscode';
 import {Configuration} from './configuration';
@@ -193,13 +193,13 @@ export class Python {
             this.logger.info(
                 `Running cmd: ${this.pythonPath} ${args.join(' ')}`
             );
-            exec(
+            if (typeof cp.exec !== 'function') {
+                reject('cp.exec is undefined');
+                return;
+            }
+            cp.exec(
                 cmd.join(' '),
-                (
-                    error: ExecException | null,
-                    stdout: string,
-                    stderr: string
-                ) => {
+                (error: Error | null, stdout: string, stderr: string) => {
                     if (error) {
                         const errorMessage: string = [
                             error.name,

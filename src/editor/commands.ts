@@ -9,6 +9,26 @@ import * as util from './util';
 import * as tableEditor from './tableEditor';
 //import * as completionItemProvider from './completionItemProvider'
 
+// Add custom path parse function
+const parse = (pathString: string) => {
+    const sep = pathString.includes('/') ? '/' : '\\';
+    const parts = pathString.split(sep);
+    const base = parts[parts.length - 1] || '';
+    const ext = base.includes('.') ? base.substring(base.lastIndexOf('.')) : '';
+    const name = base.includes('.')
+        ? base.substring(0, base.lastIndexOf('.'))
+        : base;
+    const dir = parts.slice(0, -1).join(sep);
+
+    return {
+        root: pathString.startsWith(sep) ? sep : '',
+        dir,
+        base,
+        ext,
+        name,
+    };
+};
+
 export async function insertRelPath(pathTo: string, withExt: boolean) {
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
@@ -22,11 +42,11 @@ export async function insertRelPath(pathTo: string, withExt: boolean) {
     relPath = relPath.replace(/\\/g, '/');
 
     if (!withExt) {
-        const parse = path.parse(relPath);
-        if (parse.dir) {
-            relPath = `${parse.dir}/${parse.name}`;
+        const parsedPath = parse(relPath);
+        if (parsedPath.dir) {
+            relPath = `${parsedPath.dir}/${parsedPath.name}`;
         } else {
-            relPath = parse.name;
+            relPath = parsedPath.name;
         }
     }
 

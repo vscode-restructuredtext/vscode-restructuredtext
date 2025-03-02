@@ -3,19 +3,8 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {injectable} from 'inversify';
 import * as vscode from 'vscode';
-import { path } from '../pathUtils';
-// Import fs conditionally
-let fs: any;
-if (vscode.env.uiKind === vscode.UIKind.Desktop) {
-    // Only import fs in desktop environment
-    fs = require('fs');
-}
-import {
-    Uri,
-    workspace,
-    WorkspaceConfiguration,
-    WorkspaceFolder,
-} from 'vscode';
+import * as path from 'path';
+import {Uri, workspace, WorkspaceConfiguration, WorkspaceFolder} from 'vscode';
 import {getConfig} from './config';
 import {Constants} from '../constants';
 
@@ -133,29 +122,6 @@ export class Configuration {
         }
     }
 
-    public getPythonPath2(resource?: Uri): string | undefined {
-        // IMPORTANT: python3 does not work, so the default comes from Python extension.
-        const primary = this.loadSetting(
-            'pythonPath',
-            'python3',
-            resource,
-            true,
-            'python'
-        );
-        // the user setting python.defaultInterpreterPath must be used to invoke the interpreter from the
-        // VSCode internal storage
-        if (primary) {
-            const workspaceRoot = this.getRootPath(resource);
-            if (workspaceRoot) {
-                const optional = path.join(workspaceRoot, primary);
-                if (fs.existsSync(optional)) {
-                    return optional;
-                }
-            }
-        }
-        return primary;
-    }
-
     public getLinterDisabled(resource?: Uri): string[] | undefined {
         return this.loadAnySetting<string[]>(
             'linter.disabledLinters',
@@ -209,28 +175,8 @@ export class Configuration {
         );
     }
 
-    // Example of a method that uses fs
-    public readConfigFile(filePath: string): any {
-        // Check if we're in a web environment
-        if (vscode.env.uiKind === vscode.UIKind.Web) {
-            // Return a default value or empty object for web
-            console.log('File system operations not supported in web environment');
-            return {};
-        }
-        
-        try {
-            // Only execute this code in desktop environment
-            const content = fs.readFileSync(filePath, 'utf8');
-            return JSON.parse(content);
-        } catch (err) {
-            console.error(`Error reading config file: ${err}`);
-            return {};
-        }
-    }
-
     // Example of a method that uses path
     public resolveConfigPath(relativePath: string): string {
-        // Use the pathUtils instead of direct path dependency
         return path.resolve(relativePath);
     }
 
@@ -238,7 +184,11 @@ export class Configuration {
     public isFeatureSupported(feature: string): boolean {
         // Disable certain features in web environment
         if (vscode.env.uiKind === vscode.UIKind.Web) {
-            const webUnsupportedFeatures = ['fileWatcher', 'externalProcess', 'localFileSystem'];
+            const webUnsupportedFeatures = [
+                'fileWatcher',
+                'externalProcess',
+                'localFileSystem',
+            ];
             if (webUnsupportedFeatures.includes(feature)) {
                 return false;
             }

@@ -217,7 +217,7 @@ export class LintingProvider {
             }
             args = args.concat(this.linterConfiguration.extraArgs);
 
-            const childProcess = cp.spawn(executable, args, options);
+            const childProcess = safeSpawn(executable, args, options);
             this.logger.log(
                 `[linter] Execute: ${executable} ${args.join(
                     ' '
@@ -272,5 +272,35 @@ export class LintingProvider {
                 resolve();
             }
         });
+    }
+}
+
+// Add safe spawn helper function
+function safeSpawn(
+    command: string,
+    args: string[],
+    options: cp.SpawnOptions
+): cp.ChildProcess {
+    if (typeof cp.spawn === 'function') {
+        return cp.spawn(command, args, options);
+    } else {
+        // Fallback implementation or error handling
+        console.error('spawn is not available in this environment');
+        // Return a minimal compatible object with expected interface
+        const mockProcess = {
+            stdout: {
+                on: () => {},
+            },
+            stderr: {
+                on: () => {},
+            },
+            on: function (event: string, callback: (error: Error) => void) {
+                if (event === 'error') {
+                    callback(new Error('spawn not supported'));
+                }
+                return this;
+            },
+        };
+        return mockProcess;
     }
 }
