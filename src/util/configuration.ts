@@ -85,7 +85,8 @@ export class Configuration {
 
     public async getPythonPath(resource?: Uri): Promise<string> {
         try {
-            const extension = extensions.getExtension('ms-python.python');
+            const extension =
+                vscode.extensions.getExtension('ms-python.python');
             if (!extension) {
                 return Constants.python;
             }
