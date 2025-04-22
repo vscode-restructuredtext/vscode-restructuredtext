@@ -35,10 +35,10 @@ export async function activate(
 
     const logger = container.getNamed<Logger>(TYPES.Logger, NAMES.Main);
     const extensionName =
-        context.extension.packageJSON?.displayName ||
-        'reStructuredText Extension for VSCode';
+        context.extension.packageJSON?.displayName || 'reStructuredText';
     const extensionId = context.extension.id;
-    const extensionVersion = context.extension.packageJSON?.version || 'unknown';
+    const extensionVersion =
+        context.extension.packageJSON?.version || 'unknown';
     logger.log(
         `Loaded extension "${extensionName}" (${extensionId}) in ${vscode.env.appName}.`
     );
@@ -57,7 +57,7 @@ export async function activate(
         if (found) {
             const message = `Found conflicting extension ${
                 found.packageJSON?.displayName || 'Unknown'
-            }(${element}). You have to uninstall it.`;
+            } (${element}). You have to uninstall it.`;
             logger.log(message);
             logger.show();
         }
@@ -65,11 +65,11 @@ export async function activate(
 
     const recommended = configuration.getRecommendedExtensions();
     for (const element of recommended) {
-        const found = vscode.extensions.getExtension(element);
+        const found = vscode.extensions.getExtension(element.id);
         if (!found && !configuration.getPythonRecommendationDisabled()) {
             const message = `This extension depends on ${
-                found.packageJSON?.displayName || 'Unknown'
-            }({element}). You have to install it.`;
+                element.name || 'Unknown'
+            } (${element.id}). You have to install it.`;
             logger.log(message);
             logger.show();
         }

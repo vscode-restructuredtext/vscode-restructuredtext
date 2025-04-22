@@ -291,11 +291,20 @@
           "restructuredtext.recommendedExtensions": {
             "type": "array",
             "default": [
-              "ms-python.python",
-              "trond-snekvik.simple-rst",
-              "swyddfa.esbonio"
+              {
+                "id": "ms-python.python",
+                "name": "Microsoft Python"
+              },
+              {
+                "id": "trond-snekvik.simple-rst",
+                "name": "reStructuredText Syntax Highlighting"
+              },
+              {
+                "id": "swyddfa.esbonio",
+                "name": "Esbonio"
+              }
             ],
-            "description": "Extensions that should be installed together.",
+            "description": "Extensions that should be installed together, including their IDs and names.",
             "scope": "application"
           },
           "restructuredtext.editor.sectionEditor.adornments": {

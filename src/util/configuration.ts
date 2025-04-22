@@ -19,8 +19,10 @@ export class Configuration {
         );
     }
 
-    public getRecommendedExtensions(resource?: Uri): string[] | undefined {
-        return this.loadAnySetting<string[]>(
+    public getRecommendedExtensions(
+        resource?: Uri
+    ): {id: string; name: string}[] | undefined {
+        return this.loadAnySetting<{id: string; name: string}[]>(
             'recommendedExtensions',
             undefined,
             resource
