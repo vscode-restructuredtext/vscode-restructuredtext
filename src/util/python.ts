@@ -88,8 +88,9 @@ export class Python {
     public async checkDoc8Version(): Promise<string> {
         try {
             return await this.exec(
-                '-c',
-                '"import doc8; print(doc8.__version__)"'
+                '-m',
+                'doc8',
+                '--version'
             );
         } catch (e) {
             return '0.0.0';
