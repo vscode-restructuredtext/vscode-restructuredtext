@@ -370,25 +370,25 @@
           "restructuredtext.linter.rstcheck.executablePath": {
             "type": "string",
             "default": null,
-            "description": "Points to the doc8 executable.",
+            "description": "Points to the rstcheck executable.",
             "scope": "resource"
           },
           "restructuredtext.linter.rstcheck.extraArgs": {
             "type": "array",
             "default": [],
-            "description": "Extra arguments to doc8.",
+            "description": "Extra arguments to rstcheck.",
             "scope": "resource"
           },
           "restructuredtext.linter.rst-lint.executablePath": {
             "type": "string",
             "default": null,
-            "description": "Points to the doc8 executable.",
+            "description": "Points to the rst-lint executable.",
             "scope": "resource"
           },
           "restructuredtext.linter.rst-lint.extraArgs": {
             "type": "array",
             "default": [],
-            "description": "Extra arguments to doc8.",
+            "description": "Extra arguments to rst-lint.",
             "scope": "resource"
           },
           "restructuredtext.linter.run": {
