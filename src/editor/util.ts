@@ -8,7 +8,7 @@ import stringWidth from 'string-width';
 export function getOpenedWorkfolderUri(): vscode.Uri | undefined {
     const workspaceFolders = vscode.workspace.workspaceFolders;
     if (!workspaceFolders?.length) {
-        console.log('workspaceFolders length issue.');
+        console.warn('workspaceFolders length issue.');
         return;
     }
     return workspaceFolders[0].uri;

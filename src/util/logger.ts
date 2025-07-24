@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {injectable} from 'inversify';
-import { getSystemInfo } from './systemInfo';
+import {getSystemInfo} from './systemInfo';
 
 export interface Logger {
     info(message: string): void;
@@ -56,30 +56,40 @@ export class ConsoleLogger implements Logger {
     }
 
     public error(message: string): void {
-        this.log(message);
+        this.logWithCategory('ERROR', message);
     }
 
     public info(message: string): void {
-        this.log(message);
+        this.logWithCategory('INFO', message);
     }
 
     public debug(message: string): void {
-        this.log(message);
+        this.logWithCategory('DEBUG', message);
     }
 
     public warning(message: string): void {
-        this.log(message);
+        this.logWithCategory('WARNING', message);
     }
 
-    public log(message: string, data?: unknown): void {
-        if (this.trace === Trace.Verbose) {
+    private logWithCategory(
+        category: string,
+        message: string,
+        data?: unknown
+    ): void {
+        const alwaysLog = category === 'ERROR' || category === 'WARNING' || category === 'INFO';
+        if (alwaysLog || this.trace === Trace.Verbose) {
             this.appendLine(
-                `[Log - ${new Date().toLocaleTimeString()}] ${message}`
+                `[${category} - ${new Date().toLocaleTimeString()}] ${message}`
             );
             if (data) {
                 this.appendLine(ConsoleLogger.data2String(data));
             }
         }
+    }
+
+    public log(message: string, data?: unknown): void {
+        // For backward compatibility, treat as INFO
+        this.logWithCategory('INFO', message, data);
     }
 
     public updateConfiguration() {
@@ -122,12 +132,23 @@ export class ConsoleLogger implements Logger {
     public async logPlatform(): Promise<void> {
         try {
             const systemInfo = getSystemInfo();
-            const info = await systemInfo.getInfo();
+            const info = (await systemInfo.getInfo()) as {
+                osInfo?: {
+                    platform?: string;
+                    distro?: string;
+                    release?: string;
+                    arch?: string;
+                };
+            };
 
             // Now use info safely regardless of platform
-            this.log(`OS: ${info.osInfo?.platform || 'unknown'} ${info.osInfo?.distro || ''} ${info.osInfo?.release || ''} ${info.osInfo?.arch || ''}`);
+            this.info(
+                `OS: ${info.osInfo?.platform || 'unknown'} ${
+                    info.osInfo?.distro || ''
+                } ${info.osInfo?.release || ''} ${info.osInfo?.arch || ''}`
+            );
         } catch (err) {
-            this.log(`Failed to get platform info: ${err}`);
+            this.error(`Failed to get platform info: ${err}`);
         }
     }
 }

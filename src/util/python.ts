@@ -49,10 +49,10 @@ export class Python {
 
         this.logger.error('Cannot find Python.');
         if (showInformation) {
-            this.logger.log(
+            this.logger.info(
                 'Please review Python installation on this machine before using this extension.'
             );
-            this.logger.log(
+            this.logger.info(
                 'You can learn more from https://docs.restructuredtext.net/articles/prerequisites.html#install-python-for-most-features'
             );
             this.logger.show();
@@ -191,7 +191,7 @@ export class Python {
     public exec(...args: string[]): Promise<string> {
         const cmd = [this.pythonPath, ...args];
         return new Promise<string>((resolve, reject) => {
-            this.logger.info(
+            this.logger.debug(
                 `Running cmd: ${this.pythonPath} ${args.join(' ')}`
             );
             if (typeof cp.exec !== 'function') {
@@ -209,10 +209,10 @@ export class Python {
                             '',
                             stderr.toString(),
                         ].join('\n');
-                        this.logger.error(errorMessage);
+                        this.logger.debug(errorMessage);
                         reject(errorMessage);
                     } else {
-                        this.logger.info('Successful exec');
+                        this.logger.debug('Successful exec');
                         resolve(stdout.toString());
                     }
                 }

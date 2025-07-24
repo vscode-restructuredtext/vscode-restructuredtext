@@ -337,7 +337,7 @@
               "off",
               "verbose"
             ],
-            "default": "verbose",
+            "default": "off",
             "description": "%restructuredtext.trace.desc%",
             "scope": "window"
           },

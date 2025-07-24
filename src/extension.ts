@@ -39,12 +39,12 @@ export async function activate(
     const extensionId = context.extension.id;
     const extensionVersion =
         context.extension.packageJSON?.version || 'unknown';
-    logger.log(
+    logger.info(
         `Loaded extension "${extensionName}" (${extensionId}) in ${vscode.env.appName}.`
     );
-    logger.log(`Version: ${extensionVersion}`);
+    logger.info(`Version: ${extensionVersion}`);
     await logger.logPlatform();
-    logger.log(
+    logger.info(
         'Please visit https://docs.restructuredtext.net to learn how to configure the extension.'
     );
 
@@ -58,7 +58,7 @@ export async function activate(
             const message = `Found conflicting extension ${
                 found.packageJSON?.displayName || 'Unknown'
             } (${element}). You have to uninstall it.`;
-            logger.log(message);
+            logger.warning(message);
             logger.show();
         }
     }
@@ -67,10 +67,10 @@ export async function activate(
     for (const element of recommended) {
         const found = vscode.extensions.getExtension(element.id);
         if (!found && !configuration.getPythonRecommendationDisabled()) {
-            const message = `This extension depends on ${
+            const message = `This extension is designed to work better if you install ${
                 element.name || 'Unknown'
-            } (${element.id}). You have to install it.`;
-            logger.log(message);
+            } (${element.id}).`;
+            logger.info(message);
             logger.show();
         }
     }
@@ -117,6 +117,8 @@ async function activateWebFeatures(
     logger: Logger
 ): Promise<void> {
     // Initialize web-compatible features only
-    logger.log('Running in web mode - some features like linting are disabled');
+    logger.warning(
+        'Running in web mode - some features like linting are disabled'
+    );
     // ...web-specific initialization...
 }
