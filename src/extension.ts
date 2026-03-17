@@ -75,17 +75,6 @@ export async function activate(
         })
     );
 
-    const getRecommendationReason = (id: string): string | undefined => {
-        switch (id) {
-            case 'trond-snekvik.simple-rst':
-                return 'Syntax highlighting is superseded by this.';
-            case 'swyddfa.esbonio':
-                return 'Autocompletion and live preview are superseded by this.';
-            default:
-                return undefined;
-        }
-    };
-
     const recommended = configuration.getRecommendedExtensions();
     if (recommended) {
         // collect extensions that are not installed

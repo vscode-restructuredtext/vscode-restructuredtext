@@ -21,8 +21,8 @@ export class Configuration {
 
     public getRecommendedExtensions(
         resource?: Uri
-    ): {id: string; name: string}[] | undefined {
-        return this.loadAnySetting<{id: string; name: string}[]>(
+    ): {id: string; name?: string; reason?: string}[] | undefined {
+        return this.loadAnySetting<{id: string; name?: string; reason?: string}[]>(
             'recommendedExtensions',
             undefined,
             resource

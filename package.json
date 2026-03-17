@@ -297,11 +297,13 @@
               },
               {
                 "id": "trond-snekvik.simple-rst",
-                "name": "reStructuredText Syntax Highlighting"
+                "name": "reStructuredText Syntax Highlighting",
+                "reason": "Provides dedicated syntax highlighting for reStructuredText files."
               },
               {
                 "id": "swyddfa.esbonio",
-                "name": "Esbonio"
+                "name": "Esbonio",
+                "reason": "Provides language server features: autocompletion and live preview."
               }
             ],
             "description": "Extensions that should be installed together, including their IDs and names.",
