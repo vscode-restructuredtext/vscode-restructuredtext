@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 import {CommandManager} from './util/commandManager';
 import * as commands from './commands/index';
-import { Commands } from './constants';
+import {Commands} from './constants';
 import {Logger} from './util/logger';
 import {Python} from './util/python';
 import {Configuration} from './util/configuration';
@@ -78,9 +78,14 @@ export async function activate(
     const recommended = configuration.getRecommendedExtensions();
     if (recommended) {
         // collect extensions that are not installed
-        const missing = recommended.filter((element) => !vscode.extensions.getExtension(element.id));
-        if (missing.length > 0 && !configuration.getPythonRecommendationDisabled()) {
-            const names = missing.map((e) => e.name || e.id).join(', ');
+        const missing = recommended.filter(
+            element => !vscode.extensions.getExtension(element.id)
+        );
+        if (
+            missing.length > 0 &&
+            !configuration.getPythonRecommendationDisabled()
+        ) {
+            const names = missing.map(e => e.name || e.id).join(', ');
             const prompt = `We recommend installing: ${names}. Install all or review individually?`;
             const installAll = 'Install All';
             const reviewOne = 'Review One By One';
@@ -94,17 +99,22 @@ export async function activate(
 
             if (initialChoice === installAll) {
                 for (const element of missing) {
-                    const reason = getRecommendationReason(element.id);
+                    const reason = (element as any).reason;
                     const messageToShow = reason
                         ? `Installing ${element.name || element.id}. ${reason}`
                         : `Installing ${element.name || element.id}.`;
                     logger.info(messageToShow);
-                    await vscode.commands.executeCommand(Commands.INSTALL_EXTENSION, element.id);
+                    await vscode.commands.executeCommand(
+                        Commands.INSTALL_EXTENSION,
+                        element.id
+                    );
                 }
             } else if (initialChoice === reviewOne) {
                 for (const element of missing) {
-                    const base = `This extension is designed to work better if you install ${element.name || 'Unknown'} (${element.id}).`;
-                    const reason = getRecommendationReason(element.id);
+                    const base = `This extension is designed to work better if you install ${
+                        element.name || 'Unknown'
+                    } (${element.id}).`;
+                    const reason = (element as any).reason;
                     const messageToShow = reason ? `${base} ${reason}` : base;
                     logger.info(messageToShow);
                     logger.show();
@@ -120,9 +130,15 @@ export async function activate(
                     );
 
                     if (choice === openLabel) {
-                        await vscode.commands.executeCommand(Commands.OPEN_EXTENSION, element.id);
+                        await vscode.commands.executeCommand(
+                            Commands.OPEN_EXTENSION,
+                            element.id
+                        );
                     } else if (choice === installLabel) {
-                        await vscode.commands.executeCommand(Commands.INSTALL_EXTENSION, element.id);
+                        await vscode.commands.executeCommand(
+                            Commands.INSTALL_EXTENSION,
+                            element.id
+                        );
                     }
                 }
             }

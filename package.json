@@ -496,13 +496,13 @@
   "dependencies": {
     "@jedithepro/system-info": "^3.0.0",
     "async-lock": "^1.3.1",
-    "inversify": "^6.0.1",
+    "inversify": "^6.2.2",
     "lodash.throttle": "^4.1.1",
     "meaw": "^4.1.0",
     "mime": "^2.4.6",
     "node-fetch": "^2.0.0",
     "open": "^7.3.0",
-    "reflect-metadata": "^0.1.13",
+    "reflect-metadata": "^0.2.2",
     "semver": "^7.3.7",
     "string-width": "^7.0.0",
     "tslib": "^2.4.0",
@@ -537,26 +537,27 @@
   "main": "./dist/node/extension.js",
   "browser": "./dist/browser/extension.js",
   "scripts": {
-    "vscode:prepublish": "yarn package",
+    "vscode:prepublish": "npm run package",
     "compile": "node esbuild.js",
-    "package": "node esbuild.js --production",
+    "package": "npm run update-version && node esbuild.js --production",
     "watch": "node esbuild.js --watch",
-    "pretest": "yarn compile",
-    "test": "yarn test-node && yarn test-web",
+    "pretest": "npm run compile",
+    "test": "npm run test-node && npm run test-web",
     "test-node": "node ./dist/test/runTest.js",
     "test-web": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. --extensionTestsPath=./dist/test/suite/index-web",
-    "dist:stable": "yarn install && vsce package --yarn",
-    "dist": "yarn install && vsce package --pre-release --yarn",
+    "dist:stable": "npm install && vsce package",
+    "dist": "npm install && vsce package --pre-release",
     "lint": "gts lint --verbose",
     "clean": "gts clean",
     "fix": "gts fix",
-    "posttest": "yarn lint",
-    "preversion": "yarn test",
-    "postversion": "git push && git push --tags"
+    "posttest": "npm run lint",
+    "preversion": "npm test",
+    "postversion": "git push && git push --tags",
+    "update-version": "node ./scripts/update-package-version.js"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn run fix"
+      "pre-commit": "npm run fix"
     }
   },
   "l10n": "./l10n"

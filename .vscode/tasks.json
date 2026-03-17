@@ -5,11 +5,11 @@
         {
             "label": "compile",
             "type": "shell",
-            "command": "yarn",
+            "command": "npm",
             "args": [
+                "run",
                 "compile",
-                "--loglevel",
-                "silent"
+                "--silent"
             ],
             "isBackground": true,
             "problemMatcher": "$tsc-watch",
@@ -18,11 +18,11 @@
         {
             "label": "watch",
             "type": "shell",
-            "command": "yarn",
+            "command": "npm",
             "args": [
+                "run",
                 "watch",
-                "--loglevel",
-                "silent"
+                "--silent"
             ],
             "isBackground": true,
             "problemMatcher": "$tsc-watch",
