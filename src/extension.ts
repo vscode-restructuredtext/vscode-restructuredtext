@@ -6,6 +6,7 @@
 import * as vscode from 'vscode';
 import {CommandManager} from './util/commandManager';
 import * as commands from './commands/index';
+import { Commands } from './constants';
 import {Logger} from './util/logger';
 import {Python} from './util/python';
 import {Configuration} from './util/configuration';
@@ -51,27 +52,91 @@ export async function activate(
     await EditorFeatures.activate(context);
 
     const configuration = container.get<Configuration>(TYPES.Configuration);
-    const conflicting = configuration.getConflictingExtensions();
-    for (const element of conflicting) {
-        const found = vscode.extensions.getExtension(element);
-        if (found) {
-            const message = `Found conflicting extension ${
-                found.packageJSON?.displayName || 'Unknown'
-            } (${element}). You have to uninstall it.`;
-            logger.warning(message);
-            logger.show();
+    // Check for conflicting extensions now and whenever the extensions list changes
+    const checkConflicts = () => {
+        const conflicting = configuration.getConflictingExtensions();
+        for (const element of conflicting) {
+            const found = vscode.extensions.getExtension(element);
+            if (found) {
+                const message = `Found conflicting extension ${
+                    found.packageJSON?.displayName || 'Unknown'
+                } (${element}). You have to uninstall it.`;
+                logger.warning(message);
+                logger.show();
+            }
         }
-    }
+    };
+
+    checkConflicts();
+    context.subscriptions.push(
+        vscode.extensions.onDidChange(() => {
+            // Some extensions may load/activate after us — re-check conflicts
+            checkConflicts();
+        })
+    );
+
+    const getRecommendationReason = (id: string): string | undefined => {
+        switch (id) {
+            case 'trond-snekvik.simple-rst':
+                return 'Syntax highlighting is superseded by this.';
+            case 'swyddfa.esbonio':
+                return 'Autocompletion and live preview are superseded by this.';
+            default:
+                return undefined;
+        }
+    };
 
     const recommended = configuration.getRecommendedExtensions();
-    for (const element of recommended) {
-        const found = vscode.extensions.getExtension(element.id);
-        if (!found && !configuration.getPythonRecommendationDisabled()) {
-            const message = `This extension is designed to work better if you install ${
-                element.name || 'Unknown'
-            } (${element.id}).`;
-            logger.info(message);
-            logger.show();
+    if (recommended) {
+        // collect extensions that are not installed
+        const missing = recommended.filter((element) => !vscode.extensions.getExtension(element.id));
+        if (missing.length > 0 && !configuration.getPythonRecommendationDisabled()) {
+            const names = missing.map((e) => e.name || e.id).join(', ');
+            const prompt = `We recommend installing: ${names}. Install all or review individually?`;
+            const installAll = 'Install All';
+            const reviewOne = 'Review One By One';
+            const dismiss = 'Dismiss';
+            const initialChoice = await vscode.window.showInformationMessage(
+                prompt,
+                installAll,
+                reviewOne,
+                dismiss
+            );
+
+            if (initialChoice === installAll) {
+                for (const element of missing) {
+                    const reason = getRecommendationReason(element.id);
+                    const messageToShow = reason
+                        ? `Installing ${element.name || element.id}. ${reason}`
+                        : `Installing ${element.name || element.id}.`;
+                    logger.info(messageToShow);
+                    await vscode.commands.executeCommand(Commands.INSTALL_EXTENSION, element.id);
+                }
+            } else if (initialChoice === reviewOne) {
+                for (const element of missing) {
+                    const base = `This extension is designed to work better if you install ${element.name || 'Unknown'} (${element.id}).`;
+                    const reason = getRecommendationReason(element.id);
+                    const messageToShow = reason ? `${base} ${reason}` : base;
+                    logger.info(messageToShow);
+                    logger.show();
+
+                    const openLabel = 'Open Extension';
+                    const installLabel = 'Install Extension';
+                    const skipLabel = 'Skip';
+                    const choice = await vscode.window.showInformationMessage(
+                        messageToShow,
+                        openLabel,
+                        installLabel,
+                        skipLabel
+                    );
+
+                    if (choice === openLabel) {
+                        await vscode.commands.executeCommand(Commands.OPEN_EXTENSION, element.id);
+                    } else if (choice === installLabel) {
+                        await vscode.commands.executeCommand(Commands.INSTALL_EXTENSION, element.id);
+                    }
+                }
+            }
         }
     }
 
