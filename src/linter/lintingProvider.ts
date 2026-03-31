@@ -203,7 +203,10 @@ export class LintingProvider {
             let diagnostics: vscode.Diagnostic[] = [];
             const file = '"' + textDocument.fileName + '"';
             const rootPath = configuration.getRootPath(textDocument.uri);
-            const options = rootPath ? {rootPath, shell: true} : undefined;
+            // Pass correct working directory so tools like doc8 pick up local config files (issue #461)
+            const options: cp.SpawnOptions | undefined = rootPath
+                ? {cwd: rootPath, shell: true}
+                : undefined;
             let args: string[] = [];
             args = args.concat(this.linterConfiguration.module);
             if (
@@ -219,9 +222,9 @@ export class LintingProvider {
 
             const childProcess = safeSpawn(executable, args, options);
             this.logger.debug(
-                `[linter] Execute: ${executable} ${args.join(
-                    ' '
-                )} in ${rootPath}.`
+                `[linter] Execute: ${executable} ${args.join(' ')} (cwd=${
+                    (options && options.cwd) || 'default'
+                }).`
             );
             childProcess.on('error', (error: Error) => {
                 if (this.executableNotFound) {

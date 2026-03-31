@@ -6,6 +6,7 @@
  *--------------------------------------------------------------------------------------------*/
 // @ts-check
 const esbuild = require('esbuild');
+const {globSync} = require('glob');
 const {NodeGlobalsPolyfillPlugin} = require('@esbuild-plugins/node-globals-polyfill');
 const {NodeModulesPolyfillPlugin} = require('@esbuild-plugins/node-modules-polyfill');
 
@@ -45,6 +46,22 @@ const buildOptions = {
     mainFields: ['module', 'main'],
 };
 
+const testEntryPoints = globSync('./src/test/**/*.ts');
+
+const buildOptionsTests = {
+    entryPoints: testEntryPoints,
+    bundle: true,
+    external: ['vscode', 'glob', 'mocha'],
+    sourcemap: !production,
+    minify: false,
+    platform: 'node',
+    format: 'cjs',
+    outdir: './dist/test',
+    outbase: './src/test',
+    entryNames: '[dir]/[name]',
+    mainFields: ['module', 'main'],
+};
+
 const buildOptionsWeb = {
     entryPoints: ['./src/extension.ts'],
     bundle: true,
@@ -77,6 +94,10 @@ async function build() {
         // Build for Web
         await esbuild.build(buildOptionsWeb);
         console.log('Web build completed successfully');
+
+        // Build test files for @vscode/test-electron
+        await esbuild.build(buildOptionsTests);
+        console.log('Test build completed successfully');
     } catch (err) {
         console.error(err);
         process.exit(1);
@@ -98,6 +119,13 @@ async function build() {
         });
         await webContext.watch();
         console.log('Watching for Web changes...');
+
+        const testContext = await esbuild.context({
+            ...buildOptionsTests,
+            plugins: [...(buildOptionsTests.plugins || [])],
+        });
+        await testContext.watch();
+        console.log('Watching for test changes...');
     }
 }
 

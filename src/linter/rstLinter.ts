@@ -1,4 +1,5 @@
 'use strict';
+import * as path from 'path';
 import {Diagnostic, DiagnosticSeverity, Disposable, Range, Uri} from 'vscode';
 import {Logger} from '../util/logger';
 import {Python} from '../util/python';
@@ -16,8 +17,9 @@ export default class RstLintingProvider implements ILinter {
 
     public constructor(
         public name: string,
-        private module: string,
-        private path: string,
+        private module: string | null,
+        private path: string | null,
+        private executableName: string | null,
         private extraArgs: string[],
         private readonly logger: Logger,
         private readonly python: Python
@@ -35,18 +37,18 @@ export default class RstLintingProvider implements ILinter {
         const configuration = container.get<Configuration>(TYPES.Configuration);
 
         let build = this.path; // IMPORTANT: custom path takes higher priority than module name.
-        if (build === null) {
+        if (build === null && this.module !== null) {
             const python = await configuration.getPythonPath(resource);
             if (python) {
                 build = '"' + python + '"';
                 module = module.concat(['-m', this.module]);
             }
-        } else {
+        } else if (build !== null) {
             build = '"' + build + '"';
         }
 
         if (build === null) {
-            build = this.name;
+            build = await this.resolveExecutablePath(resource);
         }
 
         return {
@@ -104,5 +106,19 @@ export default class RstLintingProvider implements ILinter {
             });
         }
         return diagnostics;
+    }
+
+    private async resolveExecutablePath(resource: Uri): Promise<string> {
+        if (this.executableName === null) {
+            return this.name;
+        }
+
+        const configuration = container.get<Configuration>(TYPES.Configuration);
+        const python = await configuration.getPythonPath(resource);
+        if (!python) {
+            return this.executableName;
+        }
+
+        return '"' + path.join(path.dirname(python), this.executableName) + '"';
     }
 }

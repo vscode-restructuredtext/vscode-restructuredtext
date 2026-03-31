@@ -2,7 +2,7 @@
   "name": "restructuredtext",
   "displayName": "%displayName%",
   "description": "%description%",
-  "version": "190.4.11",
+  "version": "190.4.12",
   "publisher": "lextudio",
   "featureFlags": {
     "usingNewInterpreterStorage": true
@@ -357,6 +357,12 @@
             "description": "Flag to disable linters if critical issues happen.",
             "scope": "resource"
           },
+          "restructuredtext.linter.installRecommendation.disabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "Flag to disable upgrade or install recommendations for linter tools.",
+            "scope": "resource"
+          },
           "restructuredtext.linter.doc8.executablePath": {
             "type": "string",
             "default": null,
@@ -544,7 +550,9 @@
     "pretest": "npm run compile",
     "test": "npm run test-node && npm run test-web",
     "test-node": "node ./dist/test/runTest.js",
+    "test-node-linters": "node ./scripts/run-node-linter-tests.mjs",
     "test-web": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. --extensionTestsPath=./dist/test/suite/index-web",
+    "setup-linter-test-env": "node ./scripts/setup-linter-test-env.mjs",
     "dist:stable": "npm install && vsce package",
     "dist": "npm install && vsce package --pre-release",
     "lint": "gts lint --verbose",

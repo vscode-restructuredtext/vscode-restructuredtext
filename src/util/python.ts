@@ -165,6 +165,17 @@ export class Python {
         }
     }
 
+    public async checkRstLintVersion(): Promise<string> {
+        try {
+            return await this.exec(
+                '-c',
+                '"import restructuredtext_lint; print(restructuredtext_lint.__version__)"'
+            );
+        } catch (e) {
+            return '0.0.0';
+        }
+    }
+
     private async getVersion(): Promise<boolean> {
         if (this.version !== null) {
             return true;

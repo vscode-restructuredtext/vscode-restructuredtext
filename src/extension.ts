@@ -19,6 +19,7 @@ import {NAMES, TYPES} from './types';
 import {updateActivationCount} from './rating';
 
 let extensionPath = '';
+const ESBONIO_EXTENSION_ID = 'swyddfa.esbonio';
 
 export function getExtensionPath(): string {
     return extensionPath;
@@ -139,6 +140,8 @@ export async function activate(
                             Commands.INSTALL_EXTENSION,
                             element.id
                         );
+                    } else if (choice === skipLabel) {
+                        await suggestLintersWhenEsbonioSkipped(element.id);
                     }
                 }
             }
@@ -167,6 +170,28 @@ export async function activate(
         await activateWebFeatures(context, logger);
         vscode.window.showInformationMessage(
             'reStructuredText extension running in web mode with limited features'
+        );
+    }
+}
+
+async function suggestLintersWhenEsbonioSkipped(
+    extensionId: string
+): Promise<void> {
+    if (extensionId !== ESBONIO_EXTENSION_ID) {
+        return;
+    }
+
+    const openDocs = 'Learn About Linters';
+    const choice = await vscode.window.showInformationMessage(
+        'Esbonio is optional. If you prefer not to install it, you can still use doc8, rstcheck, or rst-lint for diagnostics from this extension.',
+        openDocs
+    );
+
+    if (choice === openDocs) {
+        await vscode.env.openExternal(
+            vscode.Uri.parse(
+                'https://docs.restructuredtext.net/articles/configuration.html#linting'
+            )
         );
     }
 }

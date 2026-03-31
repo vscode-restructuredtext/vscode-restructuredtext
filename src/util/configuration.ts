@@ -81,6 +81,24 @@ export class Configuration {
         return this.loadAnySetting('telemetry.disabled', false, resource);
     }
 
+    public getLinterInstallRecommendationDisabled(
+        resource?: Uri
+    ): boolean | undefined {
+        return this.loadAnySetting(
+            'linter.installRecommendation.disabled',
+            false,
+            resource
+        );
+    }
+
+    public async setLinterInstallRecommendationDisabled(resource?: Uri) {
+        await this.saveAnySetting(
+            'linter.installRecommendation.disabled',
+            true,
+            resource
+        );
+    }
+
     public getRunType(resource?: Uri): string | undefined {
         return this.loadAnySetting('linter.run', 'onType', resource);
     }
