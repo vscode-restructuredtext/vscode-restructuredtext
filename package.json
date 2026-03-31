@@ -92,16 +92,6 @@
         "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
       },
       {
-        "command": "restructuredtext.editor.listEditing.onTabKey",
-        "key": "tab",
-        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible && !editorTabMovesFocus && !inSnippetMode && !hasSnippetCompletions && !hasOtherSuggestions && !inlineSuggestionVisible"
-      },
-      {
-        "command": "restructuredtext.editor.listEditing.onShiftTabKey",
-        "key": "shift+tab",
-        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible && !editorTabMovesFocus && !inSnippetMode && !hasSnippetCompletions && !hasOtherSuggestions"
-      },
-      {
         "command": "restructuredtext.editor.listEditing.onBackspaceKey",
         "key": "backspace",
         "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible && vim.mode != 'Normal' && vim.mode != 'Visual' && vim.mode != 'VisualBlock' && vim.mode != 'VisualLine' && vim.mode != 'SearchInProgressMode' && vim.mode != 'CommandlineInProgress' && vim.mode != 'Replace' && vim.mode != 'EasyMotionMode' && vim.mode != 'EasyMotionInputMode' && vim.mode != 'SurroundInputMode'"
@@ -159,16 +149,6 @@
         "command": "resttext.key.alt.enter",
         "key": "alt+enter",
         "when": "resttext.alt.enter.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext"
-      },
-      {
-        "command": "resttext.key.tab",
-        "key": "tab",
-        "when": "resttext.tab.enabled && editorTextFocus && !inSnippetMode && !suggestWidgetVisible && editorLangId==restructuredtext && !inlineSuggestionVisible"
-      },
-      {
-        "command": "resttext.key.shift.tab",
-        "key": "shift+tab",
-        "when": "resttext.shift.tab.enabled && editorTextFocus && !inSnippetMode && !suggestWidgetVisible && editorLangId==restructuredtext"
       }
     ],
     "commands": [

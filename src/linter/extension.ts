@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import container from '../inversify.config';
-import {TYPES} from '../types';
+import {NAMES, TYPES} from '../types';
 import {Configuration} from '../util/configuration';
 import {Logger} from '../util/logger';
 import {Python} from '../util/python';
@@ -11,6 +11,9 @@ import RstLintingProvider from './rstLinter';
 const shownUpgradePrompts = new Set<string>();
 const promptedUnsupportedReleases: string[] = [];
 const promptedUpgradeCommands = new Map<string, string>();
+const displayedUpgradePrompts: string[] = [];
+const upgradePromptResponses: string[] = [];
+let upgradePromptTestMode = false;
 const PYTHON_ENVS_EXTENSION = 'ms-python.vscode-python-envs';
 
 export function getPromptedUnsupportedReleases(): string[] {
@@ -21,10 +24,38 @@ export function getPromptedUpgradeCommands(): Record<string, string> {
     return Object.fromEntries(promptedUpgradeCommands.entries());
 }
 
+export function getDisplayedUpgradePrompts(): string[] {
+    return displayedUpgradePrompts.slice();
+}
+
 export function resetPromptedUnsupportedReleases(): void {
+    upgradePromptTestMode = false;
     promptedUnsupportedReleases.length = 0;
+    displayedUpgradePrompts.length = 0;
+    upgradePromptResponses.length = 0;
     shownUpgradePrompts.clear();
     promptedUpgradeCommands.clear();
+}
+
+export function setUpgradePromptTestResponses(responses: string[]): void {
+    upgradePromptTestMode = true;
+    upgradePromptResponses.splice(0, upgradePromptResponses.length, ...responses);
+}
+
+export async function promptUnsupportedReleaseForTests(
+    linterName: keyof typeof releasePolicies,
+    detectedVersion: string,
+    configuredExecutablePath?: string
+): Promise<boolean> {
+    const configuration = container.get<Configuration>(TYPES.Configuration);
+    const logger = container.getNamed<Logger>(TYPES.Logger, NAMES.Main);
+    return validateSupportedRelease(
+        linterName,
+        detectedVersion,
+        configuration,
+        logger,
+        configuredExecutablePath
+    );
 }
 
 export async function activate(
@@ -239,31 +270,43 @@ async function promptToUpgrade(
     const runLabel = 'Run Suggested Command';
     const installLabel = 'Copy Suggested Command';
     const neverAskLabel = 'Never Ask Again';
-    const selection = await vscode.window.showWarningMessage(
+    const promptMessage =
         `reStructuredText detected unsupported ${policy.name} ${detectedVersion}. ` +
-            `Upgrade to a supported release line (${policy.supportedMajorVersions
-                .map(value => `${value}.x`)
-                .join(' or ')}). Latest stable: ${policy.latestStableVersion}. ` +
-            `Suggested command: ${suggestedCommand}`,
-        openLabel,
-        runLabel,
-        installLabel,
-        neverAskLabel
-    );
+        `Upgrade to a supported release line (${policy.supportedMajorVersions
+            .map(value => `${value}.x`)
+            .join(' or ')}). Latest stable: ${policy.latestStableVersion}. ` +
+        `Suggested command: ${suggestedCommand}`;
+    displayedUpgradePrompts.push(promptKey);
+    const selection =
+        upgradePromptTestMode && upgradePromptResponses.length > 0
+            ? upgradePromptResponses.shift()
+            : await vscode.window.showWarningMessage(
+                  promptMessage,
+                  openLabel,
+                  runLabel,
+                  installLabel,
+                  neverAskLabel
+              );
 
     if (selection === openLabel) {
-        await vscode.env.openExternal(vscode.Uri.parse(policy.upgradeUrl));
+        if (!upgradePromptTestMode) {
+            await vscode.env.openExternal(vscode.Uri.parse(policy.upgradeUrl));
+        }
     } else if (selection === runLabel) {
-        const terminal =
-            vscode.window.activeTerminal ??
-            vscode.window.createTerminal('reStructuredText');
-        terminal.show(true);
-        terminal.sendText(suggestedCommand, true);
+        if (!upgradePromptTestMode) {
+            const terminal =
+                vscode.window.activeTerminal ??
+                vscode.window.createTerminal('reStructuredText');
+            terminal.show(true);
+            terminal.sendText(suggestedCommand, true);
+        }
     } else if (selection === installLabel) {
-        await vscode.env.clipboard.writeText(suggestedCommand);
-        await vscode.window.showInformationMessage(
-            `Copied upgrade command for ${policy.name} to the clipboard.`
-        );
+        if (!upgradePromptTestMode) {
+            await vscode.env.clipboard.writeText(suggestedCommand);
+            await vscode.window.showInformationMessage(
+                `Copied upgrade command for ${policy.name} to the clipboard.`
+            );
+        }
     } else if (selection === neverAskLabel) {
         await configuration.setLinterInstallRecommendationDisabled();
     }

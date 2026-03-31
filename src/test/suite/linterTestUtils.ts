@@ -2,10 +2,21 @@ import * as vscode from 'vscode';
 
 import {wait} from './initialize';
 import {
+  getDisplayedUpgradePrompts,
   getPromptedUpgradeCommands,
   getPromptedUnsupportedReleases,
+  promptUnsupportedReleaseForTests,
   resetPromptedUnsupportedReleases,
+  setUpgradePromptTestResponses,
 } from '../../linter/extension';
+import {
+  getRecommendationCommandInvocations,
+  getRecommendationExternalUrls,
+  getRecommendationPromptEvents,
+  resetRecommendationPromptTestState,
+  runRecommendationFlowForTests,
+  setRecommendationPromptTestResponses,
+} from '../../extension';
 
 export const linterTestTarget = process.env.RST_LINTER_TEST_TARGET;
 export const linterTestVersion = process.env.RST_LINTER_TEST_VERSION ?? 'unknown';
@@ -105,4 +116,48 @@ export async function waitForUpgradeCommand(
 
 export function clearUnsupportedReleasePrompts() {
   resetPromptedUnsupportedReleases();
+}
+
+export function getDisplayedUnsupportedReleasePrompts(): string[] {
+  return getDisplayedUpgradePrompts();
+}
+
+export function queueUpgradePromptResponses(responses: string[]) {
+  setUpgradePromptTestResponses(responses);
+}
+
+export async function triggerUnsupportedReleasePrompt(
+  linterName: 'doc8' | 'rstcheck' | 'rst-lint',
+  detectedVersion: string,
+  configuredExecutablePath?: string
+) {
+  return promptUnsupportedReleaseForTests(
+    linterName,
+    detectedVersion,
+    configuredExecutablePath
+  );
+}
+
+export function resetRecommendationPrompts() {
+  resetRecommendationPromptTestState();
+}
+
+export function queueRecommendationPromptResponses(responses: string[]) {
+  setRecommendationPromptTestResponses(responses);
+}
+
+export function getRecommendationPrompts() {
+  return getRecommendationPromptEvents();
+}
+
+export function getRecommendationCommands() {
+  return getRecommendationCommandInvocations();
+}
+
+export function getRecommendationUrls() {
+  return getRecommendationExternalUrls();
+}
+
+export async function triggerRecommendationFlow() {
+  await runRecommendationFlowForTests();
 }

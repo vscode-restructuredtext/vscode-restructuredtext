@@ -20,9 +20,55 @@ import {updateActivationCount} from './rating';
 
 let extensionPath = '';
 const ESBONIO_EXTENSION_ID = 'swyddfa.esbonio';
+const recommendationPromptResponses: string[] = [];
+let recommendationTestMode = false;
+const recommendationPromptEvents: Array<{message: string; options: string[]}> =
+    [];
+const recommendationCommandInvocations: Array<{
+    command: string;
+    extensionId: string;
+}> = [];
+const recommendationExternalUrls: string[] = [];
 
 export function getExtensionPath(): string {
     return extensionPath;
+}
+
+export function resetRecommendationPromptTestState(): void {
+    recommendationTestMode = false;
+    recommendationPromptResponses.length = 0;
+    recommendationPromptEvents.length = 0;
+    recommendationCommandInvocations.length = 0;
+    recommendationExternalUrls.length = 0;
+}
+
+export function setRecommendationPromptTestResponses(
+    responses: string[]
+): void {
+    recommendationTestMode = true;
+    recommendationPromptResponses.splice(
+        0,
+        recommendationPromptResponses.length,
+        ...responses
+    );
+}
+
+export function getRecommendationPromptEvents(): Array<{
+    message: string;
+    options: string[];
+}> {
+    return recommendationPromptEvents.slice();
+}
+
+export function getRecommendationCommandInvocations(): Array<{
+    command: string;
+    extensionId: string;
+}> {
+    return recommendationCommandInvocations.slice();
+}
+
+export function getRecommendationExternalUrls(): string[] {
+    return recommendationExternalUrls.slice();
 }
 
 export async function activate(
@@ -76,77 +122,7 @@ export async function activate(
         })
     );
 
-    const recommended = configuration.getRecommendedExtensions();
-    if (recommended) {
-        // collect extensions that are not installed
-        const missing = recommended.filter(
-            element => !vscode.extensions.getExtension(element.id)
-        );
-        if (
-            missing.length > 0 &&
-            !configuration.getPythonRecommendationDisabled()
-        ) {
-            const names = missing.map(e => e.name || e.id).join(', ');
-            const prompt = `We recommend installing: ${names}. Install all or review individually?`;
-            const installAll = 'Install All';
-            const reviewOne = 'Review One By One';
-            const dismiss = 'Dismiss';
-            const initialChoice = await vscode.window.showInformationMessage(
-                prompt,
-                installAll,
-                reviewOne,
-                dismiss
-            );
-
-            if (initialChoice === installAll) {
-                for (const element of missing) {
-                    const reason = (element as any).reason;
-                    const messageToShow = reason
-                        ? `Installing ${element.name || element.id}. ${reason}`
-                        : `Installing ${element.name || element.id}.`;
-                    logger.info(messageToShow);
-                    await vscode.commands.executeCommand(
-                        Commands.INSTALL_EXTENSION,
-                        element.id
-                    );
-                }
-            } else if (initialChoice === reviewOne) {
-                for (const element of missing) {
-                    const base = `This extension is designed to work better if you install ${
-                        element.name || 'Unknown'
-                    } (${element.id}).`;
-                    const reason = (element as any).reason;
-                    const messageToShow = reason ? `${base} ${reason}` : base;
-                    logger.info(messageToShow);
-                    logger.show();
-
-                    const openLabel = 'Open Extension';
-                    const installLabel = 'Install Extension';
-                    const skipLabel = 'Skip';
-                    const choice = await vscode.window.showInformationMessage(
-                        messageToShow,
-                        openLabel,
-                        installLabel,
-                        skipLabel
-                    );
-
-                    if (choice === openLabel) {
-                        await vscode.commands.executeCommand(
-                            Commands.OPEN_EXTENSION,
-                            element.id
-                        );
-                    } else if (choice === installLabel) {
-                        await vscode.commands.executeCommand(
-                            Commands.INSTALL_EXTENSION,
-                            element.id
-                        );
-                    } else if (choice === skipLabel) {
-                        await suggestLintersWhenEsbonioSkipped(element.id);
-                    }
-                }
-            }
-        }
-    }
+    await maybeRecommendExtensions(configuration, logger);
 
     const commandManager = new CommandManager();
     context.subscriptions.push(commandManager);
@@ -174,6 +150,92 @@ export async function activate(
     }
 }
 
+export async function runRecommendationFlowForTests(): Promise<void> {
+    const configuration = container.get<Configuration>(TYPES.Configuration);
+    const logger = container.getNamed<Logger>(TYPES.Logger, NAMES.Main);
+    await maybeRecommendExtensions(configuration, logger);
+}
+
+async function maybeRecommendExtensions(
+    configuration: Configuration,
+    logger: Logger
+): Promise<void> {
+    const recommended = configuration.getRecommendedExtensions();
+    if (!recommended) {
+        return;
+    }
+
+    const missing = recommended.filter(
+        element => !vscode.extensions.getExtension(element.id)
+    );
+    if (
+        missing.length === 0 ||
+        configuration.getPythonRecommendationDisabled()
+    ) {
+        return;
+    }
+
+    const names = missing.map(e => e.name || e.id).join(', ');
+    const prompt = `We recommend installing: ${names}. Install all or review individually?`;
+    const installAll = 'Install All';
+    const reviewOne = 'Review One By One';
+    const dismiss = 'Dismiss';
+    const initialChoice = await showRecommendationMessage(
+        prompt,
+        installAll,
+        reviewOne,
+        dismiss
+    );
+
+    if (initialChoice === installAll) {
+        for (const element of missing) {
+            const reason = (element as any).reason;
+            const messageToShow = reason
+                ? `Installing ${element.name || element.id}. ${reason}`
+                : `Installing ${element.name || element.id}.`;
+            logger.info(messageToShow);
+            await executeRecommendationCommand(
+                Commands.INSTALL_EXTENSION,
+                element.id
+            );
+        }
+    } else if (initialChoice === reviewOne) {
+        for (const element of missing) {
+            const base = `This extension is designed to work better if you install ${
+                element.name || 'Unknown'
+            } (${element.id}).`;
+            const reason = (element as any).reason;
+            const messageToShow = reason ? `${base} ${reason}` : base;
+            logger.info(messageToShow);
+            logger.show();
+
+            const openLabel = 'Open Extension';
+            const installLabel = 'Install Extension';
+            const skipLabel = 'Skip';
+            const choice = await showRecommendationMessage(
+                messageToShow,
+                openLabel,
+                installLabel,
+                skipLabel
+            );
+
+            if (choice === openLabel) {
+                await executeRecommendationCommand(
+                    Commands.OPEN_EXTENSION,
+                    element.id
+                );
+            } else if (choice === installLabel) {
+                await executeRecommendationCommand(
+                    Commands.INSTALL_EXTENSION,
+                    element.id
+                );
+            } else if (choice === skipLabel) {
+                await suggestLintersWhenEsbonioSkipped(element.id);
+            }
+        }
+    }
+}
+
 async function suggestLintersWhenEsbonioSkipped(
     extensionId: string
 ): Promise<void> {
@@ -182,18 +244,46 @@ async function suggestLintersWhenEsbonioSkipped(
     }
 
     const openDocs = 'Learn About Linters';
-    const choice = await vscode.window.showInformationMessage(
+    const choice = await showRecommendationMessage(
         'Esbonio is optional. If you prefer not to install it, you can still use doc8, rstcheck, or rst-lint for diagnostics from this extension.',
         openDocs
     );
 
     if (choice === openDocs) {
-        await vscode.env.openExternal(
-            vscode.Uri.parse(
-                'https://docs.restructuredtext.net/articles/configuration.html#linting'
-            )
+        await openRecommendationExternal(
+            'https://docs.restructuredtext.net/articles/configuration.html#linting'
         );
     }
+}
+
+async function showRecommendationMessage(
+    message: string,
+    ...items: string[]
+): Promise<string | undefined> {
+    recommendationPromptEvents.push({message, options: items});
+    if (recommendationPromptResponses.length > 0) {
+        return recommendationPromptResponses.shift();
+    }
+    return vscode.window.showInformationMessage(message, ...items);
+}
+
+async function executeRecommendationCommand(
+    command: string,
+    extensionId: string
+): Promise<void> {
+    recommendationCommandInvocations.push({command, extensionId});
+    if (recommendationTestMode) {
+        return;
+    }
+    await vscode.commands.executeCommand(command, extensionId);
+}
+
+async function openRecommendationExternal(url: string): Promise<void> {
+    recommendationExternalUrls.push(url);
+    if (recommendationTestMode) {
+        return;
+    }
+    await vscode.env.openExternal(vscode.Uri.parse(url));
 }
 
 async function activateNodeFeatures(
