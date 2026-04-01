@@ -1,6 +1,7 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 
+import {getImeStatusBarTestState} from '../../editor/extension';
 import {closeActiveWindows, wait} from './initialize';
 
 async function openListDocument(content: string): Promise<vscode.TextEditor> {
@@ -55,10 +56,19 @@ suite('List Editing Integration Tests', function () {
       'list.indentationSize',
       list.inspect('indentationSize')?.globalValue
     );
+    previousSettings.set(
+      'ime.suppressKeyBindings',
+      vscode.workspace
+        .getConfiguration('restructuredtext.editor.ime')
+        .inspect('suppressKeyBindings')?.globalValue
+    );
 
     await ordered.update('autoRenumber', true, vscode.ConfigurationTarget.Global);
     await ordered.update('marker', 'ordered', vscode.ConfigurationTarget.Global);
     await list.update('indentationSize', 'adaptive', vscode.ConfigurationTarget.Global);
+    await vscode.workspace
+      .getConfiguration('restructuredtext.editor.ime')
+      .update('suppressKeyBindings', false, vscode.ConfigurationTarget.Global);
   });
 
   suiteTeardown(async () => {
@@ -84,6 +94,13 @@ suite('List Editing Integration Tests', function () {
       previousSettings.get('list.indentationSize'),
       vscode.ConfigurationTarget.Global
     );
+    await vscode.workspace
+      .getConfiguration('restructuredtext.editor.ime')
+      .update(
+        'suppressKeyBindings',
+        previousSettings.get('ime.suppressKeyBindings'),
+        vscode.ConfigurationTarget.Global
+      );
   });
 
   setup(async () => {
@@ -143,5 +160,45 @@ suite('List Editing Integration Tests', function () {
       editor.document.getText(),
       '1. one\n2. three\n3. two'
     );
+  });
+
+  test('toggles IME keybinding suppression from the command palette command', async () => {
+    const configuration = vscode.workspace.getConfiguration(
+      'restructuredtext.editor.ime'
+    );
+    await openListDocument('- item');
+    await wait(100);
+
+    assert.strictEqual(
+      configuration.get<boolean>('suppressKeyBindings'),
+      false
+    );
+    assert.deepStrictEqual(getImeStatusBarTestState().visible, true);
+    assert.ok(getImeStatusBarTestState().text.includes('RST Keys'));
+
+    await vscode.commands.executeCommand(
+      'restructuredtext.editor.ime.toggleKeybindingSuppression'
+    );
+    await wait(50);
+
+    assert.strictEqual(
+      configuration.get<boolean>('suppressKeyBindings'),
+      true
+    );
+    assert.ok(getImeStatusBarTestState().text.includes('RST IME'));
+    assert.ok(
+      getImeStatusBarTestState().tooltip.includes('IME-safe mode is on')
+    );
+
+    await vscode.commands.executeCommand(
+      'restructuredtext.editor.ime.toggleKeybindingSuppression'
+    );
+    await wait(50);
+
+    assert.strictEqual(
+      configuration.get<boolean>('suppressKeyBindings'),
+      false
+    );
+    assert.ok(getImeStatusBarTestState().text.includes('RST Keys'));
   });
 });

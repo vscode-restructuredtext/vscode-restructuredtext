@@ -78,7 +78,7 @@
       {
         "command": "restructuredtext.editor.listEditing.onEnterKey",
         "key": "enter",
-        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible && vim.mode != 'Normal' && vim.mode != 'Visual' && vim.mode != 'VisualBlock' && vim.mode != 'VisualLine' && vim.mode != 'SearchInProgressMode' && vim.mode != 'CommandlineInProgress' && vim.mode != 'Replace' && vim.mode != 'EasyMotionMode' && vim.mode != 'EasyMotionInputMode' && vim.mode != 'SurroundInputMode'"
+        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible && !config.restructuredtext.editor.ime.suppressKeyBindings && vim.mode != 'Normal' && vim.mode != 'Visual' && vim.mode != 'VisualBlock' && vim.mode != 'VisualLine' && vim.mode != 'SearchInProgressMode' && vim.mode != 'CommandlineInProgress' && vim.mode != 'Replace' && vim.mode != 'EasyMotionMode' && vim.mode != 'EasyMotionInputMode' && vim.mode != 'SurroundInputMode'"
       },
       {
         "command": "restructuredtext.editor.listEditing.onCtrlEnterKey",
@@ -94,7 +94,7 @@
       {
         "command": "restructuredtext.editor.listEditing.onBackspaceKey",
         "key": "backspace",
-        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible && vim.mode != 'Normal' && vim.mode != 'Visual' && vim.mode != 'VisualBlock' && vim.mode != 'VisualLine' && vim.mode != 'SearchInProgressMode' && vim.mode != 'CommandlineInProgress' && vim.mode != 'Replace' && vim.mode != 'EasyMotionMode' && vim.mode != 'EasyMotionInputMode' && vim.mode != 'SurroundInputMode'"
+        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible && !config.restructuredtext.editor.ime.suppressKeyBindings && vim.mode != 'Normal' && vim.mode != 'Visual' && vim.mode != 'VisualBlock' && vim.mode != 'VisualLine' && vim.mode != 'SearchInProgressMode' && vim.mode != 'CommandlineInProgress' && vim.mode != 'Replace' && vim.mode != 'EasyMotionMode' && vim.mode != 'EasyMotionInputMode' && vim.mode != 'SurroundInputMode'"
       },
       {
         "command": "restructuredtext.editor.listEditing.onMoveLineUp",
@@ -105,6 +105,12 @@
         "command": "restructuredtext.editor.listEditing.onMoveLineDown",
         "key": "alt+down",
         "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
+      },
+      {
+        "command": "restructuredtext.editor.ime.toggleKeybindingSuppression",
+        "key": "ctrl+alt+\\",
+        "mac": "cmd+alt+\\",
+        "when": "editorTextFocus && editorLangId == restructuredtext"
       },
       {
         "command": "restructuredtext.editor.listEditing.onCopyLineUp",
@@ -138,7 +144,7 @@
       {
         "command": "resttext.key.enter",
         "key": "enter",
-        "when": "resttext.enter.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext"
+        "when": "resttext.enter.enabled && editorTextFocus && !suggestWidgetVisible && !config.restructuredtext.editor.ime.suppressKeyBindings && editorLangId==restructuredtext"
       },
       {
         "command": "resttext.key.shift.enter",
@@ -208,6 +214,11 @@
         "command": "resttext.key.shift.tab",
         "title": "%resttext.key.shift.tab.title%",
         "when": "resttext.shift.tab.enabled && editorTextFocus && !inSnippetMode && !suggestWidgetVisible && editorLangId==restructuredtext"
+      },
+      {
+        "category": "reStructuredText",
+        "command": "restructuredtext.editor.ime.toggleKeybindingSuppression",
+        "title": "%restructuredtext.editor.ime.toggleKeybindingSuppression.title%"
       }
     ],
     "menus": {
@@ -454,6 +465,12 @@
               "%config.orderedList.marker.enumDescriptions.one%",
               "%config.orderedList.marker.enumDescriptions.ordered%"
             ]
+          },
+          "restructuredtext.editor.ime.suppressKeyBindings": {
+            "type": "boolean",
+            "default": false,
+            "markdownDescription": "%config.editor.ime.suppressKeyBindings.description%",
+            "scope": "application"
           },
           "restructuredtext.experimental": {
             "type": "boolean",
