@@ -199,6 +199,30 @@ export class Python {
         return false;
     }
 
+    public async checkRstformatInstall(): Promise<boolean> {
+        try {
+            await this.exec('-m', 'pip', 'show', 'rstformat');
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    public async installRstformat(): Promise<void> {
+        try {
+            await this.exec('-m', 'pip', 'install', 'rstformat');
+            this.logger.info('Finished installing rstformat');
+            vscode.window.showInformationMessage(
+                'The formatter rstformat is installed.'
+            );
+        } catch (e) {
+            this.logger.error('Failed to install rstformat');
+            vscode.window.showErrorMessage(
+                'Could not install rstformat. Please run `pip install rstformat` to use the formatter, or check your Python path.'
+            );
+        }
+    }
+
     public exec(...args: string[]): Promise<string> {
         const cmd = [this.pythonPath, ...args];
         return new Promise<string>((resolve, reject) => {

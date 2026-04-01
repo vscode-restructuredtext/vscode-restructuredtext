@@ -8,10 +8,13 @@ import {
 } from './commands';
 
 import {EditorCommands, VSCodeInput} from './link';
+import {ReStructuredTextFormattingProvider} from './formatter';
 import {TableEditor} from './tableEditor';
 import {underline} from './underline';
 import * as listEditing from './listEditing';
 import {setContext} from './setContext';
+import {Python} from '../util/python';
+import {Logger} from '../util/logger';
 
 const IME_SUPPRESSION_COMMAND =
     'restructuredtext.editor.ime.toggleKeybindingSuppression';
@@ -82,7 +85,56 @@ function updateImeStatusBar(
     item.show();
 }
 
-export async function activate(context: vscode.ExtensionContext) {
+function registerFormatter(context: vscode.ExtensionContext): void {
+    const formatter = new ReStructuredTextFormattingProvider();
+    const formatterSelector: vscode.DocumentSelector = [
+        {language: 'restructuredtext', scheme: 'file'},
+        {language: 'restructuredtext', scheme: 'untitled'},
+        {language: 'restructuredtext', scheme: 'vscode-userdata'},
+    ];
+    context.subscriptions.push(
+        vscode.languages.registerDocumentFormattingEditProvider(
+            formatterSelector,
+            formatter
+        ),
+        vscode.languages.registerDocumentRangeFormattingEditProvider(
+            formatterSelector,
+            formatter
+        )
+    );
+}
+
+async function promptRstformatInstall(
+    context: vscode.ExtensionContext,
+    python: any
+): Promise<boolean> {
+    const selected = await vscode.window.showInformationMessage(
+        'The reStructuredText formatter (rstformat) is not installed. Would you like to install it now?',
+        'Install',
+        'Learn More',
+        'Disable Formatter'
+    );
+
+    if (selected === 'Install') {
+        await python.installRstformat();
+        return true;
+    } else if (selected === 'Learn More') {
+        vscode.env.openExternal(
+            vscode.Uri.parse('https://github.com/lextudio/rstformat#installation')
+        );
+        return false;
+    } else if (selected === 'Disable Formatter') {
+        return false;
+    }
+
+    return false;
+}
+
+export async function activate(
+    context: vscode.ExtensionContext,
+    python?: Python,
+    logger?: Logger
+) {
     const imeStatusBar = vscode.window.createStatusBarItem(
         'restructuredtext.editor.ime.status',
         vscode.StatusBarAlignment.Right,
@@ -111,6 +163,30 @@ export async function activate(context: vscode.ExtensionContext) {
 
     const editorCommands = new EditorCommands(new VSCodeInput());
     editorCommands.register(context);
+
+    // Formatter support with rstformat availability check
+    if (python && logger) {
+        const rstformatAvailable = await python.checkRstformatInstall();
+
+        if (!rstformatAvailable) {
+            const shouldEnable = await promptRstformatInstall(context, python);
+            if (shouldEnable) {
+                // After installation, check again
+                if (!await python.checkRstformatInstall()) {
+                    logger.warning(
+                        'rstformat installation failed or was cancelled'
+                    );
+                } else {
+                    registerFormatter(context);
+                }
+            }
+        } else {
+            registerFormatter(context);
+        }
+    } else {
+        // If Python not available (web mode), still register formatter but it will fail gracefully
+        registerFormatter(context);
+    }
 
     // Section creation support.
     context.subscriptions.push(

@@ -472,6 +472,31 @@
             "markdownDescription": "%config.editor.ime.suppressKeyBindings.description%",
             "scope": "application"
           },
+          "restructuredtext.formatter.normalizeSectionUnderlines": {
+            "type": "boolean",
+            "default": true,
+            "markdownDescription": "%config.formatter.normalizeSectionUnderlines.description%",
+            "scope": "resource"
+          },
+          "restructuredtext.formatter.normalizeSectionSpacing": {
+            "type": "boolean",
+            "default": true,
+            "markdownDescription": "%config.formatter.normalizeSectionSpacing.description%",
+            "scope": "resource"
+          },
+          "restructuredtext.formatter.trimTrailingWhitespace": {
+            "type": "boolean",
+            "default": true,
+            "markdownDescription": "%config.formatter.trimTrailingWhitespace.description%",
+            "scope": "resource"
+          },
+          "restructuredtext.formatter.maxConsecutiveBlankLines": {
+            "type": "integer",
+            "default": 2,
+            "minimum": 0,
+            "markdownDescription": "%config.formatter.maxConsecutiveBlankLines.description%",
+            "scope": "resource"
+          },
           "restructuredtext.experimental": {
             "type": "boolean",
             "default": false,

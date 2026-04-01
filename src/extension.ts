@@ -96,7 +96,6 @@ export async function activate(
         'Please visit https://docs.restructuredtext.net to learn how to configure the extension.'
     );
 
-    await EditorFeatures.activate(context);
 
     const configuration = container.get<Configuration>(TYPES.Configuration);
     // Check for conflicting extensions now and whenever the extensions list changes
@@ -294,6 +293,8 @@ async function activateNodeFeatures(
     const python = container.get<Python>(TYPES.Python);
     await python.setup();
 
+    // Re-activate editor features with Python available for rstformat check
+    await EditorFeatures.activate(context, python, logger);
     await LinterFeatures.activate(context, python, logger);
 }
 
@@ -305,5 +306,6 @@ async function activateWebFeatures(
     logger.warning(
         'Running in web mode - some features like linting are disabled'
     );
-    // ...web-specific initialization...
+    // Activate editor features without Python (formatter won't work)
+    await EditorFeatures.activate(context, undefined, logger);
 }
