@@ -17,9 +17,21 @@ that VS Code provides.
 - Code Snippets
 - Editor Enhancement
 - Linter Integration
+- **Built-in Formatter** (integrated with the editor)
 - Syntax Highlighting (via [dependent extension](https://marketplace.visualstudio.com/items?itemName=trond-snekvik.simple-rst) by Trond Snekvik)
 - IntelliSense (via [dependent extension](https://marketplace.visualstudio.com/items?itemName=swyddfa.esbonio) by Alex Carney)
 - Live Preview (via [dependent extension](https://marketplace.visualstudio.com/items?itemName=swyddfa.esbonio) by Alex Carney)
+
+### Standalone Formatter (CLI)
+
+The formatter engine from this extension is also available as a **standalone CLI tool** and Python package called [**rstformat**](./python/). It can be used in:
+
+- Pre-commit hooks
+- CI/CD pipelines  
+- Text editors (Neovim, Emacs, etc.)
+- Any Python project
+
+See the [rstformat documentation](./python/README.md) for installation and usage details.
 
 Frequent Asked Questions can be found [here](https://github.com/vscode-restructuredtext/vscode-restructuredtext/issues?q=is%3Aissue+label%3A%22faq+candidate%22+).
 
