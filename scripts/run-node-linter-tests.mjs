@@ -14,6 +14,11 @@ const matrix = [
   {target: 'rst-lint', version: '1.4.0'},
   {target: 'rst-lint', version: '2.0.2'},
 ];
+const testFiles = {
+  doc8: 'doc8.integration.test.js',
+  rstcheck: 'rstcheck.integration.test.js',
+  'rst-lint': 'rstLint.integration.test.js',
+};
 
 function run(command, args, env = process.env) {
   const result = spawnSync(command, args, {
@@ -23,11 +28,13 @@ function run(command, args, env = process.env) {
   });
 
   if (result.status !== 0) {
+    console.error(`Command failed: ${command} ${args.join(' ')}`);
     process.exit(result.status ?? 1);
   }
 }
 
 for (const entry of matrix) {
+  console.log(`\n=== ${entry.target} ${entry.version} ===`);
   run('node', ['./scripts/setup-linter-test-env.mjs', entry.target, entry.version]);
 
   const metadataPath = path.join(
@@ -42,6 +49,7 @@ for (const entry of matrix) {
     ...process.env,
     PATH: `${metadata.binDir}${path.delimiter}${process.env.PATH ?? ''}`,
     RST_LINTER_TESTS: '1',
+    RST_TEST_FILE_GLOB: testFiles[metadata.target],
     RST_LINTER_TEST_TARGET: metadata.target,
     RST_LINTER_TEST_VERSION: metadata.version,
     RST_LINTER_TEST_EXECUTABLE: metadata.executablePath,

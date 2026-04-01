@@ -10,37 +10,45 @@ export function run(): Promise<void> {
   });
 
   const testsRoot = path.resolve(__dirname, '..');
+  const defaultTestPatterns = [
+    'activation.integration.test.js',
+    'doc8.integration.test.js',
+    'listEditing.integration.test.js',
+    'rstLint.integration.test.js',
+    'rstcheck.integration.test.js',
+    'underline.test.js',
+  ];
+  const testPattern = process.env.RST_TEST_FILE_GLOB || defaultTestPatterns;
 
   return new Promise(async (c, e) => {
-    await vscode.workspace
-      .getConfiguration('restructuredtext')
-      .update(
-        'pythonRecommendation.disabled',
-        true,
-        vscode.ConfigurationTarget.Global
-      );
+    try {
+      await vscode.workspace
+        .getConfiguration('restructuredtext')
+        .update(
+          'pythonRecommendation.disabled',
+          true,
+          vscode.ConfigurationTarget.Global
+        );
 
-    glob('**/**.test.js', {cwd: testsRoot}, (err, files) => {
-      if (err) {
-        return e(err);
+      const files = (await glob(testPattern, {cwd: testsRoot})).sort();
+      if (files.length === 0) {
+        throw new Error(
+          `No test files matched ${JSON.stringify(testPattern)} in ${testsRoot}`
+        );
       }
-
-      // Add files to the test suite
       files.forEach(f => mocha.addFile(path.resolve(testsRoot, f)));
 
-      try {
-        // Run the mocha test
-        mocha.run(failures => {
-          if (failures > 0) {
-            e(new Error(`${failures} tests failed.`));
-          } else {
-            c();
-          }
-        });
-      } catch (err) {
-        console.error(err);
-        e(err);
-      }
-    });
+      mocha.run(failures => {
+        void vscode.commands.executeCommand('workbench.action.closeWindow');
+        if (failures > 0) {
+          e(new Error(`${failures} tests failed.`));
+        } else {
+          c();
+        }
+      });
+    } catch (err) {
+      console.error(err);
+      e(err);
+    }
   });
 }
