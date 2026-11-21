@@ -18,6 +18,7 @@ module.exports = [
             'node_modules/',
             'out/',
             'src/test/',
+            'test/',
             'test-resources/',
             '**/*.d.ts',
         ],

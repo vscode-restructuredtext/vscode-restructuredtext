@@ -1,6 +1,8 @@
 import * as vscode from 'vscode';
 import * as cp from 'child_process';
 
+import {getRstformatEnv} from '../util/rstformatEnv';
+
 const DEFAULT_ADORNMENTS = '#*=-^"\'`:.~_+';
 const DEFAULT_MAX_BLANK_LINES = 2;
 
@@ -98,16 +100,23 @@ async function formatWithRstformat(
                 return;
             }
 
-            const proc = cp.spawn('rstformat', args);
+            const proc = cp.spawn('rstformat', args, {
+                env: getRstformatEnv(),
+            });
             let output = '';
             let errorOutput = '';
 
-            proc.stdout?.on('data', (data: Buffer) => {
-                output += data.toString();
+            // Decode incrementally so multi-byte characters split across
+            // chunks are not corrupted.
+            proc.stdout?.setEncoding('utf8');
+            proc.stderr?.setEncoding('utf8');
+
+            proc.stdout?.on('data', (data: string) => {
+                output += data;
             });
 
-            proc.stderr?.on('data', (data: Buffer) => {
-                errorOutput += data.toString();
+            proc.stderr?.on('data', (data: string) => {
+                errorOutput += data;
             });
 
             proc.on('error', error => {

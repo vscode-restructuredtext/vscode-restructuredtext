@@ -24,14 +24,20 @@ that VS Code provides.
 
 ### Standalone Formatter (CLI)
 
-The formatter engine from this extension is also available as a **standalone CLI tool** and Python package called [**rstformat**](./python/). It can be used in:
+The formatter engine from this extension is also available as a **standalone CLI tool** and Python package called [**rstformat**](https://pypi.org/project/rstformat/). Install it with:
+
+```bash
+pip install rstformat
+```
+
+It can be used in:
 
 - Pre-commit hooks
-- CI/CD pipelines  
+- CI/CD pipelines
 - Text editors (Neovim, Emacs, etc.)
 - Any Python project
 
-See the [rstformat documentation](./python/README.md) for installation and usage details.
+See the [rstformat documentation](https://github.com/lextudio/rstformat) for more details.
 
 Frequent Asked Questions can be found [here](https://github.com/vscode-restructuredtext/vscode-restructuredtext/issues?q=is%3Aissue+label%3A%22faq+candidate%22+).
 

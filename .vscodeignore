@@ -1,6 +1,11 @@
 .github/**
 .vscode/**
 .vscode-test/**
+.venv-linter-tests/**
+.tmp-linter-matrix/**
+.claude/**
+*.tsbuildinfo
+test/**
 test-resources/**
 typings/**
 src/**/*.ts
@@ -20,5 +25,6 @@ build.bat
 .travis.yml
 *.ps1
 .husky/
-.eslintignore
+eslint.config.js
+.prettierrc.js
 esbuild.js
