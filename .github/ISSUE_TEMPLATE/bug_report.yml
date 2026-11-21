@@ -7,6 +7,8 @@ body:
       value: |
         Before moving on you might follow [the troubleshooting guide](https://docs.restructuredtext.net/articles/troubleshooting.html) to rule out common issues.
         
+        Only official Visual Studio Code from the Visual Studio Marketplace is supported. Other environments (VSCodium, Cursor, code-server, and similar forks or repackagings) are not supported; see [#463](https://github.com/vscode-restructuredtext/vscode-restructuredtext/issues/463).
+
         If troubleshooting does not reveal any useful information, please fill out the bug report below.
         
         To report an issue related to live preview, please go to [this repo](https://github.com/swyddfa/esbonio/issues) instead.
