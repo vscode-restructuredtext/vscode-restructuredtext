@@ -322,9 +322,8 @@ export class TableEditor {
                     } else if (!prevContent.startsWith('|')) {
                         prevContent = `| ${prevContent}`;
                     }
-                    cellContents[cellContents.length - 1][
-                        columnIndex
-                    ] = `${prevContent}\n| ${content}`;
+                    cellContents[cellContents.length - 1][columnIndex] =
+                        `${prevContent}\n| ${content}`;
                     columnIndex += 1;
                 }
             }

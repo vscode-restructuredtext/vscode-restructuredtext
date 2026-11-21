@@ -47,21 +47,31 @@ export function isPlatformWeb(): boolean {
 }
 
 // Create a decorator that can be used to mark commands as web-compatible or not
-export function webCommand(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+export function webCommand(
+    target: any,
+    propertyKey: string,
+    descriptor: PropertyDescriptor
+) {
     const originalMethod = descriptor.value;
-    descriptor.value = function(...args: any[]) {
+    descriptor.value = function (...args: any[]) {
         // This runs in both environments
         return originalMethod.apply(this, args);
     };
     return descriptor;
 }
 
-export function desktopCommand(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+export function desktopCommand(
+    target: any,
+    propertyKey: string,
+    descriptor: PropertyDescriptor
+) {
     const originalMethod = descriptor.value;
-    descriptor.value = function(...args: any[]) {
+    descriptor.value = function (...args: any[]) {
         // Check if we're in a web environment
         if (isPlatformWeb()) {
-            vscode.window.showInformationMessage('This command is not available in web mode');
+            vscode.window.showInformationMessage(
+                'This command is not available in web mode'
+            );
             return;
         }
         // Only run in desktop environment

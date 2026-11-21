@@ -1,6 +1,5 @@
 'use strict';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {injectable} from 'inversify';
 import * as vscode from 'vscode';
 import * as path from 'path';
@@ -9,7 +8,6 @@ import {getConfig} from './config';
 import {Constants} from '../constants';
 
 @injectable()
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export class Configuration {
     public getConflictingExtensions(resource?: Uri): string[] | undefined {
         return this.loadAnySetting<string[]>(
@@ -22,11 +20,9 @@ export class Configuration {
     public getRecommendedExtensions(
         resource?: Uri
     ): {id: string; name?: string; reason?: string}[] | undefined {
-        return this.loadAnySetting<{id: string; name?: string; reason?: string}[]>(
-            'recommendedExtensions',
-            undefined,
-            resource
-        );
+        return this.loadAnySetting<
+            {id: string; name?: string; reason?: string}[]
+        >('recommendedExtensions', undefined, resource);
     }
 
     public getDoc8Path(resource?: Uri): string | undefined {

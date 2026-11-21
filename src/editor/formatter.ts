@@ -86,7 +86,7 @@ async function formatWithRstformat(
     text: string,
     settings: FormatterSettings
 ): Promise<string> {
-    return new Promise<string>((resolve) => {
+    return new Promise<string>(resolve => {
         try {
             const args = buildRstformatArgs(settings);
 
@@ -110,14 +110,14 @@ async function formatWithRstformat(
                 errorOutput += data.toString();
             });
 
-            proc.on('error', (error) => {
+            proc.on('error', error => {
                 vscode.window.showErrorMessage(
                     `rstformat error: ${error.message}`
                 );
                 resolve(text);
             });
 
-            proc.on('close', (code) => {
+            proc.on('close', code => {
                 if (code === 0) {
                     resolve(output);
                 } else if (errorOutput) {
@@ -133,7 +133,8 @@ async function formatWithRstformat(
             proc.stdin?.write(text);
             proc.stdin?.end();
         } catch (error) {
-            const errorMsg = error instanceof Error ? error.message : String(error);
+            const errorMsg =
+                error instanceof Error ? error.message : String(error);
             vscode.window.showErrorMessage(
                 `rstformat formatting failed: ${errorMsg}`
             );
@@ -168,7 +169,9 @@ export class ReStructuredTextFormattingProvider
             return [];
         }
 
-        return [vscode.TextEdit.replace(fullDocumentRange(document), formatted)];
+        return [
+            vscode.TextEdit.replace(fullDocumentRange(document), formatted),
+        ];
     }
 
     async provideDocumentRangeFormattingEdits(

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 import {injectable} from 'inversify';
 import {getSystemInfo} from './systemInfo';
 
@@ -45,7 +45,6 @@ function isString(value: unknown): value is string {
 }
 
 @injectable()
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export class ConsoleLogger implements Logger {
     private trace?: Trace;
     public outputChannel: vscode.OutputChannel;
@@ -76,7 +75,10 @@ export class ConsoleLogger implements Logger {
         message: string,
         data?: unknown
     ): void {
-        const alwaysLog = category === 'ERROR' || category === 'WARNING' || category === 'INFO';
+        const alwaysLog =
+            category === 'ERROR' ||
+            category === 'WARNING' ||
+            category === 'INFO';
         if (alwaysLog || this.trace === Trace.Verbose) {
             this.appendLine(
                 `[${category} - ${new Date().toLocaleTimeString()}] ${message}`

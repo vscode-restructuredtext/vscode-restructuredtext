@@ -39,7 +39,11 @@ export function resetPromptedUnsupportedReleases(): void {
 
 export function setUpgradePromptTestResponses(responses: string[]): void {
     upgradePromptTestMode = true;
-    upgradePromptResponses.splice(0, upgradePromptResponses.length, ...responses);
+    upgradePromptResponses.splice(
+        0,
+        upgradePromptResponses.length,
+        ...responses
+    );
 }
 
 export async function promptUnsupportedReleaseForTests(
@@ -67,7 +71,12 @@ export async function activate(
     const configuration = container.get<Configuration>(TYPES.Configuration);
     const disabled = configuration.getLinterDisabled();
     if (disabled.indexOf('doc8') === -1) {
-        rstlintToDisable = await setupDoc8Linter(context, configuration, logger, python);
+        rstlintToDisable = await setupDoc8Linter(
+            context,
+            configuration,
+            logger,
+            python
+        );
     }
 
     if (disabled.indexOf('rstcheck') === -1) {
@@ -78,7 +87,9 @@ export async function activate(
         const rstlintPath = configuration.getRstLintPath();
         if (rstlintPath) {
             if (!(await python.checkRstLintInstall())) {
-                logger.warning("Didn't detect rst-lint module, skipping.. (explicit path configured)");
+                logger.warning(
+                    "Didn't detect rst-lint module, skipping.. (explicit path configured)"
+                );
                 return;
             }
         } else if (!(await python.checkRstLintInstall())) {
@@ -122,7 +133,9 @@ async function setupDoc8Linter(
     const doc8Path = configuration.getDoc8Path();
     if (doc8Path) {
         if (!(await python.checkDoc8Install())) {
-            logger.warning("Didn't detect doc8 module, skipping.. (explicit path configured)");
+            logger.warning(
+                "Didn't detect doc8 module, skipping.. (explicit path configured)"
+            );
             return false;
         }
     } else if (!(await python.checkDoc8Install())) {
@@ -166,7 +179,9 @@ async function setupRstCheckLinter(
     const rstcheckPath = configuration.getRstCheckPath();
     if (rstcheckPath) {
         if (!(await python.checkRstCheckInstall())) {
-            logger.warning("Didn't detect rstcheck module, skipping.. (explicit path configured)");
+            logger.warning(
+                "Didn't detect rstcheck module, skipping.. (explicit path configured)"
+            );
             return;
         }
     } else if (!(await python.checkRstCheckInstall())) {
@@ -373,9 +388,7 @@ async function getPythonEnvironmentInfo(
             }
 
             const api = extension.exports as {
-                getEnvironment?: (
-                    scope: vscode.Uri | undefined
-                ) => Promise<
+                getEnvironment?: (scope: vscode.Uri | undefined) => Promise<
                     | {
                           envId?: {managerId?: string};
                           execInfo?: {run?: {executable?: string}};
@@ -399,7 +412,9 @@ async function getPythonEnvironmentInfo(
         loggerDebugEnvironmentInfo(error);
     }
 
-    const inferredPython = inferPythonPathFromExecutable(configuredExecutablePath);
+    const inferredPython = inferPythonPathFromExecutable(
+        configuredExecutablePath
+    );
     if (inferredPython) {
         return {
             pythonPath: inferredPython,
@@ -422,7 +437,10 @@ async function isUvEnvironment(pythonPath: string): Promise<boolean> {
         return false;
     }
 
-    const cfgPath = path.join(path.dirname(path.dirname(pythonPath)), 'pyvenv.cfg');
+    const cfgPath = path.join(
+        path.dirname(path.dirname(pythonPath)),
+        'pyvenv.cfg'
+    );
     try {
         const fs = await import('fs');
         const contents = fs.readFileSync(cfgPath, 'utf8');

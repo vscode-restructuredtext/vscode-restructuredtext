@@ -96,7 +96,6 @@ export async function activate(
         'Please visit https://docs.restructuredtext.net to learn how to configure the extension.'
     );
 
-
     const configuration = container.get<Configuration>(TYPES.Configuration);
     // Check for conflicting extensions now and whenever the extensions list changes
     const checkConflicts = () => {

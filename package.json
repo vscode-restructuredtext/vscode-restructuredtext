@@ -539,28 +539,35 @@
   "devDependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
-    "@parcel/watcher": "^2.4.0",
+    "@parcel/watcher": "^2.6.0",
     "@studio/changes": "^2.2.0",
     "@types/lodash.throttle": "^4.1.4",
     "@types/node": "20.x",
     "@types/vscode": "^1.66.0",
-    "@typescript-eslint/eslint-plugin": "^5.43.0",
     "@vscode/test-electron": "^2.3.0",
-    "@vscode/test-web": "^0.0.67",
-    "@vscode/vsce": "^3.3.2",
+    "@vscode/test-web": "^0.0.81",
+    "@vscode/vsce": "^4.1.1",
     "esbuild": "^0.25.2",
-    "eslint": "^8.34.0",
-    "eslint-plugin": "^1.0.1",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prettier": "^4.2.1",
-    "glob": "^9.0.0",
-    "gts": "^3.1.1",
+    "eslint": "^9.39.5",
+    "glob": "^14.0.6",
+    "globals": "^14.0.0",
+    "gts": "^7.0.0",
     "husky": "^8.0.3",
-    "mocha": "^11.1.0",
+    "mocha": "^12.0.3",
     "path-browserify": "^1.0.1",
-    "ts-loader": "^9.5.2",
+    "ts-loader": "^9.6.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
+  },
+  "overrides": {
+    "mocha": {
+      "glob": "^14.0.6",
+      "minimatch": "^11.0.9"
+    },
+    "@vscode/vsce": {
+      "minimatch": "^11.0.9"
+    },
+    "tmp": "^0.2.7"
   },
   "main": "./dist/node/extension.js",
   "browser": "./dist/browser/extension.js",

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 const TYPES = {
     Logger: Symbol.for('Logger'),
     Python: Symbol.for('Python'),

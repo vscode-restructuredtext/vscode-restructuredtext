@@ -18,7 +18,8 @@ import {Logger} from '../util/logger';
 
 const IME_SUPPRESSION_COMMAND =
     'restructuredtext.editor.ime.toggleKeybindingSuppression';
-const IME_SUPPRESSION_SETTING = 'restructuredtext.editor.ime.suppressKeyBindings';
+const IME_SUPPRESSION_SETTING =
+    'restructuredtext.editor.ime.suppressKeyBindings';
 let imeStatusBarTestState: {
     visible: boolean;
     text: string;
@@ -120,7 +121,9 @@ async function promptRstformatInstall(
         return true;
     } else if (selected === 'Learn More') {
         vscode.env.openExternal(
-            vscode.Uri.parse('https://github.com/lextudio/rstformat#installation')
+            vscode.Uri.parse(
+                'https://github.com/lextudio/rstformat#installation'
+            )
         );
         return false;
     } else if (selected === 'Disable Formatter') {
@@ -172,7 +175,7 @@ export async function activate(
             const shouldEnable = await promptRstformatInstall(context, python);
             if (shouldEnable) {
                 // After installation, check again
-                if (!await python.checkRstformatInstall()) {
+                if (!(await python.checkRstformatInstall())) {
                     logger.warning(
                         'rstformat installation failed or was cancelled'
                     );
@@ -223,28 +226,25 @@ export async function activate(
     );
 
     context.subscriptions.push(
-        vscode.commands.registerCommand(
-            IME_SUPPRESSION_COMMAND,
-            async () => {
-                const configuration = vscode.workspace.getConfiguration(
-                    'restructuredtext.editor.ime'
-                );
-                const enabled = getImeSuppressionEnabled();
+        vscode.commands.registerCommand(IME_SUPPRESSION_COMMAND, async () => {
+            const configuration = vscode.workspace.getConfiguration(
+                'restructuredtext.editor.ime'
+            );
+            const enabled = getImeSuppressionEnabled();
 
-                await configuration.update(
-                    'suppressKeyBindings',
-                    !enabled,
-                    vscode.ConfigurationTarget.Global
-                );
+            await configuration.update(
+                'suppressKeyBindings',
+                !enabled,
+                vscode.ConfigurationTarget.Global
+            );
 
-                const state = !enabled ? 'enabled' : 'disabled';
-                updateImeStatusBar(imeStatusBar, vscode.window.activeTextEditor);
-                void vscode.window.setStatusBarMessage(
-                    `reStructuredText IME keybinding suppression ${state}`,
-                    3000
-                );
-            }
-        )
+            const state = !enabled ? 'enabled' : 'disabled';
+            updateImeStatusBar(imeStatusBar, vscode.window.activeTextEditor);
+            void vscode.window.setStatusBarMessage(
+                `reStructuredText IME keybinding suppression ${state}`,
+                3000
+            );
+        })
     );
 
     context.subscriptions.push(

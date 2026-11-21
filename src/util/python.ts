@@ -1,17 +1,15 @@
 'use strict';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import {inject, injectable, named} from 'inversify';
 import * as cp from 'child_process';
 import * as vscode from 'vscode';
 import {Uri} from 'vscode';
 import {Configuration} from './configuration';
 import {Logger} from './logger';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 import {NAMES, TYPES} from './../types';
 
 @injectable()
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export class Python {
     private version: 2 | 3 | null = null;
     private pythonPath: string | undefined;
@@ -87,11 +85,7 @@ export class Python {
 
     public async checkDoc8Version(): Promise<string> {
         try {
-            return await this.exec(
-                '-m',
-                'doc8',
-                '--version'
-            );
+            return await this.exec('-m', 'doc8', '--version');
         } catch (e) {
             return '0.0.0';
         }

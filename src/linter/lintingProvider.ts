@@ -118,9 +118,8 @@ export class LintingProvider {
     private async loadConfiguration(resource: vscode.Uri): Promise<void> {
         const oldExecutable =
             this.linterConfiguration && this.linterConfiguration.executable;
-        this.linterConfiguration = await this.linter.loadConfiguration(
-            resource
-        );
+        this.linterConfiguration =
+            await this.linter.loadConfiguration(resource);
 
         this.delayers = Object.create(null);
         if (this.executableNotFound) {
@@ -180,7 +179,7 @@ export class LintingProvider {
         if (!delayer) {
             delayer = new ThrottledDelayer<void>(
                 RunTrigger.from(this.linterConfiguration.runTrigger) ===
-                RunTrigger.onType
+                    RunTrigger.onType
                     ? 250
                     : 0
             );
