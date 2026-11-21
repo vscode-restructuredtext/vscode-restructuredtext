@@ -53,6 +53,7 @@ for (const entry of matrix) {
     RST_LINTER_TEST_TARGET: metadata.target,
     RST_LINTER_TEST_VERSION: metadata.version,
     RST_LINTER_TEST_EXECUTABLE: metadata.executablePath,
+    RST_TEST_PYTHON: metadata.pythonPath,
     RST_LINTER_TEST_SUPPRESS_PROMPTS: '1',
   });
 }

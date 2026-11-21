@@ -37,7 +37,9 @@ export class Python {
         resource: vscode.Uri,
         showInformation = true
     ): Promise<boolean> {
-        const path = await this.configuration.getPythonPath(resource);
+        const path =
+            process.env.RST_TEST_PYTHON ??
+            (await this.configuration.getPythonPath(resource));
         if (path) {
             this.pythonPath = `"${path}"`;
             if (await this.getVersion()) {
@@ -163,7 +165,7 @@ export class Python {
         try {
             return await this.exec(
                 '-c',
-                '"import restructuredtext_lint; print(restructuredtext_lint.__version__)"'
+                '"import importlib.metadata as m; print(m.version(\'restructuredtext-lint\'))"'
             );
         } catch (e) {
             return '0.0.0';

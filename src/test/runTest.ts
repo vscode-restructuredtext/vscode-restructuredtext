@@ -99,10 +99,15 @@ async function runTestsWithCli(
     '--user-data-dir=' + userDataDir,
   ];
   const timeoutMs = getTestTimeoutMs();
+  const resultFile = path.join(runProfileDir, 'test-results.json');
 
   await new Promise<void>((resolve, reject) => {
     const child = cp.spawn(cli, args, {
-      env: process.env,
+      env: {
+        ...process.env,
+        RST_TEST_MODE: '1',
+        RST_TEST_RESULT_FILE: resultFile,
+      },
       stdio: 'inherit',
       shell: process.platform === 'win32',
     });
@@ -136,7 +141,27 @@ async function runTestsWithCli(
       finished = true;
       clearTimeout(timeout);
       if (code === 0) {
-        resolve();
+        try {
+          const results = JSON.parse(fs.readFileSync(resultFile, 'utf8')) as {
+            failures?: number;
+            tests?: number;
+          };
+          if (results.failures && results.failures > 0) {
+            reject(
+              new Error(
+                `${results.failures} test(s) failed. Run profile: ${runProfileDir}`
+              )
+            );
+            return;
+          }
+          resolve();
+        } catch (error) {
+          reject(
+            new Error(
+              `The test runner did not report results (${error}). Run profile: ${runProfileDir}`
+            )
+          );
+        }
         return;
       }
 

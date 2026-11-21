@@ -26,7 +26,7 @@ export async function initConfig(ctx: vscode.ExtensionContext) {
         )
     );
 
-    if (isTrusted) {
+    if (isTrusted || process.env.RST_TEST_MODE === '1') {
         return;
     }
     const ignored = ignoredWorkspaceConfig(

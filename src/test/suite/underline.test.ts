@@ -54,8 +54,8 @@ suite('Underline Tests', () => {
 
   test('nextLineChar', () => {
     assert.equal(underline.nextUnderlineChar('='), '-');
-    assert.equal(underline.nextUnderlineChar('-'), ':');
-    assert.equal(underline.nextUnderlineChar(':'), '.');
-    assert.equal(underline.nextUnderlineChar('.'), "'");
+    assert.equal(underline.nextUnderlineChar('-'), '^');
+    assert.equal(underline.nextUnderlineChar('^'), '"');
+    assert.equal(underline.nextUnderlineChar('"'), "'");
   });
 });

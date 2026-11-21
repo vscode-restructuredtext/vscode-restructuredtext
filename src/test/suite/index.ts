@@ -1,7 +1,20 @@
+import * as fs from 'fs';
 import * as path from 'path';
 import Mocha from 'mocha';
 import {glob} from 'glob';
 import * as vscode from 'vscode';
+
+function writeResults(failures: number, tests: number): void {
+  const file = process.env.RST_TEST_RESULT_FILE;
+  if (!file) {
+    return;
+  }
+  try {
+    fs.writeFileSync(file, JSON.stringify({failures, tests}));
+  } catch (error) {
+    console.error(`Failed to write test results: ${error}`);
+  }
+}
 
 export function run(): Promise<void> {
   // Create the mocha test
@@ -9,7 +22,8 @@ export function run(): Promise<void> {
     ui: 'tdd',
   });
 
-  const testsRoot = path.resolve(__dirname, '..');
+  const testsRoot = path.resolve(__dirname);
+  process.env.RST_TEST_MODE = '1';
   const defaultTestPatterns = [
     'activation.integration.test.js',
     'doc8.integration.test.js',
@@ -38,16 +52,19 @@ export function run(): Promise<void> {
       }
       files.forEach(f => mocha.addFile(path.resolve(testsRoot, f)));
 
-      mocha.run(failures => {
-        void vscode.commands.executeCommand('workbench.action.closeWindow');
+      const runner = mocha.run(failures => {
+        writeResults(failures, runner.stats?.tests ?? 0);
         if (failures > 0) {
           e(new Error(`${failures} tests failed.`));
         } else {
-          c();
+          void vscode.commands
+            .executeCommand('workbench.action.closeWindow')
+            .then(() => c(), c);
         }
       });
     } catch (err) {
       console.error(err);
+      writeResults(1, 0);
       e(err);
     }
   });

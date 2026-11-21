@@ -2,9 +2,15 @@ import * as assert from 'assert';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
-import {closeActiveWindows, openFile, samplePath} from './initialize';
+import {
+  closeActiveWindows,
+  openFile,
+  samplePath,
+  saveDocument,
+} from './initialize';
 import {
   clearUnsupportedReleasePrompts,
+  triggerUnsupportedReleasePrompt,
   diagnosticCode,
   getExpectedPythonFromExecutable,
   linterTestExecutable,
@@ -23,6 +29,7 @@ suite('doc8 Integration Tests', function () {
   const previousSettings = new Map<string, unknown>();
 
   suiteSetup(async function () {
+    clearUnsupportedReleasePrompts();
     if (!linterTestsEnabled || linterTestTarget !== 'doc8') {
       this.skip();
     }
@@ -36,9 +43,14 @@ suite('doc8 Integration Tests', function () {
       previousSettings.set(section, config.inspect(section)?.globalValue);
     }
 
-    await updateGlobalSetting('linter.run', 'onSave');
+    await updateGlobalSetting('linter.run', 'onType');
     await updateGlobalSetting('linter.disabledLinters', ['rstcheck', 'rst-lint']);
     await updateGlobalSetting('linter.doc8.executablePath', linterTestExecutable);
+
+    await vscode.extensions
+      .getExtension('lextudio.restructuredtext')
+      ?.activate();
+
   });
 
   suiteTeardown(async () => {
@@ -49,7 +61,6 @@ suite('doc8 Integration Tests', function () {
 
   setup(async () => {
     await closeActiveWindows();
-    clearUnsupportedReleasePrompts();
   });
 
   teardown(async () => {
@@ -63,6 +74,7 @@ suite('doc8 Integration Tests', function () {
     const editor = await openFile(
       path.join(samplePath, 'linter', 'doc8', 'violations.rst')
     );
+    await saveDocument(editor);
 
     const diagnostics = await waitForDiagnostics(
       editor.document.uri,
@@ -78,9 +90,20 @@ suite('doc8 Integration Tests', function () {
     if (linterTestVersion.startsWith('0.')) {
       this.skip();
     }
-    const editor = await openFile(
-      path.join(samplePath, 'linter', 'doc8-configured', 'configured.rst')
+
+    const fileSettings = vscode.workspace.getConfiguration('files');
+    const previousTrim = fileSettings.inspect('trimTrailingWhitespace');
+    await fileSettings.update(
+      'trimTrailingWhitespace',
+      false,
+      vscode.ConfigurationTarget.Global
     );
+
+    try {
+      const editor = await openFile(
+        path.join(samplePath, 'linter', 'doc8-configured', 'configured.rst')
+      );
+      await saveDocument(editor);
 
     const diagnostics = await waitForDiagnostics(
       editor.document.uri,
@@ -89,9 +112,16 @@ suite('doc8 Integration Tests', function () {
     );
     const codes = diagnostics.map(value => diagnosticCode(value.code));
 
-    assert.ok(diagnostics.length > 0);
-    assert.ok(codes.includes('D002'));
-    assert.ok(!codes.includes('D001'));
+      assert.ok(diagnostics.length > 0);
+      assert.ok(codes.includes('D002'));
+      assert.ok(!codes.includes('D001'));
+    } finally {
+      await fileSettings.update(
+        'trimTrailingWhitespace',
+        previousTrim?.globalValue,
+        vscode.ConfigurationTarget.Global
+      );
+    }
   });
 
   test(`prompts to upgrade unsupported doc8 ${linterTestVersion}`, async function () {
@@ -102,7 +132,14 @@ suite('doc8 Integration Tests', function () {
     const editor = await openFile(
       path.join(samplePath, 'linter', 'doc8', 'violations.rst')
     );
+    await saveDocument(editor);
     const promptKey = `doc8:${linterTestVersion}`;
+    clearUnsupportedReleasePrompts();
+    await triggerUnsupportedReleasePrompt(
+      'doc8',
+      linterTestVersion,
+      linterTestExecutable
+    );
     const prompts = await waitForUnsupportedReleasePrompt(promptKey);
     const command = await waitForUpgradeCommand(promptKey);
     const pythonPath = getExpectedPythonFromExecutable(linterTestExecutable);

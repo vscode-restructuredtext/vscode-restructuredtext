@@ -13,7 +13,7 @@ import {Configuration} from './util/configuration';
 import * as EditorFeatures from './editor/extension';
 import * as LinterFeatures from './linter/extension';
 import {setGlobalState, setWorkspaceState} from './util/stateUtils';
-import {initConfig} from './util/config';
+import {DefaultConfig, initConfig} from './util/config';
 import container from './inversify.config';
 import {NAMES, TYPES} from './types';
 import {updateActivationCount} from './rating';
@@ -71,9 +71,7 @@ export function getRecommendationExternalUrls(): string[] {
     return recommendationExternalUrls.slice();
 }
 
-export async function activate(
-    context: vscode.ExtensionContext
-): Promise<void> {
+export async function activate(context: vscode.ExtensionContext) {
     setGlobalState(context.globalState);
     setWorkspaceState(context.workspaceState);
 
@@ -120,7 +118,9 @@ export async function activate(
         })
     );
 
-    await maybeRecommendExtensions(configuration, logger);
+    if (process.env.RST_TEST_MODE !== '1') {
+        await maybeRecommendExtensions(configuration, logger);
+    }
 
     const commandManager = new CommandManager();
     context.subscriptions.push(commandManager);
@@ -146,6 +146,32 @@ export async function activate(
             'reStructuredText extension running in web mode with limited features'
         );
     }
+
+    // Expose test hooks from the real extension instance. Tests live in a
+    // separate bundle, so importing these modules from a test would observe
+    // different module state.
+    return {
+        getDisplayedUpgradePrompts: LinterFeatures.getDisplayedUpgradePrompts,
+        getPromptedUpgradeCommands: LinterFeatures.getPromptedUpgradeCommands,
+        getPromptedUnsupportedReleases:
+            LinterFeatures.getPromptedUnsupportedReleases,
+        promptUnsupportedReleaseForTests:
+            LinterFeatures.promptUnsupportedReleaseForTests,
+        resetPromptedUnsupportedReleases:
+            LinterFeatures.resetPromptedUnsupportedReleases,
+        setUpgradePromptTestResponses:
+            LinterFeatures.setUpgradePromptTestResponses,
+        getImeStatusBarTestState: EditorFeatures.getImeStatusBarTestState,
+        getDoc8Path: (resource?: vscode.Uri) =>
+            configuration.getDoc8Path(resource),
+        isWorkspaceTrusted: () => DefaultConfig().workspaceIsTrusted(),
+        getRecommendationCommandInvocations,
+        getRecommendationExternalUrls,
+        getRecommendationPromptEvents,
+        resetRecommendationPromptTestState,
+        runRecommendationFlowForTests,
+        setRecommendationPromptTestResponses,
+    };
 }
 
 export async function runRecommendationFlowForTests(): Promise<void> {

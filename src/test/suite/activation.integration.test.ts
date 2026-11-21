@@ -22,6 +22,30 @@ import {wait} from './initialize';
 suite('Activation Integration Tests', function () {
   this.timeout(120000);
 
+  suiteSetup(async function () {
+    if (process.env.RST_LINTER_TESTS !== '1') {
+      this.skip();
+    }
+    await vscode.extensions
+      .getExtension('lextudio.restructuredtext')
+      ?.activate();
+  });
+
+  function api(): any {
+    const extension = vscode.extensions.getExtension(
+      'lextudio.restructuredtext'
+    );
+    return extension?.isActive ? extension.exports ?? {} : {};
+  }
+
+  function isWorkspaceTrusted(): boolean {
+    return api().isWorkspaceTrusted?.() ?? false;
+  }
+
+  function getDoc8Path(resource?: vscode.Uri): string | undefined {
+    return api().getDoc8Path?.(resource);
+  }
+
   const configuration = container.get<Configuration>(TYPES.Configuration);
   const resource = vscode.workspace.workspaceFolders?.[0]?.uri;
 
@@ -35,12 +59,12 @@ suite('Activation Integration Tests', function () {
     const inspect = settings.inspect<string>(section);
     const originalGlobalValue = inspect?.globalValue;
     const originalWorkspaceValue = inspect?.workspaceValue;
-    const originalTrusted = DefaultConfig().workspaceIsTrusted();
+    const originalTrusted = isWorkspaceTrusted();
     const globalPath = '/tmp/restructuredtext-global-doc8';
     const workspacePath = '/tmp/restructuredtext-workspace-doc8';
 
     try {
-      if (DefaultConfig().workspaceIsTrusted()) {
+      if (isWorkspaceTrusted()) {
         await vscode.commands.executeCommand(
           'restructuredtext.workspace.isTrusted.toggle'
         );
@@ -58,24 +82,24 @@ suite('Activation Integration Tests', function () {
         vscode.ConfigurationTarget.Workspace
       );
 
-      assert.strictEqual(configuration.getDoc8Path(resource), globalPath);
-      assert.strictEqual(DefaultConfig().workspaceIsTrusted(), false);
+      assert.strictEqual(getDoc8Path(resource), globalPath);
+      assert.strictEqual(isWorkspaceTrusted(), false);
 
       await vscode.commands.executeCommand(
         'restructuredtext.workspace.isTrusted.toggle'
       );
       await wait(100);
 
-      assert.strictEqual(DefaultConfig().workspaceIsTrusted(), true);
-      assert.strictEqual(configuration.getDoc8Path(resource), workspacePath);
+      assert.strictEqual(isWorkspaceTrusted(), true);
+      assert.strictEqual(getDoc8Path(resource), workspacePath);
 
       await vscode.commands.executeCommand(
         'restructuredtext.workspace.isTrusted.toggle'
       );
       await wait(100);
 
-      assert.strictEqual(DefaultConfig().workspaceIsTrusted(), false);
-      assert.strictEqual(configuration.getDoc8Path(resource), globalPath);
+      assert.strictEqual(isWorkspaceTrusted(), false);
+      assert.strictEqual(getDoc8Path(resource), globalPath);
     } finally {
       await settings.update(
         section,
@@ -88,7 +112,7 @@ suite('Activation Integration Tests', function () {
         vscode.ConfigurationTarget.Workspace
       );
 
-      if (DefaultConfig().workspaceIsTrusted() !== originalTrusted) {
+      if (isWorkspaceTrusted() !== originalTrusted) {
         await vscode.commands.executeCommand(
           'restructuredtext.workspace.isTrusted.toggle'
         );
@@ -186,6 +210,11 @@ suite('Activation Integration Tests', function () {
         false,
         vscode.ConfigurationTarget.Global
       );
+      await settings.update(
+        section,
+        false,
+        vscode.ConfigurationTarget.Workspace
+      );
 
       clearUnsupportedReleasePrompts();
       queueUpgradePromptResponses(['Never Ask Again']);
@@ -217,6 +246,11 @@ suite('Activation Integration Tests', function () {
         section,
         inspect?.globalValue,
         vscode.ConfigurationTarget.Global
+      );
+      await settings.update(
+        section,
+        inspect?.workspaceValue,
+        vscode.ConfigurationTarget.Workspace
       );
     }
   });

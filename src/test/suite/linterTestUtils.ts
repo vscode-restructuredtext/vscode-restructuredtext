@@ -1,22 +1,97 @@
 import * as vscode from 'vscode';
 
 import {wait} from './initialize';
-import {
-  getDisplayedUpgradePrompts,
-  getPromptedUpgradeCommands,
-  getPromptedUnsupportedReleases,
-  promptUnsupportedReleaseForTests,
-  resetPromptedUnsupportedReleases,
-  setUpgradePromptTestResponses,
-} from '../../linter/extension';
-import {
-  getRecommendationCommandInvocations,
-  getRecommendationExternalUrls,
-  getRecommendationPromptEvents,
-  resetRecommendationPromptTestState,
-  runRecommendationFlowForTests,
-  setRecommendationPromptTestResponses,
-} from '../../extension';
+
+interface ExtensionTestApi {
+  getDisplayedUpgradePrompts?: () => string[];
+  getPromptedUpgradeCommands?: () => Record<string, string>;
+  getPromptedUnsupportedReleases?: () => string[];
+  promptUnsupportedReleaseForTests?: (
+    linterName: string,
+    detectedVersion: string,
+    configuredExecutablePath?: string
+  ) => Promise<boolean>;
+  resetPromptedUnsupportedReleases?: () => void;
+  setUpgradePromptTestResponses?: (responses: string[]) => void;
+  getRecommendationCommandInvocations?: () => Array<{
+    command: string;
+    extensionId: string;
+  }>;
+  getRecommendationExternalUrls?: () => string[];
+  getRecommendationPromptEvents?: () => Array<{
+    message: string;
+    options: string[];
+  }>;
+  resetRecommendationPromptTestState?: () => void;
+  runRecommendationFlowForTests?: () => Promise<void>;
+  setRecommendationPromptTestResponses?: (responses: string[]) => void;
+}
+
+function getApi(): ExtensionTestApi {
+  const extension = vscode.extensions.getExtension(
+    'lextudio.restructuredtext'
+  );
+  if (!extension?.isActive) {
+    return {};
+  }
+  return (extension.exports ?? {}) as ExtensionTestApi;
+}
+
+function getDisplayedUpgradePrompts(): string[] {
+  return getApi().getDisplayedUpgradePrompts?.() ?? [];
+}
+
+function getPromptedUpgradeCommands(): Record<string, string> {
+  return getApi().getPromptedUpgradeCommands?.() ?? {};
+}
+
+function getPromptedUnsupportedReleases(): string[] {
+  return getApi().getPromptedUnsupportedReleases?.() ?? [];
+}
+
+function resetPromptedUnsupportedReleases() {
+  getApi().resetPromptedUnsupportedReleases?.();
+}
+
+function setUpgradePromptTestResponses(responses: string[]) {
+  getApi().setUpgradePromptTestResponses?.(responses);
+}
+
+async function promptUnsupportedReleaseForTests(
+  linterName: string,
+  detectedVersion: string,
+  configuredExecutablePath?: string
+) {
+  return getApi().promptUnsupportedReleaseForTests?.(
+    linterName,
+    detectedVersion,
+    configuredExecutablePath
+  );
+}
+
+function getRecommendationCommandInvocations() {
+  return getApi().getRecommendationCommandInvocations?.() ?? [];
+}
+
+function getRecommendationExternalUrls() {
+  return getApi().getRecommendationExternalUrls?.() ?? [];
+}
+
+function getRecommendationPromptEvents() {
+  return getApi().getRecommendationPromptEvents?.() ?? [];
+}
+
+function resetRecommendationPromptTestState() {
+  getApi().resetRecommendationPromptTestState?.();
+}
+
+function setRecommendationPromptTestResponses(responses: string[]) {
+  getApi().setRecommendationPromptTestResponses?.(responses);
+}
+
+async function runRecommendationFlowForTests() {
+  await getApi().runRecommendationFlowForTests?.();
+}
 
 export const linterTestTarget = process.env.RST_LINTER_TEST_TARGET;
 export const linterTestVersion = process.env.RST_LINTER_TEST_VERSION ?? 'unknown';

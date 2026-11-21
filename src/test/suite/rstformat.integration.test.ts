@@ -15,6 +15,9 @@ suite('rstformat Integration Tests', function () {
         if (!formatterTestsEnabled) {
             this.skip();
         }
+        await vscode.extensions
+            .getExtension('lextudio.restructuredtext')
+            ?.activate();
     });
 
     setup(async () => {
@@ -89,6 +92,47 @@ suite('rstformat Integration Tests', function () {
             Array.isArray(edits),
             'Range format command should return an array of edits'
         );
+    });
+
+    test('formats CJK text when the console encoding is not UTF-8', async function () {
+        const originalEncoding = process.env['PYTHONIOENCODING'];
+        process.env['PYTHONIOENCODING'] = 'gbk';
+
+        try {
+            const editor = await openFile(
+                path.join(samplePath, 'formatter', 'cjk.rst')
+            );
+
+            const edits = await vscode.commands.executeCommand<
+                vscode.TextEdit[]
+            >('vscode.executeFormatDocumentProvider', editor.document.uri, {
+                tabSize: 4,
+                insertSpaces: true,
+            });
+
+            assert.ok(
+                edits !== undefined && Array.isArray(edits),
+                'Format command should return edits'
+            );
+            assert.ok(edits.length > 0, 'CJK document should need formatting');
+
+            const wsEdit = new vscode.WorkspaceEdit();
+            wsEdit.set(editor.document.uri, edits);
+            await vscode.workspace.applyEdit(wsEdit);
+            await wait(200);
+
+            const formattedText = editor.document.getText();
+            assert.ok(
+                formattedText.startsWith('标题\n====\n'),
+                `CJK underline should be 4 characters, got: ${formattedText}`
+            );
+        } finally {
+            if (originalEncoding === undefined) {
+                delete process.env['PYTHONIOENCODING'];
+            } else {
+                process.env['PYTHONIOENCODING'] = originalEncoding;
+            }
+        }
     });
 
     test('formatting is idempotent', async function () {

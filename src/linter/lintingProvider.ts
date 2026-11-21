@@ -1,16 +1,17 @@
 'use strict';
 
 import * as cp from 'child_process';
+import * as path from 'path';
 
 import * as vscode from 'vscode';
 
 import {Logger} from '../util/logger';
-import {Python} from '../util/python';
-import {ThrottledDelayer} from '../util/async';
 import {Configuration} from '../util/configuration';
-import {LineDecoder} from '../util/lineDecoder';
 import container from '../inversify.config';
 import {TYPES} from '../types';
+import {Python} from '../util/python';
+import {ThrottledDelayer} from '../util/async';
+import {LineDecoder} from '../util/lineDecoder';
 
 enum RunTrigger {
     onSave,
@@ -194,17 +195,15 @@ export class LintingProvider {
         }
 
         return new Promise<void>(resolve => {
-            const configuration = container.get<Configuration>(
-                TYPES.Configuration
-            );
             const executable = this.linterConfiguration.executable;
             const decoder = new LineDecoder();
             let diagnostics: vscode.Diagnostic[] = [];
             const file = '"' + textDocument.fileName + '"';
-            const rootPath = configuration.getRootPath(textDocument.uri);
-            // Pass correct working directory so tools like doc8 pick up local config files (issue #461)
-            const options: cp.SpawnOptions | undefined = rootPath
-                ? {cwd: rootPath, shell: true}
+            // Run from the document's directory so tools such as doc8 pick
+            // up configuration files next to it (issue #461).
+            const cwd = path.dirname(textDocument.fileName);
+            const options: cp.SpawnOptions | undefined = cwd
+                ? {cwd, shell: true}
                 : undefined;
             let args: string[] = [];
             args = args.concat(this.linterConfiguration.module);

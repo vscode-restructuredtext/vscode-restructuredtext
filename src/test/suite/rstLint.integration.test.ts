@@ -2,9 +2,15 @@ import * as assert from 'assert';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
-import {closeActiveWindows, openFile, samplePath} from './initialize';
+import {
+  closeActiveWindows,
+  openFile,
+  samplePath,
+  saveDocument,
+} from './initialize';
 import {
   clearUnsupportedReleasePrompts,
+  triggerUnsupportedReleasePrompt,
   getExpectedPythonFromExecutable,
   linterTestExecutable,
   linterTestTarget,
@@ -22,6 +28,7 @@ suite('rst-lint Integration Tests', function () {
   const previousSettings = new Map<string, unknown>();
 
   suiteSetup(async function () {
+    clearUnsupportedReleasePrompts();
     if (
       !linterTestsEnabled ||
       linterTestTarget !== 'rst-lint'
@@ -38,12 +45,17 @@ suite('rst-lint Integration Tests', function () {
       previousSettings.set(section, config.inspect(section)?.globalValue);
     }
 
-    await updateGlobalSetting('linter.run', 'onSave');
+    await updateGlobalSetting('linter.run', 'onType');
     await updateGlobalSetting('linter.disabledLinters', ['doc8', 'rstcheck']);
     await updateGlobalSetting(
       'linter.rst-lint.executablePath',
       linterTestExecutable
     );
+
+    await vscode.extensions
+      .getExtension('lextudio.restructuredtext')
+      ?.activate();
+
   });
 
   suiteTeardown(async () => {
@@ -54,7 +66,6 @@ suite('rst-lint Integration Tests', function () {
 
   setup(async () => {
     await closeActiveWindows();
-    clearUnsupportedReleasePrompts();
   });
 
   teardown(async () => {
@@ -68,6 +79,7 @@ suite('rst-lint Integration Tests', function () {
     const editor = await openFile(
       path.join(samplePath, 'linter', 'rst-lint', 'violations.rst')
     );
+    await saveDocument(editor);
 
     const diagnostics = await waitForDiagnostics(
       editor.document.uri,
@@ -91,7 +103,14 @@ suite('rst-lint Integration Tests', function () {
     const editor = await openFile(
       path.join(samplePath, 'linter', 'rst-lint', 'violations.rst')
     );
+    await saveDocument(editor);
     const promptKey = `rst-lint:${linterTestVersion}`;
+    clearUnsupportedReleasePrompts();
+    await triggerUnsupportedReleasePrompt(
+      'rst-lint',
+      linterTestVersion,
+      linterTestExecutable
+    );
     const prompts = await waitForUnsupportedReleasePrompt(promptKey);
     const command = await waitForUpgradeCommand(promptKey);
     const pythonPath = getExpectedPythonFromExecutable(linterTestExecutable);

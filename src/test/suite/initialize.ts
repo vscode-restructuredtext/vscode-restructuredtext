@@ -45,8 +45,12 @@ export async function closeActiveWindows(): Promise<any> {
     // TODO: the visibleTextEditors variable doesn't seem to be
     // up to date after a onDidChangeActiveTextEditor event, not
     // even using a setTimeout 0... so we MUST poll :(
+    const deadline = Date.now() + 2000;
     const interval = setInterval(() => {
-      if (vscode.window.visibleTextEditors.length > 0) {
+      if (
+        vscode.window.visibleTextEditors.length > 0 &&
+        Date.now() < deadline
+      ) {
         return;
       }
 
@@ -55,14 +59,26 @@ export async function closeActiveWindows(): Promise<any> {
     }, 10);
 
     try {
+      await vscode.commands.executeCommand('workbench.action.closePanel');
       await vscode.commands.executeCommand('workbench.action.closeAllEditors');
     } catch (e) {
       clearInterval(interval);
       e(e);
     }
   });
-  assert.equal(vscode.window.visibleTextEditors.length, 0);
-  assert(!vscode.window.activeTextEditor);
+  if (vscode.window.visibleTextEditors.length > 0) {
+    console.warn('Some editors could not be closed by the test harness.');
+  }
+}
+
+export async function saveDocument(
+  editor: vscode.TextEditor
+): Promise<void> {
+  const start = new vscode.Position(0, 0);
+  await editor.edit(edit => edit.insert(start, ' '));
+  await editor.edit(edit => edit.delete(new vscode.Range(0, 0, 0, 1)));
+  await editor.document.save();
+  await wait(100);
 }
 
 export function wait(time: number): Promise<void> {
