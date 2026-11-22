@@ -7,6 +7,7 @@ import {Logger} from '../util/logger';
 import {Python} from '../util/python';
 import {releasePolicies} from './releases';
 import RstLintingProvider from './rstLinter';
+import {WebLinterName, WebLintingProvider} from './webLintingProvider';
 
 const shownUpgradePrompts = new Set<string>();
 const promptedUnsupportedReleases: string[] = [];
@@ -463,4 +464,28 @@ function inferPythonPathFromExecutable(
         process.platform === 'win32' ? 'python.exe' : 'python'
     );
     return candidate;
+}
+
+export function activateWeb(
+    context: vscode.ExtensionContext,
+    logger: Logger
+): void {
+    const configuration = container.get<Configuration>(TYPES.Configuration);
+    const disabled = configuration.getLinterDisabled() ?? [];
+    const doc8Enabled = !disabled.includes('doc8');
+    const tools: Array<
+        [WebLinterName, (resource: vscode.Uri) => string[] | undefined]
+    > = [
+        ['doc8', resource => configuration.getDoc8ExtraArgs(resource)],
+        ['rstcheck', resource => configuration.getRstCheckExtraArgs(resource)],
+        ['rst-lint', resource => configuration.getRstLintExtraArgs(resource)],
+    ];
+
+    for (const [tool, getExtraArgs] of tools) {
+        if (disabled.includes(tool) || (tool === 'rst-lint' && doc8Enabled)) {
+            continue;
+        }
+        const provider = new WebLintingProvider(tool, getExtraArgs, logger);
+        provider.activate(context.subscriptions);
+    }
 }

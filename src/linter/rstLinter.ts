@@ -65,47 +65,7 @@ export default class RstLintingProvider implements ILinter {
     }
 
     public process(contents: string[]): Diagnostic[] {
-        const diagnostics: Diagnostic[] = [];
-        for (const text of contents) {
-            if (text.includes('No module named') || text.includes('Errno')) {
-                diagnostics.push({
-                    range: new Range(0, 0, 0, Number.MAX_VALUE),
-                    severity: DiagnosticSeverity.Warning,
-                    message: text,
-                    code: null,
-                    source: this.name,
-                });
-                continue;
-            }
-
-            const regex =
-                /(([A-Z]+)\s+)?(.+?):([0-9]+):?\s(([A-Z0-9]+)\s)?(\(([A-Z]+)\/[0-9]+\)\s)?(.+)/;
-            const matches = regex.exec(text);
-            if (matches === null) {
-                continue;
-            }
-
-            const severity1 = matches[2];
-            const file = matches[3];
-            const line = matches[4];
-            const code = matches[6];
-            const severity2 = matches[8];
-            const message = matches[9];
-            if (file.endsWith('.py') && this.name === 'doc8') {
-                // doc8 internal issues.
-                continue;
-            }
-
-            const lineNumber = parseInt(line, 10) - 1;
-            diagnostics.push({
-                range: new Range(lineNumber, 0, lineNumber, Number.MAX_VALUE),
-                severity: DiagnosticSeverity.Warning,
-                message,
-                code: severity1 ?? severity2 ?? code,
-                source: this.name,
-            });
-        }
-        return diagnostics;
+        return parseLinterOutput(this.name, contents);
     }
 
     private async resolveExecutablePath(resource: Uri): Promise<string> {
@@ -121,4 +81,50 @@ export default class RstLintingProvider implements ILinter {
 
         return '"' + path.join(path.dirname(python), this.executableName) + '"';
     }
+}
+
+export function parseLinterOutput(
+    name: string,
+    contents: string[]
+): Diagnostic[] {
+    const diagnostics: Diagnostic[] = [];
+    for (const text of contents) {
+        if (text.includes('No module named') || text.includes('Errno')) {
+            diagnostics.push({
+                range: new Range(0, 0, 0, Number.MAX_VALUE),
+                severity: DiagnosticSeverity.Warning,
+                message: text,
+                code: null,
+                source: name,
+            });
+            continue;
+        }
+
+        const regex =
+            /(([A-Z]+)\s+)?(.+?):([0-9]+):?\s(([A-Z0-9]+)\s)?(\(([A-Z]+)\/[0-9]+\)\s)?(.+)/;
+        const matches = regex.exec(text);
+        if (matches === null) {
+            continue;
+        }
+
+        const severity1 = matches[2];
+        const file = matches[3];
+        const line = matches[4];
+        const code = matches[6];
+        const severity2 = matches[8];
+        const message = matches[9];
+        if (file.endsWith('.py') && name === 'doc8') {
+            continue;
+        }
+
+        const lineNumber = parseInt(line, 10) - 1;
+        diagnostics.push({
+            range: new Range(lineNumber, 0, lineNumber, Number.MAX_VALUE),
+            severity: DiagnosticSeverity.Warning,
+            message,
+            code: severity1 ?? severity2 ?? code,
+            source: name,
+        });
+    }
+    return diagnostics;
 }

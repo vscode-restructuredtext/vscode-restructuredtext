@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as cp from 'child_process';
 
 import {getRstformatEnv} from '../util/rstformatEnv';
+import {getWebPythonService} from '../web/pythonService';
 
 const DEFAULT_ADORNMENTS = '#*=-^"\'`:.~_+';
 const DEFAULT_MAX_BLANK_LINES = 2;
@@ -88,6 +89,19 @@ async function formatWithRstformat(
     text: string,
     settings: FormatterSettings
 ): Promise<string> {
+    if (vscode.env.uiKind === vscode.UIKind.Web) {
+        try {
+            return await getWebPythonService().format(text, settings);
+        } catch (error) {
+            vscode.window.showErrorMessage(
+                `reStructuredText formatter failed: ${
+                    error instanceof Error ? error.message : String(error)
+                }`
+            );
+            return text;
+        }
+    }
+
     return new Promise<string>(resolve => {
         try {
             const args = buildRstformatArgs(settings);

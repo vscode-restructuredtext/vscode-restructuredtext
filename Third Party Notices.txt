@@ -31,3 +31,42 @@ resttext
 The license terms can be found at
 
 https://github.com/TatsuyaNakamori/vscode-reStructuredText/blob/master/LICENSE
+
+Bundled Python runtime for VS Code for the Web (Pyodide)
+
+Pyodide is distributed under the Mozilla Public License 2.0.
+https://github.com/pyodide/pyodide/blob/main/LICENSE
+
+CPython
+
+The Python interpreter included in Pyodide is distributed under the Python
+Software Foundation License Version 2.
+https://docs.python.org/3/license.html
+
+Bundled Python packages
+
+The following distributions are bundled for VS Code for the Web:
+- annotated-doc (MIT)
+- annotated-types (MIT)
+- click (BSD-3-Clause)
+- doc8 (Apache-2.0)
+- docutils (public domain / BSD-2-Clause)
+- markdown-it-py (MIT)
+- mdurl (MIT)
+- micropip (MPL-2.0, part of Pyodide)
+- packaging (Apache-2.0 / BSD-2-Clause)
+- pydantic (MIT)
+- pydantic-core (MIT)
+- Pygments (BSD-2-Clause)
+- rich (MIT)
+- restructuredtext-lint (UNLICENSE)
+- rstcheck (MIT)
+- rstcheck-core (MIT)
+- rstformat (MIT)
+- shellingham (ISC)
+- stevedore (Apache-2.0)
+- typer (MIT)
+- typing-extensions (PSF-2.0)
+
+License texts are available in the metadata of each bundled wheel and in the
+source repositories linked from the corresponding PyPI project pages.

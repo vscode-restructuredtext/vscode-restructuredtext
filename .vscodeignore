@@ -10,6 +10,7 @@ dist/test/**
 dist/web/test/**
 test/**
 test-resources/**
+web/**
 typings/**
 src/**/*.ts
 node_modules/

@@ -16,3 +16,4 @@ media/index.js
 build/
 *.tsbuildinfo
 .vscode-test-web/
+web/python/pyodide-packages/

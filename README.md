@@ -41,7 +41,7 @@ See the [rstformat documentation](https://github.com/lextudio/rstformat) for mor
 
 ### Requirements
 
-Linter and formatter integration requires **Python 3.11 or newer**. Older Python versions are no longer supported. Reload the window after changing the selected Python interpreter.
+Linter and formatter integration requires **Python 3.11 or newer** on desktop. Older Python versions are no longer supported; reload the window after changing the selected Python interpreter. In VS Code for the Web, a bundled Python runtime is used and no local Python installation is needed.
 
 Frequent Asked Questions can be found [here](https://github.com/vscode-restructuredtext/vscode-restructuredtext/issues?q=is%3Aissue+label%3A%22faq+candidate%22+).
 

@@ -17,6 +17,7 @@ import {DefaultConfig, initConfig} from './util/config';
 import container from './inversify.config';
 import {NAMES, TYPES} from './types';
 import {updateActivationCount} from './rating';
+import {getWebPythonService, initializeWebPython} from './web/pythonService';
 
 let extensionPath = '';
 const ESBONIO_EXTENSION_ID = 'swyddfa.esbonio';
@@ -143,7 +144,7 @@ export async function activate(context: vscode.ExtensionContext) {
         // Web-specific initialization
         await activateWebFeatures(context, logger);
         vscode.window.showInformationMessage(
-            'reStructuredText extension running in web mode with limited features'
+            'reStructuredText extension running in web mode with the bundled Python runtime'
         );
     }
 
@@ -163,6 +164,17 @@ export async function activate(context: vscode.ExtensionContext) {
             LinterFeatures.setUpgradePromptTestResponses,
         getImeStatusBarTestState: EditorFeatures.getImeStatusBarTestState,
         isFormatterRegistered: EditorFeatures.isFormatterRegistered,
+        lintForTests: async (
+            tool: string,
+            text: string,
+            args: string[] = []
+        ) => {
+            if (vscode.env.uiKind !== vscode.UIKind.Web) {
+                throw new Error('The bundled Python runtime is web-only.');
+            }
+            const result = await getWebPythonService().lint(tool, text, args);
+            return `${result.stdout}\n${result.stderr}`;
+        },
         getDoc8Path: (resource?: vscode.Uri) =>
             configuration.getDoc8Path(resource),
         isWorkspaceTrusted: () => DefaultConfig().workspaceIsTrusted(),
@@ -329,9 +341,11 @@ async function activateWebFeatures(
     logger: Logger
 ): Promise<void> {
     // Initialize web-compatible features only
-    logger.warning(
-        'Running in web mode - some features like linting are disabled'
+    logger.info(
+        'Running in web mode - using the bundled Python runtime for linting and formatting.'
     );
-    // Activate editor features without Python (formatter won't work)
+    initializeWebPython(context.extensionUri);
+
     await EditorFeatures.activate(context, undefined, logger);
+    LinterFeatures.activateWeb(context, logger);
 }

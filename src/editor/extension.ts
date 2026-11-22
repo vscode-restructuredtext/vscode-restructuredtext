@@ -99,6 +99,8 @@ function registerFormatter(context: vscode.ExtensionContext): void {
         {language: 'restructuredtext', scheme: 'file'},
         {language: 'restructuredtext', scheme: 'untitled'},
         {language: 'restructuredtext', scheme: 'vscode-userdata'},
+        {language: 'restructuredtext', scheme: 'vscode-vfs'},
+        {language: 'restructuredtext', scheme: 'vscode-remote'},
     ];
     context.subscriptions.push(
         vscode.languages.registerDocumentFormattingEditProvider(

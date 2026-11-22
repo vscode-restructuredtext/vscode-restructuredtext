@@ -6,6 +6,7 @@
  *--------------------------------------------------------------------------------------------*/
 // @ts-check
 const esbuild = require('esbuild');
+const {prepareWebPython} = require('./scripts/prepare-web-python.js');
 const {globSync} = require('glob');
 const {NodeGlobalsPolyfillPlugin} = require('@esbuild-plugins/node-globals-polyfill');
 const {NodeModulesPolyfillPlugin} = require('@esbuild-plugins/node-modules-polyfill');
@@ -113,6 +114,7 @@ const buildOptionsWeb = {
 // Function to build
 async function build() {
     try {
+        await prepareWebPython();
         // Build for Node.js
         await esbuild.build(buildOptions);
         console.log('Node build completed successfully');
