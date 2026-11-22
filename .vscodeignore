@@ -1,10 +1,13 @@
 .github/**
 .vscode/**
 .vscode-test/**
+.vscode-test-web/**
 .venv-linter-tests/**
 .tmp-linter-matrix/**
 .claude/**
 *.tsbuildinfo
+dist/test/**
+dist/web/test/**
 test/**
 test-resources/**
 typings/**

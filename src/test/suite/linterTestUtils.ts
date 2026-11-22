@@ -122,7 +122,7 @@ export function diagnosticCode(
     return String(value);
   }
 
-  return value?.value;
+  return value?.value === undefined ? undefined : String(value.value);
 }
 
 export async function updateGlobalSetting(section: string, value: unknown) {

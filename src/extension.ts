@@ -162,6 +162,7 @@ export async function activate(context: vscode.ExtensionContext) {
         setUpgradePromptTestResponses:
             LinterFeatures.setUpgradePromptTestResponses,
         getImeStatusBarTestState: EditorFeatures.getImeStatusBarTestState,
+        isFormatterRegistered: EditorFeatures.isFormatterRegistered,
         getDoc8Path: (resource?: vscode.Uri) =>
             configuration.getDoc8Path(resource),
         isWorkspaceTrusted: () => DefaultConfig().workspaceIsTrusted(),

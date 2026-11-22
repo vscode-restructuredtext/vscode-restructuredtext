@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import Mocha from 'mocha';
+import Mocha = require('mocha');
 import {glob} from 'glob';
 import * as vscode from 'vscode';
 

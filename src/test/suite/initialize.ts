@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
-import assert from 'assert';
+import assert = require('assert');
 import * as fs from 'fs';
 
 export const samplePath = path.join(

@@ -46,7 +46,9 @@ const buildOptions = {
     mainFields: ['module', 'main'],
 };
 
-const testEntryPoints = globSync('./src/test/**/*.ts');
+const testEntryPoints = globSync('./src/test/**/*.ts').filter(
+    file => !/[\\/]test[\\/]web[\\/]/.test(file)
+);
 
 const buildOptionsTests = {
     entryPoints: testEntryPoints,
@@ -62,6 +64,29 @@ const buildOptionsTests = {
     mainFields: ['module', 'main'],
 };
 
+const buildOptionsWebTests = {
+    entryPoints: ['./src/test/web/suite/index.ts'],
+    bundle: true,
+    external: ['vscode'],
+    sourcemap: !production,
+    minify: false,
+    platform: 'browser',
+    format: 'cjs',
+    outfile: './dist/web/test/suite/index.js',
+    mainFields: ['browser', 'module', 'main'],
+    plugins: [
+        NodeGlobalsPolyfillPlugin(),
+        NodeModulesPolyfillPlugin({
+            modules: ['path', 'fs'],
+        }),
+        esbuildProblemMatcherPlugin,
+    ],
+    define: {
+        'process.env.NODE_ENV': production ? '"production"' : '"development"',
+        global: 'globalThis',
+    },
+};
+
 const buildOptionsWeb = {
     entryPoints: ['./src/extension.ts'],
     bundle: true,
@@ -69,6 +94,7 @@ const buildOptionsWeb = {
     sourcemap: !production,
     minify: production,
     platform: 'browser',
+    format: 'cjs',
     outfile: './dist/browser/extension.js',
     mainFields: ['browser', 'module', 'main'],
     plugins: [
@@ -95,6 +121,10 @@ async function build() {
         await esbuild.build(buildOptionsWeb);
         console.log('Web build completed successfully');
 
+        // Build test files for @vscode/test-web
+        await esbuild.build(buildOptionsWebTests);
+        console.log('Web test build completed successfully');
+
         // Build test files for @vscode/test-electron
         await esbuild.build(buildOptionsTests);
         console.log('Test build completed successfully');
@@ -119,6 +149,13 @@ async function build() {
         });
         await webContext.watch();
         console.log('Watching for Web changes...');
+
+        const webTestContext = await esbuild.context({
+            ...buildOptionsWebTests,
+            plugins: [...(buildOptionsWebTests.plugins || [])],
+        });
+        await webTestContext.watch();
+        console.log('Watching for web test changes...');
 
         const testContext = await esbuild.context({
             ...buildOptionsTests,

@@ -11,6 +11,7 @@ module.exports = [
             '.tmp-linter-matrix/',
             '.venv-linter-tests/',
             '.vscode-test/',
+            '.vscode-test-web/',
             'bin/',
             'build/',
             'dist/',

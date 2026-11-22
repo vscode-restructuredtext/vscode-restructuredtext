@@ -20,6 +20,7 @@ const IME_SUPPRESSION_COMMAND =
     'restructuredtext.editor.ime.toggleKeybindingSuppression';
 const IME_SUPPRESSION_SETTING =
     'restructuredtext.editor.ime.suppressKeyBindings';
+let formatterRegistered = false;
 let imeStatusBarTestState: {
     visible: boolean;
     text: string;
@@ -29,6 +30,10 @@ let imeStatusBarTestState: {
     text: '',
     tooltip: '',
 };
+
+export function isFormatterRegistered(): boolean {
+    return formatterRegistered;
+}
 
 export function getImeStatusBarTestState(): {
     visible: boolean;
@@ -87,6 +92,7 @@ function updateImeStatusBar(
 }
 
 function registerFormatter(context: vscode.ExtensionContext): void {
+    formatterRegistered = true;
     const formatter = new ReStructuredTextFormattingProvider();
     const formatterSelector: vscode.DocumentSelector = [
         {language: 'restructuredtext', scheme: 'file'},
