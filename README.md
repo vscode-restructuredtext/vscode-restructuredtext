@@ -39,6 +39,10 @@ It can be used in:
 
 See the [rstformat documentation](https://github.com/lextudio/rstformat) for more details.
 
+### Requirements
+
+Linter and formatter integration requires **Python 3.11 or newer**. Older Python versions are no longer supported. Reload the window after changing the selected Python interpreter.
+
 Frequent Asked Questions can be found [here](https://github.com/vscode-restructuredtext/vscode-restructuredtext/issues?q=is%3Aissue+label%3A%22faq+candidate%22+).
 
 ## How to install from Marketplace

@@ -6,12 +6,19 @@ import * as vscode from 'vscode';
 import {Uri} from 'vscode';
 import {Configuration} from './configuration';
 import {Logger} from './logger';
+import {
+    MINIMUM_PYTHON,
+    formatPythonVersion,
+    isSupportedPythonVersion,
+} from './pythonVersion';
 
 import {NAMES, TYPES} from './../types';
 
 @injectable()
 export class Python {
-    private version: 2 | 3 | null = null;
+    private version: {major: number; minor: number} | null = null;
+    private versionPath: string | null = null;
+    private reportedUnsupportedVersion: string | null = null;
     private pythonPath: string | undefined;
     private ready: boolean = false;
 
@@ -41,9 +48,33 @@ export class Python {
             process.env.RST_TEST_PYTHON ??
             (await this.configuration.getPythonPath(resource));
         if (path) {
-            this.pythonPath = `"${path}"`;
-            if (await this.getVersion()) {
-                return true;
+            const pythonPath = `"${path}"`;
+            if (this.pythonPath !== pythonPath) {
+                this.pythonPath = pythonPath;
+                this.version = null;
+                this.versionPath = null;
+                this.reportedUnsupportedVersion = null;
+            }
+            const version = await this.getVersion();
+            if (version) {
+                if (isSupportedPythonVersion(version.major, version.minor)) {
+                    return true;
+                }
+
+                const detected = formatPythonVersion(
+                    version.major,
+                    version.minor
+                );
+                if (this.reportedUnsupportedVersion !== detected) {
+                    this.reportedUnsupportedVersion = detected;
+                    this.logger.error(
+                        `Python ${detected} is not supported. Python ${MINIMUM_PYTHON.major}.${MINIMUM_PYTHON.minor} or newer is required. Reload the window after changing the selected interpreter.`
+                    );
+                    if (showInformation) {
+                        this.logger.show();
+                    }
+                }
+                return false;
             }
         }
 
@@ -172,27 +203,33 @@ export class Python {
         }
     }
 
-    private async getVersion(): Promise<boolean> {
-        if (this.version !== null) {
-            return true;
+    private async getVersion(): Promise<{
+        major: number;
+        minor: number;
+    } | null> {
+        if (this.version !== null && this.versionPath === this.pythonPath) {
+            return this.version;
         }
 
         try {
-            const version = await this.exec(
+            const versionPath = this.pythonPath ?? null;
+            const output = await this.exec(
                 '-c',
-                '"import sys; print(sys.version_info[0])"'
+                '"import sys; print(str(sys.version_info[0]) + \'.\' + str(sys.version_info[1]))"'
             );
-            switch (Number.parseInt(version)) {
-                case 2:
-                    this.version = 2;
-                    return true;
-                case 3:
-                    this.version = 3;
-                    return true;
+            const [major, minor] = output.trim().split('.').map(Number);
+            if (Number.isInteger(major) && Number.isInteger(minor)) {
+                const detected = {major, minor};
+                if (this.pythonPath === versionPath) {
+                    this.version = detected;
+                    this.versionPath = versionPath;
+                }
+                return detected;
             }
-            // eslint-disable-next-line no-empty
-        } catch (e) {}
-        return false;
+        } catch {
+            // Ignore detection failures and report Python as unavailable.
+        }
+        return null;
     }
 
     public async checkRstformatInstall(): Promise<boolean> {

@@ -15,6 +15,7 @@ import * as listEditing from './listEditing';
 import {setContext} from './setContext';
 import {Python} from '../util/python';
 import {Logger} from '../util/logger';
+import {MINIMUM_PYTHON} from '../util/pythonVersion';
 
 const IME_SUPPRESSION_COMMAND =
     'restructuredtext.editor.ime.toggleKeybindingSuppression';
@@ -179,29 +180,35 @@ export async function activate(
         // for prompts or probing the configured Python environment.
         registerFormatter(context);
     } else if (python && logger) {
-        const rstformatAvailable = await python.checkRstformatInstall();
-
-        if (!rstformatAvailable) {
-            // Do not block activation on a UI prompt: commands must be
-            // available even when the user never answers it.
-            void promptRstformatInstall(context, python)
-                .then(async shouldEnable => {
-                    if (!shouldEnable) {
-                        return;
-                    }
-                    if (!(await python.checkRstformatInstall())) {
-                        logger.warning(
-                            'rstformat installation failed or was cancelled'
-                        );
-                    } else {
-                        registerFormatter(context);
-                    }
-                })
-                .catch(error => {
-                    logger.error(`rstformat activation failed: ${error}`);
-                });
+        if (!python.isReady()) {
+            logger.info(
+                `Formatting is disabled because Python ${MINIMUM_PYTHON.major}.${MINIMUM_PYTHON.minor} or newer is required.`
+            );
         } else {
-            registerFormatter(context);
+            const rstformatAvailable = await python.checkRstformatInstall();
+
+            if (!rstformatAvailable) {
+                // Do not block activation on a UI prompt: commands must be
+                // available even when the user never answers it.
+                void promptRstformatInstall(context, python)
+                    .then(async shouldEnable => {
+                        if (!shouldEnable) {
+                            return;
+                        }
+                        if (!(await python.checkRstformatInstall())) {
+                            logger.warning(
+                                'rstformat installation failed or was cancelled'
+                            );
+                        } else {
+                            registerFormatter(context);
+                        }
+                    })
+                    .catch(error => {
+                        logger.error(`rstformat activation failed: ${error}`);
+                    });
+            } else {
+                registerFormatter(context);
+            }
         }
     } else {
         // If Python not available (web mode), still register formatter but it will fail gracefully
