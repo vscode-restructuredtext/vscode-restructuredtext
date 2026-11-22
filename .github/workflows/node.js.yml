@@ -28,6 +28,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
+    - run: npm run typecheck
     - run: npm run dist
 
   macOS:
@@ -48,6 +49,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
+    - run: npm run typecheck
     - run: npm run dist
 
   windows:
@@ -68,4 +70,5 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
+    - run: npm run typecheck
     - run: npm run dist

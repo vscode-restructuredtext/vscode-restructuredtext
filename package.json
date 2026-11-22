@@ -580,6 +580,7 @@
     "pretest": "npm run compile",
     "test": "npm run test-node && npm run test-web",
     "test-node": "node ./dist/test/runTest.js",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
     "test:unit": "node ./scripts/run-unit-tests.mjs",
     "test-node-linters": "node ./scripts/run-node-linter-tests.mjs",
     "test-web": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. --extensionTestsPath=./dist/web/test/suite/index.js",

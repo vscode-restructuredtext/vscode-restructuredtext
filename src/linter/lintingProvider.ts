@@ -302,6 +302,6 @@ function safeSpawn(
                 return this;
             },
         };
-        return mockProcess;
+        return mockProcess as unknown as cp.ChildProcess;
     }
 }
