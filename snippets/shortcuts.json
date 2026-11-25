@@ -1,0 +1,137 @@
+[
+    {
+        "key": "ctrl+r ctrl+a",
+        "command": "editor.action.insertSnippet",
+        "args": { "name": "attention" }
+    },
+    {
+        "key": "ctrl+r ctrl+b",
+        "command": "editor.action.insertSnippet",
+        "args": { "name": "label" }
+    },
+    {
+        "key": "ctrl+r ctrl+c",
+        "command": "editor.action.insertSnippet",
+        "args": { "name": "command" }
+    },
+    {
+        "key": "ctrl+r ctrl+d",
+        "command": "editor.action.insertSnippet",
+        "args": { "name": "doc" }
+    },
+    {
+        "key": "ctrl+r ctrl+e",
+        "command": "editor.action.insertSnippet",
+        "args": { "name": "error" }
+    },
+    {
+        "key": "ctrl+r ctrl+f",
+        "command": "editor.action.insertSnippet",
+        "args": { "name": "file" }
+    },
+    {
+        "key": "ctrl+r ctrl+f",
+        "command": "editor.action.insertSnippet",
+        "args": { "name": "ref" }
+    },
+    {
+        "key": "ctrl+r ctrl+g",
+        "command": "editor.action.insertSnippet",
+        "args": { "name": "guilabel" }
+    },
+    {
+        "key": "ctrl+r ctrl+h",
+        "command": "editor.action.insertSnippet",
+        "args": { "name": "hint" }
+    },
+    {
+        "key": "ctrl+r ctrl+i",
+        "command": "editor.action.insertSnippet",
+        "args": { "name": "image" }
+    },
+    {
+        "key": "ctrl+r ctrl+j",
+        "command": "editor.action.insertSnippet",
+        "args": { "name": "literalinclude" }
+    },
+    {
+        "key": "ctrl+r ctrl+k",
+        "command": "editor.action.insertSnippet",
+        "args": { "name": "key" }
+    },
+    {
+        "key": "ctrl+r ctrl+l",
+        "command": "editor.action.insertSnippet",
+        "args": { "name": "link" }
+    },
+    {
+        "key": "ctrl+r ctrl+m",
+        "command": "editor.action.insertSnippet",
+        "args": { "name": "menu" }
+    },
+    {
+        "key": "ctrl+r ctrl+n",
+        "command": "editor.action.insertSnippet",
+        "args": { "name": "note" }
+    },
+    {
+        "key": "ctrl+r ctrl+o",
+        "command": "editor.action.insertSnippet",
+        "args": { "name": "todo" }
+    },
+    {
+        "key": "ctrl+r ctrl+p",
+        "command": "editor.action.insertSnippet",
+        "args": { "name": "numref" }
+    },
+    {
+        "key": "ctrl+r ctrl+q",
+        "command": "editor.action.insertSnippet",
+        "args": { "name": "important" }
+    },
+    {
+        "key": "ctrl+r ctrl+r",
+        "command": "editor.action.insertSnippet",
+        "args": { "name": "rubric" }
+    },
+    {
+        "key": "ctrl+r ctrl+s",
+        "command": "editor.action.insertSnippet",
+        "args": { "name": "code" }
+    },
+    {
+        "key": "ctrl+r ctrl+t",
+        "command": "editor.action.insertSnippet",
+        "args": { "name": "tip" }
+    },
+    {
+        "key": "ctrl+r ctrl+u",
+        "command": "editor.action.insertSnippet",
+        "args": { "name": "caution" }
+    },
+    {
+        "key": "ctrl+r ctrl+v",
+        "command": "editor.action.insertSnippet",
+        "args": { "name": "figure" }
+    },
+    {
+        "key": "ctrl+r ctrl+w",
+        "command": "editor.action.insertSnippet",
+        "args": { "name": "warning" }
+    },
+    {
+        "key": "ctrl+r ctrl+x",
+        "command": "editor.action.insertSnippet",
+        "args": { "name": "math" }
+    },
+    {
+        "key": "ctrl+r ctrl+y",
+        "command": "editor.action.insertSnippet",
+        "args": { "name": "danger" }
+    },
+    {
+        "key": "ctrl+r ctrl+z",
+        "command": "editor.action.insertSnippet",
+        "args": { "name": "download" }
+    }
+]
