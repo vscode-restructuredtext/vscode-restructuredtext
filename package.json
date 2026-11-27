@@ -169,11 +169,6 @@
         "category": "Esbonio"
       },
       {
-        "command": "restructuredtext.workspace.isTrusted.toggle",
-        "title": "reStructuredText: Toggle Workspace Trust Flag",
-        "description": "Toggle the workspace trust flag. Workspace settings that determine tool locations are disabled by default in untrusted workspaces."
-      },
-      {
         "category": "reStructuredText",
         "command": "resttext.table.createGrid",
         "title": "%resttext.table.createGrid.title%",

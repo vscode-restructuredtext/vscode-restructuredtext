@@ -13,7 +13,6 @@ import {Configuration} from './util/configuration';
 import * as EditorFeatures from './editor/extension';
 import * as LinterFeatures from './linter/extension';
 import {setGlobalState, setWorkspaceState} from './util/stateUtils';
-import {DefaultConfig, initConfig} from './util/config';
 import container from './inversify.config';
 import {NAMES, TYPES} from './types';
 import {updateActivationCount} from './rating';
@@ -75,8 +74,6 @@ export function getRecommendationExternalUrls(): string[] {
 export async function activate(context: vscode.ExtensionContext) {
     setGlobalState(context.globalState);
     setWorkspaceState(context.workspaceState);
-
-    await initConfig(context);
 
     extensionPath = context.extensionPath;
 
@@ -179,9 +176,6 @@ export async function activate(context: vscode.ExtensionContext) {
             const result = await getWebPythonService().lint(tool, text, args);
             return `${result.stdout}\n${result.stderr}`;
         },
-        getDoc8Path: (resource?: vscode.Uri) =>
-            configuration.getDoc8Path(resource),
-        isWorkspaceTrusted: () => DefaultConfig().workspaceIsTrusted(),
         getRecommendationCommandInvocations,
         getRecommendationExternalUrls,
         getRecommendationPromptEvents,

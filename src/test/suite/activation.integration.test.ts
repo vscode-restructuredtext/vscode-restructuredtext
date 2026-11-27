@@ -4,7 +4,6 @@ import * as vscode from 'vscode';
 import container from '../../inversify.config';
 import {TYPES} from '../../types';
 import {Configuration} from '../../util/configuration';
-import {DefaultConfig} from '../../util/config';
 import {
   clearUnsupportedReleasePrompts,
   getDisplayedUnsupportedReleasePrompts,
@@ -17,7 +16,6 @@ import {
   triggerRecommendationFlow,
   triggerUnsupportedReleasePrompt,
 } from './linterTestUtils';
-import {wait} from './initialize';
 
 suite('Activation Integration Tests', function () {
   this.timeout(120000);
@@ -31,95 +29,7 @@ suite('Activation Integration Tests', function () {
       ?.activate();
   });
 
-  function api(): any {
-    const extension = vscode.extensions.getExtension(
-      'lextudio.restructuredtext'
-    );
-    return extension?.isActive ? extension.exports ?? {} : {};
-  }
-
-  function isWorkspaceTrusted(): boolean {
-    return api().isWorkspaceTrusted?.() ?? false;
-  }
-
-  function getDoc8Path(resource?: vscode.Uri): string | undefined {
-    return api().getDoc8Path?.(resource);
-  }
-
   const configuration = container.get<Configuration>(TYPES.Configuration);
-  const resource = vscode.workspace.workspaceFolders?.[0]?.uri;
-
-  if (!resource) {
-    return;
-  }
-
-  test('workspace trust gating ignores workspace linter paths until trusted', async () => {
-    const section = 'linter.doc8.executablePath';
-    const settings = vscode.workspace.getConfiguration('restructuredtext', resource);
-    const inspect = settings.inspect<string>(section);
-    const originalGlobalValue = inspect?.globalValue;
-    const originalWorkspaceValue = inspect?.workspaceValue;
-    const originalTrusted = isWorkspaceTrusted();
-    const globalPath = '/tmp/restructuredtext-global-doc8';
-    const workspacePath = '/tmp/restructuredtext-workspace-doc8';
-
-    try {
-      if (isWorkspaceTrusted()) {
-        await vscode.commands.executeCommand(
-          'restructuredtext.workspace.isTrusted.toggle'
-        );
-        await wait(100);
-      }
-
-      await settings.update(
-        section,
-        globalPath,
-        vscode.ConfigurationTarget.Global
-      );
-      await settings.update(
-        section,
-        workspacePath,
-        vscode.ConfigurationTarget.Workspace
-      );
-
-      assert.strictEqual(getDoc8Path(resource), globalPath);
-      assert.strictEqual(isWorkspaceTrusted(), false);
-
-      await vscode.commands.executeCommand(
-        'restructuredtext.workspace.isTrusted.toggle'
-      );
-      await wait(100);
-
-      assert.strictEqual(isWorkspaceTrusted(), true);
-      assert.strictEqual(getDoc8Path(resource), workspacePath);
-
-      await vscode.commands.executeCommand(
-        'restructuredtext.workspace.isTrusted.toggle'
-      );
-      await wait(100);
-
-      assert.strictEqual(isWorkspaceTrusted(), false);
-      assert.strictEqual(getDoc8Path(resource), globalPath);
-    } finally {
-      await settings.update(
-        section,
-        originalGlobalValue,
-        vscode.ConfigurationTarget.Global
-      );
-      await settings.update(
-        section,
-        originalWorkspaceValue,
-        vscode.ConfigurationTarget.Workspace
-      );
-
-      if (isWorkspaceTrusted() !== originalTrusted) {
-        await vscode.commands.executeCommand(
-          'restructuredtext.workspace.isTrusted.toggle'
-        );
-        await wait(100);
-      }
-    }
-  });
 
   test('recommendation flow can fall back to linter guidance when Esbonio is skipped', async function () {
     if (vscode.extensions.getExtension('swyddfa.esbonio')) {

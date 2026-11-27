@@ -1,5 +1,3 @@
 {
-    "typescript.tsdk": "./node_modules/typescript/lib",
-    "restructuredtext.linter.doc8.executablePath": "/tmp/restructuredtext-workspace-doc8",
-    "restructuredtext.linter.installRecommendation.disabled": true
+    "typescript.tsdk": "./node_modules/typescript/lib"
 }
