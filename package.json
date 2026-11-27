@@ -67,94 +67,94 @@
         "command": "restructuredtext.features.underline.underline",
         "key": "ctrl+k ctrl+=",
         "mac": "cmd+k cmd+=",
-        "when": "editorLangId == restructuredtext"
+        "when": "restructuredtext.activated && editorLangId == restructuredtext"
       },
       {
         "command": "restructuredtext.features.underline.underlineReverse",
         "key": "ctrl+k ctrl+-",
         "mac": "cmd+k cmd+-",
-        "when": "editorLangId == restructuredtext"
+        "when": "restructuredtext.activated && editorLangId == restructuredtext"
       },
       {
         "command": "restructuredtext.editor.listEditing.onEnterKey",
         "key": "enter",
-        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible && !config.restructuredtext.editor.ime.suppressKeyBindings && vim.mode != 'Normal' && vim.mode != 'Visual' && vim.mode != 'VisualBlock' && vim.mode != 'VisualLine' && vim.mode != 'SearchInProgressMode' && vim.mode != 'CommandlineInProgress' && vim.mode != 'Replace' && vim.mode != 'EasyMotionMode' && vim.mode != 'EasyMotionInputMode' && vim.mode != 'SurroundInputMode'"
+        "when": "restructuredtext.activated && editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible && !config.restructuredtext.editor.ime.suppressKeyBindings && vim.mode != 'Normal' && vim.mode != 'Visual' && vim.mode != 'VisualBlock' && vim.mode != 'VisualLine' && vim.mode != 'SearchInProgressMode' && vim.mode != 'CommandlineInProgress' && vim.mode != 'Replace' && vim.mode != 'EasyMotionMode' && vim.mode != 'EasyMotionInputMode' && vim.mode != 'SurroundInputMode'"
       },
       {
         "command": "restructuredtext.editor.listEditing.onCtrlEnterKey",
         "key": "ctrl+enter",
         "mac": "cmd+enter",
-        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
+        "when": "restructuredtext.activated && editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
       },
       {
         "command": "restructuredtext.editor.listEditing.onShiftEnterKey",
         "key": "shift+enter",
-        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
+        "when": "restructuredtext.activated && editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
       },
       {
         "command": "restructuredtext.editor.listEditing.onBackspaceKey",
         "key": "backspace",
-        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible && !config.restructuredtext.editor.ime.suppressKeyBindings && vim.mode != 'Normal' && vim.mode != 'Visual' && vim.mode != 'VisualBlock' && vim.mode != 'VisualLine' && vim.mode != 'SearchInProgressMode' && vim.mode != 'CommandlineInProgress' && vim.mode != 'Replace' && vim.mode != 'EasyMotionMode' && vim.mode != 'EasyMotionInputMode' && vim.mode != 'SurroundInputMode'"
+        "when": "restructuredtext.activated && editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible && !config.restructuredtext.editor.ime.suppressKeyBindings && vim.mode != 'Normal' && vim.mode != 'Visual' && vim.mode != 'VisualBlock' && vim.mode != 'VisualLine' && vim.mode != 'SearchInProgressMode' && vim.mode != 'CommandlineInProgress' && vim.mode != 'Replace' && vim.mode != 'EasyMotionMode' && vim.mode != 'EasyMotionInputMode' && vim.mode != 'SurroundInputMode'"
       },
       {
         "command": "restructuredtext.editor.listEditing.onMoveLineUp",
         "key": "alt+up",
-        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
+        "when": "restructuredtext.activated && editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
       },
       {
         "command": "restructuredtext.editor.listEditing.onMoveLineDown",
         "key": "alt+down",
-        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
+        "when": "restructuredtext.activated && editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
       },
       {
         "command": "restructuredtext.editor.ime.toggleKeybindingSuppression",
         "key": "ctrl+alt+\\",
         "mac": "cmd+alt+\\",
-        "when": "editorTextFocus && editorLangId == restructuredtext"
+        "when": "restructuredtext.activated && editorTextFocus && editorLangId == restructuredtext"
       },
       {
         "command": "restructuredtext.editor.listEditing.onCopyLineUp",
         "win": "shift+alt+up",
         "mac": "shift+alt+up",
-        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
+        "when": "restructuredtext.activated && editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
       },
       {
         "command": "restructuredtext.editor.listEditing.onCopyLineDown",
         "win": "shift+alt+down",
         "mac": "shift+alt+down",
-        "when": "editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
+        "when": "restructuredtext.activated && editorTextFocus && !editorReadonly && editorLangId == restructuredtext && !suggestWidgetVisible"
       },
       {
         "command": "restructuredtext.editor.listEditing.onIndentLines",
         "key": "ctrl+]",
         "mac": "cmd+]",
-        "when": "editorTextFocus && editorLangId == restructuredtext && !suggestWidgetVisible"
+        "when": "restructuredtext.activated && editorTextFocus && editorLangId == restructuredtext && !suggestWidgetVisible"
       },
       {
         "command": "restructuredtext.editor.listEditing.onOutdentLines",
         "key": "ctrl+[",
         "mac": "cmd+[",
-        "when": "editorTextFocus && editorLangId == restructuredtext && !suggestWidgetVisible"
+        "when": "restructuredtext.activated && editorTextFocus && editorLangId == restructuredtext && !suggestWidgetVisible"
       },
       {
         "command": "resttext.table.dataToTable",
         "key": "alt+t",
-        "when": "editorTextFocus && !editorHasMultipleSelections && editorHasSelection && editorLangId==restructuredtext"
+        "when": "restructuredtext.activated && editorTextFocus && !editorHasMultipleSelections && editorHasSelection && editorLangId==restructuredtext"
       },
       {
         "command": "resttext.key.enter",
         "key": "enter",
-        "when": "resttext.enter.enabled && editorTextFocus && !suggestWidgetVisible && !config.restructuredtext.editor.ime.suppressKeyBindings && editorLangId==restructuredtext"
+        "when": "restructuredtext.activated && resttext.enter.enabled && editorTextFocus && !suggestWidgetVisible && !config.restructuredtext.editor.ime.suppressKeyBindings && editorLangId==restructuredtext"
       },
       {
         "command": "resttext.key.shift.enter",
         "key": "shift+enter",
-        "when": "resttext.shift.enter.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext"
+        "when": "restructuredtext.activated && resttext.shift.enter.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext"
       },
       {
         "command": "resttext.key.alt.enter",
         "key": "alt+enter",
-        "when": "resttext.alt.enter.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext"
+        "when": "restructuredtext.activated && resttext.alt.enter.enabled && editorTextFocus && !suggestWidgetVisible && editorLangId==restructuredtext"
       }
     ],
     "commands": [
@@ -470,7 +470,7 @@
             "type": "boolean",
             "default": false,
             "markdownDescription": "%config.editor.ime.suppressKeyBindings.description%",
-            "scope": "application"
+            "scope": "resource"
           },
           "restructuredtext.formatter.normalizeSectionUnderlines": {
             "type": "boolean",

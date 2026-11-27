@@ -48,10 +48,10 @@ function isRstEditor(editor: vscode.TextEditor | undefined): boolean {
     return editor?.document.languageId === 'restructuredtext';
 }
 
-function getImeSuppressionEnabled(): boolean {
+function getImeSuppressionEnabled(resource?: vscode.Uri): boolean {
     return (
         vscode.workspace
-            .getConfiguration('restructuredtext.editor.ime')
+            .getConfiguration('restructuredtext.editor.ime', resource)
             .get<boolean>('suppressKeyBindings') ?? false
     );
 }
@@ -70,7 +70,7 @@ function updateImeStatusBar(
         return;
     }
 
-    const suppressed = getImeSuppressionEnabled();
+    const suppressed = getImeSuppressionEnabled(editor?.document.uri);
     const text = suppressed ? '$(keyboard) RST IME' : '$(keyboard) RST Keys';
     const tooltip = suppressed
         ? 'reStructuredText IME-safe mode is on. Enter and Backspace list keybindings are suppressed. Click to restore them.'
@@ -176,6 +176,109 @@ export async function activate(
     const editorCommands = new EditorCommands(new VSCodeInput());
     editorCommands.register(context);
 
+    // Section creation support.
+    context.subscriptions.push(
+        vscode.commands.registerTextEditorCommand(
+            'restructuredtext.features.underline.underline',
+            underline
+        ),
+        vscode.commands.registerTextEditorCommand(
+            'restructuredtext.features.underline.underlineReverse',
+            (textEditor, edit) => underline(textEditor, edit, true)
+        )
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('resttext.table.createGrid', () => {
+            const editor = vscode.window.activeTextEditor;
+            if (!editor) {
+                return;
+            }
+            const table = new TableEditor(editor);
+            table.createEmptyGrid();
+        })
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('resttext.table.dataToTable', () => {
+            const editor = vscode.window.activeTextEditor;
+            if (!editor) {
+                return;
+            }
+            const table = new TableEditor(editor);
+            table.dataToTable();
+        })
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand(IME_SUPPRESSION_COMMAND, async () => {
+            const editor = vscode.window.activeTextEditor;
+            const configuration = vscode.workspace.getConfiguration(
+                'restructuredtext.editor.ime',
+                editor?.document.uri
+            );
+            const inspected = configuration.inspect<boolean>(
+                'suppressKeyBindings'
+            );
+            const enabled =
+                configuration.get<boolean>('suppressKeyBindings') ?? false;
+
+            const target =
+                inspected?.workspaceFolderValue !== undefined && editor
+                    ? vscode.ConfigurationTarget.WorkspaceFolder
+                    : inspected?.workspaceValue !== undefined
+                      ? vscode.ConfigurationTarget.Workspace
+                      : vscode.ConfigurationTarget.Global;
+            await configuration.update('suppressKeyBindings', !enabled, target);
+
+            const effective = configuration.get<boolean>('suppressKeyBindings');
+            const state = effective ? 'enabled' : 'disabled';
+            updateImeStatusBar(imeStatusBar, vscode.window.activeTextEditor);
+            void vscode.window.setStatusBarMessage(
+                `reStructuredText IME keybinding suppression ${state}`,
+                3000
+            );
+        })
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('resttext.key.enter', () => {
+            key_enter();
+        })
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('resttext.key.shift.enter', () => {
+            key_shift_enter();
+        })
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('resttext.key.alt.enter', () => {
+            key_alt_enter();
+        })
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('resttext.key.tab', () => {
+            key_tab();
+        })
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('resttext.key.shift.tab', () => {
+            key_shift_tab();
+        })
+    );
+
+    listEditing.activate(context);
+
+    void vscode.commands.executeCommand(
+        'setContext',
+        'restructuredtext.activated',
+        true
+    );
+
     // Formatter support with rstformat availability check
     if (process.env.RST_TEST_MODE === '1') {
         // Keep tests deterministic: register the provider without waiting
@@ -216,92 +319,4 @@ export async function activate(
         // If Python not available (web mode), still register formatter but it will fail gracefully
         registerFormatter(context);
     }
-
-    // Section creation support.
-    context.subscriptions.push(
-        vscode.commands.registerTextEditorCommand(
-            'restructuredtext.features.underline.underline',
-            underline
-        ),
-        vscode.commands.registerTextEditorCommand(
-            'restructuredtext.features.underline.underlineReverse',
-            (textEditor, edit) => underline(textEditor, edit, true)
-        )
-    );
-
-    context.subscriptions.push(
-        vscode.commands.registerCommand('resttext.table.createGrid', () => {
-            const editor = vscode.window.activeTextEditor;
-            if (!editor) {
-                return;
-            }
-            const table = new TableEditor(editor);
-            table.createEmptyGrid();
-        })
-    );
-
-    context.subscriptions.push(
-        vscode.commands.registerCommand('resttext.table.dataToTable', () => {
-            const editor = vscode.window.activeTextEditor;
-            if (!editor) {
-                return;
-            }
-            const table = new TableEditor(editor);
-            table.dataToTable();
-        })
-    );
-
-    context.subscriptions.push(
-        vscode.commands.registerCommand(IME_SUPPRESSION_COMMAND, async () => {
-            const configuration = vscode.workspace.getConfiguration(
-                'restructuredtext.editor.ime'
-            );
-            const enabled = getImeSuppressionEnabled();
-
-            await configuration.update(
-                'suppressKeyBindings',
-                !enabled,
-                vscode.ConfigurationTarget.Global
-            );
-
-            const state = !enabled ? 'enabled' : 'disabled';
-            updateImeStatusBar(imeStatusBar, vscode.window.activeTextEditor);
-            void vscode.window.setStatusBarMessage(
-                `reStructuredText IME keybinding suppression ${state}`,
-                3000
-            );
-        })
-    );
-
-    context.subscriptions.push(
-        vscode.commands.registerCommand('resttext.key.enter', () => {
-            key_enter();
-        })
-    );
-
-    context.subscriptions.push(
-        vscode.commands.registerCommand('resttext.key.shift.enter', () => {
-            key_shift_enter();
-        })
-    );
-
-    context.subscriptions.push(
-        vscode.commands.registerCommand('resttext.key.alt.enter', () => {
-            key_alt_enter();
-        })
-    );
-
-    context.subscriptions.push(
-        vscode.commands.registerCommand('resttext.key.tab', () => {
-            key_tab();
-        })
-    );
-
-    context.subscriptions.push(
-        vscode.commands.registerCommand('resttext.key.shift.tab', () => {
-            key_shift_tab();
-        })
-    );
-
-    listEditing.activate(context);
 }

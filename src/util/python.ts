@@ -93,7 +93,7 @@ export class Python {
 
     private async installDoc8(): Promise<void> {
         try {
-            await this.exec('-m', 'pip', 'install', 'doc8');
+            await this.execWithTimeout(600000, '-m', 'pip', 'install', 'doc8');
             this.logger.info('Finished installing doc8');
             vscode.window.showInformationMessage(
                 'The linter doc8 is installed.'
@@ -126,7 +126,13 @@ export class Python {
 
     private async installRstCheck(): Promise<void> {
         try {
-            await this.exec('-m', 'pip', 'install', 'rstcheck');
+            await this.execWithTimeout(
+                600000,
+                '-m',
+                'pip',
+                'install',
+                'rstcheck'
+            );
             this.logger.info('Finished installing rstcheck');
             vscode.window.showInformationMessage(
                 'The linter rstcheck is installed.'
@@ -169,7 +175,13 @@ export class Python {
 
     private async installRstLint(): Promise<void> {
         try {
-            await this.exec('-m', 'pip', 'install', 'restructuredtext_lint');
+            await this.execWithTimeout(
+                600000,
+                '-m',
+                'pip',
+                'install',
+                'restructuredtext_lint'
+            );
             this.logger.info('Finished installing restructuredtext_lint');
             vscode.window.showInformationMessage(
                 'The linter restructuredtext_lint is installed.'
@@ -243,7 +255,13 @@ export class Python {
 
     public async installRstformat(): Promise<void> {
         try {
-            await this.exec('-m', 'pip', 'install', 'rstformat');
+            await this.execWithTimeout(
+                600000,
+                '-m',
+                'pip',
+                'install',
+                'rstformat'
+            );
             this.logger.info('Finished installing rstformat');
             vscode.window.showInformationMessage(
                 'The formatter rstformat is installed.'
@@ -257,6 +275,13 @@ export class Python {
     }
 
     public exec(...args: string[]): Promise<string> {
+        return this.execWithTimeout(30000, ...args);
+    }
+
+    private execWithTimeout(
+        timeout: number,
+        ...args: string[]
+    ): Promise<string> {
         const cmd = [this.pythonPath, ...args];
         return new Promise<string>((resolve, reject) => {
             this.logger.debug(
@@ -268,6 +293,7 @@ export class Python {
             }
             cp.exec(
                 cmd.join(' '),
+                {timeout},
                 (error: Error | null, stdout: string, stderr: string) => {
                     if (error) {
                         const errorMessage: string = [

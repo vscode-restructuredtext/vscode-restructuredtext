@@ -120,7 +120,9 @@ export async function activate(context: vscode.ExtensionContext) {
     );
 
     if (process.env.RST_TEST_MODE !== '1') {
-        await maybeRecommendExtensions(configuration, logger);
+        void maybeRecommendExtensions(configuration, logger).catch(error => {
+            logger.error(`Extension recommendation prompt failed: ${error}`);
+        });
     }
 
     const commandManager = new CommandManager();
@@ -134,7 +136,9 @@ export async function activate(context: vscode.ExtensionContext) {
         })
     );
 
-    await updateActivationCount(context);
+    void updateActivationCount(context).catch(error => {
+        logger.error(`Activation count update failed: ${error}`);
+    });
 
     // Initialize platform-specific components
     if (vscode.env.uiKind === vscode.UIKind.Desktop) {
